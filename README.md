@@ -2,7 +2,7 @@
      Written by Markdown language.
                  By Anke at CCNU on 10/16/2022 
                                                
-                    Last updated on 02/14/2023 
+                    Last updated on 08/13/2023 
  -->
 
 # The parton and hadron cascade model PACIAE

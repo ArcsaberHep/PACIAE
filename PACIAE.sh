@@ -102,9 +102,9 @@ RUN="RAW"            # Additional option. Not required to be modified usually.
 #              "nohup time ./PACIAE.sh | tee $(date "+%Y%m%d%H%M%S").log &"    #
 #       3.2 On SLURM: "sbatch PACIAE.sh". On LSF: "bsub PACIAE.sh"             #
 #                                                                              #
-#                                               By An-Ke at CCNU on 17/10/2022 #
+#                                               By An-Ke at CCNU on 10/17/2022 #
 #                                                                              #
-#                                                   Last updated on 12/08/2023 #
+#                                                   Last updated on 08/12/2023 #
 ################################################################################
 ################################################################################
 ################################################################################
