@@ -31,19 +31,12 @@
 *.out
 *.app
 
-#Lei20230813 Local
-
-# Local folder
-Analysis_program/
-Backup_src/
-Comparison/
-Direct_running_test/
-.vscode/
-
 # Local components
+.vscode/
 *.f90
 Makefile
 *.x
 *.dat
 *.bak
 *.pdf
+*.doc
