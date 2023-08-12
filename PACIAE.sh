@@ -109,7 +109,7 @@ RUN="RAW"            # Additional option. Not required to be modified usually.
 ################################################################################
 ################################################################################
 
-dev test 3
+
 
 # Gets current date and time.
 echo
@@ -119,8 +119,6 @@ echo "Now is $(date +"%Y-%m-%d %T")"
 echo
 
 
-local master
-master test 3
 
 ################################################################################
 #   Modify the following statements as needed.                                 #
