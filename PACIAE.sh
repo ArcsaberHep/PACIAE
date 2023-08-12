@@ -104,7 +104,7 @@ RUN="RAW"            # Additional option. Not required to be modified usually.
 #                                                                              #
 #                                               By An-Ke at CCNU on 10/17/2022 #
 #                                                                              #
-#                                                   Last updated on 08/12/2023 #
+#                                                   Last updated on 08/13/2023 #
 ################################################################################
 ################################################################################
 ################################################################################
@@ -210,7 +210,7 @@ i_channel=8 # (D=0) nchan, =0: inelastic (INEL)
             #               8: pythia default (msel=1)
             #               9: Z0 production
             #               settings of 0,1,3,7,8 and 9 are ready
-i_stage=2   # (D=4) adj(40), =1, stops event after parini
+i_stage=4   # (D=4) adj(40), =1, stops event after parini
             #                 2, ... parcas
             #                 3, ... hadronization with coal from parini
             #                 4, ... whole simulation
