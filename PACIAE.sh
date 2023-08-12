@@ -109,7 +109,7 @@ RUN="RAW"            # Additional option. Not required to be modified usually.
 ################################################################################
 ################################################################################
 
-xxxxtest
+
 
 # Gets current date and time.
 echo
@@ -118,7 +118,7 @@ echo "Now is $(date +"%Y-%m-%d %T")"
 # mv ./usu.dat ./default_usu.dat
 echo
 
-GUI test line
+
 
 ################################################################################
 #   Modify the following statements as needed.                                 #
