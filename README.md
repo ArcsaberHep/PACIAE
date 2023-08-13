@@ -57,8 +57,8 @@ There are two ways to run the program.
 
 ## Maintainers
 
-[@ArcsaberHep](https://github.com/ArcsaberHep).
-[@ArcsaberkxL](https://github.com/ArcsaberkxL).
+[@ArcsaberHep](https://github.com/ArcsaberHep)
+[@ArcsaberkxL](https://github.com/ArcsaberkxL)
 
 ## Contributing
 
@@ -116,43 +116,102 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 <!----------------------------------------------------------------------------->
 #### <font color=red> 08/2023: </font> In version PACIAE 2.3 ###
 
- - PACIAE.sh updated. A "sim" folder (simulation) would be generated to storing the results of simulations.
+- In subroutine "oscar" of "main_23.f", a bug was fixed for the case nosc=0.
+- In subroutine "tabh" of "coales_23.f", the probabilities of mixing-state measons were corrected.
+- PACIAE.sh updated. A "sim" folder (simulation) would be generated to storing the results of simulations.
+
 
 <!----------------------------------------------------------------------------->
 #### <font color=red> 07/2023: </font> In version PACIAE 2.3 ###
 
-Waiting....
+- In "main_23.f" and "parini_23.f", the parameters "dtt" and "smtj3" were renamed/replaced as "x_ratio" and "decpro" directly.
+- In "parini_23.f", several subroutines about leading-proton reconstruction were introduced. **TODO:** It still need detailed and complete treatment.
+- In "PAPTDI", "deexcitation_E", and "deexcitation_EP" of "coales_23.f", minor optimizations were made.
+- In "coales_23.f", two new implementations from "deexcitation_EP" were introduced, in which the excited quark-antiquark would be local pT compensation. **TODO:** It still need detailed and complete treatment.
+- "usu.dat" updated.
+- "PACIAE.sh" updated.
+- Redundant statements deleted / modified.
+- Bug fixed.
 
 <!----------------------------------------------------------------------------->
 #### <font color=red> 06/2023: </font> In version PACIAE 2.3 ###
 
-Waiting...
+- In "main_23.f", three input parameter "parp82", "i_coord_recover", "i_tune" were introduced. "parp82" corresponds to PARP(82) in PYTHIA. "i_coord_recover" controls recovering the positions of partons after parton rescattering to those before or not. "i_tune" corresponds to MSTP(5) in PYTHIA which gives easy access to different tunes encoded in PYTHIA.
+- In "main_23.f", the 4-position of one of the rest partons would be assigned to the first parton in the string. This treatment would give random 3-coordinates to produced hadrons that surround the first parton after PYTHIA SFM, i.e. more random position distribution for produced hadrons.
+- In "main_23.f", the output format of "rms0.out" was optimized.
+- The subroutine "oscar" of "main_23.f", the OSCAR output was optimized.
+- In "main_23.f", "parini_23.f", and "analy.f", the subroutine "PASTAT" was introduced to output parton-parton level cross-sections to "main.out" file. However, one should note that it is just for the basic check.
+- In "parini_23.f", the leading-proton reconstruction was improved. **TODO:** It still need detailed and complete treatment.
+- In subroutine "xevent" of "parini_23.f", now when simulate pA and Ap collision, the junction-type NN event would be re-generated.
+- In subroutine "bream" of "parini_23.f", the broken quarks would be massless if breaking diquark is massless from PYTHIA treatment.
+- In subroutines "updtlp" and "updatl" of "parini_23.f", minor optimizations were made.
+- In subroutines "ctlcre_par", "ctlcre_para", "his_p", and "updpli_p" of "parcas_23.f", minor optimizations were made.
+- In subroutines "ctlcre_h" of "hadcas_23.f", one minor optimization was made.
+- "usu.dat" updated.
+- "PACIAE.sh" updated.
+- Redundant statements deleted / modified.
+- Bug fixed.
+
 
 <!----------------------------------------------------------------------------->
 #### <font color=red> 05/2023: </font> In version PACIAE 2.3 ###
 
-Waiting...
+- In "main_23.f" and "analy.f", the internal online analyzing module was improved and optimized. The 5 distributions was extended to 6, i.e. the transverse momentum spectra dN/dpT. The format of user output file "rms.out" was optimized, too.
+- In ""main_23.f" and "parini_23.f", the diffractive NN event without parton generation after PYTHIA calling would not be thrown away now.
+- In subroutine "scat" of "parini_23.f", a minor bug of "m1 -> mm1" was fixed.
+- In "parcas_23.f", the max simulated volume was introduced, controlled by "PARAM(10)" (para10).
+- In "parcas_23.f", the inelastic processes and time-like radiation was fixed and improved to consider special pure-gluon strings (glue) and junction-type strings properly. **TODO:** It still need detailed and complete treatment.
+- In "analy.f", the usbroutine "analy_parton" and "stati_parton" were introduced to analyze partons. The subroutines "output_hadron_distribution" and "output_parton_distribution" were introduced to output analyzing information of hadrons and partons, respectively. The analyzing module was improved and optimized to 6 distributions.
+- "usu.dat" updated.
+- "PACIAE.sh" updated.
+- Redundant statements deleted / modified.
+- Bug fixed.
 
 <!----------------------------------------------------------------------------->
 #### <font color=red> 04/2023: </font> In version PACIAE 2.3 ###
 
-Waiting...
+- In "main_23.f", a energy-dependent "smtj3" was introduced for low-energy loop-A at $\sqrt{s_{NN}} < 3$ GeV.
+- In "parini_23.f", the loop-A was improved.
+- In "parini_23.f", the hadron-hadron cross-sections inspired by additive quark model (AQM) wee introduced.
+- In all of ".f" code files, many "DO-ENDDO" statements and some statements of variable initialization were optimized to save running time (memory optimization).
+- In "main_23.f", different code blocks were separated by dashed lines "-----" with corresponding comments to explain their functions, i.e. "what we are doing here".
+- In "main_23.f", three subroutines "rest_hadronization", "rest_sfm" and "rest_coal" were introduced to hadronize the rest partons that failed during the normal hadronization process. The re-hadronization is set after normal hadronization now, instead of calling "pa2evnt" after the whole simulation as before. "pa2evnt" was also fixed and improved again.
+- In "main_23.f" and "parini_23.f" (near "PYINIT" calling), the re-generation of the NN binary collision were introduced to deal with case where charge or 4-momentum was not conserved or any errors occurred after calling PYTHIA.
+- In "main_23.f", the Coalescence Mode 2 was introduced. In this mode, the gluon splitting and energetic quark deexcitation would be performed before parton rescattering. It means that there will be no gluons into parton rescattering.
+- In "main_23.f", a subroutine "prt_final_info" was introduced to print final 4-momentum information to "main.out".
+- In subroutines "decmom_sbe" of "main_23.f" and "decmom" of "parini_23.f", minor bugs were fixed.
+- The subroutine "oscar" of "main_23.f" was improved to print event particle history correctly.
+- The spectator nucleons were moved after parton rescattering and hadron rescattering correctly avoiding the interactions between them and other hadrons, i.e. "sbh moving" blocs in "main_23.f".
+- The input parameter adj1(29) could select fragmentation function for both string fragmentation model (SFM) and deexcitation of coalescence model (Coal) now. A series of parameters of fragmentation functions were introduced.
+- In subroutine "scat" of "parini_23.f", gamma66 removing block was moved to do the job correctly.
+- In subroutine "ctlcre_par" of "parcas_23.f", minor bug were fixed.
+- In "coales_23.f", the coalescence model was improved.
+- In subroutine "tabh" of "coales_23.f", the specie of hadron is extended to 200 now.
+- In subroutine "coal" of "coales_23.f", the reconstruction of parton list after normal "coal" calling was fixed and improved. A process of "final coalescence try" for the quarks that failed in normal coalescence was introduced.
+- "usu.dat" updated.
+- "PACIAE.sh" updated.
+- Redundant statements deleted / modified.
+- Bug fixed.
 
 <!----------------------------------------------------------------------------->
 #### <font color=red> 03/2023: </font> In version PACIAE 2.3 ###
 
 - The "stahad_23.f" file has beed removed.
-- The simulation mode in PACIAE has been classified into three modes, controlled by switch "mstu2":
+- The simulation mode in PACIAE has been classified into three modes, controlled by switch "mstj2":
     - =1, (low-energy) pure hadron simulation ***loop-A***;
     - =2, PYTHIA-like pure hadron simulation ***loop-B***;
     - =3, parton-hadron cascade simulation ***loop-C***.
 
-- In "main_23.f, parini_23.f", the low-energy simulation loop-A has been improved considering endothermic, exothermic processes and Delta particle decay more carefully. A common block /delt/ has been added for processing Delta particle in loop-A.
+- In "main_23.f, parini_23.f", the low-energy simulation loop-A has been improved considering endothermic, exothermic processes and Delta particle decay more carefully. A COMMON BLOCK /delt/ has been added for processing Delta particle in loop-A.
 - Parameter "mstj3" was renamed as "smtj3" and "smtj3/10" was set as the probability of the Delta particle decay. Parameter "dtt" is the ratio of the inelastic cross-section to the total one for hadron scattering now (D=0.85 for high energy, 0.1 for low-energy loop-A).
+- In "main_23.f", two subroutines "share_p_PYJETS" and "share_p_sbe" are introduced to share the 4-momentum for the conservation adjustment. The array "throe_p" of COMMON BLOCK /sa16/ is used to store the lost 4-momentum now.
+- In "main_23.f", the subroutine "pa2ent" has been fixed.
 - In "remo" of "parini_23.f", the junctions were removed correctly now.
 - In "coales_23.f", the quark energy sorting, i.e. the subroutine "eord", was closed.
 - In "coales_23.f", a subroutine "PAPTDI" has been introduced for transverse momentum sampling. The subroutine "ffm" for high-energy deexcitation mechanism has been renamed and improved as "deexcitation" (two implementations "deexcitation_E" and "deexcitation_EP" for energy mode and light-cone variable mode).
-- The common block /sa18/ was re-set as switches and parameters about coalescence.
+- The subroutine "break_glu" of "coales_23.f" has been fixed to break-up gluons correctly.
+- The subroutine "funcz" of "coales_23.f" was improved.
+- The COMMON BLOCK /sa18/ was re-set as switches and parameters about coalescence.
 - The "analy.f" has been improved for output the partial phase-space statistics. The forth distribution is transverse mass distribution now.
 
 - ***In "parini_23.f", "parcas_23.f", "coales_23.f", and "hadcas_23.f", all of the "TAB character" were replaced by corresponding "space character" safely.***
@@ -169,7 +228,7 @@ Waiting...
 - In subroutine "oscar" of "main_23.f", the OSCAR1997A/1999A/2013A output was re-wrote. 1997A for final particle information, 1999A for full event history (initial nucleon, initial parton state, final partonic state, initial hadron state and final particle state), and 2013A dummy up to now. Some related statements were added in "main_23.f" and "parini_23.f".
 - In "parini_23.f", some pre-statements for statistical hadronization was added.
 - In "coal_23.f", the separate position/momentum phase-space constraint was introduced.
-- In "p_23.f", the size of COMMON block /HEPEVT/ was extended to 80000, also with local /PYCBLS/. In subroutine "PYTIME", DATE_AND_TIME was activated. (However, a potential bug is MSTU(5). Still 10000 in p_23.f now. A possible way may be using the compiling option "-fdefault-integer-8" when one uses GFortran.) The modification of PYTHIA6 were indicated at the beginning of the file.
+- In "p_23.f", the size of COMMON BLOCK /HEPEVT/ was extended to 80000, also with local /PYCBLS/. In subroutine "PYTIME", DATE_AND_TIME was activated. (However, a potential bug is MSTU(5). Still 10000 in p_23.f now. A possible way may be using the compiling option "-fdefault-integer-8" when one uses GFortran.) The modification of PYTHIA6 were indicated at the beginning of the file.
 - In "usu.dat", comments are updated and default values are given in (D=) (not yet tuned). In addition, the KF code list was attached at the end of the file directly, which was printed from PYTHIA6.
 - A file "stahad_23.f" was introduced for the statistical hadronization in the future. Dummy up to now.
 - "PACIAE.sh" updated.
