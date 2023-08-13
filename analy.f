@@ -616,7 +616,6 @@ c       Event accumulation
         san_p   = san_p   + an_p
         san_p_f = san_p_f + an_p_f
 
-        write(*,*) "analy_parton test, iii, sn_min_p=", iii, sn_min_p   ! Lei_dehug
 
         return
         end
