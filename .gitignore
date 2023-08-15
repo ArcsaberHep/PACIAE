@@ -40,3 +40,8 @@ Makefile
 *.bak
 *.pdf
 *.doc
+.md
+
+# Does not ignore the following files and directories.
+!README.md
+!usu.dat

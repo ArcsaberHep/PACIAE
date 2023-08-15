@@ -3798,8 +3798,8 @@ c260314
      &                    + saof(m1,6,i_h(5)) + saof(m1,6,i_h(6))
         end do
 
-        sum_pT  = sum_pT / PARU(2)
-        sum_pT2 = sum_pT2
+        sum_pT  = sum_pT / PARU(2) / 2.
+        sum_pT2 = sum_pT2 / 2.
         do m1=1,40,1
             sum_pT(m1,1)  = sum_pT(m1,1)  / (afl(1,1,2)-afl(1,1,1))
             sum_pT2(m1,1) = sum_pT2(m1,1) / (afl(1,1,2)-afl(1,1,1))
