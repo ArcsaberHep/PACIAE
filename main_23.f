@@ -5752,9 +5752,9 @@ c****************************** Data dumping *****************************
             if(nbh.gt.0)then
                 do j=1,5,1
                     do i=1,nbh,1
-                        k1(n2+i,j) = kbh(i,j)
-                        p1(n2+i,j) = pbh(i,j)
-                        v1(n2+i,j) = vbh(i,j)
+                        k2(n2+i,j) = kbh(i,j)
+                        p2(n2+i,j) = pbh(i,j)
+                        v2(n2+i,j) = vbh(i,j)
                     end do
                 end do
                 n2 = n2 + nbh
