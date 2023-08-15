@@ -151,7 +151,7 @@ c           =1 coalescence mode 1; Lei2023060
 c           =2 coalescence mode 2; with gluon splitting & deexcitation 
 c                                  before parcas. Lei2023060
 c       13: dimension of meson table considered if adj1(12) > 0
-c       14: dimension of baryon table considered if adj1(12) > 1
+c       14: dimension of baryon table considered if adj1(12) > 0
 c       15: default string tension
 c       16: # of allowable generations in q (qbar) deexcitation in coales_23.f
 c       17: threshold energy in deexcitation of energetic quark in coales_23.f
@@ -2281,7 +2281,7 @@ c       Sets 3-coordinate of the diquark as one of the cooresponding quarks.
         ! do i1=1,3
         ! v(i,i1)=v(i,i1)
         ! enddo
-        if(PYR(0).gt.0.5)then
+        if(PYR(1).gt.0.5)then
         do i1=1,3
         v(i,i1)=v(j,i1)
         enddo
@@ -2326,10 +2326,10 @@ c       PYTHIA sfm, i.e. more random position distribution for produced hadrons.
             i_string_A=nstr1a(i1)
             i_string_V=nstr1v(i1)
             do while(.true.)
-                i_A = INT( PYR(0)*(i_string_V-i_string_A+1)+i_string_A )
+                i_A = INT( PYR(1)*(i_string_V-i_string_A+1)+i_string_A )
                 if(K(i_A,2).ne.88) exit   ! Excludes junction
             end do
-            ! if( PYR(0).ge.0.5 ) i_A = i_string_V
+            ! if( PYR(1).ge.0.5 ) i_A = i_string_V
             do j1=1,5,1
                 V(i_string_A,j1) = V(i_A,j1)
             end do
@@ -4531,7 +4531,7 @@ c           Dumps produced hadrons (from PYEXEC, no gamma) into "sa1_h".
             enddo
             nn  = N
 c           The first position in "sa1_h" is selected from original one gluon randomly.
-            i_g = INT( PYR(0)*n_g + 1 )
+            i_g = INT( PYR(1)*n_g + 1 )
             do jj=1,5,1
                 rn(1,jj) = v_g(i_g,jj)
             end do
@@ -4712,7 +4712,7 @@ c                   Dumps produced hadrons (from PYEXEC, no gamma) into "sa1_h".
                     nn  = N
 c                   The first position in "sa1_h" is selected from one of partons.
                     i_p = 0
-                    if( PYR(0).gt.0.5 ) i_p = 1
+                    if( PYR(1).gt.0.5 ) i_p = 1
                     do jj=1,5
                         rn(1,jj) = v_b(i,jj)
                         if(i_p.eq.1) rn(1,jj) = v_q(j,jj)
@@ -5073,10 +5073,10 @@ c       The inv. mass should greater than mass of pion (~140 MeV).
             pbe(1,5) = 0.
             ! Position. Assume 10*10*10 fm^3 volume. 
             !           (1~10 fm/c of QGP evolution)
-            vbe(1,1) = PYR(0)*10.
-            vbe(1,2) = PYR(0)*10.
-            vbe(1,3) = PYR(0)*10.
-            vbe(1,4) = PYR(0)*10.   !TODO(Lei2023060): time of parcas or 0. ?
+            vbe(1,1) = PYR(1)*10.
+            vbe(1,2) = PYR(1)*10.
+            vbe(1,3) = PYR(1)*10.
+            vbe(1,4) = PYR(1)*10.   !TODO(Lei2023060): time of parcas or 0. ?
             vbe(1,5) = 0.
             nbe = 1
             throe_p = 0.
