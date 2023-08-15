@@ -1605,7 +1605,7 @@ c        q (qbar) ) by Field-Feymman fragmentation function, etc. 081022 240223
         p_mT2 = amasi*amasi + ppt
         if(i_z.gt.0  .AND. i_z.lt.6)  call PYZDIS(kf1,kf2,p_mT2,z1)
         if(i_z.gt.10 .AND. i_z.lt.16) call funcz(z1,ie1)
-        if(i_z.eq.0) z1 = PYR(0)
+        if(i_z.eq.0) z1 = PYR(1)
         if(i_pT.eq.7 .OR. i_pT.eq.8) z1 = x
 
         e1  = z1 * e0   ! Energy of first generation qqbar pair
@@ -1873,7 +1873,7 @@ c        q (qbar) ) by Field-Feymman fragmentation function, etc. 081022 240223
         p_mT2 = amasi*amasi + ppt
         if(i_z.gt.0  .AND. i_z.lt.6)  call PYZDIS(kf1,kf2,p_mT2,z1)
         if(i_z.gt.10 .AND. i_z.lt.16) call funcz(z1,ie1)
-        if(i_z.eq.0) z1 = PYR(0)
+        if(i_z.eq.0) z1 = PYR(1)
         if(i_pT.eq.7 .OR. i_pT.eq.8) z1 = x
 
         w1    = z1 * w0             ! E1 + p_z1 = z * ( E0 + p_z0 )
@@ -2152,7 +2152,7 @@ c        q (qbar) ) by Field-Feymman fragmentation function, etc. 081022 240223
         p_mT2 = amasi*amasi + ppt
         if(i_z.gt.0  .AND. i_z.lt.6)  call PYZDIS(kf1,kf2,p_mT2,z1)
         if(i_z.gt.10 .AND. i_z.lt.16) call funcz(z1,ie1)
-        if(i_z.eq.0) z1 = PYR(0)
+        if(i_z.eq.0) z1 = PYR(1)
         if(i_pT.eq.7 .OR. i_pT.eq.8) z1 = x
 
         w1    = z1 * w0             ! E1 + p_z1 = z * ( E0 + p_z0 )
@@ -2438,7 +2438,7 @@ c        q (qbar) ) by Field-Feymman fragmentation function, etc. 081022 240223
         p_mT2 = amasi*amasi + ppt
         if(i_z.gt.0  .AND. i_z.lt.6)  call PYZDIS(kf1,kf2,p_mT2,z1)
         if(i_z.gt.10 .AND. i_z.lt.16) call funcz(z1,ie1)
-        if(i_z.eq.0) z1 = PYR(0)
+        if(i_z.eq.0) z1 = PYR(1)
         if(i_pT.eq.7 .OR. i_pT.eq.8) z1 = x
 
         w1    = z1 * w0             ! E1 + p_z1 = z * ( E0 + p_z0 )
@@ -2723,7 +2723,7 @@ c        q (qbar) ) by Field-Feymman fragmentation function, etc. 081022 240223
         p_mT2 = amasi*amasi + ppt
         if(i_z.gt.0  .AND. i_z.lt.6)  call PYZDIS(kf1,kf2,p_mT2,z1)
         if(i_z.gt.10 .AND. i_z.lt.16) call funcz(z1,ie1)
-        if(i_z.eq.0) z1 = PYR(0)
+        if(i_z.eq.0) z1 = PYR(1)
         if(i_pT.eq.7 .OR. i_pT.eq.8) z1 = x
 
         w1    = z1 * w0             ! E1 + p_z1 = z * ( E0 + p_z0 )
@@ -3726,16 +3726,16 @@ C...Commonblocks.
         x=0D0
 100     continue
 C...Generate p_T and azimuthal angle, gives Gaussian p_x and Gaussian p_y.
-        if(i_pT.eq.1) PT=PARJ(21)*SQRT(-LOG(MAX(1D-10,PYR(0))))
+        if(i_pT.eq.1) PT=PARJ(21)*SQRT(-LOG(MAX(1D-10,PYR(1))))
  
 C...Generate p_T and azimuthal angle, gives Exponential p_x and Exponential p_y.
-        if(i_pT.eq.2) PT=-PARJ(21)*LOG(PYR(0)*PYR(0))
+        if(i_pT.eq.2) PT=-PARJ(21)*LOG(PYR(1)*PYR(1))
  
 C...Generate p_T according to the Exponential distribution. (thermodynamic)
-        if(i_pT.eq.3) PT=-PARJ(21)*LOG(MAX(1D-10,PYR(0)))
+        if(i_pT.eq.3) PT=-PARJ(21)*LOG(MAX(1D-10,PYR(1)))
  
 C...Non-uniform tail.
-        if(PARJ(23).GT.PYR(0)) PT=PARJ(24)*PT
+        if(PARJ(23).GT.PYR(1)) PT=PARJ(24)*PT
  
 C...PT constrainting and re-sampling
         if(i_max.eq.1)then
@@ -3744,14 +3744,14 @@ C...PT constrainting and re-sampling
  
 C...Sampling p_T form given PT0 randomly.
         if(i_pT.eq.4 .OR. i_pT.eq.8)then
-            factor=PYR(0)
+            factor=PYR(1)
             PT=factor*PT0
             x=factor
         endif
  
 200     continue
 C...Generate azimuthal angle.
-        PHI=PARU(2)*PYR(0)
+        PHI=PARU(2)*PYR(1)
  
 C...Randomly sample [PX,PY] on circle of sphere with radius PT
 C       PX=PT*COS(PHI)
@@ -3770,12 +3770,12 @@ C...PX, PY constrainting and re-sampling
         endif
  
 C...Samples p_x and p_y from given PX0 and PY0 with different random factors.
-        if(i_pT.eq.5) PX=PYR(0)*PX0
-        if(i_pT.eq.5) PY=PYR(0)*PY0
+        if(i_pT.eq.5) PX=PYR(1)*PX0
+        if(i_pT.eq.5) PY=PYR(1)*PY0
  
 C...Samples p_x and p_y from given PX0 and PY0 with a same random factor.
         if(i_pT.eq.6 .OR. i_pT.eq.7)then
-            factor=PYR(0)
+            factor=PYR(1)
             PX=factor*PX0
             PY=factor*PY0
             x=factor
