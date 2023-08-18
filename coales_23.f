@@ -3194,13 +3194,17 @@ c       kf (amq): flavor code (mass) of generated quark
 c       if(eg.lt.amuu)goto 200   ! throw away amuu
 c161022 if(eg.ge.amdd .and. eg.lt.amss)then   ! d,u
         if(eg.lt.amss)then   ! d,u (with same flavor generation probability)
-          if(aa.le.0.5)then
-          kf=1   ! d
-          amq=amd
-          else
-          kf=2   ! u
-          amq=amu
-          endif
+!Lei20230817B-
+        !   if(aa.le.0.5)then
+        !   kf=1   ! d
+        !   amq=amd
+        !   else
+        !   kf=2   ! u
+        !   amq=amu
+        !   endif
+            kf  = 1+INT((2D0+PARJ(2))*PYR(0))   !Lei20230817
+            amq = PYMASS(kf)    !Lei20230817
+!Lei20230817E-
           goto 200
         endif
 
