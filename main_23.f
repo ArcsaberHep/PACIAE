@@ -3398,6 +3398,7 @@ c120119
         stime_par=stime_par+time_par
         stime_had=stime_had+time_had
 c120119
+        call prt_sgam(0,egam,4)   !Lei20230819
         segam=segam+egam   ! 080419
         segam1=segam1+egam1   ! 080419
         segam2=segam2+egam2   ! 080419
@@ -3611,11 +3612,19 @@ c200601
         write(10,*)'#! Nnp, Ntot, Nep='   ! 060813
         write(10,*) sknpo,sknno+skppo+sknpo,skepo   ! 060813
 c200601
-        if(psno.eq.2) write(10,*)'#! psno, ave. b, N_part and N_bin ='   ! 280113
-        if(psno.eq.2) write(10,*) psno,averbo,psnopo,psnoto,psnono*csnn   ! 280113
-        ! write(10,*)'#! avb,avneu,astbp,astbt,aanbin='   ! 280113
-        write(10,*)'#! event averaged b, avneu, Npart_p, Npart_t, T_pt='   !Lei2023060
-        write(10,*) avb,avneu,astbp,astbt,aanbin   ! 280113
+!Lei20230820B-
+        if( INT(psno).eq.1 )then
+            write(10,*)'#! event averaged b, avneu, Npart_p, '
+     &               //'Npart_t, T_pt='   !Lei2023060 Lei20230820
+            write(10,*) avb,avneu,astbp,astbt,aanbin   ! 280113
+        else if( INT(psno).eq.2 )then
+            write(10,*)'#! psno, ave. b, N_part and N_bin ='   ! 280113
+            write(10,*) psno,averbo,psnopo,psnoto,psnono*csnn   ! 280113
+        else
+            write(10,*)
+            write(10,*)
+        end if
+!Lei20230820E-
 
         write(10,*)"#!-------------------------------------"//
      &             "----------------------------------------"
@@ -3652,16 +3661,16 @@ c140223 write(10,*)dineli   ! 140223 Lei
 c070417
         write(10,*)"#!-------------------------------------"//
      &             "----------------------------------------"
-        write(10,*)'#! default par1, par2, par3, parj4, par21 ='   ! 010518
+        write(10,*)'#! default parj1, parj2, parj3, parj4, par21 ='   ! 010518
         write(10,*) parj1,parj2,parj3,parj4,parj21   ! 010518
-        write(10,*)'#! parj1, parj2, parj3, parj4, parj21, keff ='   ! 010518
+        write(10,*)'#! Eff-parj1, parj2, parj3, parj4, parj21, keff ='   ! 010518
         write(10,*) (skapao(i1),i1=1,6)   ! 010518
-        write(10,*)'#! averaged # of gluon in a string when kjp22=2,3,4'
+        write(10,*)'#! averaged # of gluon in a string when kjp22=1,3'
         write(10,*) sgtimeo
         write(10,*)'#! event averaged value of the factor related to # '
         write(10,*)'#!  of gluons and hardest gluon in a string, event '
         write(10,*)'#!  averaged transverse momentum of hardest gluon,'
-        write(10,*)'#!  event averaged # strings when kjp22=2,3,4 ='
+        write(10,*)'#!  event averaged # strings when kjp22=1,3 ='
         write(10,*) sadivo,sgpmaxo,sitimeo
 c070417
 c120119
@@ -3713,7 +3722,7 @@ c        and q/qbar.
 c00623 Lei2023060E-
 
 c140223 Lei
-        write(10,*)   ! 140223 Lei Empty line
+        write(10,"(3/)")   ! 140223 Lei Empty lines.
         write(10,*)'#! average frequency of the occurring of each '//
      c   'inela. in hadron cascade ='
         do i=1,60,1
@@ -3806,7 +3815,7 @@ c260314
         end do
         sum_y = sum_y
         sum_eta = sum_eta
-        write(10,*)
+        write(10,"(3/)")
         write(10,*) "#! Inv. dN/dpT, dN/dpT, dN/dy, dN/deta of h+-,"//
      &              " p and f"
         do m1=1,40,1
@@ -3822,8 +3831,8 @@ c260314
             sum_mul_full = sum_mul_full + sbof(i_h(i_kf))
         end do
         write(10,*)
-        write(10,*) "#! partial/full multiplicity of h+-:",
-     &              sum_mul_partial, sum_mul_full
+        write(10,*) "#! partial/full multiplicity of h+-:"
+        write(10,*) sum_mul_partial, sum_mul_full
 !Lei20230303E--
 
         close(10)

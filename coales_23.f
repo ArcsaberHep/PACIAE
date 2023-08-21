@@ -3202,10 +3202,11 @@ c161022 if(eg.ge.amdd .and. eg.lt.amss)then   ! d,u
         !   kf=2   ! u
         !   amq=amu
         !   endif
-            kf  = 1+INT((2D0+PARJ(2))*PYR(0))   !Lei20230817
+        !   goto 200
+            kf  = 1+INT((2D0+PARJ(2))*PYR(1))   !Lei20230817
             amq = PYMASS(kf)    !Lei20230817
+            return
 !Lei20230817E-
-          goto 200
         endif
 
         ! if(eg.ge.amss .and. eg.lt.amcc)then   ! d,u,s
