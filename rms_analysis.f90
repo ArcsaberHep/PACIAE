@@ -148,37 +148,37 @@
             !8 #!-----------------------------------------------------------------------------
             !9 #! parp81, parp82, bp, mstp82 =
             do j=1,9,1
-                read(99,"(A100)") comment_line(j)
+                read(99,"(A200)") comment_line(j)
             end do
             !10
             read(99,*) PARP81, PARP82, b_param_current, MSTP82
             !11 #!-----------------------------------------------------------------------------
             !12 #! MC Glauber-like <N_coll>, <N_part> =
             do j=11,12,1
-                read(99,"(A100)") comment_line(j)
+                read(99,"(A200)") comment_line(j)
             end do
             !13
             read(99,*) Ncoll_in_coll_list, Npart_in_coll_list
                 sum_Ncoll_in_coll_list = sum_Ncoll_in_coll_list + Ncoll_in_coll_list
                 sum_Npart_in_coll_list = sum_Npart_in_coll_list + Npart_in_coll_list
             !14 #! largest ave. # of NN collision pairs =
-            read(99,"(A100)") comment_line(14)
+            read(99,"(A200)") comment_line(14)
             !15
             read(99,*) Ncoll_max_in_coll_list
                 sum_Ncoll_max_in_coll_list = sum_Ncoll_max_in_coll_list + Ncoll_max_in_coll_list
             !16 #! ave. # of NN collision pairs calling pythia, not calling pythia =
-            read(99,"(A100)") comment_line(16)
+            read(99,"(A200)") comment_line(16)
             !17
             read(99,*) Ncoll_call_PYTHIA, Ncoll_not_call_PYTHIA
                 sum_Ncoll_call_PYTHIA = sum_Ncoll_call_PYTHIA + Ncoll_call_PYTHIA
                 sum_Ncoll_not_call_PYTHIA = sum_Ncoll_not_call_PYTHIA + Ncoll_not_call_PYTHIA
             !18 #! ave. # of wounded nucleons in parini =
-            read(99,"(A100)") comment_line(18)
+            read(99,"(A200)") comment_line(18)
             !19
             read(99,*) Npart_real
                 sum_Npart_real = sum_Npart_real + Npart_real
             !20 #! colli. # suffered by projectile nucleon in target nucleus
-            read(99,"(A100)") comment_line(20)
+            read(99,"(A200)") comment_line(20)
             !21
             read(99,*) Ncoll_over_Npart_Optical_Glauber_multi_string
                 sum_Ncoll_over_Npart_Optical_Glauber_multi_string =   &
@@ -186,19 +186,19 @@
                     Ncoll_over_Npart_Optical_Glauber_multi_string
 
             !22 #! event averaged N_bin
-            read(99,"(A100)") comment_line(22)
+            read(99,"(A200)") comment_line(22)
             !23
             read(99,*) Ncoll_Optical_Glauber
                 sum_Ncoll_Optical_Glauber = sum_Ncoll_Optical_Glauber + Ncoll_Optical_Glauber
             !24 #! (Npart)mini-jet, Nnn, Npp=
-            read(99,"(A100)") comment_line(24)
+            read(99,"(A200)") comment_line(24)
             !25
             read(99,*) Npart_call_PYTHIA, Ncoll_nn_call_PYTHIA, Ncoll_pp_call_PYTHIA
                 sum_Npart_call_PYTHIA    = sum_Npart_call_PYTHIA    + Npart_call_PYTHIA
                 sum_Ncoll_nn_call_PYTHIA = sum_Ncoll_nn_call_PYTHIA + Ncoll_nn_call_PYTHIA
                 sum_Ncoll_pp_call_PYTHIA = sum_Ncoll_pp_call_PYTHIA + Ncoll_pp_call_PYTHIA
             !26 #! Nnp, Ntot, Nep=
-            read(99,"(A100)") comment_line(26)
+            read(99,"(A200)") comment_line(26)
             !27
             read(99,*) Ncoll_np_call_PYTHIA, Ncoll_call_PYTHIA_2, Ncoll_lp_call_PYTHIA
                 sum_Ncoll_np_call_PYTHIA = sum_Ncoll_np_call_PYTHIA + Ncoll_np_call_PYTHIA
@@ -212,7 +212,7 @@
             ! For the case of random impact-parameter (b) sampling method.
             else if( i_b_sampling_method == 1 ) then
                 !28 #! event averaged b, avneu, Npart_p, Npart_t, T_pt=
-                read(99,"(A100)") comment_line(28)
+                read(99,"(A200)") comment_line(28)
                 !29
                 read(99,*) ave_b_param, avneu,  &
                            Npart_Optical_Glauber_proj, Npart_Optical_Glauber_targ,  &
@@ -229,7 +229,7 @@
             ! For the case of random impact-parameter (b) sampling method.
             else if( i_b_sampling_method == 2 ) then
                 !28 #! psno, ave. b, N_part and N_bin =
-                read(99,"(A100)") comment_line(28)
+                read(99,"(A200)") comment_line(28)
                 !29
                 read(99,*) b_sampling_method, ave_b_param,  &
                            Npart_Optical_Glauber_proj, Npart_Optical_Glauber_targ,  &
@@ -246,7 +246,7 @@
             !31 #! event averaged energy of gamma after partonic initiation, partonic cascade,
             !32 #!  hadronization and end of event =
             do j=30,32,1
-                read(99,"(A100)") comment_line(j)
+                read(99,"(A200)") comment_line(j)
             end do
             !33
             read(99,*) E_gamma_1, E_gamma_2, E_gamma_3, E_gamma_4
@@ -257,7 +257,7 @@
             !34 #!-----------------------------------------------------------------------------
             !35 #! # of successful, blocked and all collision in parton cascade =
             do j=34,35,1
-                read(99,"(A100)") comment_line(j)
+                read(99,"(A200)") comment_line(j)
             end do
             !36
             read(99,*) n_coll_parton_rescattering_success,  &
@@ -273,13 +273,13 @@
                 sum_n_coll_parton_rescattering_total +  &
                     n_coll_parton_rescattering_total
             !37 #! average collision # in parton cascade =
-            read(99,"(A100)") comment_line(37)
+            read(99,"(A200)") comment_line(37)
             !38
             read(99,*) n_coll_parton_rescattering
                 sum_n_coll_parton_rescattering = sum_n_coll_parton_rescattering +   &
                                                      n_coll_parton_rescattering
             !39 #! # of scaterring processes in parton cascade
-            read(99,"(A100)") comment_line(39)
+            read(99,"(A200)") comment_line(39)
             !40-42
             read(99,*) ( n_process_parton_rescattering(k), k=1,3,1 )
             read(99,*) ( n_process_parton_rescattering(k), k=4,6,1 )
@@ -289,7 +289,7 @@
             !43 #! average frequency of the occurring of each inela. in hadron cascade (at the end of the file)
             !44 #! el. and inel. coll. # and sum in hadron cascade=
             do j=43,44,1
-                read(99,"(A100)") comment_line(j)
+                read(99,"(A200)") comment_line(j)
             end do
             !45
             read(99,*) n_coll_hadron_rescattering_elastic,      &
@@ -307,12 +307,12 @@
             !46 #!-----------------------------------------------------------------------------
             !47 #! default parj1, parj2, parj3, parj4, parj21 =
             do j=46,47,1
-                read(99,"(A100)") comment_line(j)
+                read(99,"(A200)") comment_line(j)
             end do
             !48
             read(99,*) parj1_default, parj2_default, parj3_default, parj4_default, parj21_default
             !49 #! Eff-parj1, parj2, parj3, parj4, parj21, keff =
-            read(99,"(A100)") comment_line(49)
+            read(99,"(A200)") comment_line(49)
             !50
             read(99,*) parj1_effective, parj2_effective, parj3_effective,   &
                        parj4_effective, parj21_effective, kapa_effective
@@ -323,7 +323,7 @@
                 sum_parj21_effective = sum_parj21_effective + parj21_effective
                 sum_kapa_effective = sum_kapa_effective + kapa_effective
             !51 #! averaged # of gluon in a string when kjp22=1,3
-            read(99,"(A100)") comment_line(51)
+            read(99,"(A200)") comment_line(51)
             !52
             read(99,*) n_gluon_in_a_string_single_multi_string
                 sum_n_gluon_in_a_string_single_multi_string =   &
@@ -334,7 +334,7 @@
             !55 #!  averaged transverse momentum of hardest gluon,
             !56 #!  event averaged # strings when kjp22=1,3 =
             do j=53,56,1
-                read(99,"(A100)") comment_line(j)
+                read(99,"(A200)") comment_line(j)
             end do
             !57
             read(99,*) xi_factor_single_string, pT_hardest_gluon_single_string, n_string_single_string
@@ -347,7 +347,7 @@
             !58 #!-----------------------------------------------------------------------------
             !59 #! times & sum=
             do j=58,59,1
-                read(99,"(A100)") comment_line(j)
+                read(99,"(A200)") comment_line(j)
             end do
             !60
             read(99,*) time_NN_collision, time_parton_rescattering, time_hadron_rescattering
@@ -357,7 +357,7 @@
             !61 #!-----------------------------------------------------------------------------
             !62 #! q, qbar, charge thrown away =
             do j=61,62,1
-                read(99,"(A100)") comment_line(j)
+                read(99,"(A200)") comment_line(j)
             end do
             !63
             read(99,*) n_q_thrown, n_qbar_thrown, charge_thrown
@@ -365,7 +365,7 @@
                 sum_n_qbar_thrown = sum_n_qbar_thrown + n_qbar_thrown
                 sum_charge_thrown = sum_charge_thrown + charge_thrown
             !64 #! 3-momentum and energy thrown away =
-            read(99,"(A100)") comment_line(64)
+            read(99,"(A200)") comment_line(64)
             !65
             read(99,*) px_thrown, py_thrown, pz_thrown, E_thrown
                 sum_px_thrown = sum_px_thrown + px_thrown
@@ -376,7 +376,7 @@
             !67 #!-----------------------------------------------------------------------------
             !68 #! multiplicity of negative, positive particles and sums, partial & full =
             do j=66,68,1
-                read(99,"(A100)") comment_line(j)
+                read(99,"(A200)") comment_line(j)
             end do
             !69-70
             read(99,*) multiplicity_minus_partial, multiplicity_plus_partial, multiplicity_total_partial
@@ -388,7 +388,7 @@
             !71 #!-----------------------------------------------------------------------------
             !72 #! particle multiplicity, partial =
             do j=71,72,1
-                read(99,"(A100)") comment_line(j)
+                read(99,"(A200)") comment_line(j)
             end do
             !73   pi+K+p name_1 ... name_20
             read(99,*) shebang_sign, ( name_specie(j), j=1,21,1 )
@@ -396,7 +396,7 @@
             read(99,*) ( multiplicity_specie_partial(j), j=1,21,1 )
                 sum_multiplicity_specie_partial = sum_multiplicity_specie_partial + multiplicity_specie_partial
             !75 #! particle multiplicity, full    =
-            read(99,"(A100)") comment_line(75)
+            read(99,"(A200)") comment_line(75)
             !76
             read(99,*) ( multiplicity_specie_full(j), j=1,21,1 )
                 sum_multiplicity_specie_full = sum_multiplicity_specie_full + multiplicity_specie_full
@@ -410,7 +410,7 @@
             
             ! For hadrons:
             ! #!*******************|    Hadron  Distribution  Output    |******************!#
-            read(99,"(A100)") comment_line(200)
+            read(99,"(A200)") comment_line(200)
             i_line = 200
             distr_hadron_partial = 0D0
             distr_hadron_full = 0D0
@@ -421,7 +421,7 @@
                 ! #! partial phase-space,  x.xx < pT <  x.xx  (nominal cuts of 1-st setting in usu.dat)
                 do j=1,3,1
                     i_line = i_line + 1
-                    read(99,"(A100)") comment_line(i_line)
+                    read(99,"(A200)") comment_line(i_line)
                 end do
                 ! #! x    pi+K+p  name_1 ... name_20
                 read(99,*)   ! Jumps out this line.
@@ -436,7 +436,7 @@
                 ! #! x    pi+K+p  name_1 ... name_20
                 do j=1,2,1
                     i_line = i_line + 1
-                    read(99,"(A100)") comment_line(i_line)
+                    read(99,"(A200)") comment_line(i_line)
                 end do
                 ! #! x    pi+K+p  name_1 ... name_20
                 read(99,*)   ! Jumps out this line.
@@ -482,7 +482,7 @@
             read(99,*)
             read(99,*)
             ! #!*******************|    Parton  Distribution  Output    |******************!#
-            read(99,"(A100)") comment_line(300)
+            read(99,"(A200)") comment_line(300)
             i_line = 300
             distr_parton_partial = 0D0
             distr_parton_full = 0D0
@@ -493,7 +493,7 @@
                 ! #! partial phase-space,  x.xx < pT <  x.xx  (nominal cuts of 1-st setting in usu.dat)
                 do j=1,3,1
                     i_line = i_line + 1
-                    read(99,"(A100)") comment_line(i_line)
+                    read(99,"(A200)") comment_line(i_line)
                 end do
                 ! #! x    g     u+d+s + anti-   u, d, s, ...
                 read(99,*)   ! Jumps out this line.
@@ -507,7 +507,7 @@
                 ! #! full phase-space
                 do j=1,2,1
                     i_line = i_line + 1
-                    read(99,"(A100)") comment_line(i_line)
+                    read(99,"(A200)") comment_line(i_line)
                 end do
                 ! #! x    g     u+d+s + anti-   u, d, s, ...
                 read(99,*)   ! Jumps out this line.

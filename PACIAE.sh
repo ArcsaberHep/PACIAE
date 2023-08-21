@@ -431,15 +431,18 @@ eta_upp_h=1.
 # The "ipden" and "itden" in PACIAE for different systems.
 i_proj=1
 i_targ=1
-if [[ "na_proj" = "1" ]]; then      # For N.
+if [[ "${na_proj}" = "1" ]]; then      # For N.
     i_proj=0
-elif [[ "na_proj" > "1" ]]; then    # For A.
+elif [[ "${na_proj}" > "1" ]]; then    # For A.
     i_proj=1
 fi
-if [[ "na_targ" = "1" ]]; then      # For N.
+if [[ "${na_targ}" = "1" ]]; then      # For N.
     i_targ=0
-elif [[ "na_targ" > "1" ]]; then    # For A.
+elif [[ "${na_targ}" > "1" ]]; then    # For A.
     i_targ=1
+fi
+if [[ "${i_proj}" = "0" && "${i_targ}" = "0" ]]; then
+    b_samp=0
 fi
 # If others, please select them manully.
 # i_proj=1  # ipden =0,  if projectile is nucleon (anti-nucleon)
@@ -894,7 +897,7 @@ else
     # else
     fi
     if [ "${i_sim_mode}" = "1" ]; then
-        dir="./b${b_min}_${b_max}_xRatio${ratio_xSec_inel_over_tot}_pDelta${prob_Delta_decay}_iHc${i_hadcas}"
+        dir="./b${b_min}_${b_max}_xRatio${ratio_xSec_inel_over_tot}_pDelta${prob_Delta_decay}_iO${i_overlap}_iHc${i_hadcas}"
     fi
 fi
 
