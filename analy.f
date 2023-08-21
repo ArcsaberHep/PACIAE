@@ -788,7 +788,7 @@ c       Outputs particle multiplicities of 20 particles specified in usu.dat.
         write(10,*)"#!-------------------------------------"//
      &             "----------------------------------------"
         write(10,*)'#! particle multiplicity, partial ='
-        write(10,*)"  pi+K+p          ",
+        write(10,*)"#! pi+K+p          ",
      &   ("          "//name_KF(m3),m3=1,20)
         write(10,*) sum_mul_h_partial, (sbo(ll),ll=1,ispmax)
         write(10,*)'#! particle multiplicity, full    ='
@@ -900,7 +900,7 @@ c       Outputs abscissa, 6-distributions of pi+K+p and 20 particles specified i
      &             "----------------------------------------"
         write(10,*)'#! particle multiplicity, partial ='
         write(10,*)   ! Hardcode
-     &        "  g                         u+d+s + anti-             "//
+     &        "#! g                        u+d+s + anti-             "//
      &        "u                         ubar                      "//
      &        "d                         dbar                      "//
      &        "s                         sbar                      "//

@@ -962,11 +962,8 @@ else
 fi
 cp -f ../../../../../bin/${name_xRms} ./rms_file
 cd ./rms_file
-n_line_jump=1207
-if [[ "${na_proj}" = "1" && "${na_targ}" = "1" ]]; then      # For NN.
-    n_line_jump=1205
-fi
-echo "${n_run},${n_eve},${n_line_jump}" > input_rms_analysis.dat
+echo "${n_run},${n_eve}" > input_rms_analysis.dat
+echo "${i_sim_mode},${b_samp}" >> input_rms_analysis.dat   #Lei20230819 i_sim_mode, b_samp
 
 # Not required to be modified. Pre-setups for CPU/program-running.
 i_run=1      # DO not change i_run=1. Counter for program-running.
