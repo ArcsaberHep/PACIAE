@@ -116,6 +116,7 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 <!----------------------------------------------------------------------------->
 #### <font color=red> 08/2023: </font> In version PACIAE 2.3 ###
 
+- An individual analyzing program "rms_analysis.f90" was introduced to average multiple "rms.out" files when "PACIAE.sh" was used.
 - The output format of "rms.out" were optimized.
 - In subroutine "break_f" of "coales_23.f", the probabilities of "u:d:s" were replaced by Quantum Tunneling probabilities.
 - In subroutine "oscar" of "main_23.f", a bug was fixed for the case nosc=0.

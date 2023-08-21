@@ -45,3 +45,4 @@ Makefile
 # Does not ignore the following files and directories.
 !README.md
 !usu.dat
+!rms_analysis.f90
