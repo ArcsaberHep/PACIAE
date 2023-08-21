@@ -404,9 +404,6 @@ c       Vector meson, s = 1.
 c-----------------------------------------------------------------------
 c       Probability of hadron (meson).
         data (proh(i,1),i=1,80)
-    !  &   /  0.5, 0.25, 0.25,   1.,   1.,   1.,   1.,   1.,   1.,   1.,   ! 10
-    !  1       1.,  0.5, 0.25, 0.25,   1.,   1.,   1.,   1.,   1.,   1.,   ! 20
-    !  2      0.5,  0.5,   1.,   1.,   1.,   1.,   1.,   1.,   1.,   1.,   ! 30
      &   /  0.5,0.167,0.333,   1.,   1.,   1.,   1.,   1.,   1.,   1.,   ! 10
      1       1.,  0.5,0.167,0.333,   1.,   1.,   1.,   1.,   1.,   1.,   ! 20
      2    0.667,0.333,   1.,   1.,   1.,   1.,   1.,   1.,   1.,   1.,   ! 30
@@ -3164,6 +3161,7 @@ c       kf (amq): flavor code (mass) of generated quark
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
+        common/sa24/adj1(40),nnstop,non24,zstop   ! 170205
         common/sa38/csp_31,csp_32,csp_41,csp_42,csp_43,csp_51,csp_52,
      c   csp_53,csp_54,csp_61,csp_62,csp_63,csp_64,csp_65   ! 161022
         amd=pymass(1)   ! kinematical mass in GeV, 0.33
@@ -3194,34 +3192,34 @@ c       kf (amq): flavor code (mass) of generated quark
 c       if(eg.lt.amuu)goto 200   ! throw away amuu
 c161022 if(eg.ge.amdd .and. eg.lt.amss)then   ! d,u
         if(eg.lt.amss)then   ! d,u (with same flavor generation probability)
-!Lei20230817B-
-        !   if(aa.le.0.5)then
-        !   kf=1   ! d
-        !   amq=amd
-        !   else
-        !   kf=2   ! u
-        !   amq=amu
-        !   endif
-        !   goto 200
-            kf  = 1+INT((2D0+PARJ(2))*PYR(1))   !Lei20230817
-            amq = PYMASS(kf)    !Lei20230817
-            return
-!Lei20230817E-
+          if(aa.le.0.5)then
+          kf=1   ! d
+          amq=amd
+          else
+          kf=2   ! u
+          amq=amu
+          endif
+          goto 200
         endif
 
         ! if(eg.ge.amss .and. eg.lt.amcc)then   ! d,u,s
         if(eg.ge.amss)then   ! d,u,s
-          if(aa.le.csp_31)then
-          kf=1   ! d
-          amq=amd
-          elseif(aa.gt.csp_31 .and. aa.le.csp_32)then
-          kf=2   ! u
-          amq=amu
-          else
-          kf=3   ! s
-          amq=ams
-          endif
-          goto 200
+!Lei20230817B-
+        !   if(aa.le.csp_31)then
+        !   kf=1   ! d
+        !   amq=amd
+        !   elseif(aa.gt.csp_31 .and. aa.le.csp_32)then
+        !   kf=2   ! u
+        !   amq=amu
+        !   else
+        !   kf=3   ! s
+        !   amq=ams
+        !   endif
+        !   goto 200
+          kf  = 1 + INT( ( 2D0 + adj1(32) )*PYR(1) )   !Lei20230817
+          amq = PYMASS(kf)    !Lei20230817
+          return
+!Lei20230817E-
         endif
 
         ! IF(.TRUE.)THEN   !Lei2023060

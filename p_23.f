@@ -9,7 +9,7 @@ C*   6. local MCN, ICR, MSCR, IOPT, RLOPTC in PYFSCR, 4000 -> 80000;**
 C*   7. printing FORMAT in PYLIST;                                  **
 C*   8. About iikk, kkii, smadel and shanul stemming from PACIAE.   **
 c*                                                    By Ben-Hao Sa **
-c*                           Last updated by An-Ke Lei on 0/06/2023 **
+c*                           Last updated by An-Ke Lei on 22/08/2023 **
 C*********************************************************************
 
 C*********************************************************************

@@ -203,14 +203,14 @@ c       if(ik.eq.2212)then
         idf=bnf(kkk)/asd(5)+1
 c       the 5-th distribution is particle multiplicity distribution
         if(idf.lt.1 .or. idf.gt.40)goto 405   ! 131204 Lei2023060 20 -> 40
-        anf(idf,5,kkk)=anf(idf,5,kkk)+1./asd(5)
+        anf(idf,5,kkk)=anf(idf,5,kkk)+1. !/asd(5)
 c       active the window 
 405     do i=1,iflmax   ! 131204
         if(c(i).lt.afl(kkk,i,1) .or. c(i).gt.afl(kkk,i,2))goto 404
         enddo
         idd=bn(kkk)/asd(5)+1
         if(idd.lt.1 .or. idd.gt.40)goto 404   ! 131204 Lei2023060 20 -> 40
-        an(idd,5,kkk)=an(idd,5,kkk)+1./asd(5)
+        an(idd,5,kkk)=an(idd,5,kkk)+1. !/asd(5)
 404     continue
 c       endif
         enddo
@@ -591,7 +591,7 @@ c           Multiplicity is located at which interval
             idf = INT( bn_p_f(kkk)/asd(5) + 1 )
 c           The 5-th distribution is particle multiplicity distribution
             if(idf.lt.1 .or. idf.gt.40) goto 405
-            an_p_f(idf,5,kkk) = an_p_f(idf,5,kkk) + 1./asd(5)
+            an_p_f(idf,5,kkk) = an_p_f(idf,5,kkk) + 1. !/asd(5)
 c           Active the window
 c           Use the nominal cuts of 1-st setting in usu.dat for partons.
 405         do i=1,iflmax,1
@@ -599,7 +599,7 @@ c           Use the nominal cuts of 1-st setting in usu.dat for partons.
             enddo
             idd = INT( bn_p(kkk)/asd(5) + 1 )
             if(idd.lt.1 .or. idd.gt.40) goto 404
-            an_p(idd,5,kkk) = an_p(idd,5,kkk) + 1./asd(5)
+            an_p(idd,5,kkk) = an_p(idd,5,kkk) + 1. !/asd(5)
 404         continue
         enddo
 
