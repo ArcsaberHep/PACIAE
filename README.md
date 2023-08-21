@@ -1,8 +1,8 @@
 <!-- This is a README file for usage of PACIAE.
      Written by Markdown language.
-                 By Anke at CCNU on 10/16/2022 
+                 By Anke at CCNU on 17/10/2022 
                                                
-                    Last updated on 08/13/2023 
+                    Last updated on 22/08/2023 
  -->
 
 # The parton and hadron cascade model PACIAE

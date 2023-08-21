@@ -388,8 +388,6 @@ c00623 read(11,*)tdh,cptl,cptu,cptl2,cptu2,itnum   ! 241108 Lei2023060
         read(11,*)csp_61,csp_62,csp_63,csp_64,csp_65   ! 161022
 !       h+- histogram
         read(11,*) pT_low, pT_upp, y_low, y_upp, eta_low, eta_upp   !Lei20230313
-!       J/psi disassociation   !Lei20230803
-        read(11,*) i_Jpsi_disassociation   !Lei20230803
         close(11)
 c------------------------------   Input Reading   ------------------------------
 c-------------------------------------------------------------------------------
@@ -1229,7 +1227,7 @@ c-------------------------   Subprocesses Selecting   --------------------------
 c060620
 c       default pythia or user own selection for subprocesses
         if(nchan.eq.0)then
-c       Inelastic (INEL) + J/psi   !Lei20230803
+c       Inelastic (INEL)
         msel=0
         msub(11)=1   ! Hard QCD, f_i + f_j -> f_i + f_j
         msub(12)=1   ! Hard QCD, f_i + f_i^bar -> f_k + f_k^bar
@@ -1242,13 +1240,9 @@ c       msub(91)=1   ! Soft QCD, elastic scattering
         msub(93)=1   ! Soft QCD, single diffraction (AB -> AX)
         msub(94)=1   ! Soft QCD, double diffraction
         msub(95)=1   ! Soft QCD, low_pT production
-C...Charmonium production in colour octet model, with recoiling parton.
-        DO I=421,439
-            MSUB(I)=1
-        END DO   !Lei20230803
         endif
         if(nchan.eq.1)then
-c       Non Single Difractive (NSD) + J/psi   !Lei20230803
+c       Non Single Difractive (NSD)
         msel=0
         msub(11)=1   ! Hard QCD, f_i + f_j -> f_i + f_j
         msub(12)=1   ! Hard QCD, f_i + f_i^bar -> f_k + f_k^bar
@@ -1261,10 +1255,6 @@ c       msub(92)=1   ! Soft QCD, single diffraction (AB -> XB)
 c       msub(93)=1   ! Soft QCD, single diffraction (AB -> AX)
         msub(94)=1   ! Soft QCD, double diffraction
         msub(95)=1   ! Soft QCD, low_pT production
-C...Charmonium production in colour octet model, with recoiling parton.
-        DO I=421,439
-            MSUB(I)=1
-        END DO   !Lei20230803
         endif
 c090921
         if(nchan.eq.3)then
@@ -1742,12 +1732,6 @@ c       move "66" from 'pyjets' to 'sgam'
 c       give four position to the particles generated in pythia (in pyjets)
         call ptcre(1,2,time) ! arguments 1 and 2 make no sense indeed
 c       remove hadrons from 'pyjets' to 'sbh'
-
-!Lei20230803 For chamonium decays to J/psi
-        rrp=1.16
-        call decayh(rrp)
-!Lei20230803 For chamonium decays to J/psi
-
         call remo   ! in parini.f
         call pyedit(2)
 c----------------------------   Gamma 66 Removing   ----------------------------
@@ -1941,53 +1925,6 @@ c060814 endif
 c-----------------------   Diffractive Event Treating  -------------------------
 c-------------------------------------------------------------------------------
 
-!Lei20230803 J/psi disassociation.
-        if(i_Jpsi_disassociation.eq.1)then
-            n_Jpsi_parini = 0
-            i_begin = 1
-3999        continue
-            do i=i_begin,nbh,1
-                if( kbh(i,2) .eq. 443 )then
-                    n_Jpsi_parini = n_Jpsi_parini + 1
-                    do j=1,5,1
-                        K(n + 1, j) = kbh(i,j)
-                        P(n + 1, j) = pbh(i,j)
-                        V(n + 1, j) = vbh(i,j)
-                    end do
-                    n = n + 1
-!                   Removes the entry of J/psi in sbh.
-                    do j=1,5,1
-                        do ii=i+1,nbh,1
-                            kbh(i,j) = kbh(ii,j)
-                            pbh(i,j) = pbh(ii,j)
-                            vbh(i,j) = vbh(ii,j)
-                        end do
-                    end do
-                    nbh = nbh - 1
-!                   Gives satus to disassociated c-cbar.
-                    K(n,1)   = 2   ! "A"
-                    K(n,2)   = 4   ! c
-                    K(n,3)   = 0
-                    K(n,4)   = 0
-                    K(n,5)   = 0
-                    K(n+1,1) = 1   ! "V"
-                    K(n+1,2) = -4  ! cbar
-                    K(n+1,3) = 0
-                    K(n+1,4) = 0
-                    K(n+1,5) = 0
-!                   Gives 4-momentum to disassociated c-cbar.
-                    call bream(n,4,-4)
-!                   Gives 4-coordinate to disassociated c-cbar.
-                    call coord(n)
-                    n = n + 1
-                    i_begin = i
-                    goto 3999
-                end if
-            end do
-c00623      Shares 4-momentum   !Lei2023060
-            call share_p_PYJETS   !Lei2023060
-        end if
-!Lei20230803 J/psi disassociation.
 
 c       throw away event with junction if iparres=1
 c040223 if(iparres.eq.1)then
@@ -3722,7 +3659,7 @@ c        and q/qbar.
 c00623 Lei2023060E-
 
 c140223 Lei
-        write(10,"(3/)")   ! 140223 Lei Empty lines.
+        write(10,"(2/)")   ! 140223 Lei Empty lines.
         write(10,*)'#! average frequency of the occurring of each '//
      c   'inela. in hadron cascade ='
         do i=1,60,1
@@ -3807,7 +3744,7 @@ c260314
      &                    + saof(m1,6,i_h(5)) + saof(m1,6,i_h(6))
         end do
 
-        sum_pT  = sum_pT / PARU(2) / 2.
+        sum_pT  = sum_pT  / 2. / PARU(2)
         sum_pT2 = sum_pT2 / 2.
         do m1=1,40,1
             sum_pT(m1,1)  = sum_pT(m1,1)  / (afl(1,1,2)-afl(1,1,1))
@@ -3815,7 +3752,7 @@ c260314
         end do
         sum_y = sum_y
         sum_eta = sum_eta
-        write(10,"(3/)")
+        write(10,"(2/)")
         write(10,*) "#! Inv. dN/dpT, dN/dpT, dN/dy, dN/deta of h+-,"//
      &              " p and f"
         do m1=1,40,1

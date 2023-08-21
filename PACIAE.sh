@@ -102,9 +102,9 @@ RUN="RAW"            # Additional option. Not required to be modified usually.
 #              "nohup time ./PACIAE.sh | tee $(date "+%Y%m%d%H%M%S").log &"    #
 #       3.2 On SLURM: "sbatch PACIAE.sh". On LSF: "bsub PACIAE.sh"             #
 #                                                                              #
-#                                               By An-Ke at CCNU on 10/17/2022 #
+#                                               By An-Ke at CCNU on 17/10/2022 #
 #                                                                              #
-#                                                   Last updated on 08/13/2023 #
+#                                                   Last updated on 22/08/2023 #
 ################################################################################
 ################################################################################
 ################################################################################
@@ -155,19 +155,15 @@ name_rms="rms_analysis"   #Lei20230608
 #*******************************************************************************
 # Setups of the program-running.
 # Total number of events in all program-runnings = n_run * n_eve.
-n_run=1     # Number of program-running, i.e. total number of CPU cores used.
+n_run=10     # Number of program-running, i.e. total number of CPU cores used.
 # n_run=${NP}   # Uncommented this line if submit jods on LSF system.
 # ((n_run=SLURM_JOB_NUM_NODES*SLURM_NTASKS_PER_NODE))   # Uncommented for SLURM.
-n_eve=1000    # neve, number of events per program-running (per core).
+n_eve=1    # neve, number of events per program-running (per core).
 n_out=1     # (D=neve/10) nout, outputs per n_out events.
 n_osc=0     # (D=0) nosc, OSCAR-1997A/1999A/2013A output or not (1/2/3/0)
 i_random=1  # (D=1) adj(26), random generator seed in PYTHIA:
             #         =0, default PYTHIA seed (19780503), can be used for debug
             #         =1, seed from the real-time system clock (h-min-s-ms)
-
-#*******************************************************************************
-# J/psi disassociation before parcas.
-i_Jpsi_disassociation=0 
 
 #*******************************************************************************
 # Setups of the incident particles.
@@ -234,7 +230,7 @@ prob_Delta_decay=0.9 # (D=0.9) decpro, Delta decay probability in A-loop
 k_pythia=2.5    # (D=1.5) adj(10), K factor multiplying the differential 
                 #                    cross sections for hard parton-parton 
                 #                    process in PYTHIA.
-sig_pPerp=1.  # (D=2.)
+sig_pPerp=2.  # (D=2.)
 strength_color_reconnection=0.025   # (D=0.025)
 i_excute=2  # (D=2) itorw
 
@@ -246,7 +242,7 @@ k_parcas=0      # (D=1.) adj(1), K factor multiplying on the differential
 
 #*******************************************************************************
 # Setups of the hadronization (sfm/coales).
-i_hadronization=2   # (D=0) adj(12), model for hadronization
+i_hadronization=1   # (D=0) adj(12), model for hadronization
                     #                =0, string fragmentation (sfm)
                     #                =1, Monte-Carlo coalescence (coal)
                     #                =2, coal with gluon splitting and 
@@ -300,7 +296,7 @@ i_split_g=1 # (D=1) i_split_g, momentum splitting/allocating mode of
             #         = 2, random 3-momentum method with the different factors
             #         = 3, random 3-momentum method  with the same factor
             #         = 4, divided equally
-eDeex=2. # (D=2.) adj1(17), deexcitation threshold energy.
+eDeex=2 # (D=2.) adj1(17), deexcitation threshold energy.
 i_phase_constraint=0    # (D=0) adj(21), phase-space constraint in coalescence.
                         #                =0, without
                         #                =1, with complete phase-space
@@ -539,7 +535,6 @@ echo "0.29198,0.58396,0.85464         ! csp_41,csp_42,csp_43"        >> usu.dat
 echo "0.23894,0.47788,0.71113,0.91086 ! csp_51,csp_52,csp_53,csp_54" >> usu.dat
 echo "0.19964,0.39927,0.59872,0.79707,0.99180 ! csp_61,csp_62,csp_63,csp_64,csp_65"   >> usu.dat
 echo "${pT_low_h},${pT_upp_h},${y_low_h},${y_upp_h},${eta_low_h},${eta_upp_h}             ! pT_low, pT_upp, y_low, y_upp, eta_low, eta_upp"               >> usu.dat
-echo "${i_Jpsi_disassociation}             ! i_Jpsi_disassociation"               >> usu.dat
 ####################               usu.dat              ########################
 ################################################################################
 #######                                                              ###########
@@ -560,7 +555,7 @@ echo "${i_Jpsi_disassociation}             ! i_Jpsi_disassociation"             
 ################################################################################
 ####################              Makefile              ########################
 echo "# This is a toy Makefile for PACIAE."       > Makefile
-echo "#     By Anke at CCNU on 10/17/2022 "      >> Makefile
+echo "#     By Anke at CCNU on 17/10/2022 "      >> Makefile
 echo "# How to use:"                             >> Makefile
 echo "#   1. Type \"make\" command to compile and build PACIAE running file (${name_x})."   >> Makefile
 echo "#   2. Type \"make clean\" command to clean the *.o , *.mod and *.x files. "          >> Makefile
