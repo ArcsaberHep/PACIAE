@@ -919,6 +919,7 @@ c       Outputs abscissa, 6-distributions of g, u+d+s + anti- and q.
      &              "    Parton  Distribution  Output    "//
      &              "|******************!#"
 
+        iii_org = iii   !Lei20230822
         do m2=1,isdmax,1
 
         write(10,*) "#!-------------------------------------"//
@@ -949,7 +950,9 @@ c       Outputs abscissa, 6-distributions of g, u+d+s + anti- and q.
      &        "b                         bbar                      "//
      &        "t                         tbar"
         do m1=1,40,1
+            if(m2.eq.5) iii = 1   !Lei20230822
             write(10,*) xcoor(m1,m2), (san_p(m1,m2,m3)/iii,m3=1,14,1)
+            if(m2.eq.5) iii = iii_org   !Lei20230822
         enddo
         write(10,*)"#! ID of distribution m2=",m2,"   "//id_distr(m2)
         write(10,*)"#! full phase-space"

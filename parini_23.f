@@ -819,6 +819,15 @@ c       give the initial values to quantities needed in calculation
 
         anat=nat
         anap=nap
+
+!Lei20230822B
+! Now, the NN total cross section is obtained from the fitting formula:
+!       sigma_NN = 25.0 + 0.146 * ln^2( s ),
+! according to PRC 97 (2018) 054910, Constantin Loizides et al.
+        para1_1 = 25.0 + 0.146 * log( win*win )**2
+        para1_2 = para1_1   ! Or not ?
+!Lei20230822E
+
         param(1)=para1_1   ! 250204 200504
 c       rou0=PARAM(11)
 c       considering the nucleus as a sphere with radii rnt for target

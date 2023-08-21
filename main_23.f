@@ -228,7 +228,7 @@ c       pinch: four momentum and mass of incident hadron
 c        vnu: \nu; fq2: Q^2=-q^2; w2l: W^2; yyl: y; zl: z; xb: x_B; pph: P_h
 
 c       para1_1: nn total cross section, used in parini_23.f 
-c       para1_2: nn total cross section  used in hadcas_23.f
+c       para1_2: nn total cross section, used in hadcas_23.f
 c       dni: nucleon number density
 
 c       pj and ej: (pt)**2 and transverse energy of J/psi 
@@ -3415,13 +3415,16 @@ c       averaged ovr events
         dnchao=dncha/flaa
         dnchafo=dnchaf/flaa
 c010220
+        flaa_org = flaa   !Lei20230822
         do kk=1,ispmax
         sbo(kk)=sbn(kk)/flaa
         sbof(kk)=sbnf(kk)/flaa
         do i1=1,40   ! 070419
         do i2=1,isdmax
+        if(i2.eq.5) flaa = 1D0  !Lei20230822
         sao(i1,i2,kk)=san(i1,i2,kk)/flaa
         saof(i1,i2,kk)=sanf(i1,i2,kk)/flaa
+        if(i2.eq.5) flaa = flaa_org  !Lei20230822
         enddo
         enddo
         enddo
@@ -3523,7 +3526,7 @@ c171022 Records the seed of random number generator.
         write(10,*)"#!-------------------------------------"//
      &             "----------------------------------------"
         write(10,*)'#! parp81, parp82, bp, mstp82 ='    ! 291207 Lei2023060 parp82
-        write(10,*) parp81,parp82,bp,mstp(82)    ! 291207 Lei2023060 parp82
+        write(10,*) adj1(9),parp82,bp,mstp(82)    ! 291207 Lei2023060 parp82
 
         write(10,*)"#!-------------------------------------"//
      &             "----------------------------------------"
@@ -3632,22 +3635,7 @@ c120119
      &             'and sums, partial & full ='
         write(10,*) dnmino, dnchao, dnmino+dnchao
         write(10,*) dnminfo, dnchafo, dnminfo+dnchafo
-c00623 write(10,*)"#!-------------------------------------"//
-c    &             "----------------------------------------"
-c       write(10,*)'#! particle multiplicity, partial ='
-c       write(10,*) (sbo(ll),ll=1,ispmax)
-c       write(10,*)'#! particle multiplicity, full    ='
-c00623 write(10,*) (sbof(ll),ll=1,ispmax)   !Lei2023060 in output_hadron_distribution now
 csa****************************************************************
-
-c00623 do m2=1,isdmax   !Lei2023060 in output_hadron_distribution now
-c       write(10,*)'ID of distribution m2=',m2
-c       do m3=1,ispmax
-c       write(10,*)'distribution belong to m3=',m3
-c       write(10,*)(sao(m1,m2,m3),m1=1,40)   ! 070419
-c       write(10,*)(saof(m1,m2,m3),m1=1,40)   ! 070419
-c       enddo
-c00623 enddo
 
 c00623 Lei2023060B-
 c       Outputs multiplicities, abscissa, 5-distributions of pi+K+p and 20 

@@ -3155,6 +3155,7 @@ c140223 Lei
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine break_f(eg,kf,amq)
+!Lei20230822 Re-wrote.
 c       sample flavor (mass) of generated qqbar pair
 c       eg: energy of original q or qbar
 c       kf (amq): flavor code (mass) of generated quark
@@ -3164,6 +3165,8 @@ c       kf (amq): flavor code (mass) of generated quark
         common/sa24/adj1(40),nnstop,non24,zstop   ! 170205
         common/sa38/csp_31,csp_32,csp_41,csp_42,csp_43,csp_51,csp_52,
      c   csp_53,csp_54,csp_61,csp_62,csp_63,csp_64,csp_65   ! 161022
+        kf = 0   !Lei20230822
+        amq=0D0  !Lei20230822
         amd=pymass(1)   ! kinematical mass in GeV, 0.33
         amu=pymass(2)   ! amu=amd, 0.33
         ams=pymass(3)   ! 0.5
@@ -3189,22 +3192,33 @@ c       kf (amq): flavor code (mass) of generated quark
         ambb=2*amb
         amtt=2*amt
         aa=pyr(1)
-c       if(eg.lt.amuu)goto 200   ! throw away amuu
-c161022 if(eg.ge.amdd .and. eg.lt.amss)then   ! d,u
-        if(eg.lt.amss)then   ! d,u (with same flavor generation probability)
-          if(aa.le.0.5)then
-          kf=1   ! d
-          amq=amd
-          else
-          kf=2   ! u
-          amq=amu
-          endif
-          goto 200
-        endif
+
+!Lei20230822B-  Only u, d, and s are considered.
+        if(eg.lt.amuu)then 
+            return   ! The energy is not enough to excite qqbar pair.
+        else if(eg.lt.amss)then 
+            s_suppresion = 0D0
+        else if(eg.ge.amss)then
+            s_suppresion = adj1(32)
+        end if
+
+        kf  = 1 + INT( ( 2D0 + s_suppresion )*PYR(1) )
+        amq = PYMASS( kf )
+        ! return
+!Lei20230822B-
+
+        ! if(eg.lt.amss)then   ! d,u (with same flavor generation probability)
+        !   if(aa.le.0.5)then
+        !   kf=1   ! d
+        !   amq=amd
+        !   else
+        !   kf=2   ! u
+        !   amq=amu
+        !   endif
+        !   goto 200
+        ! endif
 
         ! if(eg.ge.amss .and. eg.lt.amcc)then   ! d,u,s
-        if(eg.ge.amss)then   ! d,u,s
-!Lei20230817B-
         !   if(aa.le.csp_31)then
         !   kf=1   ! d
         !   amq=amd
@@ -3216,78 +3230,68 @@ c161022 if(eg.ge.amdd .and. eg.lt.amss)then   ! d,u
         !   amq=ams
         !   endif
         !   goto 200
-          kf  = 1 + INT( ( 2D0 + adj1(32) )*PYR(1) )   !Lei20230817
-          amq = PYMASS(kf)    !Lei20230817
-          return
-!Lei20230817E-
-        endif
+        ! endif
 
-        ! IF(.TRUE.)THEN   !Lei2023060
-        IF(.FALSE.)THEN   !Lei2023060
+        ! if(eg.ge.amcc .and. eg.lt.ambb)then ! d,u,s,c
+        !   if(aa.le.csp_41)then
+        !   kf=1   ! d
+        !   amq=amd
+        !   elseif(aa.gt.csp_41 .and. aa.le.csp_42)then
+        !   kf=2   ! u
+        !   amq=amu
+        !   elseif(aa.gt.csp_42 .and. aa.le.csp_43)then
+        !   kf=3
+        !   amq=ams
+        !   else
+        !   kf=4
+        !   amq=amc
+        !   endif
+        !   goto 200
+        ! endif
 
-        if(eg.ge.amcc .and. eg.lt.ambb)then ! d,u,s,c
-          if(aa.le.csp_41)then
-          kf=1   ! d
-          amq=amd
-          elseif(aa.gt.csp_41 .and. aa.le.csp_42)then
-          kf=2   ! u
-          amq=amu
-          elseif(aa.gt.csp_42 .and. aa.le.csp_43)then
-          kf=3
-          amq=ams
-          else
-          kf=4
-          amq=amc
-          endif
-          goto 200
-        endif
+        ! if(eg.ge.ambb .and. eg.lt.amtt)then ! d,u,s,c,b
+        !   if(aa.le.csp_51)then
+        !   kf=1
+        !   amq=amd
+        !   elseif(aa.gt.csp_51 .and. aa.le.csp_52)then
+        !   kf=2
+        !   amq=amu
+        !   elseif(aa.gt.csp_52 .and. aa.le.csp_53)then
+        !   kf=3
+        !   amq=ams
+        !   elseif(aa.gt.csp_53 .and. aa.le.csp_54)then
+        !   kf=4
+        !   amq=amc
+        !   else
+        !   kf=5
+        !   amq=amb
+        !   endif
+        !   goto 200
+        ! endif
 
-c00623 if(eg.ge.ambb .and. eg.lt.amtt)then ! d,u,s,c,b
-        if(eg.ge.ambb)then ! d,u,s,c,b !Lei2023060
-          if(aa.le.csp_51)then
-          kf=1
-          amq=amd
-          elseif(aa.gt.csp_51 .and. aa.le.csp_52)then
-          kf=2
-          amq=amu
-          elseif(aa.gt.csp_52 .and. aa.le.csp_53)then
-          kf=3
-          amq=ams
-          elseif(aa.gt.csp_53 .and. aa.le.csp_54)then
-          kf=4
-          amq=amc
-          else
-          kf=5
-          amq=amb
-          endif
-          goto 200
-        endif
+        ! if(eg.ge.amtt)then ! d,u,s,c,b,t
+        !   if(aa.le.csp_61)then
+        !    kf=1
+        !   amq=amd
+        !   elseif(aa.gt.csp_61 .and. aa.le.csp_62)then
+        !   kf=2
+        !   amq=amu
+        !   elseif(aa.gt.csp_62 .and. aa.le.csp_63)then
+        !   kf=3
+        !   amq=ams
+        !   elseif(aa.gt.csp_63 .and. aa.le.csp_64)then
+        !   kf=4
+        !   amq=amc
+        !   elseif(aa.gt.csp_64 .and. aa.le.csp_65)then
+        !   kf=5
+        !   amq=amb
+        !   else
+        !   kf=6
+        !   amq=amt
+        !   endif
+        ! endif
 
-c00623 Do not consider top.   !Lei2023060
-c       if(eg.ge.amtt)then ! d,u,s,c,b,t
-c         if(aa.le.csp_61)then
-c         kf=1
-c         amq=amd
-c         elseif(aa.gt.csp_61 .and. aa.le.csp_62)then
-c         kf=2
-c         amq=amu
-c         elseif(aa.gt.csp_62 .and. aa.le.csp_63)then
-c         kf=3
-c         amq=ams
-c         elseif(aa.gt.csp_63 .and. aa.le.csp_64)then
-c         kf=4
-c         amq=amc
-c         elseif(aa.gt.csp_64 .and. aa.le.csp_65)then
-c         kf=5
-c         amq=amb
-c         else
-c         kf=6
-c         amq=amt
-c         endif
-c00623 endif
-        ENDIF  !Lei2023060
-
-200     continue
+! 200     continue
         return
         end
 
