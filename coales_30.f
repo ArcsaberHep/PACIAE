@@ -68,7 +68,7 @@ c220822     Remove junctions.
                     jb = jb + 1
                     goto 2020
                 endif
-                call updad_pyj(N,i1+1,1)   ! 090922 'updad_pyj' in sfm_23.f
+                call updad_pyj(N,i1+1,1)   ! 090922 'updad_pyj' in sfm_30.f
                 N = N - 1
                 goto 2010
 2020        enddo   ! i1 loop
