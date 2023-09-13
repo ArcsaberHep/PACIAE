@@ -1137,7 +1137,7 @@ c250803        crose(9)=crose(9)+sum1
         eee(i1)=eee2(i1)
         enddo
 c       ->qq(-) branch
-        call break_f(eiej,kf7,amq)   ! which is in coales_23.f 161022
+        call break_f(eiej,kf7,amq)   ! which is in coales_30.f 161022
         kf3=kf7   ! 161022
         kf4=-kf3   ! 250420
 c250803        reac(7)=reac(7)+1.
@@ -1221,7 +1221,7 @@ c250420 branch
 
 c00623 Lei2023060
         do while(.true.)
-            call break_f(eiej,kf7,amq)   ! which is in coales_23.f 161022
+            call break_f(eiej,kf7,amq)   ! which is in coales_30.f 161022
             if(kf7.ne.kf0) exit
         end do
         kf3=kf7
@@ -2222,7 +2222,7 @@ c       pip(1-3,ij): three momentum of spliting particle ij
      c   pip(3,ij)*pip(3,ij)   ! 080520
         eaa=sqrt(eaa)   ! invariant mass of initial state gluon
         if(eaa.lt.(PYMASS(1)*2.)) goto 200   !Lei2023060
-        call break_f(eaa,kff,amq)   ! which is in coales_23.f 161022
+        call break_f(eaa,kff,amq)   ! which is in coales_30.f 161022
         kf1=kff   ! 161022
         kf2=-kf1   ! 250420
         if(pyr(1).ge.0.5) then

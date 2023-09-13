@@ -1,18 +1,18 @@
-        program main_23
+        program main_30
 c       administrates MC simulation for relativistic pp(lp), pA (Ap), 
 c        AB (lA), & e+e- collisions 
-c100223 the program composes of main_23.f,parini_23.f,parcas_23.f, 
-c        p_23.f,sfm_23.f,coales_23.f,hadcas_23.f,and analy.f
-c       main_23.f: administrates the MC simulation
-c       parini_23.f: generates partonic initial state of colliding system
-c       parcas_23.f: performs parton rescattering, where 2->2 processes
+c100223 the program composes of main_30.f,parini_30.f,parcas_30.f, 
+c        p_30.f,sfm_30.f,coales_30.f,hadcas_30.f,and analy.f
+c       main_30.f: administrates the MC simulation
+c       parini_30.f: generates partonic initial state of colliding system
+c       parcas_30.f: performs parton rescattering, where 2->2 processes
 c        are considered only and LO pQCD cross section or its regularized
 c        approximation is used
-c       p_23.f (pythia 6.4.28): for generation of partonic initial state 
+c       p_30.f (pythia 6.4.28): for generation of partonic initial state 
 c        and/or string hadronization
-c       sfm_23.f: hadronization with LUND string fragmentation model
-c       coales_23.f: hadronization with Monte Carlo coalescence model
-c       hadcas_23.f: performs hadronic rescattering
+c       sfm_30.f: hadronization with LUND string fragmentation model
+c       coales_30.f: hadronization with Monte Carlo coalescence model
+c       hadcas_30.f: performs hadronic rescattering
 c       analy.f: an example of event analysis subroutine, user is free
 c        to replace it with your own one
 
@@ -128,8 +128,8 @@ c       adj1(i), i=
 c       1: K factor used in parton rescattering; K=0: no parton rescattering
 c       2: parameter \alpha_s ('as' in program) in parton rescattering
 c       3: parameter (\mu)^2 ('tcut' in program): to avoid divergence in 
-c          calculating parton-parton differential cross section in parcas_23.f
-c       4: parameter idw, # of integration intervals in parcas_23.
+c          calculating parton-parton differential cross section in parcas_30.f
+c       4: parameter idw, # of integration intervals in parcas_30.
 c       5: =0, w/o nuclear shadowing,
 c          =1, Wang's nuclear shadowing (PLB 527(2002)85).
 c       6: parameter 'a', i.e. parj(41), in Lund string fragmentation function
@@ -138,7 +138,7 @@ c       8: i.e. MSTP(82) in PYTHIA 6.4
 c       9: = PARP(81) (D=1.9 GeV/c), effective minimum transverse momentum 
 c            p_erp_min of multiple interactions if MSTP(82)=1.
 c       10: parp(31), K factor in pythia64
-c       11: time accuracy used in hadas_23.f
+c       11: time accuracy used in hadas_30.f
 c       12: model of hadronization: 
 c           =0, string fragmentation; 
 c           =1, coalescence mode 1; Lei2023060
@@ -147,28 +147,28 @@ c                                   before parcas. Lei2023060
 c       13: dimension of meson table considered if adj1(12) > 0
 c       14: dimension of baryon table considered if adj1(12) > 0
 c       15: default string tension
-c       16: # of allowable generations in q (qbar) deexcitation in coales_23.f
-c       17: threshold energy in deexcitation of energetic quark in coales_23.f
+c       16: # of allowable generations in q (qbar) deexcitation in coales_30.f
+c       17: threshold energy in deexcitation of energetic quark in coales_30.f
 c       18: =0, rest partons hadronize by string fragmentation
 c           =1, rest partons hadronize by coalescence
-c       19: time accuracy used in parcas_23.f ('dddt' in program)
+c       19: time accuracy used in parcas_30.f ('dddt' in program)
 c       20: =0 exact pQCD parton-parton cross section
 c           =1, limited and regularized parton-parton cross section (B. Zhang,
 c               Comput. Phys. Commun. 109(1998)193)
 c           =2, the same as 0 but flat scattering angle distribution is assumed
 c           =3, the same as 1 but flat scattering angle distribution is assumed
-c       21: =0, without phase space requirement in coales_23.f
+c       21: =0, without phase space requirement in coales_30.f
 c070223     =1, with complete phase space requirement
 c070223     =2, with requirement in spatial phase space only 
 c110223     =3, with requirement in momentum phase space only   ! 110223 Lei
 c       22: critical value of the product of radii both in coordinate and 
-c        momentum phase space (4 is assumed) used in coales_23.f
+c        momentum phase space (4 is assumed) used in coales_30.f
 c       23: switch for chiral magnetic effect (CME)
 c           =0: CME off
 c           =1: CME on
-c       24: =tl0,the virtuality cut in time-like radiation in parcas_23.f, 
+c       24: =tl0,the virtuality cut in time-like radiation in parcas_30.f, 
 c            4*tl0 is assumed
-c       25: \Lambda_QCD in parcas_23.f
+c       25: \Lambda_QCD in parcas_30.f
 c171022 26: selection of random number seed   ! 171022 Lei
 c           =0, default PYTHIA seed (19780503), can be used for debug
 c           =other, seed from the real-time colock
@@ -199,7 +199,7 @@ c       35: mstp(91) in pythia64, selects parton transverse momentum
 c           (k_{\perp}) distribution inside hadron; 
 c           =1, Gaussian; 
 c           =2, exponential
-c       36: =0 without phenomenological parton energy loss in parcas_23.f
+c       36: =0 without phenomenological parton energy loss in parcas_30.f
 c           =1 otherwise
 c       37: the coefficient ('c') in phenomenological parton energy loss
 c       38: pt cut in phenomenological parton energy loss 
@@ -214,15 +214,15 @@ c       smadel: small perpurbation of ellipse relative to circle
 c       parecc: a parameter converting initial spatial space eccentricity 
 c        to final momentum space ellipticity
 c       iparres: =0 considers elastic parton-parton collisions only in 
-c                   parcas_23.f
+c                   parcas_30.f
 c                =1 with inelastic parton-parton collisions as well
 
 c       pincl (pscal): four momentum and mass of incident (scatterd) lepon
 c       pinch: four momentum and mass of incident hadron
 c        vnu: \nu; fq2: Q^2=-q^2; w2l: W^2; yyl: y; zl: z; xb: x_B; pph: P_h
 
-c       para1_1: NN total cross section, used in parini_23.f 
-c       para1_2: NN total cross section, used in hadcas_23.f
+c       para1_1: NN total cross section, used in parini_30.f 
+c       para1_2: NN total cross section, used in hadcas_30.f
 !Lei20230828 They will be re-calculated in 'sysini' of 'parini.f' now. (inelastic)
 c       dni: nucleon number density
 
@@ -278,17 +278,17 @@ c       tp(i): time of particle i
 c       ishp(i): =1 if i-th particle inside the simulated volume
 c                =0 otherwise 
 c       tau(i): formation time of particle i.
-c       isinel(i): = 0 without i-th inelastic process in hadcas_23.f
-c                  = 1 with i-th inelastic process in hadcas_23.f
+c       isinel(i): = 0 without i-th inelastic process in hadcas_30.f
+c                  = 1 with i-th inelastic process in hadcas_30.f
 
 c       nrel: statistics of blocked parton-parton scattering process in
-c        parcas_23.f
+c        parcas_30.f
 c       nreac(i): statistics of successful i-th parton-parton scattering 
-c        process in parcas_23.f
-c       npinel(592): # of nn collision calling pythia' in parini_23.f 
-c       npinel(593): # of nn collision not calling pythia' in parini_23.f
-c       noel : statistics of elastic collisions in hadcas_23.f
-c       noinel(i): statistics the i-th inelastic collisions in hadcas_23.f
+c        process in parcas_30.f
+c       npinel(592): # of nn collision calling pythia' in parini_30.f 
+c       npinel(593): # of nn collision not calling pythia' in parini_30.f
+c       noel : statistics of elastic collisions in hadcas_30.f
+c       noinel(i): statistics the i-th inelastic collisions in hadcas_30.f
 c140223 nosc = 0 : no OSCAR output, see subroutine oscar   ! 140223 Lei
 c            = 1 : OSCAR1997A (final_id_p_x, just PACIAE final output)
 c            = 2 : OSCAR1999A (full_event_history)
@@ -486,12 +486,12 @@ c       prob_ratio_q: probability ratio u-ubar:d-dbar:s-sbar:c-cbar:b-bbar:t-tba
 
 c-------------------------------------------------------------------------------
 c-------------------------   Parameter Value Giving   --------------------------
-c       PARAM(1)=para1   ! given in 'sysini' in parini_23.f
+c       PARAM(1)=para1   ! given in 'sysini' in parini_30.f
         PARAM(2)=para2   ! read from usu.dat
         PARAM(4)=para4
         PARAM(6)=x_ratio ! 240323 Lei202307
 c240323 x_ratio: ratio of inela. cross section to total cross section, 
-c        i.e. PARAM(6) in hadcas_23.f, with default value of 
+c        i.e. PARAM(6) in hadcas_30.f, with default value of 
 c        D=0.85 for high energy and D=0.1 for low energy
         if(iMode.eq.1)then   !Lei2023060
         if(win.gt.2.015.and.win.lt.3.0)then
@@ -569,8 +569,8 @@ c       hard parton-parton process
 c070417 control the strength of colour reconnection
         parp(78)=parp78
 
-c       i_inel_proc: =6, with inelastic processes 4, 6, and 7 (parcas_23.f)
-c                    =7, with inelastic process 7 only (parcas_23.f)
+c       i_inel_proc: =6, with inelastic processes 4, 6, and 7 (parcas_30.f)
+c                    =7, with inelastic process 7 only (parcas_30.f)
 c       i_time_shower: =0, w/o final state time-like parton shower if iparres=1
 c                      =1, w/ final state time-like parton shower if iparres=1
 c230722 mstptj: =0, input mstp(111) (mstj(1)) for pp,pA(Ap),and AA (for e+e-) 
@@ -1467,7 +1467,7 @@ c       the cross section ratio of (ela.)/tot =1- rcsit (rcsit=inela./tot)
 
         if(rrlu.gt.ww)then   ! ela.  !! 161222
 c       perform nucleon-nucleon (NN) elastic scattering
-        call coelas_nn(1,2,pi,pj,lc,tc,tw,time,b,2)   ! in parini_23.f
+        call coelas_nn(1,2,pi,pj,lc,tc,tw,time,b,2)   ! in parini_30.f
         inorex=1
         goto 998   ! toward hadron rescattering (call 'hadcas')
         elseif(rrlu.le.ww)then   ! inela.   !! 161222
@@ -1595,7 +1595,7 @@ c------------------------   NN B- & C-loop Generating  -------------------------
         MSTP(5)=i_tune   !Lei202306
 
         if(ifram.eq.1)then
-        if(nzp.eq.1 .and. nzt.eq.1)call pyinit('cms','p','p',win)   ! in p_23.f
+        if(nzp.eq.1 .and. nzt.eq.1)call pyinit('cms','p','p',win)   ! in p_30.f
         if(nzp.eq.1 .and. nzt.eq.-1)call pyinit('cms','p','pbar',win)
         if(nzp.eq.-1 .and. nzt.eq.1)call pyinit('cms','pbar','p',win)
         if(nzp.eq.0 .and. nzt.eq.0)call pyinit('cms','n','n',win)
@@ -1619,8 +1619,8 @@ c       Sums of incident px, py, pz, E, inv. m, and charge.
         end do
 !20523 Lei2023060E
 c151021 endif
-        if(itden.eq.0 .and. itorw.eq.1)call pyevnt   ! in p_23.f
-        if(itden.eq.0 .and. itorw.eq.2)call pyevnw   ! in p_23.f
+        if(itden.eq.0 .and. itorw.eq.1)call pyevnt   ! in p_30.f
+        if(itden.eq.0 .and. itorw.eq.2)call pyevnw   ! in p_30.f
 c151021
 c00623 Lei2023060B
 c       Sums of px, py, pz, E, inv. m, and charge after the excution.
@@ -1645,13 +1645,13 @@ c------------------------   NN B- & C-loop Generating  -------------------------
 c-----------------------------   e+e- Generating   -----------------------------
         if(ipden.eq.2 .and. itden.eq.2)then
         mstj(1)=mstptj   ! 230722
-        call pyeevt(0,win)   ! for e+e-,   ! in p_23.f
+        call pyeevt(0,win)   ! for e+e-,   ! in p_30.f
         endif
 c-----------------------------   e+e- Generating   -----------------------------
 
 c151021
-        call pyedit(2)   ! in p_23.f
-c       call pylist(1)   ! in p_23.f
+        call pyedit(2)   ! in p_30.f
+c       call pylist(1)   ! in p_30.f
 
 c-----------------------------   B-loop Treating  ------------------------------
 c230722
@@ -2069,7 +2069,7 @@ c120520     c   nreac(6).gt.nreaco(6).or.nreac(7).gt.nreaco(7))))goto 889
 c-------------------------------------------------------------------------------
 c---------------------------   Diquark Recovering   ----------------------------
 c       recover parton configuration in 'sbe' (having diquark)
-c       loop over 'sbe'   ! 'pyjets' to 'sbe' in parini_23.f
+c       loop over 'sbe'   ! 'pyjets' to 'sbe' in parini_30.f
         idii=0
         do i=1,nbe
         kf=kbe(i,2)
@@ -2943,7 +2943,7 @@ c-------------------------------------------------------------------------------
 
 c       perform particle, declared unstable in the 'mdcy' array, decay
 c        and remove hadronic decay gammas ('22') from 'pyjets' to 'sgam'
-c130205 call pyexec   ! in p_23.f
+c130205 call pyexec   ! in p_30.f
 
 
 c-------------------------------------------------------------------------------
@@ -2953,7 +2953,7 @@ c150323
 
 c       decay the delta
 c       moves delta from 'pyjets' to 'delt'
-        call remo_delt   ! in 'parini_23.f'
+        call remo_delt   ! in 'parini_30.f'
 c       'pyjets' to 'saf'
         naf=n
         do i2=1,5,1
@@ -2977,7 +2977,7 @@ c       move decayed particle from 'pyjets' to 'saf'
         enddo
         enddo
 c       'saf' to 'pyjets'
-        call tran_saf   ! in 'parini_23.f
+        call tran_saf   ! in 'parini_30.f
 
 c       decay the pi^0
         i11=0
@@ -3004,7 +3004,7 @@ c------------------------------   Hadron Decay   -------------------------------
         rrp=1.16   ! 130205
 c       if(win.lt.parp21)then   ! 260123
         if(iMode.eq.2.or.iMode.eq.3)call decayh(rrp)   ! in sfm.f
-c       in sfm_23.f, 130205 260123 150323
+c       in sfm_30.f, 130205 260123 150323
 c150323 call decayh(rrp)
 c       endif   ! 260123
 c------------------------------   Hadron Decay   -------------------------------
@@ -3547,7 +3547,7 @@ c*******************************************************************************
 c060813 statistics of processes generated
         write(MSTU(11),*)
         write(MSTU(11),*)
-c0623 call pystat(1)   ! 060813   in p_23.f !Lei202306
+c0623 call pystat(1)   ! 060813   in p_30.f !Lei202306
         call PASTAT(1,0)   !Lei202306 in analy.f
 
         close(2)
@@ -3755,7 +3755,7 @@ c       fragmenting gg in 'sbh'
         kf2=kbh(i1+1,2)
         er2=pbh(i1+1,4)
         ss=er1+er2
-        call py2ent(0,kf1,kf2,ss)   ! in p_23.f
+        call py2ent(0,kf1,kf2,ss)   ! in p_30.f
 c00623 Lei2023060
         if(iikk.eq.2 .OR. kkii.eq.2)then   ! Failed, recover PYJETS
             n = 0
@@ -4105,7 +4105,7 @@ c           Sets fragmentation flag in PYEXEC.
                 mstp(111) = 1
             endif
 
-            call PYEXEC   ! Consider px, py, pz, E.   ! in p_23.f
+            call PYEXEC   ! Consider px, py, pz, E.   ! in p_30.f
 
 c           Sums of px, py, pz, E, inv. m, and charge after the "PYEXEC".
             ps1 = 0.
@@ -4137,8 +4137,8 @@ c           Charge is not conserved or errors occur. Re-generate the event.
             throe_p(i) = throe_p(i) + ps0(i) - ps1(i)
             end do
 
-            if(ipden.lt.11) call pyedit(1)   ! in p_23.f
-            if(ipden.ge.11) call pyedit(1)   ! in p_23.f
+            if(ipden.lt.11) call pyedit(1)   ! in p_30.f
+            if(ipden.ge.11) call pyedit(1)   ! in p_30.f
 
 c           Moves "77" from "PYJETS" to "sgam".
             if(N.gt.0)then
@@ -4280,7 +4280,7 @@ c                   Sets fragmentation flag in PYEXEC.
                         mstp(111) = 1
                     endif
                     
-                    call PYEXEC   ! Consider px, py, pz, E   ! in p_23.f
+                    call PYEXEC   ! Consider px, py, pz, E   ! in p_30.f
                     
 c                   Sums of px, py, pz, E, inv. m, and charge after the "PYEXEC".
                     ps1=0.
@@ -4317,8 +4317,8 @@ c                   Charge is not conserved or errors occur. Re-generate the str
                     throe_p(ii) = throe_p(ii) + ps0(ii) - ps1(ii)
                     end do
                     
-                    if(ipden.lt.11) call pyedit(1)   ! in p_23.f
-                    if(ipden.ge.11) call pyedit(1)   ! in p_23.f
+                    if(ipden.lt.11) call pyedit(1)   ! in p_30.f
+                    if(ipden.ge.11) call pyedit(1)   ! in p_30.f
 
 c                   moves "77" from "PYJETS" to "sgam"
                     if(n.gt.0)then

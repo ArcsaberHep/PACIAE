@@ -128,15 +128,15 @@ echo
 ####################             Files name             ########################
 # For Makefile.
 name_x="xPaciae.x"   # Name of the executable. User-defined.
-name_f1="main_23"    # Names of the source files.
-name_f2="parini_23"
-name_f3="parcas_23"
-name_f4="sfm_23"
-name_f5="coales_23"
-name_f6="hadcas_23"
+name_f1="main_30"    # Names of the source files.
+name_f2="parini_30"
+name_f3="parcas_30"
+name_f4="sfm_30"
+name_f5="coales_30"
+name_f6="hadcas_30"
 name_f7="analy"
-name_f8="p_23"
-# name_f9="stahad_23"   # Not used now.
+name_f8="p_30"
+# name_f9="stahad_30"   # Not used now.
 # name_f10="eps09"   # Not used now.
 name_xRms="xRms_analysis.x"   #Lei20230608
 name_rms="rms_analysis"   #Lei20230608
