@@ -118,8 +118,8 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 <!----------------------------------------------------------------------------->
 #### <font color=red> 09/2023: </font> In version PACIAE 3.0 ###
 
-- In subroutine "xevent" of "parini_30.f", the frame "5MOM" was introduced to traet the collisions between those possible hadrons from diffractive events.
-- The program was re-nemaed to version PACIAE 3.0.
+- In subroutine "xevent" of "parini_30.f", the frame "5MOM" was introduced to treat the collisions between those possible hadrons from diffractive events.
+- The program was re-named to version PACIAE 3.0.
 
 <!----------------------------------------------------------------------------->
 #### <font color=red> 08/2023: </font> In version PACIAE 2.3 ###
