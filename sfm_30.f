@@ -47,11 +47,11 @@ c       ich1=ich1+pychge(kf)
 c       enddo
         rrp=1.16
         nn=0
-        if(iii.eq.1)then   !Lei2023060
+        if(iii.eq.1)then   ! 300623 Lei
         kn=0
         pn=0.
         rn=0.
-        endif   !Lei2023060
+        endif   ! 300623 Lei
 c151021
         if(ipden.eq.2 .and. itden.eq.2)then
         mstj(1)=1
@@ -134,18 +134,18 @@ c260123 its output message is in 'pyjets' ('sa1_h' the same)
         COMMON/PYDAT3/MDCY(500,3),MDME(8000,2),BRAT(8000),KFDP(8000,5)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
-        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104   Lei2023060
+        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
         common/sgam/ngam,nongam,kgam(kszj,5),pgam(kszj,5),vgam(kszj,5) ! 250209
         common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
      c   nap,nat,nzp,nzt,pio   ! 060813
         dimension rc(3)
-        dimension ps0(4),ps1(4)   !Lei2023060
+        dimension ps0(4),ps1(4)   ! 300623 Lei
 
 c260123
         nn=0
 
-        ps0=0.   !Lei2023060
-        ps1=0.   !Lei2023060
+        ps0=0.   ! 300623 Lei
+        ps1=0.   ! 300623 Lei
 
 c       'pyjets' to 'sa1_h'
         nn=n
@@ -163,18 +163,18 @@ c       find out unstable hadron
 c       jd: statistics of number of unstable hadrons adjudged
         i1o=1   ! 080104
         nn1=n   ! 131218
-        n0=n   !Lei2023060
+        n0=n   ! 300623 Lei
 200     continue
         do 400 i1=i1o,nn1    ! 110604 141218
         kf=k(i1,2)
         md=mdcy(pycomp(kf),1)
 
-        n0=n   !Lei2023060
+        n0=n   ! 300623 Lei
 
         if(md.eq.1)then   ! 1
         jd=jd+1
 
-        do i=1,4,1   !Lei2023060
+        do i=1,4,1   ! 300623 Lei
             ps0(i) = p(i1,i)   ! Original 4-momentum
         end do
 c       decay of unstable hadron i1
@@ -182,8 +182,8 @@ c       decay of unstable hadron i1
 c       'pyjets' is filled up simultaneously 
 c141218 decayed particles are located above nn1
 
-        ps1=0.   !Lei2023060
-        do j=1,4,1   !Lei2023060
+        ps1=0.   ! 300623 Lei
+        do j=1,4,1   ! 300623 Lei
             do i=n0+1,n,1
             if(k(i,1).gt.0 .AND. k(i,1).lt.11) ps1(j) = ps1(j) + p(i,j)
             end do
