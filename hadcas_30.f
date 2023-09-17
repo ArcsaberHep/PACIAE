@@ -198,15 +198,27 @@ c       give the initial values to the quantities needed in hardon rescattering
         common/sa24/adj1(40),nnstop,non24,zstop   ! 060404
         common/syspar_h/pio
         common/count_h/isinel(600)
-c       cross sections are given in fm.
+c       cross sections are given in fm^2   ! 250423
         csnn=PARAM(1)*0.1
-        cspin=PARAM(2)*0.1
-        cskn=PARAM(3)*0.1
-        cspipi=PARAM(4)*0.1
-        cspsn=PARAM(13)*0.1
-        cspsm=PARAM(14)*0.1
-        csspn=PARAM(15)*0.1
-        csspm=PARAM(16)*0.1
+c250423 cspin=PARAM(2)*0.1
+        cspin=csnn*0.66666   ! 250423
+c250423 0.66666=6/9, estimated by additive quark model (arXiv:2203.11061)
+c250423 cskn=PARAM(3)*0.1
+        cskn=csnn*0.28444   ! 250423
+c250423 0.8444=1.6*1.6/9
+c250423 cspipi=PARAM(4)*0.1
+        cspipi=csnn*0.44444
+c250423 0.44444=4/9
+c250423 cspsn=PARAM(13)*0.1
+        cspsn=csnn*0.13333
+c250423 0.13333=0.4*3/9
+c250423 cspsm=PARAM(14)*0.1
+        cspsm=csnn*0.08888
+c250423 0.08888=0.4*2/9
+c250423 csspn=PARAM(15)*0.1
+        csspn=cspsn   ! 250423
+c250423 csspm=PARAM(16)*0.1
+        csspm=cspsm   ! 250423
 c       largest interaction distance of two colliding particles.
         edipi=sqrt(cspipi/3.1416)
         epin=sqrt(cspin/3.1416)
@@ -425,8 +437,8 @@ c       endif
 c170204
 600     continue
 500     continue
-c00623 if(tc(nctl).le.1.e-7) nctl=nctl-1   !Lei2023060
-        nctl=nctl-1   !Lei2023060
+c300623 if(tc(nctl).le.1.e-7) nctl=nctl-1 ! 300623 Lei
+        nctl=nctl-1   ! 300623 Lei
         return
         end
 
@@ -655,7 +667,7 @@ c        current collisions
         do il=1,nctl
         if(lc(il,1).eq.i.or.lc(il,2).eq.i) tc(il)=0.
         enddo
-        goto 200   !Lei2023060
+        goto 200   ! 300623 Lei
 300     vsa(i,4)=t1   ! 100505
 100     continue
 200     continue
@@ -11096,8 +11108,8 @@ c******************************************************************************
      &   513,-513,523,-523,533,-533,543,-543,28*0/   ! 250420
         DATA DISDET/0.5,0.5,0.5,0.5,46*0.,0.5,0.5,0.5,0.5,46*0./
         DATA ISINELT/384*1,208*0,8*1/  ! with delta and rho
-        ! DATA KFMAXT/72/   !Lei2023060 52 -> 72
-        DATA KFMAXT/34/   !Lei2023060 to psi', for time-saving
+        ! DATA KFMAXT/72/   ! 300623 Lei 52 -> 72
+        DATA KFMAXT/34/   ! 300623 Lei to psi', for time-saving
         DATA PARAM/40.,25.,21.,10.,2.0,0.85,1.0,0.02,0.1,4.0,0.16,0.04,
      &        6.0,3.0,12.,6.,4*0/   ! 060813
         DATA WEIGH/600*1.0/

@@ -1,5 +1,5 @@
         subroutine parini(time_ini,parp21,win,psno,ijk,iMode,
-     c   decpro,i_tune)  ! 260223 Lei2023061 added i_tune Lei20230822 removed parp22
+     c   decpro,i_tune)  ! 260223 300623 Lei Added i_tune 220823 Lei Removed parp22
 c210921 generate partonic initial state in relativistic
 c        pA,Ap,AA,lp, & lA collision based on 'pythia'   ! 140414
 c       it was composed by Ben-Hao Sa on 04/12/2003
@@ -562,10 +562,10 @@ c        in nucleon-nucleon CM system
         nbe=0   ! 080104
         naf=0   ! 080104
         nsa=0
-        nbh=0   !Lei2023060
+        nbh=0   ! 300623 Lei
         idi=0
         idio=0
-        if(iii.eq.1)then   !Lei2023060
+        if(iii.eq.1)then   ! 300623 Lei
         k=0
         p=0.
         v=0.
@@ -578,10 +578,10 @@ c        in nucleon-nucleon CM system
         ksa=0
         psa=0.
         vsa=0.
-        kbh=0   !Lei2023060
-        pbh=0.  !Lei2023060
-        vbh=0.  !Lei2023060
-        endif   !Lei2023060
+        kbh=0   ! 300623 Lei
+        pbh=0.  ! 300623 Lei
+        vbh=0.  ! 300623 Lei
+        endif   ! 300623 Lei
         ndiq=0
         npt=0
         ifcom=0   ! 220110
@@ -762,7 +762,8 @@ c070417 move origin of time to collision time of first nucleon-nucleon collision
 
 c       administrate a nucleus-nucleus collision   ! 180520
         call scat(time,lc,tc,tw,win,parp21,psno,ijk,ipau,irecon,
-     c   gamt,iMode,decpro,i_tune)   ! 021207 260223 Lei2023061 added i_tune Lei20230828 removed parp22
+     c   gamt,iMode,decpro,i_tune)   ! 021207 260223
+c300623 Lei Added i_tune 280823 Lei Removed parp22
         if(ijk.eq.1)return
         time_ini=time   ! 081010
 
@@ -1446,7 +1447,8 @@ c       peo : one dimension array of output momentum and energy
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine scat(time,lc,tc,tw,win,parp21,psno,ijk,
-     c   ipau,irecon,gamt,iMode,decpro,i_tune)   ! 021207 260223 Lei2023061 added i_tune Lei20230828 removed parp22
+     c   ipau,irecon,gamt,iMode,decpro,i_tune)   !021207 260223
+c300623 Lei Added i_tune 280823 Lei Removed parp22
 c       administrate a nucleus-nucleus collision !060813 120214
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
@@ -1470,7 +1472,7 @@ c       administrate a nucleus-nucleus collision !060813 120214
      c   disbe(100,100)
         common/sa6/kfmaxi,nwhole
         common/sa7/ispmax,isdmax,iflmax,ispkf(20),non7,asd(6),
-     c   afl(20,6,2)   !Lei2023060 5 -> 6
+     c   afl(20,6,2)   ! 300623 Lei 5 -> 6
         common/sa10/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
      &   iabsb,iabsm,non10,ajpsi,csspn,csspm,csen   ! 060813
         common/sa12/ppsa(5),nchan,nsjp,sjp,taup,taujp
@@ -1496,7 +1498,7 @@ c       administrate a nucleus-nucleus collision !060813 120214
         common/sbh/nbh,nonbh,kbh(kszj,5),pbh(kszj,5),vbh(kszj,5)
         common/ctllist/nctl,noinel(600),nctl0,nctlm   ! 180121 230121
         common/sppb/nppb,non3,kppb(1000,5),pppb(1000,5),vppb(1000,5) ! 281121
-        common/recons_1/ n_recon_sum   !Lei202306
+        common/recons_1/ n_recon_sum   ! 300623 Lei
         dimension lc(nsize,5),tc(nsize),tw(nsize)
         dimension pi(4),pj(4),pii(4),pjj(4),peo(4),pint(4)
         dimension nni(10),ndi(10),npi(10)
@@ -1643,13 +1645,13 @@ c       perform classical Newton motion
         if(istop.eq.1)goto 100
 c       istop=1 means all particles have get out of considered volume
 
-c00623  Lei2023060 updated numb(i)
+c300623 updated numb(i)   ! 300623 Lei
         m1=numb(1)
         m2=numb(2)
         m3=numb(3)
         m4=numb(4)
         m7=numb(7)
-c00623
+c300623
 
         if(iMode.eq.2.or.iMode.eq.3)then !! if 110123, high energy loop 260223
 c060805 if((l.le.m4 .and. l1.le.m4) .and. ss.ge.parp21)then   ! if 1
@@ -1664,8 +1666,9 @@ c060813 m7 to m2
 c171022 Now long-written statements are replaced as calling the subroutine xevent.
 c171022 The statements are rewritten for better readability of code.
 c       Executes collision event.
-        call xevent(l,l1,ifram,kfa,kfb,ss,pti,ptj,cctai,cctaj,i_tune)   ! 171022 Lei lei2023061 added i_tune Lei20230911 added l,l1
-        call PASTAT(-1,iii)  !Lei202306 Counts cross sections.
+        call xevent(l,l1,ifram,kfa,kfb,ss,pti,ptj,cctai,cctaj,i_tune)
+c171022 300623 Lei Added i_tune 110923 Lei Added l,l1
+        call PASTAT(-1,iii)  ! 300623 Lei Counts cross sections.
 
 500     continue
         if((ipden.eq.0 .and. itden.eq.0 .and. ifram.eq.1) .or.
@@ -1819,7 +1822,8 @@ c        lepton only, in cms
         xb=fq2/2./pdotq   ! x_b
         endif   !
 c260314
-        goto 333   !Lei2023060 Diffractive event in PYTHIA. Do not throw it away.
+c300623 Lei Diffractive event in PYTHIA. Do not throw it away.
+        goto 333
         igq=0
         do j1=1,n
         kfj1=iabs(k(j1,2))
@@ -1849,7 +1853,8 @@ c       remove current nn collision pair from collision list
         goto 10   ! 241110
         endif
 
-333     continue   !Lei2023060 Diffractive event in PYTHIA. Do not throw it away.
+c300623 Lei Diffractive event in PYTHIA. Do not throw it away.
+333     continue
 
 c040423 Lei Move to here. The NN collision is successful then removes gamma.
 c       remove gamma from 'pyjets' to 'sgam'
@@ -1870,30 +1875,30 @@ c        correspondingly
         if(ipden.lt.11)call pyedit(2)
         if(ipden.ge.11)call pyedit(1)
 
-!Lei202306B---------------------------------------------------------------------
+!Lei20230630B-------------------------------------------------------------------
 c161021 reconstruct nucleon (anti-nucleon) in order to increase leading 
 c        proton effect
-!Lei202306        irecon=irecon+1
+!Lei20230630        irecon=irecon+1
         nppb=0   ! 281121
-        if(iiii.eq.1) n_recon_sum = 0   !Lei202306
+        if(iiii.eq.1) n_recon_sum = 0   !Lei20230630
         if((ipden.eq.0 .and. itden.eq.1) .or.
      c   (ipden.eq.1 .and. itden.eq.0))then
 c       reconstructs leading particle according to probability distribution 
 c        resulted from impact parameter density distribution of f(b)=b
 c100322 Lei
-!Lei202306            r_max = max(suppc,suptc)
-!Lei202306            call bp_prob(bp,r_max,probb)
-!Lei202306            if(pyr(1).ge.probb)then   ! 140322
+!Lei20230630            r_max = max(suppc,suptc)
+!Lei20230630            call bp_prob(bp,r_max,probb)
+!Lei20230630            if(pyr(1).ge.probb)then   ! 140322
 c100322 Lei
-!Lei202306                call recons(irecon,l,l1,ss,time,iii)   ! 150322
-!Lei202306            endif   ! 140322
+!Lei20230630                call recons(irecon,l,l1,ss,time,iii)   ! 150322
+!Lei20230630            endif   ! 140322
             irecon  = irecon + 1
             n_recon = 0
             ! n_recon_1 = 0
             ! n_recon_2 = 0
             n_recon_real = 0
 c           Reconstructs leading particle if there is at least one NN collision pair.
-            !TODO(Lei202306): Just for NA and AN now. Need to extend to AA.
+            !TODO(Lei20230630): Just for NA and AN now. Need to extend to AA.
             i_a = l
             i_b = l1
         if(nctl.gt.1) call recons_maxPz(irecon,iii,i_a,i_b,n_recon,3)
@@ -1906,7 +1911,7 @@ c           Reconstructs leading particle if there is at least one NN collision 
 !            n_recon_real = n_recon_1 + n_recon_2
             n_recon_sum  = n_recon_sum + n_recon_real
         endif
-!Lei202306E---------------------------------------------------------------------
+!Lei20230630E-------------------------------------------------------------------
 
 c080104
 c       'pyjets' to 'sbe'. etc.
@@ -2788,7 +2793,7 @@ c       'pyjets' to 'sbh'
         nbh=0
         if(n.eq.0)goto 5002
         nbh=n
-        do mm1=1,5   !Lei2023060 m1 -> mm1, m1 is for numb(1).
+        do mm1=1,5   ! 300623 Lei m1 -> mm1, m1 is for numb(1).
         do li=1,nbh
         kbh(li,mm1)=k(li,mm1)
         pbh(li,mm1)=p(li,mm1)
@@ -2831,7 +2836,8 @@ c10/08/98       stop 'infinite loop occurs'
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine xevent(i_a,i_b,ifram,kf_a,kf_b,ss,pT_a,pT_b,
-     &   ccta_a,ccta_b,i_tune)   !Lei2023061 added i_tune Lei20230911 added i_a, i_b
+     &   ccta_a,ccta_b,i_tune)
+c300623 Lei Added i_tune 110923 Lei Added i_a, i_b
 c171022 A new subroutine to execute the binary NN and lN collision.
 c       It replaces the previous long-written statements.   ! 171022 Lei
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
@@ -2854,7 +2860,7 @@ c     &   iabsb,iabsm,non10,ajpsi,csspn,csspm,csen   ! 060813
         common/sa34/itorw,iikk,cp0,cr0,kkii   ! 060617 010418 010518 040920
 
         character name_a*16, name_b*16, name_frame*16, name_x*16
-        dimension ps0(6), ps1(6)   !Lei2023060
+        dimension ps0(6), ps1(6)   ! 300623 Lei
 
 c       Gets name of particles a and b.
         call PYNAME(kf_a,name_a)
@@ -2864,7 +2870,7 @@ c       Sets name of frame.
             name_frame = "FIXT"
         elseif( ifram.eq.1 .AND. pT_a.le.1D-15 .AND. pT_b.le.1D-15 )then
             name_frame = "CMS"
-!Lei20230911B-- For hadrons generated from diffractive events.
+c1200923 For hadrons generated from diffractive events.   ! 1200923 Lei
         else
             do i=1,5,1
                 P(1,i) = psa(i_a,i)
@@ -2873,7 +2879,7 @@ c       Sets name of frame.
             name_frame = "5MOM"   ! "CMS" -> "5MOM"
             goto 100
         endif
-!Lei20230911E--
+c1200923 Lei
 c       ccta_a: the cosine of the angular 'seta' of 
 c        the momentum for particle a.
         if( (kf_a.ne.kf_b) .AND. (ccta_a.lt.0.) )then
@@ -2884,20 +2890,20 @@ c        the momentum for particle a.
 
 100     continue   ! 040423 Lei
         MSTP(111)=mstptj   ! =0 230722
-        MSTP(5)=i_tune   !Lei2023061
+        MSTP(5)=i_tune   ! 300623 Lei
 
 c       Initilizes the colllision.
         call PYINIT( TRIM(ADJUSTL(name_frame)),
      &               TRIM(ADJUSTL(name_a)),
      &               TRIM(ADJUSTL(name_b)),
      &               ss )
-c00623 Lei2023060B
+c300623 Lei
 c       Sums of incident px, py, pz, E, inv. m, and charge.
         ps0=0.
         do i=1,6,1
             ps0(i)=PYP(0,i)
         end do
-c00623 Lei2023060E
+c300623 Lei
 c       Executes the collision. Calling PYEVNW is the default.
         if( itorw.eq.1 )then
             call PYEVNT
@@ -2906,7 +2912,7 @@ c       Executes the collision. Calling PYEVNW is the default.
         else
             call PYEVNW
         endif
-c00623 Lei2023060B--
+c300623 Lei
 c       Sums of px, py, pz, E, inv. m, and charge after the excution.
         ps1=0.
         do i=1,6,1
@@ -2930,7 +2936,7 @@ c        reconstructions (only in pA/Ap now).
                 if( K(i,2).eq.88 ) goto 100
             end do
         end if
-c00623 Lei2023060E--
+c300623 Lei
 
 c       Removes unnecessary entries in PYJETS.
         if( ipden.lt.11 ) call PYEDIT(2)
@@ -4412,7 +4418,7 @@ c060223
         goto 204
         endif   !
 
-        if(adj12.ne.0)then   !! Lei2023060 -> .ne.0
+        if(adj12.ne.0)then   !! 300623 Lei -> .ne.0
 c100223 remove junction from 'pyjets' to 'sbh'
         if(kfab.le.8 .or. kfab.eq.2101 .or. kfab.eq.3101
      c   .or. kfab.eq.3201 .or. kfab.eq.1103 .or. kfab.eq.2103
@@ -4424,14 +4430,14 @@ c060223
         endif
         endif   !!
 204     continue   ! 060223
-        if(kfab.ne.88)then   !Lei2023060 Thows away junction for coal
+        if(kfab.ne.88)then   ! 300623 Lei Thows away junction for Coal
         nbh=nbh+1
         do i2=1,5
         kbh(nbh,i2)=k(i1,i2)
         pbh(nbh,i2)=p(i1,i2)
         vbh(nbh,i2)=v(i1,i2)
         enddo
-        end if   !Lei2023060 Thows away junction for coal
+        end if   ! 300623 Lei Thows away junction for Coal
         if(i1.eq.n)then
         n=n-1
         goto 203
@@ -4462,7 +4468,7 @@ c        and four positions to the broken objects
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
-        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104   Lei2023060
+        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
         common/sa24/adj1(40),nnstop,non24,zstop   ! 170205
         common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio   ! 080104 220110
         common/saf/naf,nonaf,kaf(kszj,5),paf(kszj,5),vaf(kszj,5)
@@ -4600,10 +4606,10 @@ c       give four coordinate to the breaked quarks
         goto 100
 
 300     enddo
-400     continue   !Lei2023060
+400     continue   ! 300623 Lei
 
-c00623  Shares 4-momentum   !Lei2023060
-        call share_p_PYJETS   !Lei2023060
+c300623 Shares 4-momentum   ! 300623 Lei
+        call share_p_PYJETS   ! 300623 Lei
 
 
         return
@@ -4621,24 +4627,24 @@ c       kf1,kf2: flavor codes of broken quarks
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
-        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104   Lei2023060
+        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
         dimension pi(4),pj(4),ps(4),pp(20,5),bb(3)   ! 260503
         am1=pymass(kf1)
         am2=pymass(kf2)
-c00623 Lei2023060
+c300623 Lei
         pp(1,5)=am1
         pp(2,5)=am2
-        if( P(ii,5).le.1D-15 )then   !Lei2023060 Zero mass approximation in PYTHIA.
+        if( P(ii,5).le.1D-15 )then   ! Zero mass approximation in PYTHIA.
             pp(1,5) = 0D0
             pp(2,5) = 0D0
-        end if   !Lei2023060
-c00623 Lei2023060
+        end if
+c300623 Lei
 c       pp : four momenta & mass of broken quarks, local variable 
         do i1=1,4
         ps(i1)=p(ii,i1)
         enddo
 c       ps : four momentum of diquark, local variable
-        goto 400   ! activate it for 'decay method'  Lei2023060
+        goto 400   ! activate it for 'decay method'
 c       broken quarks share out diquark four momentum randomly,
 c        denoted as 'random four momentum method'
 c       do i1=1,4   ! activate it for 'random four momentum method'
@@ -4688,7 +4694,7 @@ c260503
         enddo
         p(n+1,5)=am2
 
-        do i2=1,4   !Lei2023060 Collects lost 4-momentum.
+        do i2=1,4   ! 300623 Lei Collects lost 4-momentum.
         throe_p(i2) = throe_p(i2) + ( ps(i2) - p(ii,i2) - p(n+1,i2) )
         enddo
 
@@ -4728,10 +4734,10 @@ c030603
 c       pp(1,4)=(sm2-am2*am2+am1*am1)/2./sm
 c       pp(2,4)=(sm2-am1*am1+am2*am2)/2./sm
         ppp=(sm2-(am1+am2)*(am1+am2))*(sm2-(am1-am2)*(am1-am2))
-        if(ppp.le.0.)then   !Lei2023060
+        if(ppp.le.0.)then   ! 300623 Lei
         decsuc=0   ! go back to random three momentum method
         return
-        endif   !Lei2023060
+        endif   ! 300623 Lei
 c161204 ppp=dabs(ppp)   ! 030603 ?
         if(ppp.lt.1.d-28)ppp=1.d-28   !161204
         ppp=dsqrt(ppp)/2./sm
@@ -5307,8 +5313,8 @@ c011204 call tcolij(i1,j1,time,nctl,lc,tc,tw,iMode)   ! 250423
 100     continue
 600     enddo   ! loop for i
 300     enddo   ! loop for j11
-c00623 700     if(tc(nctl).le.1.e-7) nctl=nctl-1   !Lei2023060
-700     nctl=nctl-1   !Lei2023060
+c300623 700     if(tc(nctl).le.1.e-7) nctl=nctl-1   ! 300623 Lei
+700     nctl=nctl-1   ! 300623 Lei
         return
         end
 
@@ -5699,8 +5705,8 @@ c       forbiden scattered particles colliding with each other
 300     if(ik.eq.2)goto 500
         j1=jc
 500     enddo
-c00623 700     if(tc(nctl).le.1.e-7) nctl=nctl-1   !Lei2023060
-700     nctl=nctl-1   !Lei2023060
+c300623 700     if(tc(nctl).le.1.e-7) nctl=nctl-1   ! 300623 Lei
+700     nctl=nctl-1   ! 300623 Lei
         return
         end
 
@@ -6350,8 +6356,9 @@ c       loop over new generated hadron which has filled in 'sa2' at ic (jc)
         if(ii.eq.2)j1=jc
         kfa=ksa(j1,2)   ! 260223
         kfab=iabs(kfa)   ! 060813 120214 260223
-        if(kfab.ne.2212.and.kfab.ne.2112.and.kfab.ne.211.or.kfa.ne.1114
-     c   .or.kfa.ne.2114.or.kfa.ne.2214.or.kfa.ne.2224)goto 300 ! not join
+        if(kfab.ne.2212.and.kfab.ne.2112.and.kfab.ne.211
+     c   .and.kfa.ne.1114.and.kfa.ne.2114.and.kfa.ne.2214
+     c   .and.kfa.ne.2224)goto 300 ! not join
 c       reconstruction of hadronic collision pair
 c       consider only the reinteraction between NN, N(Delta), Npi+, Npi-
 c       loop over old particle list
@@ -6382,8 +6389,8 @@ c       forbiden scattered particles colliding with each other
         kfa=ksa(j1,2)
         kfab=iabs(kfa)
         if(kfab.ne.2212.and.kfab.ne.2112.and.kfab.ne.211
-     c   .or.kfa.ne.1114.or.kfa.ne.2114.or.kfa.ne.2214
-     c   .or.kfa.ne.2224)goto 301 ! not join
+     c   .and.kfa.ne.1114.and.kfa.ne.2114.and.kfa.ne.2214
+     c   .and.kfa.ne.2224)goto 301 ! not join
 c       reconstruction of hadronic collision pair
 c       consider only the reinteraction between NN, N(Delta), Npi+, Npi-
 c       loop over old particle list
@@ -6468,7 +6475,7 @@ c       move particle list 'pyjets' one step downward from i1+1 to n
 
 
 
-!Lei202307B---------------------------------------------------------------------
+c310723 Lei---------------------------------------------------------------------
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine recons_string(i_recon,i_scat,i_proj,i_targ,n_recon,
      &   i_proj_or_targ)
@@ -7785,7 +7792,7 @@ c       Local initialization.
       
       
       
-!Lei202306D---------------------------------------------------------------------
+c310723 Lei---------------------------------------------------------------------
 
 
 
@@ -7804,7 +7811,7 @@ ccccccccccccccccccccccccccccccccccccc  end  cccccccccccccccccccccccccccc
 
 
 
-!Lei202306 debug
+!Lei20230630 debug
 
 C*********************************************************************
 C...pylistAnke

@@ -66606,7 +66606,7 @@ C...Check flavours and invariant masses in parton systems.
           ENDIF
           IF(NFERR.EQ.1) THEN
             CALL PYERRM(2,'(PYPREP:) unphysical flavour combination')
-           if(adj12.ne.0.or.(adj12.eq.0.and.(nreac(4).ne.0.or.nreac(6)   !Lei2023060 adj12.eq.1 -> .ne.0
+           if(adj12.ne.0.or.(adj12.eq.0.and.(nreac(4).ne.0.or.nreac(6)   ! 300623 Lei adj12.eq.1 -> .ne.0
      c     .ne.0.or.nreac(7).ne.0)))kkii=2   ! 050920
             MINT(51)=1
             RETURN
@@ -66718,7 +66718,7 @@ C...Take copy of partons to be considered. Check flavour sum.
       IF(MOD(KQSUM,3).NE.0) THEN
         CALL PYERRM(12,'(PYSTRF:) unphysical flavour combination')
 c050920
-        if(adj12.ne.0.or.(adj12.eq.0.and.(nreac(4).ne.0.or.nreac(6)   !Lei2023060 adj12.eq.1 -> .ne.0
+        if(adj12.ne.0.or.(adj12.eq.0.and.(nreac(4).ne.0.or.nreac(6)   ! 300623 Lei adj12.eq.1 -> .ne.0
      c   .ne.0.or.nreac(7).ne.0)))then
         kkii=2
         return
@@ -68319,7 +68319,7 @@ C...Reset counters. Identify parton system and take copy. Check flavour.
       IF(NJET.NE.1.AND.KQSUM.NE.0) THEN
         CALL PYERRM(12,'(PYINDF:) unphysical flavour combination')
 c050920
-        if(adj12.ne.0.or.(adj12.eq.0.and.(nreac(4).ne.0.or.nreac(6)   !Lei2023060 adj12.eq.1 -> .ne.0
+        if(adj12.ne.0.or.(adj12.eq.0.and.(nreac(4).ne.0.or.nreac(6)   ! 300623 Lei adj12.eq.1 -> .ne.0
      c   .ne.0.or.nreac(7).ne.0)))then
         kkii=2
         return
@@ -71035,8 +71035,8 @@ C...g -> ~g + ~g (eikonal approximation).
           ENDIF
 
 C...Revert to eikonal approximation for gluon in final state.
-          IF(KFLA1.EQ.21.OR.KFLA2.EQ.21) ICLASS=1   !FIXME(Lei2023060): bug or not?
-!Lei2023060 IF(KFLA(1).EQ.21.OR.KFLA(2).EQ.21) ICLASS=1
+          IF(KFLA1.EQ.21.OR.KFLA2.EQ.21) ICLASS=1   !FIXME(Lei20230630): bug or not?
+!Lei20230630 IF(KFLA(1).EQ.21.OR.KFLA(2).EQ.21) ICLASS=1
 
           M3JC=5*ICLASS+ICOMBI
         ENDIF
