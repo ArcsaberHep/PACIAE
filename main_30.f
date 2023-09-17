@@ -74,7 +74,7 @@ c300623 &   v1(4,20),v2(4,20),v12(4,20),v22(4,20)   ! 300623 Lei
         common/sa37/nth,npadth,kth(kszj,5),pth(kszj,5),vth(kszj,5)   ! 150922
 c       common/sa38/csp_31,csp_32,csp_41,csp_42,csp_43,csp_51,csp_52,
 c    c   csp_53,csp_54,csp_61,csp_62,csp_63,csp_64,csp_65   ! 161022
-        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   ! 280829 Lei
+        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei
         common/sa6_c/ithroq,ithrob,ithroc,non6_c,throe(4)
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)
         common/sbe/nbe,non_be,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
@@ -118,8 +118,8 @@ c       For the intrinsic subroutine DATE_AND_TIME calling.
         dimension n_current_date_and_time(8)   ! 171022 Lei
         character*4 c_date_and_time(8)   ! 300623 Lei
         dimension ps0(6),ps1(6)   ! 300623 Lei
-c280829 KF code of particles specified not to decay (without).   ! 280829 Lei
-        dimension KF_woDecay(20)   ! 280829 Lei
+c       KF code of particles specified not to decay (without).   ! 290823 Lei
+        dimension KF_woDecay(20)   ! 290823 Lei
 
 
 c010418 itorw: =1 executing pyevnt, =2 executing pyevnw
@@ -352,8 +352,8 @@ c       reads input variables for event generation
         read(11,*)pio,ipden,itden
 c       reads input variables for event analyses
         read(11,*)ispmax,isdmax,iflmax
-        read(11,*) ( KF_woDecay(i), i=1,10,1)   ! 280829 Lei
-        read(11,*) ( KF_woDecay(i), i=11,20,1)   ! 280829 Lei
+        read(11,*) ( KF_woDecay(i), i=1,10,1)   ! 290823 Lei
+        read(11,*) ( KF_woDecay(i), i=11,20,1)   ! 290823 Lei
         read(11,*)(ispkf(i),i=1,10)
         read(11,*)(ispkf(i),i=11,ispmax)
         read(11,*)(asd(i),i=1,isdmax)
@@ -370,8 +370,8 @@ c       reads input variables for event generation
         read(11,*)para1_1,para1_2,para2,para4
 c300623 read(11,*)tdh,cptl,cptu,cptl2,cptu2,itnum   ! 241108 300623 Lei
         read(11,*)i_deex,i_deex_gen,i_pT,i_pT_max,
-     &            a_FF,aPS_c,aPS_b,parp82,i_tune   ! 1200923 Lei
-        read(11,*)mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw   ! 160617 010418 310723 Lei
+     &            a_FF,aPS_c,aPS_b,parp82,i_tune   ! 120923 Lei
+        read(11,*)mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw   ! 160617 010418 310723 280823 Lei
         read(11,*)(adj1(i),i=1,10)
         read(11,*)(adj1(i),i=11,20)
         read(11,*)(adj1(i),i=21,30)
@@ -382,7 +382,7 @@ c       read(11,*)csp_31,csp_32   ! 161022
 c       read(11,*)csp_41,csp_42,csp_43   ! 161022
 c       read(11,*)csp_51,csp_52,csp_53,csp_54   ! 161022
 c       read(11,*)csp_61,csp_62,csp_63,csp_64,csp_65   ! 161022
-        read(11,*) i_mass, ( prob_ratio_q(i),i=1,6,1 )   ! 280829 Lei
+        read(11,*) i_mass, ( prob_ratio_q(i),i=1,6,1 )   ! 290823 Lei
         close(11)
 c------------------------------   Input Reading   ------------------------------
 c-------------------------------------------------------------------------------
@@ -947,9 +947,9 @@ c----------------------------   Input Recording   ------------------------------
         write(9,*)'para1_1,para1_2,para2,para4=',para1_1,para1_2,para2,
      c   para4
         write(9,*)'i_deex,i_deex_gen,i_pT,i_pt_max,'//
-     &            'a_FF,aPS_c,aPS_b,parp82,i_tune='   ! 1200923 Lei
+     &            'a_FF,aPS_c,aPS_b,parp82,i_tune='   ! 120923 Lei
         write(9,*) i_deex,i_deex_gen,i_pT,i_pt_max,
-     &             a_FF,aPS_c,aPS_b,parp82,i_tune   ! 280829 Lei
+     &             a_FF,aPS_c,aPS_b,parp82,i_tune   ! 120923 Lei
         write(9,*)'mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw='
      c   ,mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw   ! 160617 010418 280823 Lei
 c210803
@@ -960,7 +960,7 @@ c210803
 c210803
         write(9,*)'parecc,iparres,smadel,dparj4,cp0,cr0,seco=',
      c   parecc,iparres,smadel,dparj4,cp0,cr0,seco   ! 120219 260219
-        write(9,*) "i_mass, prob_ratio_q=", i_massm, prob_ratio_q   ! 1200923 Lei
+        write(9,*) "i_mass, prob_ratio_q=", i_massm, prob_ratio_q   ! 040923 Lei
         if(iflmax.ne.0)then
         do kk=1,ispmax
         do i=1,iflmax
@@ -1782,7 +1782,7 @@ c120620 mstp(111)=0   ! 050620
         npctlm=0   ! 180121
 c       partonic initiation for a nuclear-nuclear collision   ! 161222
         call parini(time_ini,parp21,win,psno,ijk,iMode,decpro,i_tune)   ! in parini.f
-c300623 Lei Added i_tune 280823 Lei removed parp22
+c300623 Lei Added i_tune 280823 Lei Removed parp22
 c       081010 240513 260223
 c260223 added the iMode & decpro
 c120620  mstp(111)=1   ! 050620
@@ -1901,7 +1901,7 @@ c271205
         eevh=eevh+pbh(i1,4)
         enddo
 c020718
-        if(adj140.eq.3)call coales(iii,neve,nout,nap,nat,nzp,nzt,1)   !280825 Lei In coales.f
+        if(adj140.eq.3)call coales(iii,neve,nout,nap,nat,nzp,nzt,1)   ! 280825 Lei In coales.f
 
         n44=0
         do j=1,nbh
@@ -2692,7 +2692,7 @@ c-------------------------------------------------------------------------------
 c-------------------------------------------------------------------------------
 c---------------------------   Coalescence  Model  -----------------------------
         if(adj12.ne.0)then
-        call coales(iii,neve,nout,nap,nat,nzp,nzt,1)   ! 280825 Lei
+        call coales(iii,neve,nout,nap,nat,nzp,nzt,1)   ! 250823 Lei
 c300623 goto 333   ! 300623 Lei
         endif
 c---------------------------   Coalescence  Model  -----------------------------
@@ -3126,8 +3126,8 @@ c190    format(f10.4,I7)   ! sa
 c191    format(I6,4(1x,e15.7))   ! sa
 
 c       analyses the event on-line
-        call analy(nmin,nminf,ncha,nchaf,yOrEta)   ! 281219 140223 280823 Lei ! In analy.f
-        call analy_parton(yOrEta)   ! 300623 Lei   ! 280823 Lei ! In analy.f
+        call analy(nmin,nminf,ncha,nchaf,yOrEta)   ! 281219 140223 280823 Lei ! in analy.f
+        call analy_parton(yOrEta)   ! 300623 200823 Lei ! in analy.f
 c       sum over events
         dnmin=dnmin+nmin
         dnminf=dnminf+nminf
@@ -3148,7 +3148,7 @@ c120119
         stime_par=stime_par+time_par
         stime_had=stime_had+time_had
 c120119
-        call prt_sgam(0,egam,4)   ! 280819 Lei
+        call prt_sgam(0,egam,4)   ! 190823 Lei
         segam=segam+egam   ! 080419
         segam1=segam1+egam1   ! 080419
         segam2=segam2+egam2   ! 080419
@@ -3228,16 +3228,16 @@ c       averaged ovr events
         dnchao=dncha/flaa
         dnchafo=dnchaf/flaa
 c010220
-        flaa_org = flaa   ! 280822 Lei
+        flaa_org = flaa   ! 220823 Lei
         do kk=1,ispmax
         sbo(kk)=sbn(kk)/flaa
         sbof(kk)=sbnf(kk)/flaa
         do i1=1,40   ! 070419
         do i2=1,isdmax
-        if(i2.eq.5) flaa = 1D0  ! 280822 Lei
+        if(i2.eq.5) flaa = 1D0  ! 220823 Lei
         sao(i1,i2,kk)=san(i1,i2,kk)/flaa
         saof(i1,i2,kk)=sanf(i1,i2,kk)/flaa
-        if(i2.eq.5) flaa = flaa_org  ! 280822 Lei
+        if(i2.eq.5) flaa = flaa_org  ! 220823 Lei
         enddo
         enddo
         enddo
@@ -3888,9 +3888,8 @@ c       fragmenting 'sbh' finished
 
 
         subroutine rest_hadronization
-c300623 Lei
-c       Hadronize the rest partons ("sbe") those failed in sfm/coal by 
-c        calling two subroutines "rest_sfm" and/or "rest_coal".
+c300623 Hadronize the rest partons ("sbe") those failed in sfm/coal by 
+c        calling two subroutines "rest_sfm" and/or "rest_coal".   ! 300623 Lei
         IMPLICIT DOUBLE PRECISION (A-H,O-Z)
         IMPLICIT INTEGER (I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -3935,7 +3934,7 @@ c       Appends "trs" to "sbe". (partons of inel. coll. in parcas with sfm)
         endif
 
 c       Appends "sa37" to "sbe". (partons failed in coal)
-        if( INT(adj1(12)).ne.0 .AND. nth.gt.0 )then   ! 100822 Lei .eq.1 -> .ne.0
+        if( INT(adj1(12)).ne.0 .AND. nth.gt.0 )then   ! 100823 Lei .eq.1 -> .ne.0
             do ii1=1,nth,1
                 ii3 = nbe + ii1
                 do ii2=1,5,1
@@ -3978,8 +3977,7 @@ c       Appends "aaff" to "PYJETS". (dumps "aaff" into "PYJETS" in fact)
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine rest_sfm
-c300623 Lei
-c       Hadronizes/Fragments "sbe" with "PYEXEC".
+c300623 Hadronizes/Fragmente "sbe" with "PYEXEC".   ! 300623 Lei
         IMPLICIT DOUBLE PRECISION (A-H,O-Z)
         IMPLICIT INTEGER (I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -4441,8 +4439,7 @@ c       Gives proper status code, etc.
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine rest_coal
-c300623 Lei
-c       Hadronizes/Coalesces "sbe" with "coal".
+c300623 Hadronizes/Coalesces "sbe" with "coal".   ! 300623 Lei
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -4709,8 +4706,7 @@ c       The inv. mass should be greater than mass of pion (~140 MeV).
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine share_p_PYJETS
-c300623 Lei
-c       Share the lost 4-momentum in "throe_p" with particles in "PYJETS".
+c300623 Share the lost 4-momentum in "throe_p" with particles in "PYJETS".
 c       The critirion is inv. m^2 > 0 and E > 0, or original inv. m^2 < 0 
 c         but the new one is closer to 0 and E > 0, after sharing.
 c       Sometimes there are junctions, which should be excluded.   ! 300623 Lei
@@ -4771,11 +4767,10 @@ c        suceeded, try another sharing (iteration).
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine share_p_sbe
-c300623 Lei
-c       Share the lost 4-momentum in "throe_p" with particles in "PYJETS".
+c300623 Share the lost 4-momentum in "throe_p" with particles in "PYJETS".
 c       The critirion is inv. m^2 > 0 and E > 0, or original inv. m^2 < 0 
 c         but the new one is closer to 0 and E > 0, after sharing.
-c       Sometimes there are junctions, which should be excluded.
+c       Sometimes there are junctions, which should be excluded.   ! 300623 Lei
 c       "throe_p" is 4-momentum accumulated before this calling.
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
@@ -4833,8 +4828,7 @@ c        suceeded, try another sharing (iteration).
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine share_p_PYJETS_sa1h
-c300623 Lei
-c       Share the lost 4-momentum in "throe_p" with particles in "PYJETS".
+c300623 Share the lost 4-momentum in "throe_p" with particles in "PYJETS".
 c       The critirion is inv. m^2 > 0 and E > 0, or original inv. m^2 < 0 
 c         but the new one is closer to 0 and E > 0, after sharing.
 c       Sometimes there are junctions, which should be excluded.   ! 300623 Lei
@@ -7124,4 +7118,6 @@ c171022      IF(Y-2.0E0)1,9,9   ! 171022 Lei
      4  -.002777777777777778E0)*C+.08333333333333333E0)*D                       
      5  +.9189385332046727E0+(Y-.5E0)*LOG(Y)-Y                                  
       VALUE=EXP(G)                                                              
-    7 GAMMA=VALUE   !
+    7 GAMMA=VALUE   ! 081010                                                    
+      RETURN                                                                    
+      END                                                                       
