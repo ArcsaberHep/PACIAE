@@ -58,8 +58,9 @@ RUN="RAW"            # Additional option. Not required to be modified usually.
 #   seed based on the real-time clock of the machine.                          #
 # This random number generator seed is set in PACIAE internal code (main.f).   #
 #                                                                              #
+# One needs to note that it's just a pseudo-parallism. In other words, this    #
+#   script just performs PACIAE running one-by-one automatically instead of    #
 #   manual runs. One also needs another program to aggregate and average all   #
-#                                                                              #
 #   the results (in rms.out) after the whole PACIAE running finished.          #
 #                                                                              #
 # This script has been tested on UBUNTU 20.04 in PC, on SLURM in CCNU          #
@@ -70,8 +71,9 @@ RUN="RAW"            # Additional option. Not required to be modified usually.
 #                                                                              #
 # How to use:                                                                  #
 #                                                                              #
+#   1. First and formost, give this script file "executable permission" by     #
+#        typing command "chmod +x PACIAE.sh". In addition, one needs "make"    #
 #        tool. Install "make" using the command, for example on UBUNTU,        #
-#                                                                              #
 #        "sudo apt install make".                                              #
 #                                                                              #
 #   2. Modify the variabls needed.                                             #
@@ -90,8 +92,9 @@ RUN="RAW"            # Additional option. Not required to be modified usually.
 #              the settings at the beginning of file. (SBATCH, APP_NAME...)    #
 #                                                                              #
 #   3. Execution.                                                              #
+#        3.1 On normal LINUX, to run this script by typing command             #
+#              "./PACIAE.sh".                                                  #
 #            The more recommended command is                                   #
-#   3. Execution.                                                              #
 #              "time ./PACIAE.sh | tee $(date "+%Y%m%d%H%M%S").log",           #
 #              which stores the screen information to a log file.              #
 #            Also, one can execute them in the backgroud using                 #
@@ -153,6 +156,8 @@ name_rms="rms_analysis"   #Lei20230608
 # Setups of the program-running.
 # Total number of events in all program-runnings = n_run * n_eve.
 n_run=10     # Number of program-running, i.e. total number of CPU cores used.
+# n_run=${NP}   # Uncommented this line if submit jods on LSF system.
+# ((n_run=SLURM_JOB_NUM_NODES*SLURM_NTASKS_PER_NODE))   # Uncommented for SLURM.
 n_eve=10    # neve, number of events per program-running (per core).
 n_out=1     # (D=neve/10) nout, outputs per n_out events.
 n_osc=0     # (D=0) nosc, OSCAR-1997A/1999A/2013A output or not (1/2/3/0)
