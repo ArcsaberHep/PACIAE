@@ -53,12 +53,12 @@ c        letter. typing ": set ic + enter key" before searching in Vi/Vim.
      &   ,emin(10),eminf(10),eplu(10),epluf(10)   ! 033101
 c300623 common/sa18/tdh,itnum,non18,cptl,cptu,cptl2,cptu2,snum(4,20),
 c300623 &   v1(4,20),v2(4,20),v12(4,20),v22(4,20)   ! 300623 Lei
-        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   !Lei20230828
+        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
         common/sa21/pincl(5),pscal(5),pinch(5),vnu,fq2,w2l,yyl,zl,xb,pph
      c   ,vnlep   ! 260314
         common/sa23/kpar,knn,kpp,knp,kep   ! 200601 060813
         common/sa24/adj1(40),nnstop,non24,zstop   ! 210803 181003
-        common/sa25/i_inel_proc,i_time_shower,para1_1,para1_2   !Lei20230828 mstj1_1 -> i_inel_proc, mstj1_2 -> i_time_shower
+        common/sa25/i_inel_proc,i_time_shower,para1_1,para1_2   ! 280823 Lei
         common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio   ! 220110
         common/sa27/itime,kjp22,gtime,astr,akapa(6),parj1,parj2,parj3,
      c   parj21,parj4,adiv,gpmax,nnc   ! 020708 070417 010518
@@ -74,7 +74,7 @@ c300623 &   v1(4,20),v2(4,20),v12(4,20),v22(4,20)   ! 300623 Lei
         common/sa37/nth,npadth,kth(kszj,5),pth(kszj,5),vth(kszj,5)   ! 150922
 c       common/sa38/csp_31,csp_32,csp_41,csp_42,csp_43,csp_51,csp_52,
 c    c   csp_53,csp_54,csp_61,csp_62,csp_63,csp_64,csp_65   ! 161022
-        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   !Lei20230829
+        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   ! 280829 Lei
         common/sa6_c/ithroq,ithrob,ithroc,non6_c,throe(4)
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)
         common/sbe/nbe,non_be,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
@@ -118,8 +118,8 @@ c       For the intrinsic subroutine DATE_AND_TIME calling.
         dimension n_current_date_and_time(8)   ! 171022 Lei
         character*4 c_date_and_time(8)   ! 300623 Lei
         dimension ps0(6),ps1(6)   ! 300623 Lei
-c       KF code of particles specified not to decay (without).   !Lei20230829
-        dimension KF_woDecay(20)   !Lei20230829
+c280829 KF code of particles specified not to decay (without).   ! 280829 Lei
+        dimension KF_woDecay(20)   ! 280829 Lei
 
 
 c010418 itorw: =1 executing pyevnt, =2 executing pyevnw
@@ -352,8 +352,8 @@ c       reads input variables for event generation
         read(11,*)pio,ipden,itden
 c       reads input variables for event analyses
         read(11,*)ispmax,isdmax,iflmax
-        read(11,*) ( KF_woDecay(i), i=1,10,1)   !Lei20230829
-        read(11,*) ( KF_woDecay(i), i=11,20,1)   !Lei20230829
+        read(11,*) ( KF_woDecay(i), i=1,10,1)   ! 280829 Lei
+        read(11,*) ( KF_woDecay(i), i=11,20,1)   ! 280829 Lei
         read(11,*)(ispkf(i),i=1,10)
         read(11,*)(ispkf(i),i=11,ispmax)
         read(11,*)(asd(i),i=1,isdmax)
@@ -364,15 +364,14 @@ c       reads input variables for event analyses
         enddo
         enddo
 c       reads input variables for event generation
-200     read(11,*)parp21,yOrEta,win   !Lei20230828 parp22 -> yOrEta
+200     read(11,*)parp21,yOrEta,win   ! 280823 Lei
         read(11,*)ttaup,taujp,iabsb,iabsm,nchan   ! 241108
         read(11,*)para13,para14,psno,para15,para16,ajpsi,vneum
         read(11,*)para1_1,para1_2,para2,para4
 c300623 read(11,*)tdh,cptl,cptu,cptl2,cptu2,itnum   ! 241108 300623 Lei
         read(11,*)i_deex,i_deex_gen,i_pT,i_pT_max,
-     &            a_FF,aPS_c,aPS_b,parp82,i_tune   !Lei20230912
-        read(11,*)mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw   ! 160617 010418
-c310723 Lei Lei20230828 mstj2 -> iMode, mstj1_1 -> i_inel_proc, mstj1_2 -> i_time_shower
+     &            a_FF,aPS_c,aPS_b,parp82,i_tune   ! 1200923 Lei
+        read(11,*)mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw   ! 160617 010418 310723 Lei
         read(11,*)(adj1(i),i=1,10)
         read(11,*)(adj1(i),i=11,20)
         read(11,*)(adj1(i),i=21,30)
@@ -383,7 +382,7 @@ c       read(11,*)csp_31,csp_32   ! 161022
 c       read(11,*)csp_41,csp_42,csp_43   ! 161022
 c       read(11,*)csp_51,csp_52,csp_53,csp_54   ! 161022
 c       read(11,*)csp_61,csp_62,csp_63,csp_64,csp_65   ! 161022
-        read(11,*) i_mass, ( prob_ratio_q(i),i=1,6,1 )   !Lei20230829
+        read(11,*) i_mass, ( prob_ratio_q(i),i=1,6,1 )   ! 280829 Lei
         close(11)
 c------------------------------   Input Reading   ------------------------------
 c-------------------------------------------------------------------------------
@@ -476,7 +475,7 @@ c       aPS_c: (D=0.05) -PARJ(54), parameter for charm-hadron in Petersono/SLAC
 c       aPS_b: (D=0.005) -PARJ(55), parameter for bottom-hadron in P/S function
 c       parp82: (D=2.0 GeV/c), PARP(82) in PYTHIA  regularization scale p_erp_0 
 c               of the transverse-momentum spectrum for multiple interactions 
-c               with MSTP(82) >= 2.   !Lei20230828
+c               with MSTP(82) >= 2.   ! 280823 Lei
 c       i_tune: MSTP(5), tune number of PYTHIA. = 350, Perugia 2011 tune.
 
 c       i_mass: (D=3) mass definetion of quarks used in "break_f"
@@ -708,7 +707,7 @@ c       For e+e- , one just needs to specify ipden=itden=2 in usu.dat.
             bmin= 0D0
             bmax= 0D0
             psno= 0D0
-            adj1(5) = 0D0   ! 300623 Lei without nuclear shadowing
+            adj1(5) = 0D0   ! 300623 Lei Without nuclear shadowing
         else if( ipden.gt.1 )then
 c       For lN and lA, one just needs to specify ipden >= 11 and nzp/nat/nzt.
             nap = 1   ! nominal value
@@ -731,12 +730,12 @@ c       For NN , NA(AN) and AA, one just needs to specify nap/nzp/nat/nzt.
                 bmin = 0D0
                 bmax = 0D0
                 psno = 0D0
-                adj1(5) = 0D0   ! 300623 Lei without nuclear shadowing
+                adj1(5) = 0D0   ! 300623 Lei Without nuclear shadowing
             end if
         end if
         mstptj=0   ! 300623 Lei
         if(iMode.eq.1 .OR. iMode.eq.2) mstptj=1   ! 300623 Lei
-        ! if(iMode.eq.2 .OR. iMode.eq.3) x_ratio=0.85   ! 300623 Lei hardcode
+        ! if(iMode.eq.2 .OR. iMode.eq.3) x_ratio=0.85   ! 300623 Lei Hardcode
         ! if(iMode.eq.2 .OR. iMode.eq.3) PARAM(6)=0.85   ! 300623 Lei
 c       if win.lt.parp21 & mstptj=0, dead loop in low-energy AA collision.
 c260223 changed from (win.lt.parp21)
@@ -948,11 +947,11 @@ c----------------------------   Input Recording   ------------------------------
         write(9,*)'para1_1,para1_2,para2,para4=',para1_1,para1_2,para2,
      c   para4
         write(9,*)'i_deex,i_deex_gen,i_pT,i_pt_max,'//
-     &            'a_FF,aPS_c,aPS_b,parp82,i_tune='   !Lei20230912
+     &            'a_FF,aPS_c,aPS_b,parp82,i_tune='   ! 1200923 Lei
         write(9,*) i_deex,i_deex_gen,i_pT,i_pt_max,
-     &             a_FF,aPS_c,aPS_b,parp82,i_tune   !Lei20230829
+     &             a_FF,aPS_c,aPS_b,parp82,i_tune   ! 280829 Lei
         write(9,*)'mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw='
-     c   ,mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw   ! 160617 010418 Lei20230828
+     c   ,mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw   ! 160617 010418 280823 Lei
 c210803
         write(9,*)'adj1=',(adj1(i),i=1,10)
         write(9,*)'adj1=',(adj1(i),i=11,20)
@@ -961,7 +960,7 @@ c210803
 c210803
         write(9,*)'parecc,iparres,smadel,dparj4,cp0,cr0,seco=',
      c   parecc,iparres,smadel,dparj4,cp0,cr0,seco   ! 120219 260219
-        write(9,*) "i_mass, prob_ratio_q=", i_massm, prob_ratio_q   !Lei20230904
+        write(9,*) "i_mass, prob_ratio_q=", i_massm, prob_ratio_q   ! 1200923 Lei
         if(iflmax.ne.0)then
         do kk=1,ispmax
         do i=1,iflmax
@@ -1126,7 +1125,7 @@ c-------------------------------------------------------------------------------
 c-------------------------------------------------------------------------------
 c------------------------   Particle Decay Specifying   ------------------------
 c       Forbidden decay of particle (sets MDCY(...)=0)
-c290823 Lei20230829B
+c290823 Lei
 c       Primary long-lived particle definition in ALICE-PUBLIC-2017-005.
         MDCY( PYCOMP(211),   1 ) = 0   ! pi+
         MDCY( PYCOMP(-211),  1 ) = 0   ! pi-
@@ -1170,7 +1169,7 @@ c       MDCY( KC , 1 ) = 1 means the particle will decay (unstable).
             MDCY( PYCOMP(2214), 1 ) = 1   ! Delta+
             MDCY( PYCOMP(2224), 1 ) = 1   ! Delta++
         end if
-c290823 Lei20230829E
+c290823 Lei
 c------------------------   Particle Decay Specifying   ------------------------
 c-------------------------------------------------------------------------------
 
@@ -1783,7 +1782,7 @@ c120620 mstp(111)=0   ! 050620
         npctlm=0   ! 180121
 c       partonic initiation for a nuclear-nuclear collision   ! 161222
         call parini(time_ini,parp21,win,psno,ijk,iMode,decpro,i_tune)   ! in parini.f
-c300623 Lei Added i_tune Lei20230828 removed parp22
+c300623 Lei Added i_tune 280823 Lei removed parp22
 c       081010 240513 260223
 c260223 added the iMode & decpro
 c120620  mstp(111)=1   ! 050620
@@ -1902,7 +1901,7 @@ c271205
         eevh=eevh+pbh(i1,4)
         enddo
 c020718
-        if(adj140.eq.3)call coales(iii,neve,nout,nap,nat,nzp,nzt,1)   ! in coales.f Lei20230825
+        if(adj140.eq.3)call coales(iii,neve,nout,nap,nat,nzp,nzt,1)   !280825 Lei In coales.f
 
         n44=0
         do j=1,nbh
@@ -2173,7 +2172,7 @@ c        PYTHIA sfm, i.e. more random position distribution for produced hadrons
         end do
 c300623 Recovers the 4-coordinate from 'parini'. (not ?) This treatment is 
 c        equivalent to giving medium correction in momentum space.   ! 300623 Lei
-        i_coord_recover = 1   !Lei20230828
+        i_coord_recover = 1   ! 280823 Lei
         if(INT(adj12).eq.0 .AND. i_coord_recover.eq.1)then
             do i2=1,5,1
                 do i1=1,n,1
@@ -2222,7 +2221,7 @@ c230618
 c120520 if(nreac(4).gt.nreaco(4) .or. nreac(6).gt.nreaco(6)
 c120520      c   .or. nreac(7).gt.nreaco(7))then   ! 020512 010518
 c020512 for inela. processes 4,6,and 7
-c120520 call coales(iii,neve,nout,nap,nat,nzp,nzt,1)   !Lei20230825
+c120520 call coales(iii,neve,nout,nap,nat,nzp,nzt,1)   ! 280825 Lei
 c120520 else   ! 020512 010518
 c       otherwise
 
@@ -2693,7 +2692,7 @@ c-------------------------------------------------------------------------------
 c-------------------------------------------------------------------------------
 c---------------------------   Coalescence  Model  -----------------------------
         if(adj12.ne.0)then
-        call coales(iii,neve,nout,nap,nat,nzp,nzt,1)   ! coalescence Lei20230825
+        call coales(iii,neve,nout,nap,nat,nzp,nzt,1)   ! 280825 Lei
 c300623 goto 333   ! 300623 Lei
         endif
 c---------------------------   Coalescence  Model  -----------------------------
@@ -3127,8 +3126,8 @@ c190    format(f10.4,I7)   ! sa
 c191    format(I6,4(1x,e15.7))   ! sa
 
 c       analyses the event on-line
-        call analy(nmin,nminf,ncha,nchaf,yOrEta)   ! 281219 140223 Lei ! in analy.f   !Lei20230828 parp22 -> yOrEta
-        call analy_parton(yOrEta)   ! 300623 Lei   ! in analy.f   !Lei20230828 parp22 -> yOrEta
+        call analy(nmin,nminf,ncha,nchaf,yOrEta)   ! 281219 140223 280823 Lei ! In analy.f
+        call analy_parton(yOrEta)   ! 300623 Lei   ! 280823 Lei ! In analy.f
 c       sum over events
         dnmin=dnmin+nmin
         dnminf=dnminf+nminf
@@ -3149,7 +3148,7 @@ c120119
         stime_par=stime_par+time_par
         stime_had=stime_had+time_had
 c120119
-        call prt_sgam(0,egam,4)   !Lei20230819
+        call prt_sgam(0,egam,4)   ! 280819 Lei
         segam=segam+egam   ! 080419
         segam1=segam1+egam1   ! 080419
         segam2=segam2+egam2   ! 080419
@@ -3229,16 +3228,16 @@ c       averaged ovr events
         dnchao=dncha/flaa
         dnchafo=dnchaf/flaa
 c010220
-        flaa_org = flaa   !Lei20230822
+        flaa_org = flaa   ! 280822 Lei
         do kk=1,ispmax
         sbo(kk)=sbn(kk)/flaa
         sbof(kk)=sbnf(kk)/flaa
         do i1=1,40   ! 070419
         do i2=1,isdmax
-        if(i2.eq.5) flaa = 1D0  !Lei20230822
+        if(i2.eq.5) flaa = 1D0  ! 280822 Lei
         sao(i1,i2,kk)=san(i1,i2,kk)/flaa
         saof(i1,i2,kk)=sanf(i1,i2,kk)/flaa
-        if(i2.eq.5) flaa = flaa_org  !Lei20230822
+        if(i2.eq.5) flaa = flaa_org  ! 280822 Lei
         enddo
         enddo
         enddo
@@ -3366,10 +3365,10 @@ c200601
         write(10,*)'#! Nnp, Ntot, Nep='   ! 060813
         write(10,*) sknpo,sknno+skppo+sknpo,skepo   ! 060813
 c200601
-!Lei20230820B-
+c200823 Lei
         if( INT(psno).eq.1 )then
             write(10,*)'#! event averaged b, avneu, Npart_p, '
-     &               //'Npart_t, T_pt='   !Lei20230820
+     &               //'Npart_t, T_pt='   ! 200823 Lei
             write(10,*) avb,avneu,astbp,astbt,aanbin   ! 280113
         else if( INT(psno).eq.2 )then
             write(10,*)'#! psno, ave. b, N_part and N_bin ='   ! 280113
@@ -3378,7 +3377,7 @@ c200601
             write(10,*)
             write(10,*)
         end if
-!Lei20230820E-
+c200823 Lei
 
         write(10,*)"#!-------------------------------------"//
      &             "----------------------------------------"
@@ -3889,8 +3888,9 @@ c       fragmenting 'sbh' finished
 
 
         subroutine rest_hadronization
-c300623 Hadronize the rest partons ("sbe") those failed in sfm/coal by 
-c        calling two subroutines "rest_sfm" and/or "rest_coal".   ! 300623 Lei
+c300623 Lei
+c       Hadronize the rest partons ("sbe") those failed in sfm/coal by 
+c        calling two subroutines "rest_sfm" and/or "rest_coal".
         IMPLICIT DOUBLE PRECISION (A-H,O-Z)
         IMPLICIT INTEGER (I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -3935,7 +3935,7 @@ c       Appends "trs" to "sbe". (partons of inel. coll. in parcas with sfm)
         endif
 
 c       Appends "sa37" to "sbe". (partons failed in coal)
-        if( INT(adj1(12)).ne.0 .AND. nth.gt.0 )then   !Lei20230810 .eq.1 -> .ne.0
+        if( INT(adj1(12)).ne.0 .AND. nth.gt.0 )then   ! 100822 Lei .eq.1 -> .ne.0
             do ii1=1,nth,1
                 ii3 = nbe + ii1
                 do ii2=1,5,1
@@ -3978,7 +3978,8 @@ c       Appends "aaff" to "PYJETS". (dumps "aaff" into "PYJETS" in fact)
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine rest_sfm
-c300623 Hadronizes/Fragmente "sbe" with "PYEXEC".   ! 300623 Lei
+c300623 Lei
+c       Hadronizes/Fragments "sbe" with "PYEXEC".
         IMPLICIT DOUBLE PRECISION (A-H,O-Z)
         IMPLICIT INTEGER (I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -4440,7 +4441,8 @@ c       Gives proper status code, etc.
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine rest_coal
-c300623 Hadronizes/Coalesces "sbe" with "coal".   ! 300623 Lei
+c300623 Lei
+c       Hadronizes/Coalesces "sbe" with "coal".
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -4457,7 +4459,7 @@ c       PYDAT1,PYDAT2,PYDAT3 and PYJETS are the subroutines in PYTHIA.
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
         common/sa6_c/ithroq,ithrob,ich,non6_c,throe(4)
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)
-        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   !Lei20230828
+        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         common/sa36/nglu,nongu,kglu(kszj,5),pglu(kszj,5),vglu(kszj,5)
         common/sa37/nth,npadth,kth(kszj,5),pth(kszj,5),vth(kszj,5)
@@ -4537,8 +4539,8 @@ c       Energetic q (qbar) de-excitation.
 c           iflav = 1 : if source parton is quark
 c                 =-1 : if source parton is antiquark
             if(ee.gt.adj1(17))then
-                if(i_deex.eq.1) call deexcitation_EP(i1,kf0,igen,iflav)   ! in coales.f
-                if(i_deex.eq.2) call deexcitation_E(i1,kf0,igen,iflav)    ! in coales.f
+                if(i_deex.eq.1) call deexcitation_EP(i1,kf0,igen,iflav)   ! 300623 Lei In coales.f
+                if(i_deex.eq.2) call deexcitation_E(i1,kf0,igen,iflav)    ! 300623 Lei In coales.f
         if(i_deex.eq.3) call deexcitation_EP_comp_pT(i1,kf0,igen,iflav)   ! 310723 Lei
         if(i_deex.eq.4) call deexcitation_E_comp_pT(i1,kf0,igen,iflav)    ! 310723 Lei
                 if(igen.gt.0) n_deex = n_deex + 1
@@ -4707,7 +4709,8 @@ c       The inv. mass should be greater than mass of pion (~140 MeV).
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine share_p_PYJETS
-c300623 Share the lost 4-momentum in "throe_p" with particles in "PYJETS".
+c300623 Lei
+c       Share the lost 4-momentum in "throe_p" with particles in "PYJETS".
 c       The critirion is inv. m^2 > 0 and E > 0, or original inv. m^2 < 0 
 c         but the new one is closer to 0 and E > 0, after sharing.
 c       Sometimes there are junctions, which should be excluded.   ! 300623 Lei
@@ -4768,10 +4771,11 @@ c        suceeded, try another sharing (iteration).
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine share_p_sbe
-c300623 Share the lost 4-momentum in "throe_p" with particles in "PYJETS".
+c300623 Lei
+c       Share the lost 4-momentum in "throe_p" with particles in "PYJETS".
 c       The critirion is inv. m^2 > 0 and E > 0, or original inv. m^2 < 0 
 c         but the new one is closer to 0 and E > 0, after sharing.
-c       Sometimes there are junctions, which should be excluded.   ! 300623 Lei
+c       Sometimes there are junctions, which should be excluded.
 c       "throe_p" is 4-momentum accumulated before this calling.
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
@@ -4829,7 +4833,8 @@ c        suceeded, try another sharing (iteration).
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine share_p_PYJETS_sa1h
-c300623 Share the lost 4-momentum in "throe_p" with particles in "PYJETS".
+c300623 Lei
+c       Share the lost 4-momentum in "throe_p" with particles in "PYJETS".
 c       The critirion is inv. m^2 > 0 and E > 0, or original inv. m^2 < 0 
 c         but the new one is closer to 0 and E > 0, after sharing.
 c       Sometimes there are junctions, which should be excluded.   ! 300623 Lei
