@@ -2870,7 +2870,7 @@ c       Sets name of frame.
             name_frame = "FIXT"
         elseif( ifram.eq.1 .AND. pT_a.le.1D-15 .AND. pT_b.le.1D-15 )then
             name_frame = "CMS"
-c1200923 For hadrons generated from diffractive events.   !1200923 Lei
+c1200923 For hadrons generated from diffractive events.   ! 1200923 Lei
         else
             do i=1,5,1
                 P(1,i) = psa(i_a,i)
