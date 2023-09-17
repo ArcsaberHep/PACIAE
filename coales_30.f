@@ -1,4 +1,4 @@
-        subroutine coales(ijk,neve,nnout,nap,nat,nzp,nzt,i_coal)   !Lei20230825 Added i_coal.
+        subroutine coales(ijk,neve,nnout,nap,nat,nzp,nzt,i_coal)   ! 250823 Lei Added i_coal.
 c       A phenomenological coalescence model writen by Sa Ben-Hao on 04/06/2004
 c       Its input messages are in 'pyjets'   ! 220822
 c       Its storing array is 'pyjets'
@@ -8,7 +8,7 @@ c       neve: total number of runs
 c       nnout: a internal printing per nnout runs
 c       nap and nzp: atomic and charge number of projectile
 c       nat and nzt: atomic and charge number of target
-c       i_coal: with or without gluon splitting and deexcitation.   Lei20230825
+c       i_coal: with or without gluon splitting and deexcitation.    ! 250823 Lei
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -25,8 +25,8 @@ c       PYDAT1,PYDAT2,PYDAT3 and PYJETS are the subroutines in PYTHIA
         common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
         common/sa6_c/ithroq,ithrob,ich,non6_c,throe(4)
-        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 Lei2023060
-        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   !Lei20230828
+        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
+        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         common/sa36/nglu,nongu,kglu(kszj,5),pglu(kszj,5),vglu(kszj,5) ! 220822
         common/sa37/nth,npadth,kth(kszj,5),pth(kszj,5),vth(kszj,5)   ! 150922
@@ -36,18 +36,18 @@ c       PYDAT1,PYDAT2,PYDAT3 and PYJETS are the subroutines in PYTHIA
         dimension numb(3)
 
 
-        if( i_coal.eq.0 ) goto 888  !Lei20230825
+        if( i_coal.eq.0 ) goto 888  ! 250823 Lei
 
 
 c-------------------------------------------------------------------------------
 c-------------------------   Variables initialization   ------------------------
         rrp = 1.16
         nn  = 0
-        if( ijk.eq.1 )then   !Lei2023060
+        if( ijk.eq.1 )then   ! 300623 Lei
             kn = 0
             pn = 0D0
             rn = 0D0
-        endif   !Lei2023060
+        endif   ! 300623 Lei
         nout  = nnout
         imc   = INT(adj1(13))
         ibc   = INT(adj1(14))
@@ -82,7 +82,7 @@ c       It will be satisfied automatically according to the number of q and qbar
 c-------------------------------------------------------------------------------
 c------------------------   Net baryon number counting   -----------------------
 c       Conservation of net baryon.
-        netba = 0   !Lei2023060
+        netba = 0   ! 300623 Lei
         do i1=1,nbh,1 ! note: 'sbh' is hadron list before hadronization 060119
             kf   = kbh(i1,2)
             kfab = ABS(kf)
@@ -112,8 +112,8 @@ c------------------------   Net baryon number counting   -----------------------
 c-------------------------------------------------------------------------------
 
 
-!Lei2023060 g-splitting and q-deexcitation before "parcas".
-888     if( INT(adj1(12)).eq.2 .AND. i_coal.eq.1 ) goto 1000   !Lei20230825
+c300623 g-splitting and q-deexcitation before "parcas".   ! 300623
+888     if( INT(adj1(12)).eq.2 .AND. i_coal.eq.1 ) goto 1000   ! 250823 Lei
 
 
 c-------------------------------------------------------------------------------
@@ -130,14 +130,14 @@ c       So far, the parton list ('pyjets') is composed of q and qbar only.
         adj17 = adj1(17)
 c200222 adj17=max(4.0,adj17) ! 070612, yan
 
-c00623 Shares 4-momentum in "throe_p" among partons.   !Lei2023060
-        call share_p_PYJETS   !Lei2023060
+c300623 Shares 4-momentum in "throe_p" among partons.   ! 300623 Lei
+        call share_p_PYJETS   ! 300623 Lei
 c-----------------------------   Gluon splitting   -----------------------------
 c-------------------------------------------------------------------------------
 
 
-!Lei20230825 Debug mode.
-        if( INT(adj1(12)).eq.3 ) goto 1000   !Lei2023070 w/ g-splitting and w/o deexc.
+c250823 Debug mode.   ! 250823 Lei
+        if( INT(adj1(12)).eq.3 ) goto 1000   ! 310723 Lei w/ g-splitting and w/o deexc.
 
 
 c-------------------------------------------------------------------------------
@@ -158,15 +158,15 @@ c280822 energetic q (qbar) de-excitation
 c           iflav = 1 : if source parton is quark
 c                 =-1 : if source parton is anti-quark
             if( ee.gt.adj17 )then
-                if(i_deex.eq.1) call deexcitation_EP(i1,kf0,igen,iflav)   !Lei2023060
-                if(i_deex.eq.2) call deexcitation_E(i1,kf0,igen,iflav)    !Lei2023060
-        if(i_deex.eq.3) call deexcitation_EP_comp_pT(i1,kf0,igen,iflav)   !Lei2023071
-        if(i_deex.eq.4) call deexcitation_E_comp_pT(i1,kf0,igen,iflav)    !Lei2023071
-                if(igen.gt.0) n_deex = n_deex + 1   !Lei2023060
+                if(i_deex.eq.1) call deexcitation_EP(i1,kf0,igen,iflav)   ! 300623 Lei
+                if(i_deex.eq.2) call deexcitation_E(i1,kf0,igen,iflav)    ! 300623 Lei
+        if(i_deex.eq.3) call deexcitation_EP_comp_pT(i1,kf0,igen,iflav)   ! 310723 Lei
+        if(i_deex.eq.4) call deexcitation_E_comp_pT(i1,kf0,igen,iflav)    ! 310723 Lei
+                if(igen.gt.0) n_deex = n_deex + 1   ! 300623 Lei
                 igens = igens + 1   ! times of 'call deexcitation'
             endif
 c           igen : number of generations per source q (qbar)
-c00623 Lei2023060B---
+c300623 Lei
 c           Updates n0 and does deexcitation for newly produced qqbar pair
         if( i1.eq.n0 .AND. N.gt.n0 .AND. i_daught_gen.lt.i_deex_gen)then
 c         i_deex_gen=0 means no deexcitation for any newly produced qqbar pairs.
@@ -183,19 +183,19 @@ c         i_deex_gen=999 means always do deexcitation for newly produced qqbar p
             n0 = N
             goto 700
         end if
-c00623 Lei2023060E---
+c300623 Lei
 800     enddo   ! 280822 continue->enddo
 900     continue
 c       energetic q (qbar) de-excitation, finished.
 
-c00623 Shares the 4-momentum in 'throe_p' among partons.   !Lei2023060
-        call share_p_PYJETS   !Lei2023060
+c300623 Shares the 4-momentum in 'throe_p' among partons.   ! 300623 Lei
+        call share_p_PYJETS   ! 300623 Lei
 c220122
 c---------------------------   Quark deexcitation   ----------------------------
 c-------------------------------------------------------------------------------
 
 
-1000    if( i_coal.eq.0 ) return  !Lei2023060 For adj12 = 2
+1000    if( i_coal.eq.0 ) return  ! 300623 Lei For adj12 = 2
 
 
 c-------------------------------------------------------------------------------
@@ -215,7 +215,7 @@ c        i.e. move q to the end.   ! 220822
             if( kfab.lt.7 .and. kf.gt.0 )then   ! q, consider d, u, s, c, b, t
                 N = N + 1
                 numb(3) = numb(3) + 1
-                do i4=1,5,1   !Lei2023060 Lei 4 -> 5
+                do i4=1,5,1   ! 300623 Lei Lei 4 -> 5
                     K(N,i4) = K(j,i4)
                     P(N,i4) = P(j,i4)
                     V(N,i4) = V(j,i4)
@@ -234,9 +234,9 @@ c        i.e. move q to the end.   ! 220822
         n2 = numb(2)
         n3 = N
 c       Order the qbar according to energy from the maximal to minimal.
-c00623 call eord(n1+1,n2)   !Lei2023060
+c300623 call eord(n1+1,n2)   ! 300623 Lei
 c       Order the q according to energy from the maximal to minimal.
-c00623 call eord(n2+1,n3)   !Lei2023060
+c300623 call eord(n2+1,n3)   ! 300623 Lei
 c-----------------------------   Parton sorting   ------------------------------
 c-------------------------------------------------------------------------------
 
@@ -358,7 +358,7 @@ c        with i-th quark configuration of baryon
 c       prob(i,1), prob(i,2): probability of baryon
 c       amasb(i,1), amasb(i,2): mass of baryon
 
-c00623 New table.   !Lei2023060
+c300623 New table.   ! 300623 Lei
 c***********************************************************************
 c       imc: 26 -> 30; ibc: 18 -> 45
 c       Meson  : 20 + 20 + 6 + 4 = 50  (meson  + anti- + onium)
@@ -477,7 +477,7 @@ c       Probability of baryon.
      4       0.,   0.,   0.,   0.,   0.,                                 ! 50
      5      30*0. /                                                      ! 80
 c***********************************************************************
-c00623 New table.   !Lei2023060
+c300623 New table.   ! 300623 Lei
 
         do i1=1,imc
             kf1=kfh(i1,1)
@@ -554,7 +554,7 @@ c       Parton coalescence (hadronization)
 c       n1 : total number of partons (q & qbar only)
 c       nqb : total number of qbar (qbar is ordered before q)
 c       ijk : the run number
-c       iphas: = 1, complete phase space constraint  !Lei2023060
+c       iphas: = 1, complete phase space constraint  ! 300623 Lei
 c              = 2, position constraint only
 c              = 3, momentum constraint only
 c       netba: number of baryons to be first generated keeping
@@ -575,7 +575,7 @@ C...Double precision and integer declarations.
         common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
         common/sa6_c/ithroq,ithrob,ich,non6_c,throe(4)
-        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104   Lei2023060
+        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         common/sa37/nth,npadth,kth(kszj,5),pth(kszj,5),vth(kszj,5)   ! 150922
         dimension pc(4),rc(3),iar(3),rcp(3)
@@ -585,18 +585,18 @@ C...Double precision and integer declarations.
 
 c-------------------------------------------------------------------------------
 c-------------------------   Variables initialization   ------------------------
-c00623 Moved from 'coales' to here.   !Lei2023060
+c300623 Moved from 'coales' to here.   ! 300623 Lei
         ithroq = 0
         ithrob = 0
         ich    = 0
         throe  = 0D0
 c       Arrays for partons thrown away.
         nth = 0
-        if( ijk.eq.1 )then   !Lei2023060
+        if( ijk.eq.1 )then   ! 300623 Lei
             kth = 0
             pth = 0D0
             vth = 0D0
-        endif   !Lei2023060
+        endif   ! 300623 Lei
 c-------------------------   Variables initialization   ------------------------
 c-------------------------------------------------------------------------------
 
@@ -674,7 +674,7 @@ c       Fail to compose ii1 into a meson, either. Throw away the qbar.
               kk  = K(ii1,2)
               ich = ich + PYCHGE(kk)
               kth(nth,2) = kk
-              vth(nth,5) = V(ii1,5)   !Lei20230825
+              vth(nth,5) = V(ii1,5)   ! 250823 Lei
               pth(nth,5) = P(ii1,5)
               do i2=1,4
                 throe(i2)   = throe(i2) + P(ii1,i2)
@@ -683,7 +683,7 @@ c       Fail to compose ii1 into a meson, either. Throw away the qbar.
               enddo
 c       Move parton list one step downward from ii1+1 to n1.
               call updad_pyj(n1,ii1+1,1)
-              N   = N   - 1   !Lei2023060
+              N   = N   - 1   ! 300623 Lei
               n1  = n1  - 1
               nqb = nqb - 1
               goto 300
@@ -710,7 +710,7 @@ c       Fail to compose ii1 into an anti-baryon, either. Throw away the qbar.
               kk  = K(ii1,2)
               ich = ich + PYCHGE(kk)
               kth(nth,2) = kk
-              vth(nth,5) = V(ii1,5)   !Lei20230825
+              vth(nth,5) = V(ii1,5)   ! 250823 Lei
               pth(nth,5) = P(ii1,5)
               do i2=1,4
                 throe(i2)   = throe(i2) + P(ii1,i2)
@@ -719,7 +719,7 @@ c       Fail to compose ii1 into an anti-baryon, either. Throw away the qbar.
               enddo
 c       Move parton list one step downward from ii1+1 to n1.
               call updad_pyj(n1,ii1+1,1)
-              N   = N   - 1   !Lei2023060
+              N   = N   - 1   ! 300623 Lei
               n1  = n1  - 1
               nqb = nqb - 1
               goto 300
@@ -744,8 +744,8 @@ c       Throw away those qbar remained.
           kk  = K(i1,2)
           ich = ich + PYCHGE(kk)
           kth(nth,2) = kk
-          vth(nth,5) = V(i1,5)   !Lei20230825 Fixed from V(nth, to vth(nth
-          pth(nth,5) = P(i1,5)   !Lei20230825
+          vth(nth,5) = V(i1,5)   ! 250823 Lei Fixed from V(nth, to vth(nth
+          pth(nth,5) = P(i1,5)   ! 250823 Lei
           do i2=1,4
             throe(i2)   = throe(i2) + P(i1,i2)
             pth(nth,i2) = P(i1,i2)
@@ -754,7 +754,7 @@ c       Throw away those qbar remained.
         enddo
 c       Move parton list nqb steps downward from nqb+1 to n1.
         call updad_pyj(n1,nqb+1,nqb)
-        N   = N  - nqb   !Lei2023060
+        N   = N  - nqb   ! 300623 Lei
         n1  = n1 - nqb
         nqb = 0
 
@@ -775,14 +775,14 @@ c       Throw away remained q.   150922
           ich = ich + PYCHGE(kk)
           kth(nth,2) = K(i1,2)
           vth(nth,5) = V(i1,5)
-          pth(nth,5) = P(i1,5)   !Lei20230825
+          pth(nth,5) = P(i1,5)   ! 250823 Lei
           do i2=1,4
             throe(i2)   = throe(i2) + P(i1,i2)
             pth(nth,i2) = P(i1,i2)
             vth(nth,i2) = V(i1,i2)
           enddo
         enddo
-        N   = nqb   !Lei20230825
+        N   = nqb   ! 250823 Lei
         n1  = nqb
 c-------------------------   Failed quarks treatment   -------------------------
 c-------------------------------------------------------------------------------
@@ -793,7 +793,7 @@ c-------------------------------------------------------------------------------
 
 c-------------------------------------------------------------------------------
 c---------------------------   List reconstructing   ---------------------------
-c00623 Lei2023060
+c300623 Lei
 c       Reconstruct parton list for calling 'coal' again.
 c       Sort the parton list ('sa37') in order of qbar and q.
         jh = nth
@@ -839,14 +839,14 @@ c       'sa37' -> 'PYJETS'
         ithrob = 0
         ich    = 0
         throe  = 0.
-c00623 Lei2023060
+c300623 Lei
 c---------------------------   List reconstructing   ---------------------------
 c-------------------------------------------------------------------------------
 
 
 c-------------------------------------------------------------------------------
 c--------------------------   Final coalescence try   --------------------------
-c00623 Lei2023060
+c300623 Lei
 c       Final try for meson production. No more than 50 times.
         if( i_qbar.gt.0 .AND. n_q.gt.0 )then
             do i=1,50,1
@@ -879,14 +879,14 @@ c       Final try for anti-baryon production. No more than 50 times.
             end do
         if(i.eq.50) write(*,*) "Final an_barpro failed! ijk, N" ,ijk,N
         end if
-c00623 Lei2023060
+c300623 Lei
 c--------------------------   Final coalescence try   --------------------------
 c-------------------------------------------------------------------------------
 
 
 c-------------------------------------------------------------------------------
 c------------------------------   Data dumping   -------------------------------
-c00623 Lei2023060
+c300623 Lei
 c       'PYJETS' -> 'sa37'
         if(N.gt.0)then
             do i=1,N,1
@@ -909,7 +909,7 @@ c       'PYJETS' -> 'sa37'
         else
             nth = 0
         end if
-c00623 Lei2023060
+c300623 Lei
 c------------------------------   Data dumping   -------------------------------
 c-------------------------------------------------------------------------------
 
@@ -1111,7 +1111,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c       To compose baryon.
 c       n1 : total number of partons (q & qbar)
 c       nqb : total number of qbar (qbar is ordered before q)
-c       iphas: = 1, complete phase space constraint  !Lei2023060
+c       iphas: = 1, complete phase space constraint  ! 300623 Lei
 c              = 2, position constraint only
 c              = 3, momentum constraint only
 c       ibarp: statistic number of baryon
@@ -1126,7 +1126,7 @@ C...Double precision and integer declarations.
         common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
         common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
-        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104   Lei2023060
+        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         dimension rcp(3)
 
@@ -1186,7 +1186,7 @@ c       Give proper variables to the primary baryon.
                 pnnn = SQRT(pnnmm)
                 pn(nn,4)   = pnnn
                 ! dele     = sume - pnnn
-                throe_p(4) = throe_p(4) + sume-pnnn   !Lei2023060
+                throe_p(4) = throe_p(4) + sume-pnnn   ! 300623 Lei
 
 c       Produced hadron is arranged among constituent partons randomly.
                 pyrx = PYR(1)
@@ -1199,21 +1199,21 @@ c       Produced hadron is arranged among constituent partons randomly.
 c       Move parton list one step downward from i3+1 to n1.
 411             call updad_pyj(n1,i3+1,1)
                 n1 = n1 - 1
-                N  = N  - 1   !Lei2023060
+                N  = N  - 1   ! 300623 Lei
 
 c       Move parton list one step downward from i2+1 to n1.
                 call updad_pyj(n1,i2+1,1)
                 n1 = n1 - 1
-                N  = N  - 1   !Lei2023060
+                N  = N  - 1   ! 300623 Lei
 
 c       Move parton list one step downward from i1+1 to n1.
                 call updad_pyj(n1,i1+1,1)
                 n1 = n1 - 1
-                N  = N  - 1   !Lei2023060
+                N  = N  - 1   ! 300623 Lei
 
-c00623 Share the surplus 4-momentum in throe_p.   !Lei2023060
-                ! call share_p_PYJETS   !Lei2023060
-                call share_p_PYJETS_sa1h   !Lei2023060
+c300623 Share the surplus 4-momentum in throe_p.   ! 300623 Lei
+                ! call share_p_PYJETS   ! 300623 Lei
+                call share_p_PYJETS_sa1h   ! 300623 Lei
                 if( iway.eq.1 )then
                     if( nba.lt.netba ) goto 400 ! Recycle all the partons remained, do again.
                     if( nba.eq.netba ) return
@@ -1240,7 +1240,7 @@ c       To compose an anti-baryon.
 c       n1 : total number of partons (q & qbar)
 c       nqb : total number of qbar (qbar is ordered before q)
 c       i1: anti-quark wanted to compose anti-baryon
-c       iphas: = 1, complete phase space constraint  !Lei2023060
+c       iphas: = 1, complete phase space constraint  ! 300623 Lei
 c              = 2, position constraint only
 c              = 3, momentum constraint only
 c       ibarm: statistic number of anti-baryon
@@ -1257,7 +1257,7 @@ C...Double precision and integer declarations.
         common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
         common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
-        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104   Lei2023060
+        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         dimension rcp(3)
 
@@ -1326,7 +1326,7 @@ c       Give proper variables to the primary anti-baryon.
         pnnn = SQRT(pnnmm)
         pn(nn,4)   = pnnn
         ! dele     = sume - pnnn
-        throe_p(4) = throe_p(4) + sume-pnnn   !Lei2023060
+        throe_p(4) = throe_p(4) + sume-pnnn   ! 300623 Lei
 
 c       Produced hadron is arranged among contituent partons randomly.
         pyrx = PYR(1)
@@ -1342,22 +1342,22 @@ c       Move parton list one step downward from i3+1 to n1.
         if( i2.gt.i3 ) i2 = i2 - 1
         nqb = nqb - 1
         n1  = n1  - 1
-        N   = N   - 1   !Lei2023060
+        N   = N   - 1   ! 300623 Lei
 
 c       Move parton list one step downward from i2+1 to n1.
         call updad_pyj(n1,i2+1,1)
         if( i1.gt.i2 ) i1 = i1 - 1
         nqb = nqb - 1
         n1  = n1  - 1
-        N   = N   - 1   !Lei2023060
+        N   = N   - 1   ! 300623 Lei
 
 c       Move parton list one step downward from i1+1 to n1.
         call updad_pyj(n1,i1+1,1)
         nqb = nqb - 1
         n1  = n1  - 1
-        N   = N   - 1   !Lei2023060
+        N   = N   - 1   ! 300623 Lei
 
-c00623 Share the surplus 4-momentum in throe_p.   !Lei2023060
+c300623 Share the surplus 4-momentum in throe_p.   ! 300623 Lei
         ! call share_p_PYJETS
         call share_p_PYJETS_sa1h
 c       iway=1: creat an anti-baryon and return
@@ -1384,7 +1384,7 @@ c       Compose a meson.
 c       n1 : total number of partons (q & qbar)
 c       nqb : total number of qbar (qbar is ordered before q)
 c       i1: anti-quark wanted to compose a meson
-c       iphas: = 1, complete phase space constraint  !Lei2023060
+c       iphas: = 1, complete phase space constraint  ! 300623 Lei
 c              = 2, position constraint only
 c              = 3, momentum constraint only
 c       imes: statistic number of meson
@@ -1399,7 +1399,7 @@ C...Double precision and integer declarations.
         common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
         common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
-        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104   Lei2023060
+        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         dimension rcp(3)
 
@@ -1457,7 +1457,7 @@ c       Give proper variables to the primary meson.
         pnnn = SQRT(pnnmm)
         pn(nn,4)   = pnnn
         ! dele     = sume - pnnn
-        throe_p(4) = throe_p(4) + sume-pnnn   !Lei2023060
+        throe_p(4) = throe_p(4) + sume-pnnn   ! 300623 Lei
 
 c       Produced hadron is set in between contituent partons randomly.
         pyrx = PYR(1)
@@ -1469,15 +1469,15 @@ c       Produced hadron is set in between contituent partons randomly.
 c       Move parton list one step downward since i2+1.
 111     call updad_pyj(n1,i2+1,1)
         n1 = n1 - 1
-        N  = N  - 1   !Lei2023060
+        N  = N  - 1   ! 300623 Lei
 
 c       Move parton list one step downward since i1+1.
         call updad_pyj(n1,i1+1,1)
         nqb = nqb - 1
         n1  = n1  - 1
-        N   = N   - 1   !Lei2023060
+        N   = N   - 1   ! 300623 Lei
 
-c00623 Share the surplus 4-momentum in throe_p.   !Lei2023060
+c300623 Share the surplus 4-momentum in throe_p.   ! 300623 Lei
         ! call share_p_PYJETS
         call share_p_PYJETS_sa1h
         if( nme.eq.1 ) return
@@ -1564,7 +1564,7 @@ c090700
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccrcccccccccccccccc
         subroutine deexcitation_E(ii,kf0,igen,iflav)
-c00623 Renamed from orginal 'ffm' and some modifications were made.   !Lei2023060
+c300623 Renamed from orginal 'ffm' and some modifications were made.   ! 300623 Lei
 c       qqbar pair generation according to energy conservation ! 200223
 c280822 i.e. energetic q (qbar) de-exciatation
 c       ii : the order number of source quark (or anti-quark)
@@ -1584,7 +1584,7 @@ C...Double precision and integer declarations.
         common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104
-        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   !Lei20230828
+        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         dimension p0(4),p1(4),p1c(4),p00(4),rc(3),rr(3),pnn(kszj,5),
      c   peo(5),pdec(20,5)   ! 090922
@@ -1632,7 +1632,7 @@ c       Sample the flavor (mass) of generated q (qbar)   260223
         px_0  = p0(1)
         py_0  = p0(2)
 c       Sample transverse momentum of created qqbar pair by "PAPTDI" in coalles.f .
-        ! i_pT_max = 0   !Lei20230828
+        ! i_pT_max = 0   ! 280823 Lei
         call PAPTDI(kf0,kf1,kf2,px_0,py_0,pT_0,px,py,pT,i_pT,i_pT_max,x)
         p1(1) = px   ! of created qqbar pair
         p1(2) = py   ! of created qqbar pair
@@ -1782,7 +1782,7 @@ c       Re-calculate E for the remenant, let its inv. mass >= 0.
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccrcccccccccccccccc
         subroutine deexcitation_EP(ii,kf0,igen,iflav)
-c00623 Rename from orginal 'ffm' and some modifications were made.   !Lei2023060
+c300623 Rename from orginal 'ffm' and some modifications were made.   ! 300623 Lei
 c       qqbar pair generation according to light-cone variable !
 c280822 i.e. energetic q (qbar) de-exciatation
 c       ii : the order number of source quark (or anti-quark)
@@ -1802,7 +1802,7 @@ C...Double precision and integer declarations.
         common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104
-        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   !Lei20230828
+        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         dimension p0(4),p1(4),p1c(4),p00(4),rc(3),rr(3),pnn(kszj,5),
      c   peo(5),pdec(20,5)   ! 090922
@@ -1853,7 +1853,7 @@ c       Sample the flavor (mass) of generated  q (qbar).   260223
         px_0  = p0(1)
         py_0  = p0(2)
 c       Sample transverse momentum of created qqbar pair by "PAPTDI" in coales.f .
-        ! i_pT_max = 0   !Lei20230828
+        ! i_pT_max = 0   ! 280823 Lei
         call PAPTDI(kf0,kf1,kf2,px_0,py_0,pT_0,px,py,pT,i_pT,i_pT_max,x)
         p1(1) = px   ! of created qqbar pair
         p1(2) = py   ! of created qqbar pair
@@ -2008,7 +2008,7 @@ c       Re-calculates E for the remenant, let its inv. mass >= 0.
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccrcccccccccccccccc
         subroutine deexcitation_EP_comp_pT(ii,kf0,igen,iflav)
-c00623 Rename from orginal 'ffm' and some modifications were made.   !Lei2023060
+c300623 Rename from orginal 'ffm' and some modifications were made.   ! 300623 Lei
 c       qqbar pair generation according to light-cone variable !
 c      Assuming local pT compensation, i.e. px(-px) and py(-py) for q(qbar), 
 c       vice versa. Sample z for qqbar.
@@ -2030,7 +2030,7 @@ C...Double precision and integer declarations.
         common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104
-        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   !Lei20230828
+        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         dimension p0(4),p1(4),p1c(4),p00(4),rc(3),rr(3),pnn(kszj,5),
      c   peo(5),pdec(20,5)   ! 090922
@@ -2081,7 +2081,7 @@ c       Sample the flavor (mass) of generated  q (qbar).   260223
         px_0  = p0(1)
         py_0  = p0(2)
 c       Sample transverse momentum of created qqbar pair by "PAPTDI" in coales.f .
-        ! i_pT_max = 0   !Lei20230828
+        ! i_pT_max = 0   ! 280823 Lei
         call PAPTDI(kf0,kf1,kf2,px_0,py_0,pT_0,px,py,pT,i_pT,i_pT_max,x)
         px_1 =  px   ! Local pT compensation.
         py_1 =  py
@@ -2246,7 +2246,7 @@ c       Re-calculates E for the remenant, let its inv. mass >= 0.
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccrcccccccccccccccc
         subroutine deexcitation_E_comp_pT(ii,kf0,igen,iflav)
-c00623 Renamed from orginal 'ffm' and some modifications were made.   !Lei2023060
+c300623 Renamed from orginal 'ffm' and some modifications were made.   ! 300623 Lei
 c       qqbar pair generation according to energy conservation ! 200223
 c      Assuming local pT compensation, i.e. px(-px) and py(-py) for q(qbar), 
 c       vice versa. Sample z for qqbar.
@@ -2268,7 +2268,7 @@ C...Double precision and integer declarations.
         common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104
-        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   !Lei20230828
+        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         dimension p0(4),p1(4),p1c(4),p00(4),rc(3),rr(3),pnn(kszj,5),
      c   peo(5),pdec(20,5)   ! 090922
@@ -2316,7 +2316,7 @@ c       Sample the flavor (mass) of generated q (qbar)   260223
         px_0  = p0(1)
         py_0  = p0(2)
 c       Sample transverse momentum of created qqbar pair by "PAPTDI" in coalles.f .
-        ! i_pT_max = 0   !Lei20230828
+        ! i_pT_max = 0   ! 280823 Lei
         call PAPTDI(kf0,kf1,kf2,px_0,py_0,pT_0,px,py,pT,i_pT,i_pT_max,x)
         px_1 =  px   ! Local pT compensation.
         py_1 =  py
@@ -2476,7 +2476,7 @@ c       Re-calculate E for the remenant, let its inv. mass >= 0.
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine funcz(zz,ij)   ! 081222
-c00623 This subroutine has been rewrote and fixed.   !Lei2023060
+c300623 This subroutine has been rewrote and fixed.   ! 300623 Lei
 c       Sample daughter energy fraction, zz, from mother according to 
 c        fragmentation function by selecting sample method.
 c       adj1(29)=1 : Lund string fragmentation function   ! 140223 Lei
@@ -2497,8 +2497,8 @@ C...Double precision and integer declarations.
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
         common/sa1/kjp21,non1,bp,iii,neve,nout,nosc   ! 081222
-        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   !Lei20230828
-        common/local_fmax/ fmax_value(5)   !Lei2023060
+        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
+        common/local_fmax/ fmax_value(5)   ! 300623 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
 
 c       Sets parameters.
@@ -2713,20 +2713,20 @@ c140223 Lei
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine break_f(eg,kf,amq)
-!Lei20230822 Rewritten to use probability ratios directly.
+c220823 Rewritten to use probability ratios directly.   ! 220823 Lei
 c       sample flavor (mass) of generated qqbar pair
 c       eg: energy of original q or qbar
 c       kf (amq): flavor code (mass) of generated quark
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)   !Lei20230825
+        COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)   ! 250823 Lei
         common/sa1/kjp21,non1,bp,iii,neve,nout,nosc   ! 081222
         common/sa24/adj1(40),nnstop,non24,zstop   ! 170205
-        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   !Lei20230829
+        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei
 
-        kf  = 0   !Lei20230822
-        amq = 0D0  !Lei20230822
+        kf  = 0
+        amq = 0D0
 c       Defined here 1-6: u, d, s, c, b, t
 c       In PYTHIA,   1-6: d, u, s, c, b, t. Note d and u.
         if( iii.eq.1 )then
@@ -2872,11 +2872,11 @@ c       moves gluons from 'pyjets' to 'sa36'
         common/sa36/nglu,nongu,kglu(kszj,5),pglu(kszj,5),vglu(kszj,5)
         common/sa1/kjp21,non1,bp,iii,neve,nout,nosc
         nglu=0
-        if(iii.eq.1)then   !Lei2023060
+        if(iii.eq.1)then   ! 300623 Lei
         kglu=0
         pglu=0.
         vglu=0.
-        endif   !Lei2023060
+        endif   ! 300623 Lei
         jb=0
 201     do i1=jb+1,N
         kf=K(i1,2)
@@ -2924,7 +2924,7 @@ c        filling in 'pyjets'
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
-        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104   Lei2023060
+        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
         common/sa24/adj1(40),nnstop,non24,zstop   ! 170205
         common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio   ! 080104 220110
         common/sa36/nglu,nongu,kglu(kszj,5),pglu(kszj,5),vglu(kszj,5) 
@@ -2932,20 +2932,20 @@ c        filling in 'pyjets'
         amu=pymass(2)   ! 271022
         amuu=2*amu   ! 271022
 c       throw away g with energy<amuu
-        jb=1       !Lei2023060
-2010    continue   !Lei2023060
-        do i1=jb,nglu,1   !Lei2023060 1 -> jb
+        jb=1       ! 300623 Lei
+2010    continue   ! 300623 Lei
+        do i1=jb,nglu,1   ! 300623 Lei 1 -> jb
         eg=pglu(i1,4)
         if(eg.lt.amuu)then
         do i2=1,4
-        throe_p(i2)=throe_p(i2)+pglu(i1,i2)   !Lei2023060 Replace ppsa by throe_p.
+        throe_p(i2)=throe_p(i2)+pglu(i1,i2)   ! 300623 Lei Replace ppsa by throe_p.
         enddo
-c00623 Lei2023060
+c300623 Lei
         if(i1.eq.nglu)then
             nglu = nglu - 1
             goto 2020
         endif
-c00623 Lei2023060
+c300623 Lei
 c       move particle list ('sa36') one step downward from i1+1 to nglu
         do jj=1,5
         do j=i1+1,nglu
@@ -2955,11 +2955,11 @@ c       move particle list ('sa36') one step downward from i1+1 to nglu
         enddo
         enddo
         nglu=nglu-1
-        jb=i1       !Lei2023060
-        goto 2010   !Lei2023060
+        jb=i1       ! 300623 Lei
+        goto 2010   ! 300623 Lei
         endif
         enddo
-2020    continue    !Lei2023060
+2020    continue    ! 300623 Lei
 
 c       g (in 'sa36') -> qq_{bar} (as a string filling in 'pyjets')
 100     do i1=1,nglu   ! do loop over gluons
@@ -3009,19 +3009,19 @@ c       kf1,kf2: flavor codes of broken quarks
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
-        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104   Lei2023060
+        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
         common/sa36/nglu,nongu,kglu(kszj,5),pglu(kszj,5),vglu(kszj,5)
         dimension pi(4),pj(4),ps(4),pp(20,5),bb(3)
         am1=pymass(kf1)
         am2=pymass(kf2)
         pp(1,5)=am1   ! mass of first broken quark
         pp(2,5)=am2   ! mass of second broken quark
-c00623 Lei2023060
-        ! if( P(ii,5).le.1D-15 )then   !Lei2023060 Zero mass approximation.
+c300623 Lei
+        ! if( P(ii,5).le.1D-15 )then   ! Zero mass approximation.
         !     pp(1,5) = 0D0
         !     pp(2,5) = 0D0
-        ! end if   !Lei2023060
-c00623 Lei2023060
+        ! end if
+c300623 Lei
 c       pp : four momenta & mass of broken quarks, local variable
         do i1=1,4
         ps(i1)=pglu(ii,i1)
@@ -3081,7 +3081,7 @@ c160822
         enddo
         P(N+2,5)=am2
 
-        do i2=1,4   !Lei2023060 Collects lost 4-momentum.
+        do i2=1,4   ! 300623 Lei Collects lost 4-momentum.
         throe_p(i2) = throe_p(i2) + ( ps(i2) - P(N+1,i2) - P(N+2,i2) )
         enddo
 
@@ -3150,7 +3150,7 @@ c       write(9,*)peo,ich1/3   !
 
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        subroutine prt_sa37(nn,cc)   ! Lei2023060
+        subroutine prt_sa37(nn,cc)   ! 300623 Lei
 c       print particle list and sum of momentum and energy
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
@@ -3195,9 +3195,9 @@ c       Generate p_T and azimuthal angle, gives p_x and p_y.
         pt=-parj(21)*log(max(1d-10,PYR(1)))
         phi=paru(2)*PYR(1)
 c       randomly sample [px,py] on circle of sphere with radius pt
-        px=pt*cos(phi)*(1+smadel)   !Lei2023060
-        py=pt*sin(phi)*(1-smadel)   !Lei2023060
-        pt=SQRT(px*px+py*py)        !Lei2023060
+        px=pt*cos(phi)*(1+smadel)   ! 300623 Lei
+        py=pt*sin(phi)*(1-smadel)   ! 300623 Lei
+        pt=SQRT(px*px+py*py)        ! 300623 Lei
         return
         end
 
@@ -3205,10 +3205,10 @@ c       randomly sample [px,py] on circle of sphere with radius pt
 
 C*********************************************************************
 C...PAPTDI
-c00623 Lei2023060
 C...Generates transverse momentum according to a Gaussian/Exponential/Random.
  
         SUBROUTINE PAPTDI(KF0,KF1,KF2,PX0,PY0,PT0,PX,PY,PT,i_pT,i_max,x)
+c300623 Lei
 c       i_pT: (D=1) the pT sampling method of the daughter qqbar pair in coal
 c             = 1, Gaussian px and py with width PARJ(21)
 c             = 2, Exponential px and py with width PARJ(21)
@@ -3273,7 +3273,7 @@ C...PX, PY constrainting and re-sampling
             if(PX0.gt.0. .AND. PX.gt.PX0) goto 100
             if(PX0.lt.0. .AND. PX.lt.PX0) goto 100
             if(PY0.gt.0. .AND. PY.gt.PY0) goto 100
-            if(PY0.lt.0. .AND. PY.lt.PY0) goto 100   !Lei20230906 fixed .gt. -> .lt., 200 -> 100
+            if(PY0.lt.0. .AND. PY.lt.PY0) goto 100   ! 060923 Lei fixed .gt. -> .lt., 200 -> 100
         endif
  
 C...Samples p_x and p_y from given PX0 and PY0 with different random factors.

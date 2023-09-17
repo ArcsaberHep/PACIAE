@@ -12,9 +12,9 @@ c       jjj: jjj-th loop interaction in a event   ! 180520
         PARAMETER (KSZJ=80000,MSCA=20000,MCLIS=280000)   ! 051122
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)   ! 051122
         COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)  ! 240503
-        COMMON/PYCIDAT2/KFMAXT,NONCI2,PARAM(20),WEIGH(600)   !Lei2023060
+        COMMON/PYCIDAT2/KFMAXT,NONCI2,PARAM(20),WEIGH(600)   ! 300623 Lei
         common/sa1/kjp21,non1,bp,iiii,neve,nout,nosc
-        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   !Lei2023060
+        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   ! 300623 Lei
         common/sa12/ppsa(5),nchan,nsjp,sjp,ttaup,taujp   ! 120505
         common/sa24/adj1(40),nnstop,non24,zstop
         common/sa33/smadel,ecce,secce,parecc,iparres   ! 080520
@@ -30,36 +30,36 @@ c       tc   : the collision time of colliding pair
 c       ic,jc: line number of colliding particles
 c       n0: the n before current collision
 c       pi,pj: four momentum of colliding particles
-c       taup(i) : formation time of particle i.   Lei2023060
-c       ishp(i)=1 if i-th particle inside the simulated volume   Lei2023060
-c              =0 if i-th particle outside the simulated volume   Lei2023060
+c       taup(i) : formation time of particle i.   ! 300623 Lei
+c       ishp(i)=1 if i-th particle inside the simulated volume   ! 300623 Lei
+c              =0 if i-th particle outside the simulated volume   ! 300623 Lei
         dimension rpo(kszj,4),ppo(kszj,4)    ! 051122
 c051122 rpo,ppo: parton four coordinate before Neuton motion, four momentum 
 c051122  before energy loss
 c151203 iijk=0   ! 120603
         tl0=adj1(24)
 c       tl0: cut off virtuality of time-like branching, i. e. Mu0**2
-        if(ABS(adj1(1)).le.1D-15)return   ! 290505 Lei2023060 i.e. adj1(1)=0
+        if(ABS(adj1(1)).le.1D-15)return   ! 290505  300623 Lei i.e. adj1(1)=0
         time=time_par   ! 280910
         adj112=adj1(12)
         adj136=adj1(36)   ! 120505
         adj137=adj1(37)   ! 120505
         call reset_eve
 c241104
-c00623 ithroq_p=0   !Lei2023060
-c00623 ithrob_p=0
-c00623 ich_p=0
-c00623 do i=1,4
-c00623 throe_p(i)=0.
-c00623 enddo
+c300623 ithroq_p=0   ! 300623 Lei
+c300623 ithrob_p=0
+c300623 ich_p=0
+c300623 do i=1,4
+c300623 throe_p(i)=0.
+c300623 enddo
         do i1=1,n   ! 051122
         v(i1,4)=0.
-        taup(i1)=0.   !Lei2023060
+        taup(i1)=0.   ! 300623 Lei
         enddo
 c241104
-c00623 Lei2023060
+c300623 Lei
         dpmax=adj1(27)
-        drmax=PARAM(10)*dmax1(rnt,rnp)   !Lei2023060
+        drmax=PARAM(10)*dmax1(rnt,rnp)   ! 300623 Lei
         do i1=1,n
         if(k(i1,2).eq.88)then   ! Excludes junctions.
         ishp(i1)=0
@@ -92,12 +92,12 @@ c00623 Lei2023060
         ishp(i1)=0
         endif
 200     enddo
-c00623 Lei2023060
+c300623 Lei
 
-c00623 calculate the position for the center of mass of the   Lei2023060
+c300623 calculate the position for the center of mass of the   ! 300623 Lei
 c        non-freeze-out system. The distance of a particle, when checking
 c        is it freezing out or not, is measured with respect to this center
-        call copl_p(time)   !Lei2023060
+        call copl_p(time)   ! 300623 Lei
 
 c       step 1
 c       create the parton-parton (initial) collision time list 
@@ -125,7 +125,7 @@ c---------------------------------------------------------------------
         endif
         n0=n   ! 051122
 
-        if(jjj.gt.1) call copl_p(time)   !Lei2023060
+        if(jjj.gt.1) call copl_p(time)   ! 300623 Lei
 
 c       step 2
 c       find out the binary collision (icp) with the minimum colli. time
@@ -154,15 +154,15 @@ c       perform classical Neuton motion for ic & jc partons
         do i=1,n   ! 051122
         do j=1,3
         rpo(i,j)=v(i,j)
-c00623 vpij=p(i,j)/p(i,4)   !Lei2023060
-c00623 v(i,j)=v(i,j)+vpij*(tcp-v(i,4))   !Lei2023060
+c300623 vpij=p(i,j)/p(i,4)   ! 300623 Lei
+c300623 v(i,j)=v(i,j)+vpij*(tcp-v(i,4))   ! 300623 Lei
         enddo
         rpo(i,4)=v(i,4)
-c00623 v(i,4)=tcp
+c300623 v(i,4)=tcp   ! 300623 Lei
         enddo
-        call his_p(time,rnt,rnp,istop)   !Lei2023060
-        if(istop.eq.1) goto 25   !Lei2023060
-c00623 istop=1 means all particles have get out of considered volume
+        call his_p(time,rnt,rnp,istop)   ! 300623 Lei
+        if(istop.eq.1) goto 25   ! 300623 Lei
+c300623 istop=1 means all particles have get out of considered volume
 
 c120603
 c       consider parton energy loss phenomenologically
@@ -236,7 +236,7 @@ c       initiate the collision time list
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (MCLIS=280000)
-        common/sa1/kjp21,non1,bp,iii,neve,nout,nosc   !Lei2023060
+        common/sa1/kjp21,non1,bp,iii,neve,nout,nosc   ! 300623 Lei
         common/collist/lc(2,mclis),tc(2,mclis),icol
         common/scatt/pi(4),pj(4),ic,jc,n0   ! 051122
         common/work7/reac(9),crose(9)
@@ -244,10 +244,10 @@ c       reac and crose: the arraies to account for the number and
 c        the value of cross section for 2->2 partonic processes
         ic=0
         jc=0
-        if(iii.eq.1)then   !Lei2023060
+        if(iii.eq.1)then   ! 300623 Lei
         lc=0
         tc=0.
-        endif   !Lei2023060
+        endif   ! 300623 Lei
         icol=0
         reac=0.
         crose=0.
@@ -288,7 +288,7 @@ c080603
         kfj=iabs(k(j,2))
 c051122 if(kfj.gt.3 .and. kfj.ne.21)goto 200   ! 120620
 c       consider d,u,s, their antiquarks, and gluon only   ! 120620
-        if(kfj.gt.6 .and. kfj.ne.21)goto 200   ! 080520 051122 Lei2023060 kfi -> kfj, 100 -> 200
+        if(kfj.gt.6 .and. kfj.ne.21)goto 200   ! 080520 051122 300623 Lei kfi -> kfj, 100 -> 200
 c       consider d,u,s,c,b,t, their antiquarks, and gluon only   ! 080520
 c080603
         if(icol.gt.mclis) then
@@ -296,9 +296,9 @@ c080603
         stop 7777
         endif
 
-        iflag=0   !Lei2023060
-        call rsfilt_p(j,i,iflag)   !Lei2023060
-        if(iflag.eq.0) goto 200   !Lei2023060
+        iflag=0   ! 300623 Lei
+        call rsfilt_p(j,i,iflag)   ! 300623 Lei
+        if(iflag.eq.0) goto 200   ! 300623 Lei
 
         tc(1,icol)=0.0
         tc(2,icol)=0.0
@@ -329,8 +329,8 @@ c161104 if(ddt.ne.0.)dddt=ddt*300
 c080304
 200     enddo
 100     enddo
-c00623 if(tcicol.eq.0.) icol=icol-1   !Lei2023060
-        icol=icol-1   !Lei2023060
+c300623 if(tcicol.eq.0.) icol=icol-1   ! 300623 Lei
+        icol=icol-1   ! 300623 Lei
         if(icol.eq.0)then
 c290803
         iijk=2   ! 1 151203
@@ -449,9 +449,9 @@ c080603
         if(k1.eq.1)j1=ic
         if(k1.eq.2)j1=jc
 
-        iflag=0   !Lei2023060
-        call rsfilt_p(j1,i1,iflag)   !Lei2023060
-        if(iflag.eq.0) goto 200   !Lei2023060
+        iflag=0   ! 300623 Lei
+        call rsfilt_p(j1,i1,iflag)   ! 300623 Lei
+        if(iflag.eq.0) goto 200   ! 300623 Lei
 
         tc(1,icol)=0.0
         tc(2,icol)=0.0
@@ -568,9 +568,9 @@ c080603
         if(k1.eq.1)j1=ic
         if(k1.eq.2)j1=jc
 
-        iflag=0   !Lei2023060
-        call rsfilt_p(j1,i1,iflag)   !Lei2023060
-        if(iflag.eq.0) goto 200   !Lei2023060
+        iflag=0   ! 300623 Lei
+        call rsfilt_p(j1,i1,iflag)   ! 300623 Lei
+        if(iflag.eq.0) goto 200   ! 300623 Lei
 
         tc(1,icol)=0.0
         tc(2,icol)=0.0
@@ -739,7 +739,7 @@ c       calculate the collision time of i and j
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000,MCLIS=280000)   ! 051122
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)   ! 051122
-        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   !Lei2023060
+        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   ! 300623 Lei
         common/syspar_p/rsig1,pio,tcut
         common/collist/lc(2,mclis),tc(2,mclis),icol
         common/scatt/pi(4),pj(4),ic,jc,n0
@@ -747,9 +747,9 @@ c       calculate the collision time of i and j
      c   pxc(4),pyc(4)
         dimension dr(3),db(3),vi(3),vj(3),rfi(4),rfj(4)
         double precision b(3)
-c00623 dimension taup(kszj)   ! 051122 Lei2023060
+c300623 dimension taup(kszj)   ! 051122   ! 300623 Lei
 c051122
-c00623 taup=0.
+c300623 taup=0.   ! 300623 Lei
 c051122
         pi(4)=p(i,4)
         pj(4)=p(j,4)
@@ -1168,7 +1168,7 @@ c160902
         do i1=0,idw
         eee2(i1)=eee(i1)
         enddo
-c00623 Lei2023060B
+c300623 Lei
         iparreso=iparres
         if(iparres.eq.1 .and. eiej.lt.dmass)then
         iparres=0
@@ -1179,7 +1179,7 @@ c       add (common/sa33/smadel,ecce,secce,parecc,iparres) today in 'fsig'
         else
         call integ(fs11_1,uxt,dxt,idw,eee,sum) ! ->q'q'(-) (or q'(-)q') process 4 (inelastic)
         end if
-c00623 Lei2023060E
+c300623 Lei
         sum3=sum
         do i1=0,idw
         eee3(i1)=eee(i1)
@@ -1219,13 +1219,13 @@ c090603 elseif(sele.gt.sum5)then
 
 c250420 branch
 
-c00623 Lei2023060
+c300623 Lei
         do while(.true.)
             call break_f(eiej,kf7,amq)   ! which is in coales_30.f 161022
             if(kf7.ne.kf0) exit
         end do
         kf3=kf7
-c00623 Lei2023060
+c300623 Lei
 
 c250420
 1002    kf4=-kf3   ! 250420
@@ -1336,7 +1336,7 @@ c       if kkk=1 throw away current collision
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (MPLIS=80000,MSCA=20000)
-        PARAMETER (KSZJ=80000,MCLIS=280000)   ! 160110 Lei2023060 MCLIS
+        PARAMETER (KSZJ=80000,MCLIS=280000)   ! 160110  300623 Lei MCLIS
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)   ! 160110
         common/papr_p/core,xs,xu,xt,sm,as,dta,xa,sl0,tl0,qa,
      c   ea,sqq,sqg,sgg,pa(3),pip(6,msca),mtime,kfk,nsca,kpip(msca)
@@ -1344,7 +1344,7 @@ c       if kkk=1 throw away current collision
         common/sbe/nbe,nonbe,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)   ! 160110
         common/trs/ntrs,nontrs,ktrs(kszj,5),ptrs(kszj,5),vtrs(kszj,5) ! 280620
         common/sa1/kjp21,non1,bp,iiii,neve,nout,nosc
-        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   !Lei2023060
+        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   ! 300623 Lei
         common/sa12/ppsa(5),nchan,nsjp,sjp,ttaup,taujp   ! 180705
         common/sa24/adj1(40),nnstop,non24,zstop
         common/sa25/i_inel_proc,i_time_shower,para1_1,para1_2   ! 090820
@@ -1355,7 +1355,7 @@ c       if kkk=1 throw away current collision
         common/work7/reac(9),crose(9)
         common/ctllist_p/nreac(9),nrel
         common/show/vip(mplis),xap(mplis)
-        common/collist/lc(2,MCLIS),tc(2,MCLIS),icol   !Lei2023060
+        common/collist/lc(2,MCLIS),tc(2,MCLIS),icol   ! 300623 Lei
 c160110 ifcom(i): line number (in 'sbe') of first component of i-th diquark
 c       nreac(i): statistics of the # of successful i-th collision
 c       nrel: statistics of the # of collision blocked
@@ -1583,7 +1583,7 @@ c080520 endif
 c       treats scattering parton pair (scattered parton pair has been
 c        treated as a new string above)
 
-c0523 Lei2023060B-------------
+c300623 Lei-------------
 c       Is ik1 a component of the normal/pure gluon string?
         call adjst(ik1,ik1str,ik1sa,ik1sv,i_g1)
         n_inStr1 = 0
@@ -1621,12 +1621,12 @@ c           ifcom1: line # (in 'sbe') of first component of idi1-th diquark
 c       throws away scattering parton pair (ik1 & ik2)
         write(3,*)"****************************************************"
         write(3,*)"imn=7, parmov"
-c00623 Lei2023060
+c300623 Lei
         if(i_g1.eq.0)then
-c00623 If ik1 belongs to a normal string.
+c300623 If ik1 belongs to a normal string.
             call parmov(ik1,0,0,lmn)
         elseif(i_g1.eq.1)then
-c00623 If ik1 belongs to a gluon string.   !Lei2023060
+c300623 If ik1 belongs to a gluon string.   ! 300623 Lei
 c        Copys (and removes) the rest gluon (not ik1) to n+1, n+2 ...
             do i_gStr=ik1sa,ik1sv,1
                 if(i_gStr.ne.ik1)then   ! ikl has been moved
@@ -1647,10 +1647,10 @@ c        Copys (and removes) the rest gluon (not ik1) to n+1, n+2 ...
                 end if
             end do
         end if
-c00623 Lei2023060
+c300623 Lei
 
-        if( INT(adj12).ne.0 .OR. (INT(adj12).eq.0 .AND. i_g.eq.0) )then   !Lei2023060
-c00623 If coal or sfm with ik1 & ik2 being in normal string.   !Lei2023060
+        if( INT(adj12).ne.0 .OR. (INT(adj12).eq.0 .AND. i_g.eq.0) )then   ! 300623 Lei
+c300623 If coal or sfm with ik1 & ik2 being in normal string.   ! 300623 Lei
             if(ik1.gt.ik2)then
                 call parmov(ik1,ik1,ik2,lmn)
                 call parmov(ik2,ik1,ik2,lmn)
@@ -1659,11 +1659,11 @@ c00623 If coal or sfm with ik1 & ik2 being in normal string.   !Lei2023060
                 call parmov(ik2,ik1,ik2,lmn)
                 call parmov(ik1,ik1,ik2,lmn)
             endif
-            n00=n-2   !Lei2023060 New partons are above n-2 w/ or w/o branching.
-            call updpli_p(n00,time)   !Lei2023060
+            n00=n-2   ! 300623 Lei New partons are above n-2 w/ or w/o branching.
+            call updpli_p(n00,time)   ! 300623 Lei
             return
         elseif(INT(adj12).eq.0 .AND. i_g.ne.0)then
-c00623 If sfm with ik1 &/or ik2 being in gluon string.   !Lei2023060
+c300623 If sfm with ik1 &/or ik2 being in gluon string.   ! 300623 Lei
             if(i_g1.eq.1)then
 c               Copys (and removes) the rest gluon (not ik1) to n+1, n+2 ...
                 do i_gStr=ik1sa,ik1sv,1
@@ -1676,13 +1676,13 @@ c               Copys (and removes) the rest gluon (not ik1) to n+1, n+2 ...
             end if
         end if
         endif   !! 2
-c0523 For the case the string the ik1 and/or ik2 belongs to is pure gluon string. 
-c       i.e. "g-g-g" string.
-c0523 Lei2023060E------------
+c300623 For the case the string the ik1 and/or ik2 belongs to is pure gluon string. 
+c        i.e. "g-g-g" string.
+c300623 Lei------------
 
         if(lmn.eq.4.or.lmn.eq.6)then   !! 3, 4:q1q1bar->q2q2bar, 6:qqbar->gg
 
-        if(adj12.ne.0)then   !! 4, fragments with coalescence Lei2023060 -> .ne.0
+        if(adj12.ne.0)then   !! 4, fragments with coalescence 300623 Lei -> .ne.0
 c       throws away scattering parton pair (ik1 & ik2)
         if(ik1.gt.ik2)then
         call parmov(ik1,ik1,ik2,lmn)
@@ -1692,16 +1692,16 @@ c       throws away scattering parton pair (ik1 & ik2)
         call parmov(ik2,ik1,ik2,lmn)
         call parmov(ik1,ik1,ik2,lmn)
         endif
-        n00=n-2   !Lei2023060 New partons are above n-2 w/ or w/o branching.
-        call updpli_p(n00,time)   !Lei2023060
+        n00=n-2   ! 300623 Lei New partons are above n-2 w/ or w/o branching.
+        call updpli_p(n00,time)   ! 300623 Lei
         return
         elseif(adj12.eq.0)then   !! 4
 c       does ik1 (ik2) is a component of string
-        call adjst(ik1,ik1str,ik1sa,ik1sv,i_g1)   ! 020620   Lei2023060
+        call adjst(ik1,ik1str,ik1sa,ik1sv,i_g1)   ! 020620  300623 Lei
 c       ik1str: oredr number of string to which ik1 belongs,equal 0 otherwise
 c       ik1sa: line number of first component of above string,equal 0 otherwise
 c       ik1sv: line number of last component of above string,equal 0 otherwise
-        call adjst(ik2,ik2str,ik2sa,ik2sv,i_g2)   ! 020620   Lei2023060
+        call adjst(ik2,ik2str,ik2sa,ik2sv,i_g2)   ! 020620  300623 Lei
 
 c       does ik1 is a component of diquark ?
         call adjdi(ik1,idi1,iway1)
@@ -1752,8 +1752,8 @@ c       moves ik1 & ik2 out as well as updates lists
         call parmov(ik2,ik1,ik2,lmn)   ! 070720
         call parmov(ik1,ik1,ik2,lmn)   ! 070720
         endif
-        n00=n-2   !Lei2023060 New partons are above n-2 w/ or w/o branching.
-        call updpli_p(n00,time)   !Lei2023060
+        n00=n-2   ! 300623 Lei New partons are above n-2 w/ or w/o branching.
+        call updpli_p(n00,time)   ! 300623 Lei
         return
 
         endif
@@ -1770,8 +1770,8 @@ c       moves ik1 & ik2 out as well as updates lists
         call parmov(ik1,ik1,ik2,lmn)   ! 070720
         call strmov(ik2str,ik2sa,ik2sv,ik1,ik2,lmn)   ! 070720
         endif
-        n00=n-(ik2sv-ik2sa+1)-1   !Lei2023060 New partons are above n00 w/ or w/o branching.
-        call updpli_p(n00,time)   !Lei2023060
+        n00=n-(ik2sv-ik2sa+1)-1   ! 300623 Lei New partons are above n00 w/ or w/o branching.
+        call updpli_p(n00,time)   ! 300623 Lei
         return
 
         endif
@@ -1787,8 +1787,8 @@ c       moves ik1 & ik2 out as well as updates lists
         call strmov(ik1str,ik1sa,ik1sv,ik1,ik2,lmn)   ! 070720
         call parmov(ik2,ik1,ik2,lmn)   ! 070720
         endif
-        n00=n-(ik1sv-ik1sa+1)-1   !Lei2023060 New partons are above n00 w/ or w/o branching.
-        call updpli_p(n00,time)   !Lei2023060
+        n00=n-(ik1sv-ik1sa+1)-1   ! 300623 Lei New partons are above n00 w/ or w/o branching.
+        call updpli_p(n00,time)   ! 300623 Lei
         return
 
         endif
@@ -1796,20 +1796,20 @@ c       moves ik1 & ik2 out as well as updates lists
 c       proceeds for both of ik1str & ik2str are not equal to zero
         if(ik1str.eq.ik2str)then
         call strmov(ik1str,ik1sa,ik1sv,ik1,ik2,lmn)   ! 070720
-        n00=n-(ik1sv-ik1sa+1)   !Lei2023060 New partons are above n00 w/ or w/o branching.
-        call updpli_p(n00,time)   !Lei2023060
+        n00=n-(ik1sv-ik1sa+1)   ! 300623 Lei New partons are above n00 w/ or w/o branching.
+        call updpli_p(n00,time)   ! 300623 Lei
         endif
         if(ik1str.gt.ik2str)then
         call strmov(ik1str,ik1sa,ik1sv,ik1,ik2,lmn)   ! 070720
         call strmov(ik2str,ik2sa,ik2sv,ik1,ik2,lmn)   ! 070720
-        n00=n-(ik1sv-ik1sa+1)-(ik2sv-ik2sa+1)   !Lei2023060 New partons are above n00 w/ or w/o branching.
-        call updpli_p(n00,time)   !Lei2023060
+        n00=n-(ik1sv-ik1sa+1)-(ik2sv-ik2sa+1)   ! 300623 Lei New partons are above n00 w/ or w/o branching.
+        call updpli_p(n00,time)   ! 300623 Lei
         endif
         if(ik1str.lt.ik2str)then
         call strmov(ik2str,ik2sa,ik2sv,ik1,ik2,lmn)   ! 070720
         call strmov(ik1str,ik1sa,ik1sv,ik1,ik2,lmn)   ! 070720
-        n00=n-(ik1sv-ik1sa+1)-(ik2sv-ik2sa+1)   !Lei2023060 New partons are above n00 w/ or w/o branching.
-        call updpli_p(n00,time)   !Lei2023060
+        n00=n-(ik1sv-ik1sa+1)-(ik2sv-ik2sa+1)   ! 300623 Lei New partons are above n00 w/ or w/o branching.
+        call updpli_p(n00,time)   ! 300623 Lei
         endif
         return
         endif  !! 4
@@ -1902,7 +1902,7 @@ c        to ik1 & ik2
         k(l,2)=kpip(1)
         p(l,5)=amass(kpip(1))
         v(l,5)=0.
-        taup(l)=0.   !Lei2023060
+        taup(l)=0.   ! 300623 Lei
 
         l=ik2
         if(pip(4,2).lt.1.e-10)pip(4,2)=1.e-10   ! 031204
@@ -1913,7 +1913,7 @@ c        to ik1 & ik2
         k(l,2)=kpip(2)
         p(l,5)=amass(kpip(2))
         v(l,5)=0.
-        taup(l)=0.   !Lei2023060
+        taup(l)=0.   ! 300623 Lei
         goto 1008
         endif
 
@@ -2003,18 +2003,18 @@ c       moves particle i3 to the second position in 'nsca'
         py(i)=v(ik2,i)   ! three position of ik2
         enddo
 c       induced parton is distributed randomly in between colliding pair
-        n0=n   !Lei2023060
+        n0=n   ! 300623 Lei
         do i=3,nsca
         rl=pyr(1)
-        n0=n0+1   !Lei2023060
-        ! n=n+1   !Lei2023060 do not change n here, see the following
+        n0=n0+1   ! 300623 Lei
+        ! n=n+1   ! 300623 Lei Do not change n here, see the following
         do k1=1,3
-        v(n0,k1)=px(k1)*rl+py(k1)*(1.-rl)   !Lei2023060 i -> n0
+        v(n0,k1)=px(k1)*rl+py(k1)*(1.-rl)   ! 300623 Lei i -> n0
         enddo
-        v(n0,4)=tcp   !Lei2023060 i -> n0
-        v(n0,5)=0.    !Lei2023060
-        taup(n0)=0.   !Lei2023060
-        ishp(n0)=1   !Lei2023060
+        v(n0,4)=tcp   ! 300623 Lei i -> n0
+        v(n0,5)=0.    ! 300623 Lei
+        taup(n0)=0.   ! 300623 Lei
+        ishp(n0)=1   ! 300623 Lei
         enddo
 
 c--------- keeps four momentum conservation-------
@@ -2053,7 +2053,7 @@ c       updates 'pyjets'
         k(l,2)=kpip(1)
         p(l,5)=amass(kpip(1))
         v(l,5)=0.
-        taup(l)=0.   !Lei2023060
+        taup(l)=0.   ! 300623 Lei
 c       updates 'pyjets'
         l=ik2
         if(pip(4,2).lt.1.e-10)pip(4,2)=1.e-10   ! 031204
@@ -2064,24 +2064,24 @@ c       updates 'pyjets'
         k(l,2)=kpip(2)
         p(l,5)=amass(kpip(2))
         v(l,5)=0.
-        taup(l)=0.   !Lei2023060
+        taup(l)=0.   ! 300623 Lei
 c0800   finished----------------------------------------------
 
 c220820 deals with third & fourth partons in 'nsca'
         if(nsca.eq.3)then
-        if(INT(adj12).eq.0.)then   !Lei2023060
+        if(INT(adj12).eq.0.)then   ! 300623 Lei
 c       moves third induced partons to 'trs' for sfm
         ntrs=ntrs+1
         ktrs(ntrs,1)=3
         ktrs(ntrs,2)=kpip(3)
         do j=1,4
         ptrs(ntrs,j)=pip(j,3)
-        vtrs(ntrs,j)=v(n0,j)   !Lei2023060 0 -> v(n0,j)
+        vtrs(ntrs,j)=v(n0,j)   ! 300623 Lei 0 -> v(n0,j)
         enddo
         ptrs(ntrs,5)=0.
         vtrs(ntrs,5)=0.
-        elseif(INT(adj12).ne.0)then   !Lei2023060
-c00623 Add this parton (gluon) into collision list for coal.   !Lei2023060
+        elseif(INT(adj12).ne.0)then   ! 300623 Lei
+c300623 Add this parton (gluon) into collision list for coal.   ! 300623 Lei
         n=n+1
         k(n,1)=2
         k(n,2)=kpip(3)
@@ -2092,8 +2092,8 @@ c00623 Add this parton (gluon) into collision list for coal.   !Lei2023060
         p(n,j)=pip(j,3)
         enddo
         p(n,5)=0.
-        endif   !Lei2023060
-c00623
+        endif   ! 300623 Lei
+c300623
         goto 1008
         endif
 
@@ -2221,7 +2221,7 @@ c       pip(1-3,ij): three momentum of spliting particle ij
         eaa=ea*ea-pip(1,ij)*pip(1,ij)-pip(2,ij)*pip(2,ij)-
      c   pip(3,ij)*pip(3,ij)   ! 080520
         eaa=sqrt(eaa)   ! invariant mass of initial state gluon
-        if(eaa.lt.(PYMASS(1)*2.)) goto 200   !Lei2023060
+        if(eaa.lt.(PYMASS(1)*2.)) goto 200   ! 300623 Lei
         call break_f(eaa,kff,amq)   ! which is in coales_30.f 161022
         kf1=kff   ! 161022
         kf2=-kf1   ! 250420
@@ -3196,16 +3196,16 @@ c       consider d,u,s,c,b,t, their antiquarks, and gluon only   ! 080520
         kfj=iabs(k(j,2))
 c051122 if(kfj.gt.3 .and. kfj.ne.21)goto 200   ! 120620
 c       consider d,u,s, their antiquarks, and gluon only   ! 120620
-        if(kfj.gt.6 .and. kfj.ne.21)goto 200   ! 080520 051122 Lei2023060 kfi -> kfj, 100 -> 200
+        if(kfj.gt.6 .and. kfj.ne.21)goto 200   ! 080520 051122 300623 Lei kfi -> kfj, 100 -> 200
 c       consider d,u,s,c,b,t, their antiquarks, and gluon only   ! 080520
         if(icol.gt.mclis) then
         write(9,*)'icol over limit n,icol=',n,icol   ! sa
         stop 77777
         endif
 
-        iflag=0   !Lei2023060
-        call rsfilt_p(j,i,iflag)   !Lei2023060
-        if(iflag.eq.0) goto 200   !Lei2023060
+        iflag=0   ! 300623 Lei
+        call rsfilt_p(j,i,iflag)   ! 300623 Lei
+        if(iflag.eq.0) goto 200   ! 300623 Lei
 
         tc(1,icol)=0.0
         tc(2,icol)=0.0
@@ -3228,8 +3228,8 @@ c       consider d,u,s,c,b,t, their antiquarks, and gluon only   ! 080520
         endif
 200     continue
 100     continue
-c00623 if(tcicol.le.0.0) icol=icol-1   !Lei2023060
-        icol=icol-1   !Lei2023060
+c300623 if(tcicol.le.0.0) icol=icol-1   ! 300623 Lei
+        icol=icol-1   ! 300623 Lei
         n0=n
         return
         end
@@ -3248,7 +3248,7 @@ c       deltp(3): three momentum losed
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)   ! 051122
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)   ! 051122
-        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   !Lei2023060
+        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   ! 300623 Lei
         dimension deltp(3)
         nl=n+1
         if(nl.gt.kszj)then
@@ -3264,8 +3264,8 @@ c       deltp(3): three momentum losed
         p(n+1,5)=0.
         k(n+1,2)=21
         v(n+1,4)=v(ii,4)
-        taup(n+1)=0.   !Lei2023060
-        ishp(n+1)=1    !Lei2023060
+        taup(n+1)=0.   ! 300623 Lei
+        ishp(n+1)=1    ! 300623 Lei
         do i=1,3
         v(n+1,i)=pyr(1)*v(ii,i)
         enddo
@@ -3287,7 +3287,7 @@ c       deltp(3): three momentum losed
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)   ! 051122
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)   ! 051122
-        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   !Lei2023060
+        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   ! 300623 Lei
         dimension deltp(3)
         nl=n+1
         if(nl.gt.kszj)then
@@ -3319,10 +3319,10 @@ c       deltp(3): three momentum losed
         k(n+2,1)=1   ! 051122
         v(n+1,4)=v(ii,4)
         v(n+2,4)=v(ii,4)
-        taup(n+1)=0.   !Lei2023060
-        taup(n+2)=0.   !Lei2023060
-        ishp(n+1)=1    !Lei2023060
-        ishp(n+2)=1    !Lei2023060
+        taup(n+1)=0.   ! 300623 Lei
+        taup(n+2)=0.   ! 300623 Lei
+        ishp(n+1)=1    ! 300623 Lei
+        ishp(n+2)=1    ! 300623 Lei
         do i=1,3
         rpi=pyr(1)*v(ii,i)
         v(n+1,i)=rpi
@@ -3342,7 +3342,7 @@ c       copy parton ii to the end of 'pyjets'
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)   ! 051122
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
-        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   !Lei2023060
+        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   ! 300623 Lei
         common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio
         n=n+1
         do i3=1,5
@@ -3350,8 +3350,8 @@ c       copy parton ii to the end of 'pyjets'
         p(n,i3)=p(ii,i3)
         v(n,i3)=v(ii,i3)
         enddo
-        taup(n)=taup(ii)   !Lei2023060
-        ishp(n)=ishp(ii)   !Lei2023060
+        taup(n)=taup(ii)   ! 300623 Lei
+        ishp(n)=ishp(ii)   ! 300623 Lei
 c        ndiq(n)=ndiq(ii)
 c        do j1=1,idi
 c        kk=ifcom(j1)
@@ -3366,7 +3366,7 @@ c        enddo
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine adjst(ik1,ik1str,ik1sa,ik1sv,i_g)   ! 160110
-!Lei2023060 Added i_g for pure the gluon string "g-g-g".
+c300623 Added i_g for pure the gluon string "g-g-g".   ! 300623 Lei
 c       finds order number etc. of ik1 string    ! 270620
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
@@ -3375,7 +3375,7 @@ c       finds order number etc. of ik1 string    ! 270620
         common/sbe/nbe,nonbe,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
         common/sa28/nstr,nstra(kszj),nstrv(kszj),nstr0,
      c   nstr1,nstr1a(kszj),nstr1v(kszj)   ! 030620
-        i_g=0    !Lei2023060 if ik1 does not belong to string
+        i_g=0    ! 300623 Lei if ik1 does not belong to string
         ik1str=0   ! if ik1 not belong to string
         ik1sa=0   ! if ik1 not belong to string
         ik1sv=0   ! if ik1 not belong to string
@@ -3383,9 +3383,9 @@ c       finds order number etc. of ik1 string    ! 270620
         do i1=1,nstr0   ! nstr0 is giving after call break
         i1a=nstr1a(i1)   ! i1a: line number of 'A' of i1-th string
         i1v=nstr1v(i1)   ! i1v: line number of 'V' of i1-th string
-        kfa=kbe(i1a,2)   !Lei2023060 kfa: KF code of 'A'
-        kfv=kbe(i1v,2)   !Lei2023060 kfa: KF code of 'V'
-        if(kfa.eq.21 .AND. kfv.eq.21) i_g=1   !Lei2023060 ik1 belongs to string
+        kfa=kbe(i1a,2)   ! 300623 Lei kfa: KF code of 'A'
+        kfv=kbe(i1v,2)   ! 300623 Lei kfa: KF code of 'V'
+        if(kfa.eq.21 .AND. kfv.eq.21) i_g=1   ! 300623 Lei ik1 belongs to string
         if(ik1.ge.i1a .and. ik1.lt.i1v+1)then
         ik1str=i1   ! order number of string to which ik1 belongs
         ik1sa=i1a   ! line number of 'A' of above string
@@ -3398,9 +3398,9 @@ c       finds order number etc. of ik1 string    ! 270620
         do i1=nstr0+1,nstr1
         i1a=nstr1a(i1)
         i1v=nstr1v(i1)
-        kfa=kbe(i1a,2)   !Lei2023060 kfa: KF code of 'A'
-        kfv=kbe(i1v,2)   !Lei2023060 kfa: KF code of 'V'
-        if(kfa.eq.21 .AND. kfv.eq.21) i_g=1   !Lei2023060 ik1 belongs to string
+        kfa=kbe(i1a,2)   ! 300623 Lei kfa: KF code of 'A'
+        kfv=kbe(i1v,2)   ! 300623 Lei kfa: KF code of 'V'
+        if(kfa.eq.21 .AND. kfv.eq.21) i_g=1   ! 300623 Lei ik1 belongs to string
         if(ik1.ge.i1a .and. ik1.lt.i1v+1)then
         ik1str=i1
         ik1sa=i1a
@@ -3509,7 +3509,7 @@ c       ik1 & ik2 are the line number (in parton list) of colliding pair
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         common/sbe/nbe,nonbe,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
         common/collist/lc(2,mclis),tc(2,mclis),icol
-        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   !Lei2023060
+        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   ! 300623 Lei
         common/sa24/adj1(40),nnstop,non24,zstop   ! 070720
         common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio
         common/sa28/nstr,nstra(kszj),nstrv(kszj),nstr0,
@@ -3554,8 +3554,8 @@ c       updates particle list 'pyjets'
         p(i2,i3)=p(i1,i3)
         v(i2,i3)=v(i1,i3)
         enddo
-        ishp(i2)=ishp(i1)   !Lei2023060
-        taup(i2)=taup(i1)   !Lei2023060
+        ishp(i2)=ishp(i1)   ! 300623 Lei
+        taup(i2)=taup(i1)   ! 300623 Lei
         enddo
         n=n-1
         endif
@@ -3601,7 +3601,7 @@ c       updates the values of lc(1-2,m) if which is .ge. ii
      &  iak, lc(1,iak), lc(2,iak), tc(1,iak), tc(2,iak)    !Lei
         end do
 
-c00623 Lei2023060
+c300623 Lei
 c       Removing colliding pairs with lc=0. This case happens when ii 
 c        is the 1-st one in PYJETS, especially when removing string 
 c        after inelastic collisions.
@@ -3620,7 +3620,7 @@ c           Throw away the pairs with lc=0.
             end if
         end do
         icol = jcol
-c00623 Lei2023060
+c300623 Lei
 
         write(3,*)"Af. parmov remove ----------------------------------"
         write(3,*)"icol, lmn=",icol,lmn   !Lei
@@ -3664,12 +3664,12 @@ c       moves string istr1-th out of string list
         if(istr1.lt.nstr1)then
         jj=istr1v-istr1a+1
         do ii=istr1+1,nstr1
-c00623 if(ii.ge.istr1)then
-c00623 nstr1v(ii-jj)=nstr1v(ii)   !Lei2023060
-c00623 nstr1a(ii-jj)=nstr1a(ii)   !Lei2023060
-        nstr1v(ii-1)=nstr1v(ii)   !Lei2023060
-        nstr1a(ii-1)=nstr1a(ii)   !Lei2023060
-c00623 endif
+c300623 if(ii.ge.istr1)then
+c300623 nstr1v(ii-jj)=nstr1v(ii)   ! 300623 Lei
+c300623 nstr1a(ii-jj)=nstr1a(ii)   ! 300623 Lei
+        nstr1v(ii-1)=nstr1v(ii)   ! 300623 Lei
+        nstr1a(ii-1)=nstr1a(ii)   ! 300623 Lei
+c300623 endif
         enddo
         nstr1=nstr1-1
         endif
@@ -3681,7 +3681,7 @@ c00623 endif
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine copl_p(tt)
-c00623 Lei2023060
+c300623 Lei
 c       calculate position of center of mass of the non-freeze-out system 
 c       distance of a particle from this cms is used to checke whether
 c        it freezes out or not 
@@ -3691,7 +3691,7 @@ c        it freezes out or not
         PARAMETER(KSZJ=80000)
         common/PYJETS/N,NON1,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
-        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   !Lei2023060
+        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   ! 300623 Lei
         do ii=1,3
         coor(ii)=0.
         enddo
@@ -3716,25 +3716,25 @@ c        it freezes out or not
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine his_p(t1,rnt,rnp,istop)
-!Lei2023060
+c300623 Lei
 c       classical Newton motion in AA/NN CMS/Lab. system
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000,MCLIS=280000)
-        COMMON/PYCIDAT2/KFMAXT,NONCI2,PARAM(20),WEIGH(600)   !Lei2023060
-        common/PYJETS/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)   !Lei2023060
-        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   !Lei2023060
+        COMMON/PYCIDAT2/KFMAXT,NONCI2,PARAM(20),WEIGH(600)   ! 300623 Lei
+        common/PYJETS/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)   ! 300623 Lei
+        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   ! 300623 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         common/collist/lc(2,mclis),tc(2,mclis),icol
         istop=1   ! 231104
         in=0   ! 231104
-        r0=PARAM(10)*dmax1(rnt,rnp)   !Lei2023060
+        r0=PARAM(10)*dmax1(rnt,rnp)   ! 300623 Lei
         do 200 i=1,nsa
 c       if(t1.le.taup(i))goto 200
 c       do move particles which have not produced
         if(ishp(i).eq.1) goto 10
-        if(ksa(i,2).eq.88) goto 200   !Lei2023060
+        if(ksa(i,2).eq.88) goto 200   ! 300623 Lei
         in=in+1
         goto 200
 10      aa=0.
@@ -3770,7 +3770,7 @@ c        current collisions
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine rsfilt_p(l,l1,iflag)
-!Lei2023060
+c300623 Lei
 c       subroutine rsfilt_p plays the role of first range filter 
 c       subroutine intdis plays the role of second range filter
 c       collision pairs not interested can not filter through both of rsfilt 
@@ -3780,7 +3780,7 @@ c        and intdis
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
         COMMON/PYJETS/N,NON2,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
-        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   !Lei2023060
+        common/sa8_p/taup(kszj),coor(3),ishp(kszj)   ! 300623 Lei
 
         kl=k(l,2)
         kl1=k(l1,2)
@@ -3803,7 +3803,7 @@ c        and intdis
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine updpli_p(n00,time)
-!Lei2023060
+c300623 Lei
 c       Update collision time list for new partons when removing string 
 c        and diqaruk after inelastic parton collisions.
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)

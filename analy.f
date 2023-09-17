@@ -8,7 +8,7 @@ c       it is composed by Ben-Hao Sa on 28/12/19
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         common/sa1/kjp21,non1,bp,iii,neve,nout,nosc
         common/sa7/ispmax,isdmax,iflmax,ispkf(20),non7,asd(6),
-     c   afl(20,6,2)   !Lei2023060 5 -> 6
+     c   afl(20,6,2)   ! 300623 Lei 5 -> 6
         common/sa10/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
      c   iabsb,iabsm,non10,ajpsi,csspn,csspm,csen   ! 060813
         common/sa12/ppsa(5),nchan,nsjp,sjp,ttaup,taujp
@@ -18,7 +18,7 @@ c       it is composed by Ben-Hao Sa on 28/12/19
         common/sa30/vneump,vneumt,mstptj
         common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
      c   nap,nat,nzp,nzt,pio
-        common/anly1/an(40,6,20),bn(20),anf(40,6,20),bnf(20)   !Lei2023060 5 -> 6
+        common/anly1/an(40,6,20),bn(20),anf(40,6,20),bnf(20)   ! 300623 Lei 5 -> 6
         real*8 nmin,nminf,ncha,nchaf
         dimension c(5),dinel(600),dineli(600),sthroe(4),wthroe(4)
 
@@ -38,7 +38,7 @@ c        i=2: for pt (inv. pT)
 c        i=3: for eta
 c        i=4: for mT
 c        i=5: for event-wise multiplicity
-c        i=6: for pT (dN/dpT)   !Lei2023060
+c        i=6: for pT (dN/dpT)   ! 300623 Lei
 c       for lp and lA collisions
 c        i=1 : z
 c        i=2 : \nu
@@ -202,14 +202,14 @@ c       multiplicity is located at which interval
 c       if(ik.eq.2212)then
         idf=bnf(kkk)/asd(5)+1
 c       the 5-th distribution is particle multiplicity distribution
-        if(idf.lt.1 .or. idf.gt.40)goto 405   ! 131204 Lei2023060 20 -> 40
+        if(idf.lt.1 .or. idf.gt.40)goto 405   ! 131204 300623 Lei 20 -> 40
         anf(idf,5,kkk)=anf(idf,5,kkk)+1. !/asd(5)
 c       active the window 
 405     do i=1,iflmax   ! 131204
         if(c(i).lt.afl(kkk,i,1) .or. c(i).gt.afl(kkk,i,2))goto 404
         enddo
         idd=bn(kkk)/asd(5)+1
-        if(idd.lt.1 .or. idd.gt.40)goto 404   ! 131204 Lei2023060 20 -> 40
+        if(idd.lt.1 .or. idd.gt.40)goto 404   ! 131204 300623 Lei 20 -> 40
         an(idd,5,kkk)=an(idd,5,kkk)+1. !/asd(5)
 404     continue
 c       endif
@@ -229,17 +229,17 @@ c       on line statistics for NA,AN,and AA collisions   ! 260314
         INTEGER PYK,PYCHGE,PYCOMP
         common/sa1/kjp21,non1,bp,iii,neve,nout,nosc
         common/sa7/ispmax,isdmax,iflmax,ispkf(20),non7,asd(6),
-     c   afl(20,6,2)   !Lei2023060 5 -> 6
+     c   afl(20,6,2)   ! 300623 Lei 5 -> 6
         common/sa10/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
      &   iabsb,iabsm,non10,ajpsi,csspn,csspm,csen   ! 060813
-        dimension a(20),b(40,6,20),c(6),af(20),bf(40,6,20),id(6) ! 070419 Lei2023060 5 -> 6
-        if(pt.le.1D-15) return   !Lei2023060 Excludes particles with too small/zero pT.
+        dimension a(20),b(40,6,20),c(6),af(20),bf(40,6,20),id(6) ! 070419 300623 Lei 5 -> 6
+        if(pt.le.1D-15) return   ! 300623 Lei Excludes particles with too small/zero pT.
         amass=p5   ! 010600
         amass2=amass*amass
         pt2=pt*pt
-        pmt=dsqrt(pt2+amass2)   !Lei2023060 m_T
+        pmt=dsqrt(pt2+amass2)   ! 300623 Lei m_T
         do 10000 i=1,iflmax
-        goto (10,20,30,40,50,60) i   !Lei2023060 added 60
+        goto (10,20,30,40,50,60) i   ! 300623 Lei Added 60
 10      c(i)=y
         if( INT(yOrEta).eq.1 ) c(1)=eta   ! 140223 Lei
         goto 10000
@@ -248,11 +248,11 @@ c       on line statistics for NA,AN,and AA collisions   ! 260314
 30      continue
 40      continue
 50      continue
-60      continue   !Lei2023060 added 60
+60      continue   ! 300623 Lei added 60
 10000   continue
 c       calculate the abscissa one by one
 40000   do 20000 i=1,isdmax
-        goto (100,200,300,400,500,600) i   !Lei2023060 added 600
+        goto (100,200,300,400,500,600) i   ! 300623 Lei Added 600
 c       y is located in which interval?
 100     ii=dabs(y)/asd(i)+1
         if(ifram.eq.1 .and. y.gt.0.)ii=ii+20   ! 311019
@@ -276,11 +276,11 @@ c        40   ! 311019
         id(i)=ii
         goto 20000
 c       mt is counted in which mt interval ?
-400     id(i)=pmt/asd(i)+1   !Lei2023060
+400     id(i)=pmt/asd(i)+1   ! 300623 Lei
         goto 20000
 500     continue
-        goto 20000   !Lei2023060
-c20523 pt is located in which interval? (dN/dpT)   !Lei2023060
+        goto 20000   ! 300623 Lei
+c300623 pt is located in which interval? (dN/dpT)   ! 300623 Lei
 600     id(i)=pt/asd(i)+1
 20000   continue
 
@@ -293,12 +293,12 @@ c       make statistics of particle yield and desired distributions in full spac
         if(i.eq.2)bf(ii,i,kk)=bf(ii,i,kk)+ww/asd(i)/pt    ! (1/pT)dN/dpT
         if(i.eq.3)bf(ii,i,kk)=bf(ii,i,kk)+ww/asd(i)       ! dN/deta
         if(i.eq.4)bf(ii,i,kk)=bf(ii,i,kk)+ww/asd(i)/pmt   ! (1/mT)dN/dmT
-        if(i.eq.6)bf(ii,i,kk)=bf(ii,i,kk)+ww/asd(i)       !Lei2023060 dN/dpT
+        if(i.eq.6)bf(ii,i,kk)=bf(ii,i,kk)+ww/asd(i)       ! 300623 Lei dN/dpT
 30000   enddo
 
 c       if(iflmax.eq.0)return
 
-c00623 make statistics for desired distributions in partial space   Lei2023060
+c300623 make statistics for desired distributions in partial space   ! 300623 Lei
         do i=1,isdmax
             ii=id(i)
             if(ii.lt.1 .or. ii.gt.40)goto 50000   ! 010218  070419
@@ -309,7 +309,7 @@ c00623 make statistics for desired distributions in partial space   Lei2023060
             if( c(1).ge.afl(kk,1,1) .AND. c(1).le.afl(kk,1,2) )then   ! y/eta cut
                 if(i.eq.2) b(ii,i,kk)=b(ii,i,kk)+ww/asd(i)/pt   ! (1/pT)dN/dpT
                 if(i.eq.4) b(ii,i,kk)=b(ii,i,kk)+ww/asd(i)/pmt  ! (1/mT)dN/dmT
-                if(i.eq.6) b(ii,i,kk)=b(ii,i,kk)+ww/asd(i)      !Lei2023060 dN/dpT
+                if(i.eq.6) b(ii,i,kk)=b(ii,i,kk)+ww/asd(i)      ! 300623 Lei dN/dpT
             endif
 50000   enddo
 
@@ -332,12 +332,12 @@ c       on line statistics for case of lepton incidence
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
         common/sa7/ispmax,isdmax,iflmax,ispkf(20),non7,asd(6),
-     c   afl(20,6,2)   !Lei2023060 5 -> 6
+     c   afl(20,6,2)   ! 300623 Lei 5 -> 6
         common/sa10/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
      &   iabsb,iabsm,non10,ajpsi,csspn,csspm,csen   ! 060813
         common/sa21/pincl(5),pscal(5),pinch(5),vnu,fq2,w2l,yyl,zl,xb,pph
      c   ,vnlep
-        dimension a(20),b(40,6,20),af(20),bf(40,6,20),c(6),id(6) ! 070419 Lei2023060 5 -> 6
+        dimension a(20),b(40,6,20),af(20),bf(40,6,20),c(6),id(6) ! 070419  300623 Lei 5 -> 6
 c       vnu: \nu; fq2: Q^2=-q^2; w2l: W^2; yyl: y; zl: z; xb: x_B; pph: P_h
 c       calculate kinematic variable relevant to the produced hadron
         pph=p1*p1+p2*p2+p3*p3
@@ -407,7 +407,7 @@ c       make statistics of particle yield and desired distributions
 
 
         subroutine analy_parton(yOrEta)
-c00623 Lei2023060
+c300623 Lei
 c       Analyses an event based on the messages in "pyjets"
 c       Use the nominal cuts of 1-st setting in usu.dat for partons.
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
@@ -422,16 +422,16 @@ c       Use the nominal cuts of 1-st setting in usu.dat for partons.
         ! common/oscar3/ n3, npad3, k3(kszj,5), p3(kszj,5), v3(kszj,5)
         common/sa1/kjp21,non1,bp,iii,neve,nout,nosc
         common/sa7/ispmax,isdmax,iflmax,ispkf(20),non7,asd(6),
-     c   afl(20,6,2)   !Lei2023060 5 -> 6
+     c   afl(20,6,2)   ! 300623 Lei 5 -> 6
         common/sa24/adj1(40),nnstop,non24,zstop   ! 210803 181003
         common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
      c   nap,nat,nzp,nzt,pio
-c00623 Lei2023060B For parton.
+c300623 For parton.   ! 300623 Lei
 c       u, ubar, d, dbar, s, sbar, c, cbar, b, bbar, t, tbar, g, (u+d+s + anti-)
         common/anly2/ sn_min_p, sn_min_p_f, sn_cha_p, sn_cha_p_f, sn_g,
-     &  sn_g_f, san_p(40,6,14), sbn_p(14), san_p_f(40,6,14), sbn_p_f(14)   !Lei2023060 5 -> 6
-c00623 Lei2023060E
-        dimension c(6),bn_p(14),bn_p_f(14),an_p(40,6,14),an_p_f(40,6,14)   !Lei2023060 5 -> 6
+     &  sn_g_f, san_p(40,6,14), sbn_p(14), san_p_f(40,6,14), sbn_p_f(14)   ! 300623 Lei 5 -> 6
+c300623 Lei
+        dimension c(6),bn_p(14),bn_p_f(14),an_p(40,6,14),an_p_f(40,6,14)   ! 300623 Lei 5 -> 6
 
 c       bn(i) (bnf(i)): multiplicity of i-th particle in partial (full)
 c        phase space
@@ -445,7 +445,7 @@ c        i=2: for pt (inv. pT)
 c        i=3: for eta
 c        i=4: for mT
 c        i=5: for event-wise multiplicity
-c        i=6: for pT (dN/dpT)   !Lei2023060
+c        i=6: for pT (dN/dpT)   ! 300623 Lei
 c       j: order # of particle in array of 'ispkf' (1 to ispmax)
 c       isdmax: maximum # of distributions considered
 c       asd(i): interval segmented for i-th distribution
@@ -624,7 +624,7 @@ c       Event accumulation
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine stati_parton(y,pt,eta,p5,kf,kk,ww,a,b,af,bf,yOrEta)
-c00623 Lei2023060
+c300623 Lei
 c       Online statistics for NA,AN,and AA collisions
 c       Use the nominal cuts of 1-st setting in usu.dat for partons.
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
@@ -632,8 +632,8 @@ c       Use the nominal cuts of 1-st setting in usu.dat for partons.
         INTEGER PYK,PYCHGE,PYCOMP
         common/sa1/kjp21,non1,bp,iii,neve,nout,nosc
         common/sa7/ispmax,isdmax,iflmax,ispkf(20),non7,asd(6),
-     c   afl(20,6,2)   !Lei2023060 5 -> 6
-        dimension c(6), id(6), a(14), af(14), b(40,6,14), bf(40,6,14)   !Lei2023060 5 -> 6
+     c   afl(20,6,2)   ! 300623 Lei 5 -> 6
+        dimension c(6), id(6), a(14), af(14), b(40,6,14), bf(40,6,14)   ! 300623 Lei 5 -> 6
 
         if(pt.le.1D-15) return   ! Excludes particles with too small/zero pT.
         amass  = p5
@@ -662,7 +662,7 @@ c       eta is located in which interval?
         id(3) = ii
 c       mt is counted in which mt interval ?
         id(4) = INT( pmt/asd(4) + 1 )
-c20523 pt is located in which interval? (dN/dpT)
+c300623 pt is located in which interval? (dN/dpT)   ! 300623 Lei
         id(6) = INT( pt/asd(6) + 1 )
 
 c       Make statistics of particle yield and desired distributions in full space
@@ -675,13 +675,13 @@ c       Make statistics of particle yield and desired distributions in full spac
             if(i.eq.2) bf(ii,i,kk) = bf(ii,i,kk) + ww/asd(i)/pt
             if(i.eq.3) bf(ii,i,kk) = bf(ii,i,kk) + ww/asd(i)
             if(i.eq.4) bf(ii,i,kk) = bf(ii,i,kk) + ww/asd(i)/pmt
-            if(i.eq.6) bf(ii,i,kk) = bf(ii,i,kk) + ww/asd(i)   !Lei2023060 dN/dpT
+            if(i.eq.6) bf(ii,i,kk) = bf(ii,i,kk) + ww/asd(i)   ! 300623 Lei dN/dpT
             if( ABS(kf).ge.1 .AND. ABS(kf).le.3 )then   ! u+d+s + anti-
                 if(i.eq.1) bf(ii,i,2) = bf(ii,i,2) + ww/asd(i)
                 if(i.eq.2) bf(ii,i,2) = bf(ii,i,2) + ww/asd(i)/pt
                 if(i.eq.3) bf(ii,i,2) = bf(ii,i,2) + ww/asd(i)
                 if(i.eq.4) bf(ii,i,2) = bf(ii,i,2) + ww/asd(i)/pmt
-                if(i.eq.6) bf(ii,i,2) = bf(ii,i,2) + ww/asd(i)   !Lei2023060
+                if(i.eq.6) bf(ii,i,2) = bf(ii,i,2) + ww/asd(i)   ! 300623 Lei
             endif
 30000   enddo
 
@@ -701,11 +701,11 @@ c       Use the nominal cuts of 1-st setting in usu.dat for partons.
             if( c(1).ge.afl(1,1,1) .AND. c(1).le.afl(1,1,2) )then   ! y/eta cut
                 if(i.eq.2) b(ii,i,kk) = b(ii,i,kk) + ww/asd(i)/pt   ! (1/pT)dN/dpT
                 if(i.eq.4) b(ii,i,kk) = b(ii,i,kk) + ww/asd(i)/pmt  ! (1/mT)dN/dmT
-                if(i.eq.6) b(ii,i,kk) = b(ii,i,kk) + ww/asd(i)   !Lei2023060 dN/dpT
+                if(i.eq.6) b(ii,i,kk) = b(ii,i,kk) + ww/asd(i)   ! 300623 Lei dN/dpT
                 if( ABS(kf).ge.1 .AND. ABS(kf).le.3 )then
                     if(i.eq.2) b(ii,i,2) = b(ii,i,2) + ww/asd(i)/pt
                     if(i.eq.4) b(ii,i,2) = b(ii,i,2) + ww/asd(i)/pmt
-                    if(i.eq.6) b(ii,i,2) = b(ii,i,2) + ww/asd(i)   !Lei2023060
+                    if(i.eq.6) b(ii,i,2) = b(ii,i,2) + ww/asd(i)   ! 300623 Lei
                 endif
             endif
 50000   enddo
@@ -724,7 +724,7 @@ c       Make statistics for particle yield in partial space
 
 
         subroutine output_hadron_distribution(sao,sbo,saof,sbof)
-c00623 Lei2023060
+c300623 Lei
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -858,7 +858,7 @@ c       Outputs abscissa, 6-distributions of pi+K+p and 20 particles specified i
 
 
         subroutine output_parton_distribution
-c00623 Lei2023060
+c300623 Lei
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -919,7 +919,7 @@ c       Outputs abscissa, 6-distributions of g, u+d+s + anti- and q.
      &              "    Parton  Distribution  Output    "//
      &              "|******************!#"
 
-        iii_org = iii   !Lei20230822
+        iii_org = iii   ! 220823 Lei
         do m2=1,isdmax,1
 
         write(10,*) "#!-------------------------------------"//
@@ -950,9 +950,9 @@ c       Outputs abscissa, 6-distributions of g, u+d+s + anti- and q.
      &        "b                         bbar                      "//
      &        "t                         tbar"
         do m1=1,40,1
-            if(m2.eq.5) iii = 1   !Lei20230822
+            if(m2.eq.5) iii = 1   ! 220823 Lei
             write(10,*) xcoor(m1,m2), (san_p(m1,m2,m3)/iii,m3=1,14,1)
-            if(m2.eq.5) iii = iii_org   !Lei20230822
+            if(m2.eq.5) iii = iii_org   ! 220823 Lei
         enddo
         write(10,*)"#! ID of distribution m2=",m2,"   "//id_distr(m2)
         write(10,*)"#! full phase-space"
@@ -981,8 +981,8 @@ C***********************************************************************
 C...PASTAT
 C...Prints out information about cross-sections, decay widths, branching
 C...ratios, kinematical limits, status codes and parameter values.
-CLei202306
       SUBROUTINE PASTAT(I_STAT,I_CALL)
+C300623 Lei
 C...Modified from PYTHIA/PYSTAT for PACIAE. It just prints 
 C    cross-sections now, i.e. hardcode of MSTAT=1.
 C...The blocks used for cross section are /PYINT5/ and /PYINT5_S/
@@ -1060,7 +1060,7 @@ C...Local arrays, character variables and data.
      &'       tau''       '/
       DATA DNAME /'q     ','lepton','nu    '/
  
-CLei202306B
+C300623 Lei
       COMMON/SA1/KJP21,NON1,BP,III,NEVE,NOUT,NOSC
       COMMON/SYSPAR/IPDEN,ITDEN,SUPPM,SUPTM,SUPPC,SUPTC,R0P,R0T,
      &NAP,NAT,NZP,NZT,PIO
@@ -1068,11 +1068,11 @@ CLei202306B
       COMMON/PYDAT1_1/MSTU_1(200),PARU_1(200),MSTJ_1(200),PARJ_1(200)
       COMMON/PYINT5_S/NGENPD_S,NGEN_S(0:500,3),XSEC_S(0:500,3)
       COMMON/PYDAT1_S/MSTU_S(200),PARU_S(200),MSTJ_S(200),PARJ_S(200)
-CLei202306E
+C300623 Lei
 
 
-CLei202306B----------
-      MSTAT = 1   !Lei202306 Hardcode!
+C300623 Lei----------
+      MSTAT = 1   ! 300623 Lei Hardcode!
 C...Initializes global variables.
       IF(I_STAT.EQ.-2) THEN
         NGEN_S = 0
@@ -1112,7 +1112,7 @@ C...Counts total-event cross sections and numbers of errors and warnings.
       MSTU(23)  = MSTU_S(23)
       MSTU(27)  = MSTU_S(27)
       MSTU(30)  = MSTU_S(30)
-CLei202306E----------
+C300623 Lei----------
 
 C...Cross-sections.
       IF(MSTAT.LE.1) THEN
