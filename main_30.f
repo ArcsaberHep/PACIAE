@@ -3979,7 +3979,7 @@ c       Appends "aaff" to "PYJETS". (dumps "aaff" into "PYJETS" in fact)
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine rest_sfm
 c300623 Lei
-c300623 Hadronizes/Fragments "sbe" with "PYEXEC".
+c       Hadronizes/Fragments "sbe" with "PYEXEC".
         IMPLICIT DOUBLE PRECISION (A-H,O-Z)
         IMPLICIT INTEGER (I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -4713,7 +4713,7 @@ c300623 Lei
 c       Share the lost 4-momentum in "throe_p" with particles in "PYJETS".
 c       The critirion is inv. m^2 > 0 and E > 0, or original inv. m^2 < 0 
 c         but the new one is closer to 0 and E > 0, after sharing.
-c       Sometimes there are junctions, which should be excluded.
+c       Sometimes there are junctions, which should be excluded.   ! 300623 Lei
 c       "throe_p" is 4-momentum accumulated before this calling.
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
@@ -4837,7 +4837,7 @@ c300623 Lei
 c       Share the lost 4-momentum in "throe_p" with particles in "PYJETS".
 c       The critirion is inv. m^2 > 0 and E > 0, or original inv. m^2 < 0 
 c         but the new one is closer to 0 and E > 0, after sharing.
-c       Sometimes there are junctions, which should be excluded.
+c       Sometimes there are junctions, which should be excluded.   ! 300623 Lei
 c       "throe_p" is 4-momentum accumulated before this calling.
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
@@ -7124,6 +7124,4 @@ c171022      IF(Y-2.0E0)1,9,9   ! 171022 Lei
      4  -.002777777777777778E0)*C+.08333333333333333E0)*D                       
      5  +.9189385332046727E0+(Y-.5E0)*LOG(Y)-Y                                  
       VALUE=EXP(G)                                                              
-    7 GAMMA=VALUE   ! 081010                                                    
-      RETURN                                                                    
-      END                                                                       
+    7 GAMMA=VALUE   !
