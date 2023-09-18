@@ -1,5 +1,5 @@
         program main_30
-c       administrates MC simulation for relativistic pp(lp), pA (Ap), 
+c       Administrates MC simulation for relativistic pp(lp), pA (Ap), 
 c        AB (lA), & e+e- collisions 
 c100223 the program composes of main_30.f,parini_30.f,parcas_30.f, 
 c        p_30.f,sfm_30.f,coales_30.f,hadcas_30.f,and analy.f
@@ -53,7 +53,7 @@ c        letter. typing ": set ic + enter key" before searching in Vi/Vim.
      &   ,emin(10),eminf(10),eplu(10),epluf(10)   ! 033101
 c300623 common/sa18/tdh,itnum,non18,cptl,cptu,cptl2,cptu2,snum(4,20),
 c300623 &   v1(4,20),v2(4,20),v12(4,20),v22(4,20)   ! 300623 Lei
-        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
+        common/sa18/i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
         common/sa21/pincl(5),pscal(5),pinch(5),vnu,fq2,w2l,yyl,zl,xb,pph
      c   ,vnlep   ! 260314
         common/sa23/kpar,knn,kpp,knp,kep   ! 200601 060813
@@ -369,7 +369,7 @@ c       reads input variables for event generation
         read(11,*)para13,para14,psno,para15,para16,ajpsi,vneum
         read(11,*)para1_1,para1_2,para2,para4
 c300623 read(11,*)tdh,cptl,cptu,cptl2,cptu2,itnum   ! 241108 300623 Lei
-        read(11,*)i_deex,i_deex_gen,i_pT,i_pT_max,
+        read(11,*)i_deex,n_deex_step,i_pT,i_pT_max,
      &            a_FF,aPS_c,aPS_b,parp82,i_tune   ! 120923 Lei
         read(11,*)mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw   ! 160617 010418 310723 280823 Lei
         read(11,*)(adj1(i),i=1,10)
@@ -448,16 +448,7 @@ c               = 3, light-cone variable mode, with local pT compensation
 c                    and sampling z for qqbar.
 c               = 4, energy mode, with local pT compensation 
 c                    and sampling z for qqbar.
-c       i_deex_gen: (D=0) the deexcitation generation of newly produced qqbar
-c                   = 0, means no deexcitation for any newly produced qqbar
-c                   = 1, means just do deexcitation for the directly proudced 
-c                        qqbar pairs (1-st daughters) from original mother 
-c                        quarks (Orig mothers)
-c                   = 2, means do deexcitation for "1-st daughters" from 
-c                        "Orig mothers" and the subsequent qqbar pairs 
-c                        produced from "1-st daughters". (2-nd daughters)
-c                     ...
-c                   = 999, always do deexcitation for newly produced qqbar
+c       n_deex_step: the number of deexcitation steps per q/qbar
 c       i_pT: (D=1) the pT sampling method of the daughter qqbar pair in coal
 c             = 1, Gaussian px and py with width PARJ(21)
 c             = 2, Exponential px and py with width PARJ(21)
@@ -946,9 +937,9 @@ c----------------------------   Input Recording   ------------------------------
         write(9,*)'psno,ajpsi,vneum=',psno,ajpsi,vneum
         write(9,*)'para1_1,para1_2,para2,para4=',para1_1,para1_2,para2,
      c   para4
-        write(9,*)'i_deex,i_deex_gen,i_pT,i_pt_max,'//
+        write(9,*)'i_deex,n_deex_step,i_pT,i_pt_max,'//
      &            'a_FF,aPS_c,aPS_b,parp82,i_tune='   ! 120923 Lei
-        write(9,*) i_deex,i_deex_gen,i_pT,i_pt_max,
+        write(9,*) i_deex,n_deex_step,i_pT,i_pt_max,
      &             a_FF,aPS_c,aPS_b,parp82,i_tune   ! 120923 Lei
         write(9,*)'mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw='
      c   ,mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw   ! 160617 010418 280823 Lei
@@ -3917,7 +3908,7 @@ c       PYDAT1,PYDAT2,PYDAT3 and PYJETS are the subroutines in PYTHIA.
 c       Dumps "PYJETS" into "aaff".
         naff = 0
         call tran_pyjets   ! in main.f
-        n = 0
+        N = 0
 
 c       Appends "trs" to "sbe". (partons of inel. coll. in parcas with sfm)
         if( INT(adj1(12)).eq.0. .AND. iparres.eq.1 .AND. ntrs.gt.0 )then
@@ -4306,7 +4297,7 @@ c                   Charge is not conserved or errors occur. Re-generate the str
                     if(ipden.ge.11) call pyedit(1)   ! in p_30.f
 
 c                   moves "77" from "PYJETS" to "sgam"
-                    if(n.gt.0)then
+                    if(N.gt.0)then
                         n77 = 0
                         do jj=1,N,1
                             kf = K(jj,2)
@@ -4456,7 +4447,7 @@ c       PYDAT1,PYDAT2,PYDAT3 and PYJETS are the subroutines in PYTHIA.
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
         common/sa6_c/ithroq,ithrob,ich,non6_c,throe(4)
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)
-        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
+        common/sa18/i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         common/sa36/nglu,nongu,kglu(kszj,5),pglu(kszj,5),vglu(kszj,5)
         common/sa37/nth,npadth,kth(kszj,5),pth(kszj,5),vth(kszj,5)
@@ -4468,6 +4459,7 @@ c       Local variables.
         dimension numb(3)   ! g, qbar, q
 
         iteration = 0
+        i_deex_gen = INT( adj1(16) )   ! 180923 Lei
 12345   continue   ! Process the rest partons until empty.
         iteration = iteration + 1  ! No more than 50 times.
         if(nbe.eq.0) goto 54231   ! No rest partons.
@@ -4504,7 +4496,7 @@ c       Removes potential junctions if sfm in main.
                     jb = jb + 1
                     cycle
                 endif
-                call updad_pyj(n,i1+1,1)   ! in sfm.f
+                call updad_pyj(N,i1+1,1)   ! in sfm.f
                 N = N - 1
                 goto 100
             enddo
@@ -4522,8 +4514,8 @@ c       Shares 4-momentum in 'throe_p' among partons.
 
 c       Energetic q (qbar) de-excitation.
         n00   = N   ! Original total entries in PYJETS
-        igens = 0
-        i_daught_gen = 0   ! the #-th newly produced daughter qqbar
+        i_call_deex  = 0
+        i_daught_gen = 1   ! the #-th newly produced daughter qqbar
         n_deex = 0   ! number of successful deexcitation
         jb = 0
         n0 = N   ! Current total entries in PYJETS
@@ -4532,32 +4524,23 @@ c       Energetic q (qbar) de-excitation.
             kf0   = K(i1,2)
             ee    = P(i1,4)
             iflav = 1
-            if(kf0.lt.0) iflav = -1
+            if( kf0.lt.0 ) iflav = -1
 c           iflav = 1 : if source parton is quark
 c                 =-1 : if source parton is antiquark
-            if(ee.gt.adj1(17))then
-                if(i_deex.eq.1) call deexcitation_EP(i1,kf0,igen,iflav)   ! 300623 Lei In coales.f
-                if(i_deex.eq.2) call deexcitation_E(i1,kf0,igen,iflav)    ! 300623 Lei In coales.f
-        if(i_deex.eq.3) call deexcitation_EP_comp_pT(i1,kf0,igen,iflav)   ! 310723 Lei
-        if(i_deex.eq.4) call deexcitation_E_comp_pT(i1,kf0,igen,iflav)    ! 310723 Lei
-                if(igen.gt.0) n_deex = n_deex + 1
-                igens = igens + 1   ! Number of "call deexcitation"
+            if( ee.gt.adj1(17) )then
+              if( i_deex.eq.1 ) call deexcitation_EP(i1,kf0,nstep,iflav)   ! 300623 Lei In coales.f
+              if( i_deex.eq.2 ) call deexcitation_E(i1,kf0,nstep,iflav)    ! 300623 Lei In coales.f
+        if(i_deex.eq.3) call deexcitation_EP_comp_pT(i1,kf0,nstep,iflav)   ! 310723 Lei
+        if(i_deex.eq.4) call deexcitation_E_comp_pT(i1,kf0,nstep,iflav)    ! 310723 Lei
+                if( nstep.gt.0 ) n_deex = n_deex + 1
+                i_call_deex = i_call_deex + 1   ! Number of "call deexcitation"
             endif
-c           igen : number of generations per source q (qba)
-c               Updates n0 and does deexcitation for newly produced qqbar pair
-        if(i1.eq.n0 .AND. n.gt.n0 .AND. i_daught_gen.lt.i_deex_gen)then
-c         i_deex_gen=0 means no deexcitation for any newly produced qqbar pairs.
-c         i_deex_gen=1 means just do deexcitation for the directly proudced qqbar 
-c                       pairs (1-st daughters) from original PYJETS (Orig mothers).
-c         i_deex_gen=2 means do deexcitation for "1-st daughters" from "Orig mothers" 
-c                       and the subsequent qqbar pairs produced from "1-st daughters".
-c                       (2-nd daughters).
-c         i_deex_gen=3,4,...
-c         ...
-c         i_deex_gen=999 means always do deexcitation for newly produced qqbar pair
+c           nstep : number of deexcitation steps per source q (qbar)
+c           Updates n0 and does deexcitation for newly produced qqbar pairs
+        if( i1.eq.n0 .AND. N.gt.n0 .AND. i_daught_gen.lt.i_deex_gen)then
             jb = i1
             i_daught_gen = i_daught_gen + 1
-            n0 = n
+            n0 = N
             goto 700
         end if
         enddo
@@ -4580,11 +4563,11 @@ c       Make the partons in order of qba and q, i.e. move q to the end.
                 N = N + 1
                 numb(3) = numb(3)+1
                 do i4=1,5,1
-                    K(n,i4) = K(j,i4)
-                    P(n,i4) = P(j,i4)
-                    V(n,i4) = V(j,i4)
+                    K(N,i4) = K(j,i4)
+                    P(N,i4) = P(j,i4)
+                    V(N,i4) = V(j,i4)
                 enddo
-                call updad_pyj(n,j+1,1)   ! in sfm.f
+                call updad_pyj(N,j+1,1)   ! in sfm.f
                 N  = N  - 1
                 jh = jh - 1
                 jl = j  - 1
@@ -4593,7 +4576,7 @@ c       Make the partons in order of qba and q, i.e. move q to the end.
         enddo
         numb(1) = 0
         numb(2) = N - numb(3)
-        numb(3) = n
+        numb(3) = N
         n1 = numb(1)
         n2 = numb(2)
         n3 = N
@@ -4622,7 +4605,7 @@ c       Re-coalesces if iphase /= 0.
         endif
 
 c       Trasfers "sa1_h" to "PYJETS".
-        n = nn
+        N = nn
         do j2=1,5,1
             do j1=1,nn,1
                 K(j1,j2) = kn(j1,j2)

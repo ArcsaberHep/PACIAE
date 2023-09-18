@@ -26,7 +26,7 @@ c       PYDAT1,PYDAT2,PYDAT3 and PYJETS are the subroutines in PYTHIA
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
         common/sa6_c/ithroq,ithrob,ich,non6_c,throe(4)
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
-        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
+        common/sa18/i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         common/sa36/nglu,nongu,kglu(kszj,5),pglu(kszj,5),vglu(kszj,5) ! 220822
         common/sa37/nth,npadth,kth(kszj,5),pth(kszj,5),vth(kszj,5)   ! 150922
@@ -126,7 +126,7 @@ c        (filling in 'pyjets').
         call break_glu
 c       So far, the parton list ('pyjets') is composed of q and qbar only.
         adj12 = adj1(12)
-        adj16 = adj1(16)
+        i_deex_gen = INT( adj1(16) )   ! 180923 Lei
         adj17 = adj1(17)
 c200222 adj17=max(4.0,adj17) ! 070612, yan
 
@@ -144,8 +144,8 @@ c-------------------------------------------------------------------------------
 c---------------------------   Quark deexcitation   ----------------------------
 c280822 energetic q (qbar) de-excitation
         n00   = N   ! Original total entries in PYJETS
-        igens = 0
-        i_daught_gen = 0   ! the #-th newly produced daughter qqbar
+        i_call_deex  = 0
+        i_daught_gen = 1   ! the #-th newly produced daughter qqbar
         n_deex = 0   ! the number of successful deexcitation
         jb = 0
         n0 = N   ! Current total entries in PYJETS
@@ -154,30 +154,21 @@ c280822 energetic q (qbar) de-excitation
             kf0   = K(i1,2)
             ee    = P(i1,4)
             iflav = 1
-            if(kf0.lt.0) iflav = -1
+            if( kf0.lt.0 ) iflav = -1
 c           iflav = 1 : if source parton is quark
 c                 =-1 : if source parton is anti-quark
             if( ee.gt.adj17 )then
-                if(i_deex.eq.1) call deexcitation_EP(i1,kf0,igen,iflav)   ! 300623 Lei
-                if(i_deex.eq.2) call deexcitation_E(i1,kf0,igen,iflav)    ! 300623 Lei
-        if(i_deex.eq.3) call deexcitation_EP_comp_pT(i1,kf0,igen,iflav)   ! 310723 Lei
-        if(i_deex.eq.4) call deexcitation_E_comp_pT(i1,kf0,igen,iflav)    ! 310723 Lei
-                if(igen.gt.0) n_deex = n_deex + 1   ! 300623 Lei
-                igens = igens + 1   ! times of 'call deexcitation'
+              if( i_deex.eq.1 ) call deexcitation_EP(i1,kf0,nstep,iflav)   ! 300623 Lei
+              if( i_deex.eq.2 ) call deexcitation_E(i1,kf0,nstep,iflav)    ! 300623 Lei
+        if(i_deex.eq.3) call deexcitation_EP_comp_pT(i1,kf0,nstep,iflav)   ! 310723 Lei
+        if(i_deex.eq.4) call deexcitation_E_comp_pT(i1,kf0,nstep,iflav)    ! 310723 Lei
+                if( nstep.gt.0 ) n_deex = n_deex + 1   ! 300623 Lei
+                i_call_deex = i_call_deex + 1   ! times of 'call deexcitation'
             endif
-c           igen : number of generations per source q (qbar)
+c           nstep : number of deexcitation steps per source q (qbar)
 c300623 Lei
-c           Updates n0 and does deexcitation for newly produced qqbar pair
+c           Updates n0 and does deexcitation for newly produced qqbar pairs.
         if( i1.eq.n0 .AND. N.gt.n0 .AND. i_daught_gen.lt.i_deex_gen)then
-c         i_deex_gen=0 means no deexcitation for any newly produced qqbar pairs.
-c         i_deex_gen=1 means just do deexcitation for the directly proudced qqbar 
-c                       pairs (1-st daughters) from original PYJETS (Orig mothers).
-c         i_deex_gen=2 means do deexcitation for "1-st daughters" from "Orig mothers" 
-c                       and the subsequent qqbar pairs produced from "1-st daughters".
-c                       (2-nd daughters).
-c         i_deex_gen=3,4,...
-c         ...
-c         i_deex_gen=999 means always do deexcitation for newly produced qqbar pair
             jb = i1
             i_daught_gen = i_daught_gen + 1
             n0 = N
@@ -1563,13 +1554,13 @@ c090700
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccrcccccccccccccccc
-        subroutine deexcitation_E(ii,kf0,igen,iflav)
+        subroutine deexcitation_E(ii,kf0,nstep,iflav)
 c300623 Renamed from orginal 'ffm' and some modifications were made.   ! 300623 Lei
 c       qqbar pair generation according to energy conservation ! 200223
 c280822 i.e. energetic q (qbar) de-exciatation
 c       ii : the order number of source quark (or anti-quark)
 c       kf0 : flavor code of source quark (or anti-quark)
-c       igen : number of generations per source q (qbar)  ! 280822
+c       nstep : number of deexcitation steps per source q (qbar)
 c       iflav = 1 : if source parton is quark (kf0>0)
 c             =-1 : if source parton is anti-quark (kf0<0)
 C...Double precision and integer declarations.
@@ -1584,12 +1575,11 @@ C...Double precision and integer declarations.
         common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104
-        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
+        common/sa18/i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         dimension p0(4),p1(4),p1c(4),p00(4),rc(3),rr(3),pnn(kszj,5),
      c   peo(5),pdec(20,5)   ! 090922
 
-        adj16 = adj1(16)   ! Number of allowed generations 280822
         adj17 = adj1(17)   ! Threshold energy
         i_z   = INT( adj1(29) )   ! Function for selecting z
         n0    = N
@@ -1606,7 +1596,7 @@ C...Double precision and integer declarations.
         pm0    = P(ii,5) ! m, mass of source q (qbar), maybe 0 from PYTHIA.
         ! pm0    = PYMASS(kf0) ! m, mass of source q (qbar)
 
-        igen = 0   ! Count number of generation
+        nstep = 0   ! Counts number of deexcitation step.
 
         if(e0.lt.0.) return   ! Stop generation 280822
 
@@ -1749,18 +1739,18 @@ c       p1c refers to remnant (original parion after generating qqbr pair)
         do i3=1,4
             p0(i3) = p1c(i3)
         enddo
-        igen = igen + 1
+        nstep = nstep + 1
 
         N = N + 2
         ! sm2 = e0**2 - p0(1)**2 - p0(2)**2 - p0(3)**2
         ! if( SQRT(sm2).gt.pm0 ) goto 100 ! Continue to another generation.
-        if(igen.ge.INT(adj16)) goto 106   ! Stop generation 280822
+        if( nstep.ge.n_deex_step ) goto 106   ! Stop generation 280822
         if( e0.le.adj17) goto 106   ! Stop generation
 
         goto 100
 
 106     continue
-        if(igen.eq.0)return
+        if( nstep.eq.0 ) return
 c       Update four momentum of the remnant of ii-th source q (qbar) 280822
         do i3=1,4   ! 280822
             P(ii,i3) = p0(i3)
@@ -1781,13 +1771,13 @@ c       Re-calculate E for the remenant, let its inv. mass >= 0.
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccrcccccccccccccccc
-        subroutine deexcitation_EP(ii,kf0,igen,iflav)
+        subroutine deexcitation_EP(ii,kf0,nstep,iflav)
 c300623 Rename from orginal 'ffm' and some modifications were made.   ! 300623 Lei
 c       qqbar pair generation according to light-cone variable !
 c280822 i.e. energetic q (qbar) de-exciatation
 c       ii : the order number of source quark (or anti-quark)
 c       kf0 : flavor code of source quark (or anti-quark)
-c       igen : number of generations per source q (qbar)  ! 280822
+c       nstep : number of deexcitation steps per source q (qbar)
 c       iflav = 1 : if source parton is quark (kf0>0)
 c             =-1 : if source parton is anti-quark (kf0<0)
 C...Double precision and integer declarations.
@@ -1802,12 +1792,11 @@ C...Double precision and integer declarations.
         common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104
-        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
+        common/sa18/i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         dimension p0(4),p1(4),p1c(4),p00(4),rc(3),rr(3),pnn(kszj,5),
      c   peo(5),pdec(20,5)   ! 090922
 
-        adj16 = adj1(16)   ! Number of allowed generations 280822
         adj17 = adj1(17)   ! Threshold energy
         i_z   = INT( adj1(29) )   ! Function for selecting z
         n0    = N
@@ -1827,7 +1816,7 @@ C...Double precision and integer declarations.
         if(p00(3).lt.0.) p0(3) = -p0(3)  ! Converts E-p_z as E+p_z
         w0 = e0 + p0(3) ! E+p_z
 
-        igen = 0   ! Count number of generation
+        nstep = 0   ! Counts number of deexcitation step.
 
         if(w0.lt.0.) return   ! Stop generation
 
@@ -1973,19 +1962,19 @@ c       p1c refers to remnant (original parion after generating qqbr pair)
         do i3=1,4
             p0(i3) = p1c(i3)
         enddo
-        igen = igen + 1
+        nstep = nstep + 1
 
         N = N + 2
         ! sm2 = e0**2 - p0(1)**2 - p0(2)**2 - p0(3)**2
         ! if( SQRT(sm2).gt.pm0 ) goto 100 ! Continue to another generation.
-        if( igen.ge.INT(adj16) ) goto 106   ! Stop generation 280822
+        if( nstep.ge.n_deex_step ) goto 106   ! Stop generation 280822
         if( e0.le.adj17 ) goto 106   ! Stop generation
         if( w0.le.0. )    goto 106   ! Stop generation
 
         goto 100
 
 106     continue
-        if(igen.eq.0)return
+        if( nstep.eq.0 ) return
 c       Update four momentum of the remnant of ii-th source q (qbar). 280822
         do i3=1,4   ! 280822
             P(ii,i3) = p0(i3)
@@ -2007,7 +1996,7 @@ c       Re-calculates E for the remenant, let its inv. mass >= 0.
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccrcccccccccccccccc
-        subroutine deexcitation_EP_comp_pT(ii,kf0,igen,iflav)
+        subroutine deexcitation_EP_comp_pT(ii,kf0,nstep,iflav)
 c300623 Rename from orginal 'ffm' and some modifications were made.   ! 300623 Lei
 c       qqbar pair generation according to light-cone variable !
 c      Assuming local pT compensation, i.e. px(-px) and py(-py) for q(qbar), 
@@ -2015,7 +2004,7 @@ c       vice versa. Sample z for qqbar.
 c280822 i.e. energetic q (qbar) de-exciatation
 c       ii : the order number of source quark (or anti-quark)
 c       kf0 : flavor code of source quark (or anti-quark)
-c       igen : number of generations per source q (qbar)  ! 280822
+c       nstep : number of deexcitation steps per source q (qbar)
 c       iflav = 1 : if source parton is quark (kf0>0)
 c             =-1 : if source parton is anti-quark (kf0<0)
 C...Double precision and integer declarations.
@@ -2030,12 +2019,11 @@ C...Double precision and integer declarations.
         common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104
-        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
+        common/sa18/i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         dimension p0(4),p1(4),p1c(4),p00(4),rc(3),rr(3),pnn(kszj,5),
      c   peo(5),pdec(20,5)   ! 090922
 
-        adj16 = adj1(16)   ! Number of allowed generations 280822
         adj17 = adj1(17)   ! Threshold energy
         i_z   = INT( adj1(29) )   ! Function for selecting z
         n0    = N
@@ -2055,7 +2043,7 @@ C...Double precision and integer declarations.
         if(p00(3).lt.0.) p0(3) = -p0(3)  ! Converts E-p_z as E+p_z
         w0 = e0 + p0(3) ! E+p_z
 
-        igen = 0   ! Count number of generation
+        nstep = 0   ! Counts number of deexcitation step.
 
         if(w0.lt.0.) return   ! Stop generation
 
@@ -2211,19 +2199,19 @@ c       p1c refers to remnant (original parion after generating qqbr pair)
         do i3=1,4
             p0(i3) = p1c(i3)
         enddo
-        igen = igen + 1
+        nstep = nstep + 1
 
         N = N + 2
         ! sm2 = e0**2 - p0(1)**2 - p0(2)**2 - p0(3)**2
         ! if( SQRT(sm2).gt.pm0 ) goto 100 ! Continue to another generation.
-        if( igen.ge.INT(adj16) ) goto 106   ! Stop generation 280822
+        if( nstep.ge.n_deex_step ) goto 106   ! Stop generation 280822
         if( e0.le.adj17 ) goto 106   ! Stop generation
         if( w0.le.0. )    goto 106   ! Stop generation
 
         goto 100
 
 106     continue
-        if(igen.eq.0)return
+        if( nstep.eq.0 ) return
 c       Update four momentum of the remnant of ii-th source q (qbar). 280822
         do i3=1,4   ! 280822
             P(ii,i3) = p0(i3)
@@ -2245,7 +2233,7 @@ c       Re-calculates E for the remenant, let its inv. mass >= 0.
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccrcccccccccccccccc
-        subroutine deexcitation_E_comp_pT(ii,kf0,igen,iflav)
+        subroutine deexcitation_E_comp_pT(ii,kf0,nstep,iflav)
 c300623 Renamed from orginal 'ffm' and some modifications were made.   ! 300623 Lei
 c       qqbar pair generation according to energy conservation ! 200223
 c      Assuming local pT compensation, i.e. px(-px) and py(-py) for q(qbar), 
@@ -2253,7 +2241,7 @@ c       vice versa. Sample z for qqbar.
 c280822 i.e. energetic q (qbar) de-exciatation
 c       ii : the order number of source quark (or anti-quark)
 c       kf0 : flavor code of source quark (or anti-quark)
-c       igen : number of generations per source q (qbar)  ! 280822
+c       nstep : number of deexcitation steps per source q (qbar)
 c       iflav = 1 : if source parton is quark (kf0>0)
 c             =-1 : if source parton is anti-quark (kf0<0)
 C...Double precision and integer declarations.
@@ -2268,12 +2256,11 @@ C...Double precision and integer declarations.
         common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104
-        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
+        common/sa18/i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         dimension p0(4),p1(4),p1c(4),p00(4),rc(3),rr(3),pnn(kszj,5),
      c   peo(5),pdec(20,5)   ! 090922
 
-        adj16 = adj1(16)   ! Number of allowed generations 280822
         adj17 = adj1(17)   ! Threshold energy
         i_z   = INT( adj1(29) )   ! Function for selecting z
         n0    = N
@@ -2290,7 +2277,7 @@ C...Double precision and integer declarations.
         pm0    = P(ii,5) ! m, mass of source q (qbar), maybe 0 from PYTHIA.
         ! pm0    = PYMASS(kf0) ! m, mass of source q (qbar)
 
-        igen = 0   ! Count number of generation
+        nstep = 0   ! Counts number of deexcitation step.
 
         if(e0.lt.0.) return   ! Stop generation 280822
 
@@ -2443,18 +2430,18 @@ c       p1c refers to remnant (original parion after generating qqbr pair)
         do i3=1,4
             p0(i3) = p1c(i3)
         enddo
-        igen = igen + 1
+        nstep = nstep + 1
 
         N = N + 2
         ! sm2 = e0**2 - p0(1)**2 - p0(2)**2 - p0(3)**2
         ! if( SQRT(sm2).gt.pm0 ) goto 100 ! Continue to another generation.
-        if(igen.ge.INT(adj16)) goto 106   ! Stop generation 280822
+        if( nstep.ge.n_deex_step ) goto 106   ! Stop generation 280822
         if( e0.le.adj17) goto 106   ! Stop generation
 
         goto 100
 
 106     continue
-        if(igen.eq.0)return
+        if( nstep.eq.0 ) return
 c       Update four momentum of the remnant of ii-th source q (qbar) 280822
         do i3=1,4   ! 280822
             P(ii,i3) = p0(i3)
@@ -2497,7 +2484,7 @@ C...Double precision and integer declarations.
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
         common/sa1/kjp21,non1,bp,iii,neve,nout,nosc   ! 081222
-        common/sa18/i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
+        common/sa18/i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
         common/local_fmax/ fmax_value(5)   ! 300623 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
 
