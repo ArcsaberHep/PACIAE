@@ -275,7 +275,7 @@ i_pT_samp=1 # (D=3) i_pT, pT sampling method of the daughter qqbar pair in coal:
             #         = 8, random pT from mother, the same random 
             #              factor as z which related to adj1(29).
 i_pT_max=0  # (D=0) i_pT_max, with/without max value constraint in pT sampling.
-eDeex=2 # (D=2.) adj1(17), deexcitation threshold energy.
+e_deex=2 # (D=2.) adj1(17), deexcitation threshold energy.
 i_phase_constraint=0    # (D=0) adj(21), phase-space constraint in coalescence.
                         #                =0, without
                         #                =1, with complete phase-space
@@ -363,17 +363,8 @@ i_deex=3    # (D=3) i_deex, the deexcitation mode used in coal
             #                   and sample z for qqbar.
             #               =4, light-cone variable mode, local pT compensation,
             #                   and sample z for q0-q or q0-qbar.
-i_deex_gen=0    # (D=0) i_deex_gen, the deexcitation generation of newly qqbar
-                #         =0, means no deexcitation for any newly produced qqbar
-                #         =1, means just do deexcitation for the directly 
-                #             proudced qqbar pairs (1-st daughters) from 
-                #             original mother quarks (Orig mothers)
-                #         =2, means do deexcitation for "1-st daughters" from 
-                #             "Orig mothers" and the subsequent qqbar pairs 
-                #             produced from "1-st daughters". (2-nd daughters)
-                #         ...
-                #         =999, always do deexcitation for newly produced qqbar
-n_deexc_time_per_q=999 # (D=999) adj(16), the number of deexcitation per q/qbar.
+i_deex_gen=1    # (D=1) adj(16), the deexcitation generation of newly qqbar
+n_deex_step=999 # (D=999) n_deex_step, the number of deexcitation steps per q.
 i_mass=3    # (D=3) i_mass, mass definetion of quarks used in "break_f"
             #               =1, kinematical mass
             #               =2, current algebra mass
@@ -512,11 +503,11 @@ echo "${pT_low},${pT_upp}"                                                      
 echo "2.7,${i_y_or_eta},${energy}               ! parp21,yOrEta,win"    >> usu.dat
 echo "0.,0.5,1,1,${i_channel}       ! ttaup,taujp,iabsb,iabsm,nchan"    >> usu.dat
 echo "7.2,4.,${b_samp},40.,20.,0.,0.1 ! para13,para14,psno,para15,para16,ajpsi,vneum"   >> usu.dat
-echo "40,40,15,10                 ! para1_1,para1_2,para2,para4" >> usu.dat
-echo "${i_deex},${i_deex_gen},${i_pT_samp},${i_pT_max},0.77,0.05,0.005,${p_perp0},${i_tune}   ! i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,a_PS_c,a_PS_b,parp82,i_tune" >> usu.dat
+echo "40,40,25,10                 ! para1_1,para1_2,para2,para4" >> usu.dat
+echo "${i_deex},${n_deex_step},${i_pT_samp},${i_pT_max},0.77,0.05,0.005,${p_perp0},${i_tune}   ! i_deex,n_deex_step,i_pT,i_pT_max,a_FF,a_PS_c,a_PS_b,parp82,i_tune" >> usu.dat
 echo "1,${i_inel_proc},${i_t_shower},${i_sim_mode},${prob_Delta_decay},2        ! mstu21,i_inel_proc,i_time_shower,,iMode,decpro,itorw" >> usu.dat
 echo "${k_parcas},0.47,0.4,1000,${i_shadow},${a_lund},${b_lund},4,${p_perp_min},${k_pythia}    ! adj1(1)- adj1(10)  " >> usu.dat
-echo "${dt_hadcas},${i_hadronization},30,45,1.,${n_deexc_time_per_q},${eDeex},0,${dt_parcas},1          ! adj1(11)- adj1(20) " >> usu.dat
+echo "${dt_hadcas},${i_hadronization},30,45,1.,${i_deex_gen},${e_deex},0,${dt_parcas},1          ! adj1(11)- adj1(20) " >> usu.dat
 echo "${i_phase_constraint},4.,${i_cme},0.15,0.4,${i_random},800000.,${ex_volum_factor},${i_fragment_function},${i_overlap} ! adj1(21)- adj1(30) " >> usu.dat
 echo "0.1,0.3,0.4,${pT_width},1,0,100.,3.,${sig_kPerp},${i_stage}    ! adj1(31)- adj1(40) " >> usu.dat
 echo "${i_string_tension},2,2,0.025,0   ! kjp22,kjp23,kjp24,parp78,mstptj" >> usu.dat
@@ -603,7 +594,7 @@ echo "#         =1, if projectile is nucleus"                                   
 echo "#         =2, for e+e-"                                                               >> usu.dat
 echo "#         ..."                                                                        >> usu.dat
 echo "#"                                                                                    >> usu.dat
-echo "# ispmax,isdmax,iflmax   (D=20, 5, 2)"                                                >> usu.dat
+echo "# ispmax,isdmax,iflmax   (D=20, 6, 2)"                                                >> usu.dat
 echo "#  ispmax: maximum # of different particle pieces to be considered"                   >> usu.dat
 echo "#  isdmax: maximum # of different distributions to be considered"                     >> usu.dat
 echo "#  iflmax: maximum # of windows to be set, =0 means no window at all"                 >> usu.dat
@@ -614,12 +605,13 @@ echo "#          (list at the end and see detail in reference: arXiv:hep-ph/0603
 echo "#"                                                                                    >> usu.dat
 echo "# asd(i=1,isdmax): interval of the i-th distribution"                                 >> usu.dat
 echo "#  for pp, pbarp, pA(Ap), AB etc."                                                    >> usu.dat
-echo "#      (D=0.35, 0.5, 0.35, 0.3, 25)"                                                  >> usu.dat
+echo "#      (D=0.35, 0.5, 0.35, 0.3, 25, 0.5)"                                             >> usu.dat
 echo "#      i=1: rapidity distribution (dN/dy v.s. y)"                                     >> usu.dat
 echo "#       =2: invariant transverse monmentum distribution (1/pT*dN/dpT v.s. pT)"        >> usu.dat
 echo "#       =3: pesudorapidity distribution (dN/deta v.s. eta)"                           >> usu.dat
 echo "#       =4: transeverse mass distribution (1/mT*dN/dmT v.s. mT)"                      >> usu.dat
 echo "#       =5: event-wise multiplicity distribution"                                     >> usu.dat
+echo "#       =6: transverse momentum distribution (dN/dpT v.s. pT)"                        >> usu.dat
 echo "#  for ep, nu_ep, etc."                                                               >> usu.dat
 echo "#      i=1: Q^2=-q^2 (fq2 in code) distribution"                                      >> usu.dat
 echo "#       =2: W^2 (w21) distribution"                                                   >> usu.dat
@@ -664,7 +656,7 @@ echo "#         =4, heavy-flavor production"                                    
 echo "#         =5, direct photon"                                                          >> usu.dat
 echo "#         =6, soft only"                                                              >> usu.dat
 echo "#         =7, W+/- production"                                                        >> usu.dat
-echo "#         =8: PYTHIA default (msel=1)"                                                >> usu.dat
+echo "#         =8: PYTHIA default (MSEL=1)"                                                >> usu.dat
 echo "#         =9: Z0 production"                                                          >> usu.dat
 echo "#"                                                                                    >> usu.dat
 echo "# para13,para14,psno,para15,para16,ajpsi,vneum (D=7.2, 4., 2, 40., 20., 0, 0.1)"      >> usu.dat
@@ -685,8 +677,8 @@ echo "#  para1_2: nn total cross section used in hadron cascade"                
 echo "#  para2: total cross-section of pi-nucleon"                                          >> usu.dat
 echo "#  para4: total cross-section of pi-pi"                                               >> usu.dat
 echo "#"                                                                                    >> usu.dat
-echo "# i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b,parp82,i_tune"                     >> usu.dat
-echo "#  (D=3, 0, 1, 0, 0.77, 0.05, 0.005, 2., 0)"                                          >> usu.dat
+echo "# i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b,parp82,i_tune"                    >> usu.dat
+echo "#  (D=3, 0, 999, 0, 0.77, 0.05, 0.005, 2., 0)"                                        >> usu.dat
 echo "#  i_deex: the deexcitation mode used in coal"                                        >> usu.dat
 echo "#          = 1, light-cone variable mode"                                             >> usu.dat
 echo "#          = 2, energy mode"                                                          >> usu.dat
@@ -694,16 +686,7 @@ echo "#          = 3, light-cone variable mode, with local pT compensation "    
 echo "#               and sampling z for qqbar"                                             >> usu.dat
 echo "#          = 4, energy mode, with local pT compensation "                             >> usu.dat
 echo "#               and sampling z for qqbar"                                             >> usu.dat
-echo "#  i_deex_gen: the deexcitation generation of newly produced qqbar in coal"           >> usu.dat
-echo "#              = 0, means no deexcitation for any newly produced qqbar pairs"         >> usu.dat
-echo "#              = 1, means just do deexcitation for the directly proudced qqbar "      >> usu.dat
-echo "#                         pairs (1-st daughters) from original mother quarks "        >> usu.dat
-echo "#                         (Orig mothers)"                                             >> usu.dat
-echo "#              = 2, means do deexcitation for "1-st daughters" from "                 >> usu.dat
-echo "#                         "Orig mothers" and the subsequent qqbar pairs "             >> usu.dat
-echo "#                         produced from "1-st daughters". (2-nd daughters)"           >> usu.dat
-echo "#                ..."                                                                 >> usu.dat
-echo "#              = 999, always do deexcitation for newly produced qqbar"                >> usu.dat
+echo "#  n_deex_step: the number of deexcitation steps per q/qbar"                          >> usu.dat
 echo "#  i_pT: the pT sampling method of the daughter qqbar pair in coal"                   >> usu.dat
 echo "#        = 1, Gaussian px and py with width PARJ(21)"                                 >> usu.dat
 echo "#        = 2, Exponential px and py with width PARJ(21)"                              >> usu.dat
@@ -740,7 +723,7 @@ echo "#"                                                                        
 echo "# adj1(i), i=1,40: switches and/or parameters"                                        >> usu.dat
 echo "# --------------------------------------------------------------------------------"   >> usu.dat
 echo "#     D= 1-10 :  1., 0.47, 0.4, 1000,   1, 0.3,    0.58,  4,  1.9, 1.5"               >> usu.dat
-echo "#        11-20: 0.1,    0,  30,   45,  1.,  1.,      2.,  0, 0.03, 1"                 >> usu.dat
+echo "#        11-20: 0.1,    0,  30,   45,  1.,   1,      2.,  0, 0.03, 1"                 >> usu.dat
 echo "#        21-30:   0,   4.,   1, 0.15, 0.4,   1, 800000., 1.,    4, 0"                 >> usu.dat
 echo "#        31-40: 0.1,  0.3, 0.4, 0.36,   1,   0,    100., 3.,   2., 4."                >> usu.dat
 echo "# --------------------------------------------------------------------------------"   >> usu.dat
@@ -751,19 +734,21 @@ echo "#          the parton-parton differential cross section (parcas)."        
 echo "#       4: idw, the number of intervals in the numerical integration."                >> usu.dat
 echo "#       5: =1: with Wang's nuclear shadowing (PLB 527(2002)85),"                      >> usu.dat
 echo "#          =0: without nuclear shadowing."                                            >> usu.dat
-echo "#       6: alpha in the LUND string fragmentation function (PARJ(41) in PYTHIA)."     >> usu.dat
-echo "#       7: beta in the LUND string fragmentation function (PARJ(42) in PYTHIA)."      >> usu.dat
+echo "#       6: 'a' in the LUND string fragmentation function (PARJ(41) in PYTHIA)."       >> usu.dat
+echo "#       7: 'b' in the LUND string fragmentation function (PARJ(42) in PYTHIA)."       >> usu.dat
 echo "#       8: MSTP(82) in PYTHIA."                                                       >> usu.dat
 echo "#       9: PARP(81) in PYTHIA."                                                       >> usu.dat
 echo "#       10: K factor (PARP(31) in PYTHIA)."                                           >> usu.dat
 echo "#       11: time accuracy used in the hadron rescattering."                           >> usu.dat
 echo "#       12: model for hadronization:"                                                 >> usu.dat
-echo "#           =0, string fragmentation,"                                                >> usu.dat
-echo "#           =1, Monte Carlo coalescence model"                                        >> usu.dat
+echo "#           =0, string fragmentation;"                                                >> usu.dat
+echo "#           =1, Monte Carlo coalescence model, mode 1;"                               >> usu.dat
+echo "#           =2, Monte Carlo coalescence model, mode 2; with gluon splitting & "       >> usu.dat
+echo "#               deexcitation before parcas."                                          >> usu.dat
 echo "#       13: dimension of meson table considered in coalescence model."                >> usu.dat
 echo "#       14: dimension of baryon table considered coalescence model."                  >> usu.dat
 echo "#       15: string tension of qqbar simple string."                                   >> usu.dat
-echo "#       16: number of loops in the deexcitation of energetic quark in the "           >> usu.dat
+echo "#       16: number of the deexcitation generations of energetic quark in the "        >> usu.dat
 echo "#           Monte Carlo coalescence model."                                           >> usu.dat
 echo "#       17: the threshold energy in the deexcitation of energetic quark in "          >> usu.dat
 echo "#           the Monte Carlo coalescence model."                                       >> usu.dat
@@ -798,19 +783,13 @@ echo "#            hadcas, it will be recalculated in program running "         
 echo "#           ( drmax=para10*dmax1(rnt,rnp) )."                                         >> usu.dat
 echo "#       29: For sfm in PYTHIA, it is MSTJ(11). Choice of longitudinal "               >> usu.dat
 echo "#            fragmentation function, i.e. how large a fraction of the energy "        >> usu.dat
-echo "#            available a newly-created hadron takes:"                                 >> usu.dat
-echo "#           =1: Lund symmetric fragmentation function, see PARJ(41) - PARJ(45),"      >> usu.dat
-echo "#           =2: Field-Feynman + Peterson/SLAC, see PARJ(51) PARJ(59),"                >> usu.dat
-echo "#           =3: Lund + Peterson/SLAC (light flavor + heavier),"                       >> usu.dat
-echo "#           =4: default PYTHIA. Lund + Bowler,"                                       >> usu.dat
-echo "#           =5: as = 4, but interpolate for c and b; see PARJ(46) and PARJ(47)."      >> usu.dat
-echo "#           For coal, sampling daughter parton energy fraction z taking from "        >> usu.dat
-echo "#            mother in 'funcz' for coal:"                                             >> usu.dat
-echo "#           =1: by Lund string fragmentation function,"                               >> usu.dat
-echo "#           =2: by Field-Feynmman fragmentation function,"                            >> usu.dat
-echo "#           =3: by Peterson/SLAC fragmentation function,"                             >> usu.dat
-echo "#           =4: null,"                                                                >> usu.dat
-echo "#           =5: null."                                                                >> usu.dat
+echo "#            available a newly-created hadron takes."                                 >> usu.dat
+echo "#           =1: Lund symmetric fragmentation function, see PARJ(41) - PARJ(45)"       >> usu.dat
+echo "#           =2: Field-Feynman + Peterson/SLAC, see PARJ(51) PARJ(59)"                 >> usu.dat
+echo "#           =3: Lund + Peterson/SLAC (light flavor + heavier)"                        >> usu.dat
+echo "#           =4: default PYTHIA. Lund + Bowler"                                        >> usu.dat
+echo "#           =5: as = 4, but interpolate for c and b; see PARJ(46) and PARJ(47)"       >> usu.dat
+echo "#           =0: as = 4 in sfm / random z in coal"                                     >> usu.dat
 echo "#       30: =1, distribute the participant nucleons in overlapping region forcely,"   >> usu.dat
 echo "#           =0, without more requirements."                                           >> usu.dat
 echo "#       31: PARJ(1) in PYTHIA."                                                       >> usu.dat
@@ -820,7 +799,7 @@ echo "#       34: PARJ(21) in PYTHIA, width of px/py/pT sampling in PYPTDI/paptd
 echo "#       35: MSTP(91) in PYTHIA, parton transverse momentum (k_perp) distribution "    >> usu.dat
 echo "#           inside hadron:"                                                           >> usu.dat
 echo "#           =1: Gaussian,"                                                            >> usu.dat
-echo "#           =2: exponential."   >> usu.dat
+echo "#           =2: exponential."                                                         >> usu.dat
 echo "#       36: with or without phenomenological parton energy loss in parton rescattering:"      >> usu.dat
 echo "#           =0, without,"                                                             >> usu.dat
 echo "#           =1, with."                                                                >> usu.dat
@@ -866,18 +845,14 @@ echo "#  dparj4: default PARJ(4)"                                               
 echo "#  cp0,cr0: parameters in parameterization of multiple string effect"                 >> usu.dat
 echo "#  seco: parameter in popcorn mechanism for correction of PARJ(1)"                    >> usu.dat
 echo "#"                                                                                    >> usu.dat
-echo "#"                                                                                    >> usu.dat
 echo "# i_mass, prob_ratio_q (D=3, 1, 1, 0.3, 0, 0, 0)"                                     >> usu.dat
-echo "# i_mass: mass definetion of quarks used in \"break_f\""                              >> usu.dat
-echo "# prob_ratio_q: probability ratio u-ubar:d-dbar:s-sbar:c-cbar:b-bbar:t-tbar."         >> usu.dat
+echo "#  i_mass: mass definetion of quarks used in \"break_f\""                             >> usu.dat
+echo "#          =1, kinematical mass"                                                      >> usu.dat
+echo "#          =2, current algebra mass"                                                  >> usu.dat
+echo "#          =3, constituent mass"                                                      >> usu.dat
+echo "#  prob_ratio_q: probability ratio u-ubar:d-dbar:s-sbar:c-cbar:b-bbar:t-tbar."        >> usu.dat
 echo "#"                                                                                    >> usu.dat
 echo "#"                                                                                    >> usu.dat
-echo "# cumulent sum of flavor generation probability, for an example: "                    >> usu.dat
-echo "#  p_31=(1-amd/sms)/2., p_32=(1-amu/sms)/2., p_33=(1-ams/sms)/2.;"                    >> usu.dat
-echo "#  amd (amu, ams): d (u,s) quark constituent mass, sms=amd+amu+ams;"                  >> usu.dat
-echo "#  p_31+p_32+p33=1;"                                                                  >> usu.dat
-echo "#  cumulent sum: csp_31=p_31, csp_32=p_31+p_32"                                       >> usu.dat
-echo "#  u and d have same constituent mass and probability"                                >> usu.dat
 echo "######################        Annotation of usu.dat         ####################"     >> usu.dat
 echo "################################################################################"     >> usu.dat
 echo ""                                                                                     >> usu.dat
@@ -1505,7 +1480,7 @@ cd ./${dir_energy}
 # xVf : ex_volum_factor
 # iCr : i_coord_recover
 # Default
-dir="./b${b_min}_${b_max}_aL${a_lund}_bL${b_lund}_eDeex${eDeex}_K${k_pythia}"
+dir="./b${b_min}_${b_max}_aL${a_lund}_bL${b_lund}_eDeex${e_deex}_K${k_pythia}"
 # dir="./b${b_min}_${b_max}_aL${a_lund}_bL${b_lund}_kI${k_pythia}_kC${k_parcas}_pTp${pT_perturb}_iO${i_overlap}_iH${i_hadronization}_iHc${i_hadcas}_iStr${i_string_tension}_iP${i_phase_constraint}_iFF${i_fragment_function}_iM${i_cme}"
 
 if [[ "${na_proj}" = "1" && "${na_targ}" = "1" ]]; then
@@ -1513,7 +1488,7 @@ if [[ "${na_proj}" = "1" && "${na_targ}" = "1" ]]; then
     if [[ "${i_hadronization}" = "0" ]]; then
         dir="./Sfm_aL${a_lund}_bL${b_lund}_pP0${p_perp0}_pPm${p_perp_min}_sig${pT_width}_K${k_pythia}_Kc${k_parcas}_iHc${i_hadcas}_iTune${i_tune}"
     elif [[ "${i_hadronization}" != "0" ]]; then
-        dir="./Coal${i_hadronization}_pP0${p_perp0}_pPm${p_perp_min}_iFF${i_fragment_function}_ipT${i_pT_samp}_iPm${i_pT_max}_iPc${i_phase_constraint}_eDeex${eDeex}_nDq${n_deexc_time_per_q}_iDg${i_deex_gen}_iDx${i_deex}_sig${pT_width}_sigP${sig_kPerp}_K${k_pythia}_Kc${k_parcas}_iHc${i_hadcas}"
+        dir="./Coal${i_hadronization}_pP0${p_perp0}_pPm${p_perp_min}_iFF${i_fragment_function}_ipT${i_pT_samp}_iPm${i_pT_max}_iPc${i_phase_constraint}_eDeex${e_deex}_nDs${n_deex_step}_iDg${i_deex_gen}_iDx${i_deex}_sig${pT_width}_sigK${sig_kPerp}_K${k_pythia}_Kc${k_parcas}_iHc${i_hadcas}"
     # else
     fi
     if [ "${i_sim_mode}" = "1" ]; then
@@ -1523,9 +1498,9 @@ if [[ "${na_proj}" = "1" && "${na_targ}" = "1" ]]; then
 else
 # pA, AA collisions
     if [[ "${i_hadronization}" = "0" ]]; then
-        dir="./b${b_min}_${b_max}_sfm_aL${a_lund}_bL${b_lund}_pP0${p_perp0}_pPm${p_perp_min}_sig${pT_width}_K${k_pythia}_Kc${k_parcas}_iO${i_overlap}_iHc${i_hadcas}_iTune${i_tune}"
+        dir="./b${b_min}_${b_max}_sfm_aL${a_lund}_bL${b_lund}_pP0${p_perp0}_pPm${p_perp_min}_sig${pT_width}_K${k_pythia}_Kc${k_parcas}_iO${i_overlap}_iHc${i_hadcas}_iSh${i_shadow}_iTune${i_tune}"
     elif [[ "${i_hadronization}" != "0" ]]; then
-        dir="./b${b_min}_${b_max}_coal${i_hadronization}_pP0${p_perp0}_pPm${p_perp_min}_iFF${i_fragment_function}_ipT${i_pT_samp}_iPm${i_pT_max}_iPc${i_phase_constraint}_eDeex${eDeex}_nDq${n_deexc_time_per_q}_iDg${i_deex_gen}_iDx${i_deex}_sig${pT_width}_sigP${sig_kPerp}_K${k_pythia}_Kc${k_parcas}_iO${i_overlap}_iHc${i_hadcas}"
+        dir="./b${b_min}_${b_max}_coal${i_hadronization}_pP0${p_perp0}_pPm${p_perp_min}_iFF${i_fragment_function}_ipT${i_pT_samp}_iPm${i_pT_max}_iPc${i_phase_constraint}_eDeex${e_deex}_nDs${n_deex_step}_iDg${i_deex_gen}_iDx${i_deex}_sig${pT_width}_sigK${sig_kPerp}_K${k_pythia}_Kc${k_parcas}_iO${i_overlap}_iHc${i_hadcas}_iSh${i_shadow}"
     # else
     fi
     if [ "${i_sim_mode}" = "1" ]; then
