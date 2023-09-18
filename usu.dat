@@ -4,7 +4,7 @@
 0,1,1.2,200,1     ! kjp21,ifram,para7,para10,kjp20
 3.1416,1,1                  ! pio,ipden,itden
 20,6,2                                 ! ispmax,isdmax,iflmax
-333,443,23,24,-24,0,0,0,0,0   ! KF code of particles not to decay
+0,0,0,0,0,0,0,0,0,0           ! KF code of particles not to decay
 0,0,0,0,0,0,0,0,0,0           ! KF code of particles not to decay
 211,-211,321,-321,3122,-3122,3312,-3312,3334,-3334   ! KF code of particles to be analyzed online
 2212,-2212,2112,-2112,3212,-3212,3112,3222,333,443   ! KF code of particles to be analyzed online
@@ -53,15 +53,15 @@
 0.,0.5,1,1,8       ! ttaup,taujp,iabsb,iabsm,nchan
 7.2,4.,2,40.,20.,0.,0.1 ! para13,para14,psno,para15,para16,ajpsi,vneum
 40.,40.,25.,10.                 ! para1_1,para1_2,para2,para4
-3,0,1,0,0.77,0.05,0.005,2.,0   ! i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b,parp82,i_tune
+3,0,1,0,0.77,0.05,0.005,2.,0   ! i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b,parp82,i_tune
 1,7,0,3,0.9,2        ! mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw
-0,0.47,0.4,1000,1,0.3,0.58,4,1.9,0.7    ! adj1(1)- adj1(10)  
-0.1,1,30,45,1.,999,1.8,0,0.03,1          ! adj1(11)- adj1(20) 
+1,0.47,0.4,1000,1,0.3,0.58,4,1.9,0.7    ! adj1(1)- adj1(10)  
+0.1,0,30,45,1.,999,1.8,0,0.03,1          ! adj1(11)- adj1(20) 
 0,4.,1,0.15,0.4,1,800000.,1,0,1      ! adj1(21)- adj1(30) 
 0.1,0.3,0.4,0.6,1,0,100.,3.,1.3,4    ! adj1(31)- adj1(40) 
 4,2,2,0.025,0   ! kjp22,kjp23,kjp24,parp78,mstptj
 0.,0,0.,0.05,1.,0.2,0.05   ! parecc,iparres,smadel,dparj4,cp0,cr0,seco
-1,1,0.3,0,0,0   ! prob_ratio_q
+3,1,1,0.3,0,0,0   ! i_mass,prob_ratio_q
 
 ######################        Annotation of usu.dat         ####################
 # neve,nout,nosc (D=xxx, xxx/10, 0)
@@ -148,7 +148,7 @@
 #
 # asd(i=1,isdmax): interval of the i-th distribution
 #  for pp, pbarp, pA(Ap), AB etc.
-#      (D=0.35, 0.5, 0.35, 0.3, 25)
+#      (D=0.35, 0.5, 0.35, 0.3, 25, 0.5)
 #      i=1: rapidity distribution (dN/dy v.s. y)
 #       =2: invariant transverse momentum distribution (1/pT*dN/dpT v.s. pT)
 #       =3: pesudorapidity distribution (dN/deta v.s. eta)
@@ -201,7 +201,6 @@
 #         =7, W+/- production
 #         =8: PYTHIA default (MSEL=1)
 #         =9: Z0 production
-#         setting of nchan=0,1,3,6,7,8 and 9 is ready.
 #
 # para13,para14,psno,para15,para16,ajpsi,vneum (D=7.2, 4., 2, 40., 20., 0, 0.1)
 #  para13: total cross-section of J/Psi + n
@@ -222,8 +221,8 @@
 #  para2: total cross-section of pi-nucleon
 #  para4: total cross-section of pi-pi
 #
-# i_deex,i_deex_gen,i_pT,i_pT_max,a_FF,aPS_c,aPS_b,parp82,i_tune
-#  (D= 3, 0, 1, 0, 0.77, 0.05, 0.005, 2., 0)
+# i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b,parp82,i_tune
+#  (D= 3, 999, 1, 0, 0.77, 0.05, 0.005, 2., 0)
 #  i_deex: the deexcitation mode used in coal
 #          = 1, light-cone variable mode
 #          = 2, energy mode
@@ -231,16 +230,7 @@
 #               and sampling z for qqbar
 #          = 4, energy mode, with local pT compensation 
 #               and sampling z for qqbar
-#  i_deex_gen: the deexcitation generation of newly produced qqbar in coal
-#              = 0, means no deexcitation for any newly produced qqbar pairs
-#              = 1, means just do deexcitation for the directly proudced qqbar 
-#                         pairs (1-st daughters) from original mother quarks 
-#                         (Orig mothers)
-#              = 2, means do deexcitation for "1-st daughters" from 
-#                         "Orig mothers" and the subsequent qqbar pairs 
-#                         produced from "1-st daughters". (2-nd daughters)
-#                ...
-#              = 999, always do deexcitation for newly produced qqbar
+#  n_deex_step: the number of deexcitation steps per q/qbar
 #  i_pT: the pT sampling method of the daughter qqbar pair in coal
 #        = 1, Gaussian px and py with width PARJ(21)
 #        = 2, Exponential px and py with width PARJ(21)
@@ -277,7 +267,7 @@
 # adj1(i), i=1,40: switches and/or parameters
 # --------------------------------------------------------------------------------
 #     D= 1-10 :  1., 0.47, 0.4, 1000,   1, 0.3,    0.58,  4,  1.9, 1.5
-#        11-20: 0.1,    0,  30,   45,  1., 999,      2.,  0, 0.03, 1
+#        11-20: 0.1,    0,  30,   45,  1.,   1,      2.,  0, 0.03, 1
 #        21-30:   0,   4.,   1, 0.15, 0.4,   1, 800000., 1.,    4, 0
 #        31-40: 0.1,  0.3, 0.4, 0.36,   1,   0,    100., 3.,   2., 4.
 # --------------------------------------------------------------------------------
@@ -345,7 +335,7 @@
 #           =3: Lund + Peterson/SLAC (light flavor + heavier)
 #           =4: default PYTHIA. Lund + Bowler
 #           =5: as = 4, but interpolate for c and b; see PARJ(46) and PARJ(47)
-#           =0: as = 4 in sfm / random z in 'coal'
+#           =0: as = 4 in sfm / random z in coal
 #       30: =1, distribute the participant nucleons in overlapping region forcely,
 #           =0, without more requirements.
 #       31: PARJ(1) in PYTHIA.
@@ -402,15 +392,13 @@
 #  seco: parameter in popcorn mechanism for correction of PARJ(1)
 #
 # i_mass, prob_ratio_q (D=3, 1, 1, 0.3, 0, 0, 0)
-# i_mass: mass definetion of quarks used in "break_f"
-# prob_ratio_q: probability ratio u-ubar:d-dbar:s-sbar:c-cbar:b-bbar:t-tbar.
+#  i_mass: mass definetion of quarks used in "break_f"
+#          =1, kinematical mass
+#          =2, current algebra mass
+#          =3, constituent mass
+#  prob_ratio_q: probability ratio u-ubar:d-dbar:s-sbar:c-cbar:b-bbar:t-tbar.
 #
-# cumulent sum of flavor generation probability, for an example: 
-#  p_31=(1-amd/sms)/2., p_32=(1-amu/sms)/2., p_33=(1-ams/sms)/2.; 
-#  amd (amu, ams): d (u,s) quark constituent mass, sms=amd+amu+ams; 
-#  p_31+p_32+p33=1;
-#  cumulent sum: csp_31=p_31, csp_32=p_31+p_32
-#  u and d have same constituent mass and probability
+#
 ######################        Annotation of usu.dat         ####################
 ################################################################################
 
