@@ -536,11 +536,11 @@ c               Statistics of positive multiplicity
 703             endif
 c               Statistics of gluon multiplicity
                 if( kf.eq.21 )then
-                    n_g = n_g + 1
+                    n_g_f = n_g_f + 1
                     do i=1,iflmax,1
             if( c(i).lt.afl(1,i,1) .or. c(i).gt.afl(1,i,2) ) goto 704
                     enddo
-                    n_g_f = n_g_f + 1
+                    n_g = n_g + 1
 704             endif
             endif
 
