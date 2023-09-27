@@ -2844,6 +2844,7 @@ c       It replaces the previous long-written statements.   ! 171022 Lei
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
+        COMMON/PYINT1/MINT(400),VINT(400)
         COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
         COMMON/PYPARS/MSTP(200),PARP(200),MSTI(200),PARI(200)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
@@ -2862,6 +2863,8 @@ c     &   iabsb,iabsm,non10,ajpsi,csspn,csspm,csen   ! 060813
         character name_a*16, name_b*16, name_frame*16, name_x*16
         dimension ps0(6), ps1(6)   ! 300623 Lei
 
+        i_xevent = 0   ! 270923 Lei Error counter.
+
 c       Gets name of particles a and b.
         call PYNAME(kf_a,name_a)
         call PYNAME(kf_b,name_b)
@@ -2876,6 +2879,7 @@ c1200923 For hadrons generated from diffractive events.   ! 1200923 Lei
                 P(1,i) = psa(i_a,i)
                 P(2,i) = psa(i_b,i)
             end do
+            N = 2
             name_frame = "5MOM"   ! "CMS" -> "5MOM"
             goto 100
         endif
@@ -2889,6 +2893,13 @@ c        the momentum for particle a.
         endif
 
 100     continue   ! 040423 Lei
+c290923 Lei
+        i_xevent = i_xevent + 1
+        if( i_xevent.gt.1000 )then
+            write(*,*) "Dead-loop in xevent of parini. STOP!"
+            stop
+        end if
+c290923 Lei
         MSTP(111)=mstptj   ! =0 230722
         MSTP(5)=i_tune   ! 300623 Lei
 
@@ -2899,12 +2910,21 @@ c       Initilizes the colllision.
      &               ss )
 c300623 Lei
 c       Sums of incident px, py, pz, E, inv. m, and charge.
-        do i=1,4,1
-            ps0(i) = psa(i_a,i) + psa(i_b,i)
-        end do
+        ps0=0.
+c290923 Lei
+        if( MINT(111).eq.1 .OR. MINT(111).eq.2 )then   ! "CMS" and "FXT"
+            do i=1,6,1
+                ps0(i)=PYP(0,i)
+            end do
+        else
+            do i=1,4,1
+                ps0(i) = psa(i_a,i) + psa(i_b,i)
+            end do
         ps0(5) = SQRT((psa(i_a,4)+P(i_b,4))**2-(psa(i_a,1)+P(i_b,1))**2-
      &                (psa(i_a,2)+P(i_b,2))**2-(psa(i_a,3)+P(i_b,3))**2)
-        ps0(6) = PYCHGE( kf_a ) + PYCHGE( kf_b )
+            ps0(6) = ( PYCHGE( kf_a ) + PYCHGE( kf_b ) ) / 3D0
+        end if
+c290923 Lei
 c300623 Lei
 c       Executes the collision. Calling PYEVNW is the default.
         if( itorw.eq.1 )then
