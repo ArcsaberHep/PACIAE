@@ -72,7 +72,7 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
  - [Zhi-Lei She](https://inspirehep.net/authors/1903611), shezhilei@cug.edu.cn <!-- School of Mathematical and Physical Sciences, Wuhan Textile University, Wuhan 430200, China --> 
  - [Dai-Mei Zhou](https://inspirehep.net/authors/1030208), zhoudm@mail.ccnu.edu.cn <!-- Key Laboratory of Quark and Lepton Physics (MOE) and Institute of Particle Physics, Central China Normal University, Wuhan 430079, China. -->
  - [Yu-Liang Yan](https://inspirehep.net/authors/1051028), yanyl@ciae.ac.cn <!-- China Institute of Atomic Energy, P.O. Box 275 (10), Beijing, 102413,China. -->
- - [Ben-Hao Sa](https://inspirehep.net/authors/990834), sabh@ciae.ac.cn (model founder) <!-- China Institute of Atomic Energy, P.O. Box 275 (10), Beijing, 102413,China. -->
+ - [Ben-Hao Sa](https://inspirehep.net/authors/990834), sabh@ciae.ac.cn <!-- China Institute of Atomic Energy, P.O. Box 275 (10), Beijing, 102413,China. -->
 
 ## License
 
@@ -120,6 +120,10 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 
 - In subroutine "xevent" of "parini_30.f", the frame "5MOM" was introduced to treat the collisions between those possible hadrons from diffractive events.
 - The program was re-named to version PACIAE 3.0.
+- "usu.dat" updated.
+- "PACIAE.sh" updated.
+- Redundant statements deleted / modified.
+- Bug fixed.
 
 <!----------------------------------------------------------------------------->
 #### <font color=red> 08/2023: </font> In version PACIAE 2.3 ###
