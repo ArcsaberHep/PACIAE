@@ -2899,10 +2899,12 @@ c       Initilizes the colllision.
      &               ss )
 c300623 Lei
 c       Sums of incident px, py, pz, E, inv. m, and charge.
-        ps0=0.
-        do i=1,6,1
-            ps0(i)=PYP(0,i)
+        do i=1,4,1
+            ps0(i) = psa(i_a,i) + psa(i_b,i)
         end do
+        ps0(5) = SQRT((psa(i_a,4)+P(i_b,4))**2-(psa(i_a,1)+P(i_b,1))**2-
+     &                (psa(i_a,2)+P(i_b,2))**2-(psa(i_a,3)+P(i_b,3))**2)
+        ps0(6) = PYCHGE( kf_a ) + PYCHGE( kf_b )
 c300623 Lei
 c       Executes the collision. Calling PYEVNW is the default.
         if( itorw.eq.1 )then
