@@ -2080,8 +2080,8 @@ c       'pyjets' to 'sbh'
         vbh(li,m)=v(li,m)
         enddo
         enddo
-        nbh=n
 5001    continue
+        nbh=n   !Lei20231010 Moved to here.
 c       n=0
         endif
 c140414
@@ -2852,6 +2852,7 @@ c       It replaces the previous long-written statements.   ! 171022 Lei
      c   nap,nat,nzp,nzt,pio
         common/sa1/kjp21,non1,bp,iiii,neve,nout,nosc
         common/sa2/nsa,non2,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
+        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104
 c       common/sa10/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
 c     &   iabsb,iabsm,non10,ajpsi,csspn,csspm,csen   ! 060813
         common/sa23/kpar,knn,kpp,knp,kep   ! 060813
@@ -2869,9 +2870,9 @@ c       Gets name of particles a and b.
         call PYNAME(kf_a,name_a)
         call PYNAME(kf_b,name_b)
 c       Sets name of frame.
-        if( ifram.eq.0 .AND. pT_a.le.1D-15 .AND. pT_b.le.1D-15 )then
+        if( ifram.eq.0 .AND. pT_a.le.1D-10 .AND. pT_b.le.1D-10 )then
             name_frame = "FIXT"
-        elseif( ifram.eq.1 .AND. pT_a.le.1D-15 .AND. pT_b.le.1D-15 )then
+        elseif( ifram.eq.1 .AND. pT_a.le.1D-10 .AND. pT_b.le.1D-10 )then
             name_frame = "CMS"
 c1200923 For hadrons generated from diffractive events.   ! 1200923 Lei
         else
@@ -2893,13 +2894,17 @@ c        the momentum for particle a.
         endif
 
 100     continue   ! 040423 Lei
-c290923 Lei
+c270923 Lei
         i_xevent = i_xevent + 1
-        if( i_xevent.gt.1000 )then
-            write(*,*) "Dead-loop in xevent of parini. STOP!"
-            stop
+        if( i_xevent.gt.100 )then
+            ! write(*,*) "Dead-loop in xevent of parini. STOP!"
+            ! stop
+            do i=1,4,1
+                throe_p(i) = throe_p(i) + ( ps1(i) - ps0(i) )
+            end do
+            goto 200
         end if
-c290923 Lei
+c270923 Lei
         MSTP(111)=mstptj   ! =0 230722
         MSTP(5)=i_tune   ! 300623 Lei
 
@@ -2911,7 +2916,7 @@ c       Initilizes the colllision.
 c300623 Lei
 c       Sums of incident px, py, pz, E, inv. m, and charge.
         ps0=0.
-c290923 Lei
+c270923 Lei
         if( MINT(111).eq.1 .OR. MINT(111).eq.2 )then   ! "CMS" and "FXT"
             do i=1,6,1
                 ps0(i)=PYP(0,i)
@@ -2920,11 +2925,13 @@ c290923 Lei
             do i=1,4,1
                 ps0(i) = psa(i_a,i) + psa(i_b,i)
             end do
-        ps0(5) = SQRT((psa(i_a,4)+P(i_b,4))**2-(psa(i_a,1)+P(i_b,1))**2-
-     &                (psa(i_a,2)+P(i_b,2))**2-(psa(i_a,3)+P(i_b,3))**2)
+        ps0(5) = SQRT( ( psa(i_a,4) + psa(i_b,4) )**2 -
+     &                 ( psa(i_a,1) + psa(i_b,1) )**2 -
+     &                 ( psa(i_a,2) + psa(i_b,2) )**2 -
+     &                 ( psa(i_a,3) + psa(i_b,3) )**2)
             ps0(6) = ( PYCHGE( kf_a ) + PYCHGE( kf_b ) ) / 3D0
         end if
-c290923 Lei
+c270923 Lei
 c300623 Lei
 c       Executes the collision. Calling PYEVNW is the default.
         if( itorw.eq.1 )then
@@ -2944,14 +2951,14 @@ c       Charge is not conserved. Re-generates the event.
         if( ABS(ps0(6)-ps1(6)).gt.1D-10 ) goto 100   ! Charge.
 c       4-momentum is not conserved. Re-generates the event.
         do i=1,4,1   ! px, py, pz, E
-            if( ABS(ps0(i)-ps1(i)).gt.1D-10 ) goto 100
+            if( ABS(ps0(i)-ps1(i)).gt.1D-5 ) goto 100
         end do
 c       Re-generates the event if any errors exit during the excution.
         if( MSTU(23).gt.0 .OR. MSTU(30).gt.0 ) goto 100
 c       Re-generates the event if there are junctions when consider inelatic 
 c        processes in parton rescattering in SFM or consider leading-particle 
 c        reconstructions (only in pA/Ap now).
-        if( (INT(adj1(12)).eq.0 .AND. iparres.ne.1) .OR. 
+        if( (INT(adj1(12)).eq.0 .AND. iparres.ne.0) .OR. 
      &      (ipden.eq.0 .AND. itden.eq.1) .OR.
      &      (ipden.eq.1 .AND. itden.eq.0) )then
             do i=1,N,1
@@ -2959,6 +2966,8 @@ c        reconstructions (only in pA/Ap now).
             end do
         end if
 c300623 Lei
+
+200     continue   ! 270923 Lei
 
 c       Removes unnecessary entries in PYJETS.
         if( ipden.lt.11 ) call PYEDIT(2)
@@ -5271,14 +5280,15 @@ c       through away the pair whih tc<= time
         lc(i,m)=0
         enddo
         enddo
-c010223
+
+200     nctl=j+1
+
+c010223 101023 Lei Moved to here avoiding potential bugs with "nctl=0".
         if(mstptj.eq.1)then   ! for B-loop (PYTHIA-like loop)
         nctl=j
         return
         endif
 c010223
-
-200     nctl=j+1
 
         m2=numb(2)   ! 060813
         m4=numb(4)

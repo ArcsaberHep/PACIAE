@@ -1621,7 +1621,7 @@ c       Charge is not conserved. Re-generate the event.
         if( ABS(ps0(6)-ps1(6)).gt.1D-10 ) goto 99999   ! Charge.
 c       4-momentum is not conserved. Re-generate the event.
         do i=1,4,1   ! px, py, pz, E
-            if( ABS(ps0(i)-ps1(i)).gt.1D-10 ) goto 99999
+            if( ABS(ps0(i)-ps1(i)).gt.1D-5 ) goto 99999
         end do
 c       Error count in PYTHIA. Re-generate the event if any errors exit.
         if( MSTU(23).gt.0 .OR. MSTU(30).gt.0 ) goto 99999
