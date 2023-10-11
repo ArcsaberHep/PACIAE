@@ -116,7 +116,14 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 ...(waiting for updating)
 
 <!----------------------------------------------------------------------------->
-#### <font color=red> 09/2023: </font> In version PACIAE 3.0 ###
+### <font color=red> 10/2023: </font> In version PACIAE 3.0
+
+- In subroutine "xevent, updtlp" of "parini_30.f", bugs were fixed for loop-B to avoid potential dead-loops.
+- Redundant statements deleted / modified.
+- Bug fixed.
+
+<!----------------------------------------------------------------------------->
+### <font color=red> 09/2023: </font> In version PACIAE 3.0
 
 - In subroutine "xevent" of "parini_30.f", the frame "5MOM" was introduced to treat the collisions between those possible hadrons from diffractive events.
 - The program was re-named to version PACIAE 3.0.
@@ -126,7 +133,7 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 - Bug fixed.
 
 <!----------------------------------------------------------------------------->
-#### <font color=red> 08/2023: </font> In version PACIAE 2.3 ###
+### <font color=red> 08/2023: </font> In version PACIAE 2.3
 
 - In "main_23.f", the primary long-lived particles were defined according to ALICE-PUBLIC-2017-005. A new array "KF_woDecay" was introduced to specify particles not to decay from "usu.dat" directly.
 - The subroutine "break_f" of "coales_23.f" has been rewritten to use probability ratios directly. COMMON/sa38/ has been modified, correspondingly.
@@ -142,7 +149,7 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 
 
 <!----------------------------------------------------------------------------->
-#### <font color=red> 07/2023: </font> In version PACIAE 2.3 ###
+### <font color=red> 07/2023: </font> In version PACIAE 2.3
 
 - In "main_23.f" and "parini_23.f", the parameters "dtt" and "smtj3" were renamed/replaced as "x_ratio" and "decpro" directly.
 - In "parini_23.f", several subroutines about leading-proton reconstruction were introduced. **TODO:** It still need detailed and complete treatment.
@@ -154,7 +161,7 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 - Bug fixed.
 
 <!----------------------------------------------------------------------------->
-#### <font color=red> 06/2023: </font> In version PACIAE 2.3 ###
+### <font color=red> 06/2023: </font> In version PACIAE 2.3
 
 - In "main_23.f", three input parameter "parp82", "i_coord_recover", "i_tune" were introduced. "parp82" corresponds to PARP(82) in PYTHIA. "i_coord_recover" controls recovering the positions of partons after parton rescattering to those before or not. "i_tune" corresponds to MSTP(5) in PYTHIA which gives easy access to different tunes encoded in PYTHIA.
 - In "main_23.f", the 4-position of one of the rest partons would be assigned to the first parton in the string. This treatment would give random 3-coordinates to produced hadrons that surround the first parton after PYTHIA SFM, i.e. more random position distribution for produced hadrons.
@@ -174,7 +181,7 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 
 
 <!----------------------------------------------------------------------------->
-#### <font color=red> 05/2023: </font> In version PACIAE 2.3 ###
+### <font color=red> 05/2023: </font> In version PACIAE 2.3
 
 - In "main_23.f" and "analy.f", the internal online analyzing module was improved and optimized. The 5 distributions was extended to 6, i.e. the transverse momentum spectra dN/dpT. The format of user output file "rms.out" was optimized, too.
 - In ""main_23.f" and "parini_23.f", the diffractive NN event without parton generation after PYTHIA calling would not be thrown away now.
@@ -188,7 +195,7 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 - Bug fixed.
 
 <!----------------------------------------------------------------------------->
-#### <font color=red> 04/2023: </font> In version PACIAE 2.3 ###
+### <font color=red> 04/2023: </font> In version PACIAE 2.3
 
 - In "main_23.f", a energy-dependent "smtj3" was introduced for low-energy loop-A at $\sqrt{s_{NN}} < 3$ GeV.
 - In "parini_23.f", the loop-A was improved.
@@ -214,7 +221,7 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 - Bug fixed.
 
 <!----------------------------------------------------------------------------->
-#### <font color=red> 03/2023: </font> In version PACIAE 2.3 ###
+### <font color=red> 03/2023: </font> In version PACIAE 2.3
 
 - The "stahad_23.f" file has beed removed.
 - The simulation mode in PACIAE has been classified into three modes, controlled by switch "mstj2":
@@ -241,7 +248,7 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 - Bug fixed.
 
 <!----------------------------------------------------------------------------->
-#### <font color=red> 02/2023: </font> In version PACIAE 2.3 ###
+### <font color=red> 02/2023: </font> In version PACIAE 2.3
 
 - In "main_23.f, analy.f", the parameter "parp22" was used to select y/eta in partial phase-space statistics.
 - In "main_23.f", The mistake-proofing statements were added.
@@ -257,14 +264,14 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 - ***In "main_23.f", "sfm_23.f", "stahad_23.f", "analy.f", and "p_23.f", all of the "TAB character" were replaced by corresponding "space character" safely. Partly done in "parini_23.f", "parcas_23.f", and "hadcas_23.f"***
 
 <!----------------------------------------------------------------------------->
-### <font color=red> 01/2023: </font> In version PACIAE 2.3 ###
+### <font color=red> 01/2023: </font> In version PACIAE 2.3
 
 - In "main_23.f" and "parini_23.f", the low-energy simulation was introduced.
 - "PACIAE.sh" updated.
 - Bug fixed.
 
 <!----------------------------------------------------------------------------->
-### <font color=red> 12/2022: </font> In version PACIAE 2.3 ###
+### <font color=red> 12/2022: </font> In version PACIAE 2.3
 
 - In "parcas_23.f", the working COMMON BLOCK /parlist/ was replaced by /PYJETS/.
 - Output display optimized for "rms.out".
@@ -273,7 +280,7 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 - Bug fixed.
 
 <!----------------------------------------------------------------------------->
-### <font color=red> 11/2022: </font> In version PACIAE 2.3 ###
+### <font color=red> 11/2022: </font> In version PACIAE 2.3
 
 - In "parini_23.f", the selections of distributing nucleons into the overlapping region forcedly was introduced, controlled by adj(30).
 - In "parcas_23.f", all of six quarks and gluons were included now. (u, d, s, g old)
@@ -282,7 +289,7 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 - Bug fixed.
 
 <!----------------------------------------------------------------------------->
-### <font color=red> 10/2022: </font> In version PACIAE 2.3 ###
+### <font color=red> 10/2022: </font> In version PACIAE 2.3
 
 - In subroutine "main" of "main_23.f", the real-time clock random seed was introduced.
 - In subroutine "scat" of "parini_23.f", the long-written statement about executing the binary collision by calling PYEVNW / PYEVNT was replaced by a new subroutine "xevent".
@@ -294,11 +301,11 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 - Bug fixed.
 
 <!----------------------------------------------------------------------------->
-### <font color=red> 04/2021: </font> In version PACIAE 2.2.1 b and c ###
+### <font color=red> 04/2021: </font> In version PACIAE 2.2.1 b and c
 
 - The CME was introduced by Zhi-Lei She et al.
 
 <!----------------------------------------------------------------------------->
-### <font color=red> 01/2020: </font> In version PACIAE 2.3 ###
+### <font color=red> 01/2020: </font> In version PACIAE 2.3
 
 - The EPS09 nuclear shadowing was introduced by Liang, whose subroutine is called "shanul_eps09". An extra file named "eps09.f" was added.
