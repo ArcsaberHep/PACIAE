@@ -1005,15 +1005,17 @@ c       leadding order pQCD differential cross section of 2->2 processes
         external fs11_0,fs11_1,fs11_2,fs12_0,fs12_1,fsqq,fsgg_0,fsgg_1,
      c   fsqg
 
+        COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)   ! 250823 Lei
         common/sa1/kjp21,non1,bp,iiii,neve,nout,nosc   ! 220803
         common/sa24/adj1(40),nnstop,non24,zstop   ! 240803 181003
         common/sa33/smadel,ecce,secce,parecc,iparres   ! 230520
+        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei
         common/syspar_p/rsig1,pio,tcut
         common/papr_p/core,xs,xu,xt,sm,as,dta,xa,sl0,tl0,qa,
      c   ea,sqq,sqg,sgg,pa(3),pip(6,msca),mtime,kfk,nsca,kpip(msca)
 c250803 common/work7/reac(9),crose(9)
         dimension ssig(0:3),eee(0:1000),dd(0:1000),eee1(0:1000),
-     c   eee2(0:1000),eee3(0:1000)
+     c   eee2(0:1000),eee3(0:1000), amqk(6)   ! 061123 Lei added amqk(6)
         logical lgg,lqg,lqq,lqaq,lqqp,lqaqp
 
 c       classify the incident channel
@@ -1045,14 +1047,41 @@ c       calculate the total cross section for each incedent channel
         enddo
         idw=adj1(4)   ! 240803 changed from 1000
         adj120=adj1(20)   ! 230405
+
+c061123 Lei
 c250420
-        dmass=pymass(1)*2.   ! umass=pymass(2)=dmass
-        umass=pymass(2)*2.
-        smass=pymass(3)*2.
-        cmass=pymass(4)*2.
-        bmass=pymass(5)*2.
-        tmass=pymass(6)*2.
-c250420        
+c       dmass=pymass(1)*2.   ! umass=pymass(2)=dmass
+c       umass=pymass(2)*2.
+c       smass=pymass(3)*2.
+c       cmass=pymass(4)*2.
+c       bmass=pymass(5)*2.
+c       tmass=pymass(6)*2.
+c250420
+        amqk = 0D0
+c       Kinematical mass
+        if( i_mass.eq.1 )then
+            do i=1,6,1
+                am(i) = PMAS(i,1)   ! 1-6
+            end do
+c       Current algebra mass
+        elseif( i_mass.eq.2 )then
+            do i=1,6,1
+                am(i) = PARF(90 + i) ! 91-96
+            end do
+c       Constituent mass
+        elseif( i_mass.eq.3 )then
+            do i=1,6,1
+                am(i) = PARF(100 + i) ! 101-106
+            end do
+        end if
+        dmass = amqk(1)*2.   ! umass <= dmass
+        umass = amqk(2)*2.
+        smass = amqk(3)*2.
+        cmass = amqk(4)*2.
+        bmass = amqk(5)*2.
+        tmass = amqk(6)*2.
+c061123 Lei
+
         xs=eiej2
 c       xs: squared invariant mass of colliding pair   ! 230520
 c080520
@@ -1106,7 +1135,7 @@ c160902
         enddo
 c230520
         iparreso=iparres
-        if(iparres.eq.1 .and. eiej.lt.dmass)then
+        if(iparres.eq.1 .and. eiej.lt.umass)then   ! 061123 Lei dmass -> umass
         iparres=0
 c       treates as elastic (iparres=0), process 9 happens
         call integ(fsgg_1,uxt,dxt,idw,eee,sum)   ! process 7 doesn't happen
@@ -1170,7 +1199,7 @@ c160902
         enddo
 c300623 Lei
         iparreso=iparres
-        if(iparres.eq.1 .and. eiej.lt.dmass)then
+        if(iparres.eq.1 .and. eiej.lt.umass)then   ! 061123 Lei dmass -> umass
         iparres=0
 c       treates as elastic (iparres=0), process 5 or 6 happens
         call integ(fs11_1,uxt,dxt,idw,eee,sum) ! ->q'q'(-) (or q'(-)q') process 4 (inelastic) doesn't happen.
@@ -2147,9 +2176,11 @@ c       ij: order # of spliting parton in parton list
         PARAMETER (MSCA=20000,MPLIS=80000)   ! 080520
 
         parameter (pio=3.1416)
+        COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)   ! 250823 Lei
         common/papr_p/core,xs,xu,xt,sm,as,dta,xa,sl0,tl0,qa,
      c   ea,sqq,sqg,sgg,pa(3),pip(6,msca),mtime,kfk,nsca,kpip(msca)
         common/sa24/adj1(40),nnstop,non24,zstop   ! 170205
+        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei
         dimension pa1(4),pa2(4),p00(4)
         il=1
 cc      il=1 means the branching will go on, il=0 means 'stop'.
@@ -2221,7 +2252,23 @@ c       pip(1-3,ij): three momentum of spliting particle ij
         eaa=ea*ea-pip(1,ij)*pip(1,ij)-pip(2,ij)*pip(2,ij)-
      c   pip(3,ij)*pip(3,ij)   ! 080520
         eaa=sqrt(eaa)   ! invariant mass of initial state gluon
-        if(eaa.lt.(PYMASS(1)*2.)) goto 200   ! 300623 Lei
+
+c061123 Lei
+c       if(eaa.lt.(PYMASS(1)*2.)) goto 200   ! 300623 Lei
+        amu = 0D0
+c       Kinematical mass
+        if( i_mass.eq.1 )then
+            amu = PMAS( 2, 1 )
+c       Current algebra mass
+        elseif( i_mass.eq.2 )then
+            amu = PARF( 90 + 2 )
+c       Constituent mass
+        elseif( i_mass.eq.3 )then
+            amu = PARF( 100 + 2 )
+        end if
+        if( eaa.lt.amu*2. ) goto 200
+c061123 Lei
+
         call break_f(eaa,kff,amq)   ! which is in coales_30.f 161022
         kf1=kff   ! 161022
         kf2=-kf1   ! 250420

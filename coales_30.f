@@ -2911,12 +2911,28 @@ c        filling in 'pyjets'
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
+        COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)   ! 250823 Lei
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
         common/sa24/adj1(40),nnstop,non24,zstop   ! 170205
         common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio   ! 080104 220110
         common/sa36/nglu,nongu,kglu(kszj,5),pglu(kszj,5),vglu(kszj,5) 
+        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei
         common/saf/naf,nonaf,kaf(kszj,5),paf(kszj,5),vaf(kszj,5)
-        amu=pymass(2)   ! 271022
+
+c061123 Lei
+c       amu=pymass(2)   ! 271022
+        if( i_mass.eq.1 )then
+c       Kinematical mass
+            amu = PMAS( 2, 1 )
+        elseif( i_mass.eq.2 )then
+c       Current algebra mass
+            amu = PARF( 90 + 2 )
+        elseif( i_mass.eq.3 )then
+c       Constituent mass
+            amu = PARF( 100 + 2 )
+        end if
+c061123 Lei
+
         amuu=2*amu   ! 271022
 c       throw away g with energy<amuu
         jb=1       ! 300623 Lei
@@ -2996,11 +3012,30 @@ c       kf1,kf2: flavor codes of broken quarks
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
+        COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)   ! 250823 Lei
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
         common/sa36/nglu,nongu,kglu(kszj,5),pglu(kszj,5),vglu(kszj,5)
+        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei
         dimension pi(4),pj(4),ps(4),pp(20,5),bb(3)
-        am1=pymass(kf1)
-        am2=pymass(kf2)
+
+c061123 Lei
+c       am1=pymass(kf1)
+c       am2=pymass(kf2)
+        if( i_mass.eq.1 )then
+c       Kinematical mass
+            am1 = PMAS( ABS(kf1), 1 )
+            am2 = PMAS( ABS(kf2), 1 )
+        elseif( i_mass.eq.2 )then
+c       Current algebra mass
+            am1 = PARF( 90 + ABS(kf1) )
+            am2 = PARF( 90 + ABS(kf2) )
+        elseif( i_mass.eq.3 )then
+c       Constituent mass
+            am1 = PARF( 100 + ABS(kf1) )
+            am2 = PARF( 100 + ABS(kf2) )
+        end if
+c061123 Lei
+
         pp(1,5)=am1   ! mass of first broken quark
         pp(2,5)=am2   ! mass of second broken quark
 c300623 Lei

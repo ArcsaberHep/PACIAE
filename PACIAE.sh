@@ -104,7 +104,7 @@ RUN="RAW"            # Additional option. Not required to be modified usually.
 #                                                                              #
 #                                           By An-Ke Lei at CCNU on 17/10/2022 #
 #                                                                              #
-#                                      Last updated by An-Ke Lei on 11/09/2023 #
+#                                      Last updated by An-Ke Lei on 06/11/2023 #
 ################################################################################
 ################################################################################
 ################################################################################
@@ -180,7 +180,8 @@ nz_targ=79  # nzt, proton number of target
             #   Au+Au : 197,79,197,79; Pb+Pb: 208,82,208,82;
             #   Xe+Xe : 129,54,129,54; U + U: 238,92,238,92;
             #   Ag+Ag : 108,47,108,47; Cu+Cu: 63,29,63,29;
-            #   Ru+Ru : 96,44,96,44; Zr+Zr: 96,40,96,40.
+            #   Ru+Ru :  96,44, 96,44; Zr+Zr: 96,40,96,40;
+            #   O + O :  16, 8, 16, 8; C + C: 12, 6,12 ,6.
 
 #*******************************************************************************
 # Setups of the simulation.
@@ -203,7 +204,7 @@ i_channel=8 # (D=0) nchan, =0: inelastic (INEL)
             #               5: direct photon
             #               6: soft only
             #               7: W+/- production
-            #               8: pythia default (msel=1)
+            #               8: PYTHIA default (msel=1)
             #               9: Z0 production
 i_stage=4   # (D=4) adj(40), =1, stops event after parini
             #                 2, ... parcas
@@ -216,7 +217,7 @@ prob_Delta_decay=0.9 # (D=0.9) decpro, Delta decay probability in A-loop
 
 #*******************************************************************************
 # Setups of the parton initialization (parini).
-k_pythia=2.5    # (D=1.5) adj(10), K factor multiplying the differential 
+k_PYTHIA=2.5    # (D=1.5) adj(10), K factor multiplying the differential 
                 #                    cross sections for hard parton-parton 
                 #                    process in PYTHIA.
 sig_kPerp=2     # (D=2.) adj(39), width of parton promordial transverse 
@@ -506,7 +507,7 @@ echo "7.2,4.,${b_samp},40.,20.,0.,0.1 ! para13,para14,psno,para15,para16,ajpsi,v
 echo "40,40,25,10                 ! para1_1,para1_2,para2,para4" >> usu.dat
 echo "${i_deex},${n_deex_step},${i_pT_samp},${i_pT_max},0.77,0.05,0.005,${p_perp0},${i_tune}   ! i_deex,n_deex_step,i_pT,i_pT_max,a_FF,a_PS_c,a_PS_b,parp82,i_tune" >> usu.dat
 echo "1,${i_inel_proc},${i_t_shower},${i_sim_mode},${prob_Delta_decay},2        ! mstu21,i_inel_proc,i_time_shower,,iMode,decpro,itorw" >> usu.dat
-echo "${k_parcas},0.47,0.4,1000,${i_shadow},${a_lund},${b_lund},4,${p_perp_min},${k_pythia}    ! adj1(1)- adj1(10)  " >> usu.dat
+echo "${k_parcas},0.47,0.4,1000,${i_shadow},${a_lund},${b_lund},4,${p_perp_min},${k_PYTHIA}    ! adj1(1)- adj1(10)  " >> usu.dat
 echo "${dt_hadcas},${i_hadronization},30,45,1.,${i_deex_gen},${e_deex},0,${dt_parcas},1          ! adj1(11)- adj1(20) " >> usu.dat
 echo "${i_phase_constraint},4.,${i_cme},0.15,0.4,${i_random},800000.,${ex_volum_factor},${i_fragment_function},${i_overlap} ! adj1(21)- adj1(30) " >> usu.dat
 echo "0.1,0.3,0.4,${pT_width},1,0,100.,3.,${sig_kPerp},${i_stage}    ! adj1(31)- adj1(40) " >> usu.dat
@@ -548,7 +549,8 @@ echo "#            for A+B along with ipden=itden=1"                            
 echo "#             Au+Au: 197, 79, 197, 79; Pb+Pb: 208, 82, 208, 82;"                      >> usu.dat
 echo "#             Xe+Xe: 129, 54, 129, 54; U + U: 238, 92, 238, 92;"                      >> usu.dat
 echo "#             Ag+Ag: 108, 47, 108, 47; Cu+Cu:  63, 29,  63, 29;"                      >> usu.dat
-echo "#             Ru+Ru:  96, 44,  96, 44; Zr+Zr:  96, 40,  96, 40."                      >> usu.dat
+echo "#             Ru+Ru:  96, 44,  96, 44; Zr+Zr:  96, 40,  96, 40;"                      >> usu.dat
+echo "#             O + O:  16,  8,  16,  8; C + C:  12,  6,  12,  6."                      >> usu.dat
 echo "# for eA, nu_eA, etc."                                                                >> usu.dat
 echo "#  e^-A:     nap=1, nzp=-1, ipden=11, itden=1,"                                       >> usu.dat
 echo "#  e^+A:     nap=1, nzp= 1, ipden=11, itden=1,"                                       >> usu.dat
@@ -632,7 +634,7 @@ echo "#       =4, p_h (haron momentum)"                                         
 echo "#       =5: z"                                                                        >> usu.dat
 echo "#"                                                                                    >> usu.dat
 echo "# parp21,yOrEta,win (D=2.7, 1, xxx)"                                                  >> usu.dat
-echo "#  parp21: lowest CM energy running 'pythia'"                                         >> usu.dat
+echo "#  parp21: lowest CM energy running 'PYTHIA'"                                         >> usu.dat
 echo "#  yOrEta: select y or eta in partial phase-space statistics (analy.f)"               >> usu.dat
 echo "#          = 0 , y"                                                                   >> usu.dat
 echo "#          = 1 , eta"                                                                 >> usu.dat
@@ -1175,7 +1177,7 @@ echo "#       9910551    bb~[3P08]       "                                      
 echo "# This is a toy Makefile for PACIAE."     > Makefile
 echo "# By An-Ke Lei at CCNU on 17/10/2022"     >> Makefile
 echo "# Last updated"                           >> Makefile
-echo "#         by An-Ke Lei on 17/10/2022"     >> Makefile
+echo "#         by An-Ke Lei on 08/06/2023"     >> Makefile
 echo "# How to use:"                            >> Makefile
 echo "#   1. Type \"make\" command to compile and build PACIAE running file (${name_x})."   >> Makefile
 echo "#   2. Type \"make clean\" command to clean the *.o , *.mod and *.x files. "          >> Makefile
@@ -1371,6 +1373,10 @@ elif [[ "${na_proj}" = "1" && "${nz_proj}" = "-1" ]]; then
     proj_name="pbar"
 elif [[ "${na_proj}" = "1" && "${nz_proj}" = "0" ]]; then
     proj_name="n"
+elif [ "${na_proj}" = "12" ]; then
+    proj_name="C${na_proj}"
+elif [ "${na_proj}" = "16" ]; then
+    proj_name="O${na_proj}"
 elif [ "${na_proj}" = "63" ]; then
     proj_name="Cu${na_proj}"
 elif [[ "${na_proj}" = "96" && "${nz_proj}" = "44" ]]; then
@@ -1398,6 +1404,10 @@ elif [[ "${na_targ}" = "1" && "${nz_targ}" = "-1" ]]; then
     targ_name="pbar"
 elif [[ "${na_targ}" = "1" && "${nz_targ}" = "0" ]]; then
     targ_name="n"
+elif [ "${na_targ}" = "12" ]; then
+    targ_name="C${na_targ}"
+elif [ "${na_targ}" = "16" ]; then
+    targ_name="O${na_targ}"
 elif [ "${na_targ}" = "63" ]; then
     targ_name="Cu${na_targ}"
 elif [[ "${na_targ}" = "96" && "${nz_targ}" = "44" ]]; then
@@ -1465,8 +1475,8 @@ cd ./${dir_energy}
 # aL: a_lund
 # bL: b_lund
 # aFF: a_FF
-# K : k_pythia (in parini)
-#     kI: k_pythia (in parini)
+# K : k_PYTHIA (in parini)
+#     kI: k_PYTHIA (in parini)
 #     kC: k_parcas
 # iH: i_hadronization
 # iHc: i_hadcas
@@ -1480,15 +1490,15 @@ cd ./${dir_energy}
 # xVf : ex_volum_factor
 # iCr : i_coord_recover
 # Default
-dir="./b${b_min}_${b_max}_aL${a_lund}_bL${b_lund}_eDeex${e_deex}_K${k_pythia}"
-# dir="./b${b_min}_${b_max}_aL${a_lund}_bL${b_lund}_kI${k_pythia}_kC${k_parcas}_pTp${pT_perturb}_iO${i_overlap}_iH${i_hadronization}_iHc${i_hadcas}_iStr${i_string_tension}_iP${i_phase_constraint}_iFF${i_fragment_function}_iM${i_cme}"
+dir="./b${b_min}_${b_max}_aL${a_lund}_bL${b_lund}_eDeex${e_deex}_K${k_PYTHIA}"
+# dir="./b${b_min}_${b_max}_aL${a_lund}_bL${b_lund}_kI${k_PYTHIA}_kC${k_parcas}_pTp${pT_perturb}_iO${i_overlap}_iH${i_hadronization}_iHc${i_hadcas}_iStr${i_string_tension}_iP${i_phase_constraint}_iFF${i_fragment_function}_iM${i_cme}"
 
 if [[ "${na_proj}" = "1" && "${na_targ}" = "1" ]]; then
 # Elementary NN collision
     if [[ "${i_hadronization}" = "0" ]]; then
-        dir="./Sfm_aL${a_lund}_bL${b_lund}_pP0${p_perp0}_pPm${p_perp_min}_sig${pT_width}_K${k_pythia}_Kc${k_parcas}_iHc${i_hadcas}_iTune${i_tune}"
+        dir="./Sfm_aL${a_lund}_bL${b_lund}_pP0${p_perp0}_pPm${p_perp_min}_sig${pT_width}_K${k_PYTHIA}_Kc${k_parcas}_iHc${i_hadcas}_iTune${i_tune}"
     elif [[ "${i_hadronization}" != "0" ]]; then
-        dir="./Coal${i_hadronization}_pP0${p_perp0}_pPm${p_perp_min}_iFF${i_fragment_function}_ipT${i_pT_samp}_iPm${i_pT_max}_iPc${i_phase_constraint}_eDeex${e_deex}_nDs${n_deex_step}_iDg${i_deex_gen}_iDx${i_deex}_sig${pT_width}_sigK${sig_kPerp}_K${k_pythia}_Kc${k_parcas}_iHc${i_hadcas}"
+        dir="./Coal${i_hadronization}_pP0${p_perp0}_pPm${p_perp_min}_iFF${i_fragment_function}_ipT${i_pT_samp}_iPm${i_pT_max}_iPc${i_phase_constraint}_eDeex${e_deex}_nDs${n_deex_step}_iDg${i_deex_gen}_iDx${i_deex}_sig${pT_width}_sigK${sig_kPerp}_K${k_PYTHIA}_Kc${k_parcas}_iHc${i_hadcas}"
     # else
     fi
     if [ "${i_sim_mode}" = "1" ]; then
@@ -1498,9 +1508,9 @@ if [[ "${na_proj}" = "1" && "${na_targ}" = "1" ]]; then
 else
 # pA, AA collisions
     if [[ "${i_hadronization}" = "0" ]]; then
-        dir="./b${b_min}_${b_max}_sfm_aL${a_lund}_bL${b_lund}_pP0${p_perp0}_pPm${p_perp_min}_sig${pT_width}_K${k_pythia}_Kc${k_parcas}_iO${i_overlap}_iHc${i_hadcas}_iSh${i_shadow}_iTune${i_tune}"
+        dir="./b${b_min}_${b_max}_sfm_aL${a_lund}_bL${b_lund}_pP0${p_perp0}_pPm${p_perp_min}_sig${pT_width}_K${k_PYTHIA}_Kc${k_parcas}_iO${i_overlap}_iHc${i_hadcas}_iSh${i_shadow}_iTune${i_tune}"
     elif [[ "${i_hadronization}" != "0" ]]; then
-        dir="./b${b_min}_${b_max}_coal${i_hadronization}_pP0${p_perp0}_pPm${p_perp_min}_iFF${i_fragment_function}_ipT${i_pT_samp}_iPm${i_pT_max}_iPc${i_phase_constraint}_eDeex${e_deex}_nDs${n_deex_step}_iDg${i_deex_gen}_iDx${i_deex}_sig${pT_width}_sigK${sig_kPerp}_K${k_pythia}_Kc${k_parcas}_iO${i_overlap}_iHc${i_hadcas}_iSh${i_shadow}"
+        dir="./b${b_min}_${b_max}_coal${i_hadronization}_pP0${p_perp0}_pPm${p_perp_min}_iFF${i_fragment_function}_ipT${i_pT_samp}_iPm${i_pT_max}_iPc${i_phase_constraint}_eDeex${e_deex}_nDs${n_deex_step}_iDg${i_deex_gen}_iDx${i_deex}_sig${pT_width}_sigK${sig_kPerp}_K${k_PYTHIA}_Kc${k_parcas}_iO${i_overlap}_iHc${i_hadcas}_iSh${i_shadow}"
     # else
     fi
     if [ "${i_sim_mode}" = "1" ]; then
