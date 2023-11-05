@@ -1,7 +1,7 @@
         subroutine parini(time_ini,parp21,win,psno,ijk,iMode,
      c   decpro,i_tune)  ! 260223 300623 Lei Added i_tune 220823 Lei Removed parp22
 c210921 generate partonic initial state in relativistic
-c        pA,Ap,AA,lp, & lA collision based on 'pythia'   ! 140414
+c        pA,Ap,AA,lp, & lA collision based on 'PYTHIA'   ! 140414
 c       it was composed by Ben-Hao Sa on 04/12/2003
 c260223 iMode=1: low energy simulation A-loop;
 c            =2: PYTHIA-like B-loop;
@@ -24,7 +24,7 @@ c260223  of mstptj=0 (C-loop), but is in 'sbh' for mstptj=1 (A- and B-loops)
 c       those variables in above common blocks are defined in 'jetset'
         COMMON/PYSUBS/MSEL,MSUB(500),KFIN(2,-40:40),NON,CKIN(200)
         COMMON/PYPARS/MSTP(200),PARP(200),MSTI(200),PARI(200)   ! 221203
-c       those variables in above common block are defined in 'pythia'
+c       those variables in above common block are defined in 'PYTHIA'
         COMMON/PYCIDAT2/KFMAXT,NONCI2,PARAM(20),WEIGH(600)
         common/sa1/kjp21,non1,bp,iii,neve,nout,nosc
         common/sa2/nsa,non2,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
@@ -100,8 +100,8 @@ c       nctl: number of collision pairs in current collision list
 c       nctl0: number of collision pairs in initial collision list
 c180121 nctlm: maxmimum number of collision pairs
 c       noinel(1): statistics of nn elas. colli.;
-c       noinel(592): statistics of nn colli. calling pythia
-c230121 noinel(593): statistics of nn colli. not calling pythia
+c       noinel(592): statistics of nn colli. calling PYTHIA
+c230121 noinel(593): statistics of nn colli. not calling PYTHIA
 
         double precision bst(4),bzp,bzt,bbb(3),bb(3)
         dimension peo(4),pi(4),pj(4),xi(4),xj(4)
@@ -113,7 +113,7 @@ c230121 noinel(593): statistics of nn colli. not calling pythia
         kpp=0
         knp=0
         kep=0   ! 060813
-c       kep: to statistics of the # of times calling pythia in 
+c       kep: to statistics of the # of times calling PYTHIA in 
 c        case of lepton is projectile
 
 c270312 initiation of x,y,xy,x^2,y^2 and sump (statistics of the number of
@@ -947,7 +947,7 @@ c       largest collision distance between two colliding particles.
         rcsit=PARAM(6)
         t0=PARAM(7)   ! 230805
 c230805 t0=0.   ! 221102
-c221102 proper formation time of particle from 'pythia'
+c221102 proper formation time of particle from 'PYTHIA'
         dep=PARAM(9)
         ddt=PARAM(8)
         rao=PARAM(10)
@@ -1504,9 +1504,9 @@ c       administrate a nucleus-nucleus collision !060813 120214
         dimension nni(10),ndi(10),npi(10)
         dimension pkk(kszj,4)
         dimension cc(5),b(3),bkk(3),pl(100,5)   ! 260314
-c       arraies in 'pyjets' are given after calling 'pythia'
+c       arraies in 'pyjets' are given after calling 'PYTHIA'
 c       arraies in 'sa2' are used in the collision processes
-c       arraies in 'sbh' are used to store hadron after calling 'pythia'
+c       arraies in 'sbh' are used to store hadron after calling 'PYTHIA'
 c       numbs(i) is is given in 'filt', updated with transport processes, and 
 c        numbs(i)->numb(i) in the initiation of nucleus-nucleus collisin only
 c        numb(i) is updated with transport processes
@@ -1520,7 +1520,7 @@ c        collision pair in particle list, respectively
 c       lc(i,3) and lc(i,4) are the flavor codes of scattered particles 3 and 4
 c        of i-th collision, respectively
 c       lc(i,5) identifies the different inelastic processes,
-c       lc(i,5)=592 refers to the process calling 'pythia'
+c       lc(i,5)=592 refers to the process calling 'PYTHIA'
 c       tc(i) is the collision time of i-th colli.
 c       tw(i) is the cross section ratio of (i-th inelas.)/tot
 c       array 'sbe' stores cumulatively parton (q,qq,g and their anti-particle) 
@@ -1682,7 +1682,7 @@ c       if(cctai.gt.0.99)goto 1002
 
 c       'cctai.gt.0.99' means pi (or pj) nearly on the z axis, don't need 
 c         rotation
-c       perform the rotate for produced particle from calling 'pythia'
+c       perform the rotate for produced particle from calling 'PYTHIA'
         call rosa(cfi1,sfi1,ccta1,scta1,cfis,sfis,cctas,sctas,pint)
         do j1=1,4
         p(j,j1)=pint(j1)
@@ -1756,7 +1756,7 @@ c        calling pyevnt into the overlap region randomly
 c061207 call ptcre(l,l1,time,gamt)
 c--------------------------------------------------------------------
         noinel(592)=noinel(592)+1   ! 280722
-c       592-th scattering process is referred to calling 'pythia'
+c       592-th scattering process is referred to calling 'PYTHIA'
 
         if(mstptj.eq.1)goto 997   ! toward the case PYTHIA-like 230722
 
@@ -2085,29 +2085,29 @@ c       'pyjets' to 'sbh'
 c       n=0
         endif
 c140414
-c281121 update hadron list 'sa2' after calling pythia ('sbh' to 'sa2'), 
+c281121 update hadron list 'sa2' after calling PYTHIA ('sbh' to 'sa2'), 
 c        remove collision pair composed of l and/or l1, remove l (l1)
 c        from 'sa2'
         call updpip(l,l1,icp,lc,tc,tw,time,iii)
 c011204 l=lc(icp,1)
 c011204 l1=lc(icp,2)
-c       update collision list after calling 'pythia'
+c       update collision list after calling 'PYTHIA'
         call updtlp(time,lc,tc,tw,iii,iMode)   ! 250423
         if(nctl.eq.0)goto 100   ! 021204
 c170121
 c240121 noinel(592)=noinel(592)+1
-c       noinel(592): statistics of # of nn collition calling pythia
+c       noinel(592): statistics of # of nn collition calling PYTHIA
 c170121
-        goto 300   ! ss is enough to call pythia
+        goto 300   ! ss is enough to call PYTHIA
         endif   ! if 1
 
-c010223 if ss is not enough to call pythia or current hadron-hadron
-c        collision pair is not in the plan of calling pythia, then it is 
+c010223 if ss is not enough to call PYTHIA or current hadron-hadron
+c        collision pair is not in the plan of calling PYTHIA, then it is 
 c        as ela. scattering
         noinel(593)=noinel(593)+1   ! 140820
 c140820 noinel(593): statistics of # of hadron-hadron collition which energy 
-c        is not enough to call pythia or current hadron-hadron
-c        collision pair is not in the plan of calling pythia
+c        is not enough to call PYTHIA or current hadron-hadron
+c        collision pair is not in the plan of calling PYTHIA
         call coelas(l,l1,ss,pi,pj)
 c       update the particle list for elastic scattering, pi and pj have been
 c       boosted back to Lab frame or cms of nucleus-nucleus collision
@@ -2741,7 +2741,7 @@ c       prepare rotation
         do j1=1,4
         pint(j1)=p(j,j1)
         enddo
-c       perform the rotate for inelas. scattered particles in 'pythia'
+c       perform the rotate for inelas. scattered particles in 'PYTHIA'
         call rosa(cfi1,sfi1,ccta1,scta1,cfis,sfis,cctas,sctas,pint)
         do j1=1,4
         p(j,j1)=pint(j1)
@@ -3177,7 +3177,7 @@ c        and now
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine ptcre(l,l1,time)   ! 110517
-c       give four position to the particles after calling pythia
+c       give four position to the particles after calling PYTHIA
 c       l and l1 are colliding particles 060813 120214
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
@@ -3215,7 +3215,7 @@ c210921 generated particles are distributed on the surface with unit radius
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine ptcre_n(l,l1,time,gamt)   ! 021207
 c       arrange particles (quark,diquark, and gluon mainly) after 
-c        calling pythia into the overlap region randomly  
+c        calling PYTHIA into the overlap region randomly  
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -3273,7 +3273,7 @@ c        in the sphere of projectile
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine updpip(l,l1,icp,lc,tc,tw,time,iii)
-c281121 update hadron list 'sa2' after calling pythia ('sbh' to 'sa2') 
+c281121 update hadron list 'sa2' after calling PYTHIA ('sbh' to 'sa2') 
 c        remove collision pair composed of l and/or l1, remove l (l1) 
 c        from 'sa2'
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
@@ -3367,8 +3367,8 @@ c221203 ksa(jj,3)=0
         enddo
         ishp(jj)=1
         tau(jj)=time+t0*p(i,4)/p(i,5)
-c       the values of 'ishp' and 'tau' for hadrons from 'pythia' 
-c        are given here, the proper formation time of 'pythia' particle 
+c       the values of 'ishp' and 'tau' for hadrons from 'PYTHIA' 
+c        are given here, the proper formation time of 'PYTHIA' particle 
 c        is assume to be equal to t0 fm/c, except nucleon and j/psi
         if(kf.eq.2212 .or. kf.eq.2112)then
         tau(jj)=time+t0*p(i,4)/p(i,5)*taup
@@ -3755,7 +3755,7 @@ c       cta1=atan2(dsqrt(pi(1)**2+pi(2)**2),pi(3))
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine rosa(cfi1,sfi1,ccta1,scta1,cfis,sfis,cctas,sctas,
      c   pis)
-c       perform rotate for produced particles from 'pythia'
+c       perform rotate for produced particles from 'PYTHIA'
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -3910,7 +3910,7 @@ c16101  cm: invariant mass of found diquark-quark (quark-diquark) 'A-V' pair
         kf3=kf
         sdir=dsign(1d0,p(i3,3))   ! sign of third momentm of i3
         endif
-c161021 cf. pythia manual p.71 for flavor code of diquark
+c161021 cf. PYTHIA manual p.71 for flavor code of diquark
 
 c   found diquark-quark (quark-diquark) 'A-V' pair can be p (pbar,n,or nbar) ?
         call tabhb
@@ -4492,6 +4492,7 @@ c       move particle list one step downward from i1+1 to n
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine break
+c061123 Rewritten to get kf1 and kf2 directly.   ! 061123 Lei
 c       breaks up diquark (anti-diquark), gives four momenta 
 c        and four positions to the broken objects
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
@@ -4518,98 +4519,12 @@ c     c   .and. kfab.ne.3303 .and. kfab.ne.21)then
         goto 300
         endif
 
-        if(kf.eq.2101)then
-        kf1=2
-        kf2=1
-        goto 200
-        endif
-        if(kf.eq.3101)then
-        kf1=3
-        kf2=1
-        goto 200
-        endif
-        if(kf.eq.3201)then
-        kf1=3
-        kf2=2
-        goto 200
-        endif
-        if(kf.eq.1103)then
-        kf1=1
-        kf2=1
-        goto 200
-        endif
-        if(kf.eq.2103)then
-        kf1=2
-        kf2=1
-        goto 200
-        endif
-        if(kf.eq.2203)then
-        kf1=2
-        kf2=2
-        goto 200
-        endif
-        if(kf.eq.3103)then
-        kf1=3
-        kf2=1
-        goto 200
-        endif
-        if(kf.eq.3203)then
-        kf1=3
-        kf2=2
-        goto 200
-        endif
-        if(kf.eq.3303)then
-        kf1=3
-        kf2=3
-        goto 200
-        endif
-c251103
-        if(kf.eq.-2101)then
-        kf1=-2
-        kf2=-1
-        goto 200
-        endif
-        if(kf.eq.-3101)then
-        kf1=-3
-        kf2=-1
-        goto 200
-        endif
-        if(kf.eq.-3201)then
-        kf1=-3
-        kf2=-2
-        goto 200
-        endif
-        if(kf.eq.-1103)then
-        kf1=-1
-        kf2=-1
-        goto 200
-        endif
-        if(kf.eq.-2103)then
-        kf1=-2
-        kf2=-1
-        goto 200
-        endif
-        if(kf.eq.-2203)then
-        kf1=-2
-        kf2=-2
-        goto 200
-        endif
-        if(kf.eq.-3103)then
-        kf1=-3
-        kf2=-1
-        goto 200
-        endif
-        if(kf.eq.-3203)then
-        kf1=-3
-        kf2=-2
-        goto 200
-        endif
-        if(kf.eq.-3303)then
-        kf1=-3
-        kf2=-3
-        goto 200
-        endif
-c251103
+c061123 Lei
+c       Convert KF code of diquark to correspoding ones of quarks.
+        kf1 = kf/1000
+        kf2 = (kf-kf1*1000)/100
+c061123 Lei
+
 200     k(i1,2)=kf1
         k(n+1,2)=kf2
 c221203 k(i1,1)=1
@@ -4658,10 +4573,29 @@ c       kf1,kf2: flavor codes of broken quarks
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
+        COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)   ! 250823 Lei
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
+        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei
         dimension pi(4),pj(4),ps(4),pp(20,5),bb(3)   ! 260503
-        am1=pymass(kf1)
-        am2=pymass(kf2)
+
+c061123 Lei
+c       am1=pymass(kf1)
+c       am2=pymass(kf2)
+        if( i_mass.eq.1 )then
+c       Kinematical mass
+            am1 = PMAS( ABS(kf1), 1 )
+            am2 = PMAS( ABS(kf2), 1 )
+        elseif( i_mass.eq.2 )then
+c       Current algebra mass
+            am1 = PARF( 90 + ABS(kf1) )
+            am2 = PARF( 90 + ABS(kf2) )
+        elseif( i_mass.eq.3 )then
+c       Constituent mass
+            am1 = PARF( 100 + ABS(kf1) )
+            am2 = PARF( 100 + ABS(kf2) )
+        end if
+c061123 Lei
+
 c300623 Lei
         pp(1,5)=am1
         pp(2,5)=am2
@@ -5238,7 +5172,7 @@ c       find out the binary collision with minimum collision time
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine updtlp(time,lc,tc,tw,iii,iMode)   ! 250423
-c       update collision list after calling 'pythia' successfully
+c       update collision list after calling 'PYTHIA' successfully
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -5302,7 +5236,7 @@ c       m32=numb(32)
 c       m34=numb(34)
 c        m34=numb(kfmax-11)
 c       subtract 11, since we do not consider the rescattering of x0c, etc
-c101221 note: # of produced hadrons equal to zero (n=0) after call 'pythia'
+c101221 note: # of produced hadrons equal to zero (n=0) after call 'PYTHIA'
 c        in case of w/o reconstruction leading proton
 c101221 proceed for case of with reconstruction leading nucleon
 c101221 constract hadron collision pair composed of one from produced hadrons
@@ -5531,7 +5465,7 @@ C TAIAN
 
 c       when collision happens,particles should already be produced
 c       we give a zero formation time for particles produced after
-c       calling 'pythia'
+c       calling 'PYTHIA'
         sg1=rr+tcol*rb
 ctai
         endif

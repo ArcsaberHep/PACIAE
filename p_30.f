@@ -1,5 +1,5 @@
 C*********************************************************************
-C* Modified for PACIAE 2.3                                          **
+C* Modified for PACIAE 3.0                                          **
 C*   1. /PYJETS/ 4000 -> 80000;                                     **
 C*   2. MSTU(4)  4000 -> 80000, MSTU(5) 10000 -> ?0000 (need fix);  **
 C*   3. /HEPEVT/ 4000 -> 80000;                                     **
@@ -9,7 +9,7 @@ C*   6. local MCN, ICR, MSCR, IOPT, RLOPTC in PYFSCR, 4000 -> 80000;**
 C*   7. printing FORMAT in PYLIST;                                  **
 C*   8. About iikk, kkii, smadel and shanul stemming from PACIAE.   **
 c*                                                    By Ben-Hao Sa **
-c*                          Last updated by An-Ke Lei on 22/08/2023 **
+c*                          Last updated by An-Ke Lei on 06/11/2023 **
 C*********************************************************************
 
 C*********************************************************************
@@ -9489,12 +9489,12 @@ C...q + qbar -> q*_D + q*_Dbar, q*_S + q*_Sbar
 C...qi + qbarj -> q*_Di + q*_Sbarj
          IF(PYR(0).LE.0.5)THEN
             KFPR(ISUB,1)=5100001
-c Changed from private pythia6410_ued code
+c Changed from private PYTHIA6410_ued code
 c            KFPR(ISUB,2)=-5010001
             KFPR(ISUB,2)=-6100002
          ELSE
             KFPR(ISUB,1)=5100002
-c Changed from private pythia6410_ued code
+c Changed from private PYTHIA6410_ued code
 c            KFPR(ISUB,2)=-5010002
             KFPR(ISUB,2)=-6100001
          ENDIF
@@ -61626,7 +61626,7 @@ C*********************************************************************
 C...PYTUNE
 C...Presets for a few specific underlying-event and min-bias tunes
 C...Note some tunes require external pdfs to be linked (e.g. 105:QW),
-C...others require particular versions of pythia (e.g. the SCI and GAL
+C...others require particular versions of PYTHIA (e.g. the SCI and GAL
 C...models). See below for details.
       SUBROUTINE PYTUNE(MYTUNE)
 C

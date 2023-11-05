@@ -166,7 +166,7 @@
             !15
             read(99,*) Ncoll_max_in_coll_list
                 sum_Ncoll_max_in_coll_list = sum_Ncoll_max_in_coll_list + Ncoll_max_in_coll_list
-            !16 #! ave. # of NN collision pairs calling pythia, not calling pythia =
+            !16 #! ave. # of NN collision pairs calling PYTHIA, not calling PYTHIA =
             read(99,"(A200)") comment_line(16)
             !17
             read(99,*) Ncoll_call_PYTHIA, Ncoll_not_call_PYTHIA
@@ -682,7 +682,7 @@
         write(100,*) TRIM(ADJUSTL( comment_line(14) ))
 !15
         write(100,*) sum_Ncoll_max_in_coll_list
-!16 #! ave. # of NN collision pairs calling pythia, not calling pythia =
+!16 #! ave. # of NN collision pairs calling PYTHIA, not calling PYTHIA =
         write(100,*) TRIM(ADJUSTL( comment_line(16) ))
 !17
         write(100,*) sum_Ncoll_call_PYTHIA, sum_Ncoll_not_call_PYTHIA

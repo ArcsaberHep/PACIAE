@@ -91,7 +91,8 @@
 #             Au+Au: 197, 79, 197, 79; Pb+Pb: 208, 82, 208, 82;
 #             Xe+Xe: 129, 54, 129, 54; U + U: 238, 92, 238, 92;
 #             Ag+Ag: 108, 47, 108, 47; Cu+Cu:  63, 29,  63, 29;
-#             Ru+Ru:  96, 44,  96, 44; Zr+Zr:  96, 40,  96, 40.
+#             Ru+Ru:  96, 44,  96, 44; Zr+Zr:  96, 40,  96, 40;
+#             O + O:  16,  8,  16,  8; C + C:  12,  6,  12,  6.
 # for eA, nu_eA, etc.
 #  e^-A:     nap=1, nzp=-1, ipden=11, itden=1,
 #  e^+A:     nap=1, nzp= 1, ipden=11, itden=1,
@@ -175,7 +176,7 @@
 #       =5: z
 #
 # parp21,yOrEta,win (D=2.7, 1, xxx)
-#  parp21: lowest CM energy running 'pythia'
+#  parp21: lowest CM energy running 'PYTHIA'
 #  yOrEta: select y or eta in partial phase-space statistics (analy.f)
 #          = 0 , y
 #          = 1 , eta

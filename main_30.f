@@ -8,7 +8,7 @@ c       parini_30.f: generates partonic initial state of colliding system
 c       parcas_30.f: performs parton rescattering, where 2->2 processes
 c        are considered only and LO pQCD cross section or its regularized
 c        approximation is used
-c       p_30.f (pythia 6.4.28): for generation of partonic initial state 
+c       p_30.f (PYTHIA 6.4.28): for generation of partonic initial state 
 c        and/or string hadronization
 c       sfm_30.f: hadronization with LUND string fragmentation model
 c       coales_30.f: hadronization with Monte Carlo coalescence model
@@ -137,7 +137,7 @@ c       7: parameter 'b', i.e. parj(42), in Lund string fragmentation function
 c       8: i.e. MSTP(82) in PYTHIA 6.4
 c       9: = PARP(81) (D=1.9 GeV/c), effective minimum transverse momentum 
 c            p_erp_min of multiple interactions if MSTP(82)=1.
-c       10: parp(31), K factor in pythia64
+c       10: parp(31), K factor in PYTHIA64
 c       11: time accuracy used in hadas_30.f
 c       12: model of hadronization: 
 c           =0, string fragmentation; 
@@ -191,11 +191,11 @@ c           Note: for coal, when using 11, 12 or 13, it is LUND/FF/PS
 c140223      fragmentation function in 'funcz' which comes up with PACIAE.
 c111222 30: =1: distributes participant nucleons in overlapping areas forcely
 c           =0: no more requirements   ! 111222 Lei
-c       31: parj(1) in pythia64
-c       32: parj(2) in pythia64
-c       33: parj(3) in pythia64
+c       31: parj(1) in PYTHIA64
+c       32: parj(2) in PYTHIA64
+c       33: parj(3) in PYTHIA64
 c       34: parj(21) width of px/py/pT sampling in PYPTDI/PAPTDI.
-c       35: mstp(91) in pythia64, selects parton transverse momentum 
+c       35: mstp(91) in PYTHIA64, selects parton transverse momentum 
 c           (k_{\perp}) distribution inside hadron; 
 c           =1, Gaussian; 
 c           =2, exponential
@@ -285,8 +285,8 @@ c       nrel: statistics of blocked parton-parton scattering process in
 c        parcas_30.f
 c       nreac(i): statistics of successful i-th parton-parton scattering 
 c        process in parcas_30.f
-c       npinel(592): # of nn collision calling pythia' in parini_30.f 
-c       npinel(593): # of nn collision not calling pythia' in parini_30.f
+c       npinel(592): # of nn collision calling PYTHIA' in parini_30.f 
+c       npinel(593): # of nn collision not calling PYTHIA' in parini_30.f
 c       noel : statistics of elastic collisions in hadcas_30.f
 c       noinel(i): statistics the i-th inelastic collisions in hadcas_30.f
 c140223 nosc = 0 : no OSCAR output, see subroutine oscar   ! 140223 Lei
@@ -322,7 +322,7 @@ c       win: =incident momentum if ifram=0
 c            =sqrt(s) if ifram=1
 
 c250209 flavor code 22: hardonic decay photon
-c                   44: prompt direct photon (<- pythia)
+c                   44: prompt direct photon (<- PYTHIA)
 c                   55: photon from parton-parton scattering
 c                       qg->q(gamma) and q(-q)->g(gamma)
 c                   66: hardonic direct photon
@@ -546,7 +546,7 @@ c270219 recalculate parj(1) with popcorn mechanism correction
 c       parp(93)=adj1(30) ! upper cut-off for k_perp distribution in hadron
 c       parj(21)=adj1(29)
         parp(2)=parp21
-c       parp21: lowest CM energy for calling 'pythia' (D=10.), for 
+c       parp21: lowest CM energy for calling 'PYTHIA' (D=10.), for 
 c        the case of nchan not equal to 3
 c140223 yOrEta: select y or eta in partial phase-space statistics.   ! 140223 Lei
 c               = 0 , y
@@ -655,7 +655,7 @@ c200601
         sknn=0.
         skpp=0.
         sknp=0.
-        skep=0. ! statistic of ep and en collisions with calling pythia 060813
+        skep=0. ! statistic of ep and en collisions with calling PYTHIA 060813
 c200601
         sthroq=0.
         sthrob=0.
@@ -673,7 +673,7 @@ c280113
         psnop=0.   ! parojectile N_part in case of psno=2
         psnot=0.   ! target N_part in case of psno=2
         endif
-        nncoll=0
+        NN_diff=0   ! 061123 Lei nncoll -> NN_diff
         vnlep=0.d0 ! statistics of the number of studied leptons 260314
 c280113
         iii=0
@@ -1168,7 +1168,7 @@ c-------------------------------------------------------------------------------
 c-------------------------------------------------------------------------------
 c-------------------------   Subprocesses Selecting   --------------------------
 c060620
-c       default pythia or user own selection for subprocesses
+c       default PYTHIA or user own selection for subprocesses
         if(nchan.eq.0)then
 c       Inelastic (INEL)
         msel=0
@@ -1646,7 +1646,7 @@ c       call pylist(1)   ! in p_30.f
 c-----------------------------   B-loop Treating  ------------------------------
 c230722
         if(mstptj.eq.1)then   !! 230722 PYTHIA-like simulation for pp & e+e-
-c       give four position to the particles generated in pythia ('pyjets')
+c       give four position to the particles generated in PYTHIA ('pyjets')
         call ptcre(1,2,time)   ! in parini.f
         goto 998   ! toward hadron rescattering ('call hadcas') for pp & e+e-
         else   !! 230722
@@ -1668,7 +1668,7 @@ c       remove gamma from 'pyjets' to 'sgam'
         enddo
 c       move "66" from 'pyjets' to 'sgam'
         if(n66.gt.0)call remo_gam(66)
-c       give four position to the particles generated in pythia (in pyjets)
+c       give four position to the particles generated in PYTHIA (in pyjets)
         call ptcre(1,2,time) ! arguments 1 and 2 make no sense indeed
 c       remove hadrons from 'pyjets' to 'sbh'
         call remo   ! in parini.f
@@ -1853,10 +1853,10 @@ c-------------------------------------------------------------------------------
 c-----------------------   Diffractive Event Treating  -------------------------
 c       no parton produced at all
         if(n.le.0)then
-        nncoll=nncoll+1
+        NN_diff=NN_diff+1   ! 061123 Lei nncoll -> NN_diff
 c300623 Diffractive event in PYTHIA. Do not throw it away.   ! 300623 Lei
         if(nbh.gt.0) goto 333
-c060814 if(nncoll.gt.neve)then
+c060814 if(NN_diff.gt.neve)then   ! 061123 Lei nncoll -> NN_diff
 c       stop 8888
 c060814 endif
         iii=iii-1
@@ -3059,7 +3059,7 @@ c       moves partons from 'pyjets' to 'sbe'
 
 c-------------------------------------------------------------------------------
 c------------------------   Final Information Output   -------------------------
-c       pythia output
+c       PYTHIA output
 80004   continue
         if(nout.eq.1 .or. iii.eq.1 .or. mod(iii,nout).eq.0 .or. iii
      c   .eq.neve)then
@@ -3339,8 +3339,8 @@ c171022 Records the seed of random number generator.
         write(10,*)'#! largest ave. # of NN collision pairs =' ! 280722
         write(10,*) snpctlmi   ! 280722
 c140820
-        write(10,*)'#! ave. # of NN collision pairs calling pythia, '//
-     c             'not calling pythia ='
+        write(10,*)'#! ave. # of NN collision pairs calling PYTHIA, '//
+     c             'not calling PYTHIA ='
         write(10,*) eineli(592),eineli(593)
         write(10,*)'#! ave. # of wounded nucleons in parini ='
         write(10,*) swouni
@@ -3521,7 +3521,7 @@ c*******************************************************************************
 
 
 
-        write(9,*)'nncoll (total diffractive NN)=',nncoll   ! sa 060814 300623 Lei
+        write(9,*)'NN_diff (total diffractive NN)=',NN_diff   ! sa 060814 300623 Lei 061123 Lei nncoll => NN_diff
 c060813 statistics of processes generated
         write(MSTU(11),*)
         write(MSTU(11),*)
@@ -5680,97 +5680,12 @@ c        and four positions to the broken partons
         goto 300
         endif
 
-        if(kf.eq.2101)then
-        kf1=2
-        kf2=1
-        goto 200
-        endif
-        if(kf.eq.3101)then
-        kf1=3
-        kf2=1
-        goto 200
-        endif
-        if(kf.eq.3201)then
-        kf1=3
-        kf2=2
-        goto 200
-        endif
-        if(kf.eq.1103)then
-        kf1=1
-        kf2=1
-        goto 200
-        endif
-        if(kf.eq.2103)then
-        kf1=2
-        kf2=1
-        goto 200
-        endif
-        if(kf.eq.2203)then
-        kf1=2
-        kf2=2
-        goto 200
-        endif
-        if(kf.eq.3103)then
-        kf1=3
-        kf2=1
-        goto 200
-        endif
-        if(kf.eq.3203)then
-        kf1=3
-        kf2=2
-        goto 200
-        endif
-        if(kf.eq.3303)then
-        kf1=3
-        kf2=3
-        goto 200
-        endif
-c251103
-        if(kf.eq.-2101)then
-        kf1=-2
-        kf2=-1
-        goto 200
-        endif
-        if(kf.eq.-3101)then
-        kf1=-3
-        kf2=-1
-        goto 200
-        endif
-        if(kf.eq.-3201)then
-        kf1=-3
-        kf2=-2
-        goto 200
-        endif
-        if(kf.eq.-1103)then
-        kf1=-1
-        kf2=-1
-        goto 200
-        endif
-        if(kf.eq.-2103)then
-        kf1=-2
-        kf2=-1
-        goto 200
-        endif
-        if(kf.eq.-2203)then
-        kf1=-2
-        kf2=-2
-        goto 200
-        endif
-        if(kf.eq.-3103)then
-        kf1=-3
-        kf2=-1
-        goto 200
-        endif
-        if(kf.eq.-3203)then
-        kf1=-3
-        kf2=-2
-        goto 200
-        endif
-        if(kf.eq.-3303)then
-        kf1=-3
-        kf2=-3
-        goto 200
-        endif
+c061123 Lei
+c       Convert KF code of diquark to correspoding ones of quarks.
+        kf1 = kf/1000
+        kf2 = (kf-kf1*1000)/100
+c061123 Lei
+
 200     k(i1,2)=kf1
         k(n+1,2)=kf2
 c221203 k(i1,1)=1
@@ -5809,11 +5724,30 @@ c       kf1,kf2: flavor codes of broken quarks
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
+        COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)   ! 250823 Lei
         common/sbe/n,npad,k(kszj,5),p(kszj,5),v(kszj,5)
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
+        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei
         dimension pi(4),pj(4),ps(4),pp(20,5),bb(3)   ! 260503
-        am1=pymass(kf1)
-        am2=pymass(kf2)
+
+c061123 Lei
+c       am1=pymass(kf1)
+c       am2=pymass(kf2)
+        if( i_mass.eq.1 )then
+c       Kinematical mass
+            am1 = PMAS( ABS(kf1), 1 )
+            am2 = PMAS( ABS(kf2), 1 )
+        elseif( i_mass.eq.2 )then
+c       Current algebra mass
+            am1 = PARF( 90 + ABS(kf1) )
+            am2 = PARF( 90 + ABS(kf2) )
+        elseif( i_mass.eq.3 )then
+c       Constituent mass
+            am1 = PARF( 100 + ABS(kf1) )
+            am2 = PARF( 100 + ABS(kf2) )
+        end if
+c061123 Lei
+
         pp(1,5)=am1
         pp(2,5)=am2
 c300623 Lei
@@ -6342,7 +6276,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine shanul(x,q2,rag,raq)   ! 181213
 c       calculate nuclear ratio R^A_i=f_{i/A}(x,Q2)/f_i(x,Q2) according
 c        to Xin-Nian Wang's paper (PLB 527 (2002) 85), multiply it to
-c        the parton distribution function in pythia, resulted parton
+c        the parton distribution function in PYTHIA, resulted parton
 c        distribution function is including nuclear shadowing effect
 c       it was proved in Eur. Phys. J. C9(1999)61 that nuclear ratio does
 c        not depend strongly on the choice for the parton distribution

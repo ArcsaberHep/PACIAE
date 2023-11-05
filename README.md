@@ -2,7 +2,7 @@
      Written by Markdown language.
                  By Anke at CCNU on 17/10/2022 
                                                
-                    Last updated on 22/08/2023 
+                    Last updated on 06/11/2023 
  -->
 
 # The parton and hadron cascade model PACIAE
@@ -114,6 +114,14 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 
 <!----------------------------------------------------------------------------->
 ...(waiting for updating)
+
+<!----------------------------------------------------------------------------->
+### <font color=red> 11/2023: </font> In version PACIAE 3.0
+
+- In subroutines "break, break_sbe" of "parini_30.f, main_30.f", statements have been rewritten to get KF codes from corresponding diquark directly.
+- In subroutines "bream_sbe, bream, fsig & ti_li1 and break_glu & bream_glu" of "main_30, parini_30.f, parcas_30.f and coales_30.f", "i_mass"-statements have been added to control mass type of quarks.
+- Redundant statements deleted / modified.
+- Bug fixed.
 
 <!----------------------------------------------------------------------------->
 ### <font color=red> 10/2023: </font> In version PACIAE 3.0
