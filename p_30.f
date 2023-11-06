@@ -64946,7 +64946,8 @@ C...Output of LEP parameters, common to all models
         IF (MSTJ(11).EQ.5) WRITE(M11,5060) 47, PARJ(47), CHPARJ(47)
       ENDIF
         
- 100  IF (MSTU(13).GE.1) WRITE(M11,6000)
+c061123 100  IF (MSTU(13).GE.1) WRITE(M11,6000)
+ 100  IF (M13.GE.1) WRITE(M11,6000)   ! 2061123 Lei
  
  9999 RETURN
  

@@ -821,20 +821,6 @@ c       give the initial values to quantities needed in calculation
         anat=nat
         anap=nap
 
-!Lei20230822B
-! Now, the NN inelastic cross section is obtained from the fitting formula:
-!      sigma_NN = a + b * ln^n( s ).
-! (central value only, without uncertainties)
-! (1) According to Phys. Rrv. C 97 (2018) 054910, Constantin Loizides et al. 
-!      Fitting of 200 GeV -- 100 TeV, a = 25.0, b=0.146, n = 2.
-        ! para1_1 = 25.0 + 0.146 * log( win*win )**2
-! (2) According to Annu. Rev. Nucl. Part. Sci. 2021.71:315-344, 
-!      David d'Enterria and Constantin Loizides.
-!      Fitting of ~10 GeV -- 100 TeV, a = 28.84, b = 0.0458, n = 2.374.
-!        para1_1 = 28.84 + 0.0458 * log( win*win )**2.374
-!        para1_2 = para1_1   ! Or not ?
-!Lei20230822E
-
         PARAM(1)=para1_1   ! 250204 200504
 c       rou0=PARAM(11)
 c       considering the nucleus as a sphere with radii rnt for target
@@ -2874,7 +2860,7 @@ c       Sets name of frame.
             name_frame = "FIXT"
         elseif( ifram.eq.1 .AND. pT_a.le.1D-10 .AND. pT_b.le.1D-10 )then
             name_frame = "CMS"
-c1200923 For hadrons generated from diffractive events.   ! 1200923 Lei
+c1200923 For hadrons generated from diffractive events and remnants.   ! 1200923 Lei
         else
             do i=1,5,1
                 P(1,i) = psa(i_a,i)
@@ -4438,7 +4424,7 @@ c       moves hadron (lepton) and junction from 'pyjets' to 'sbh'   060813
         kfab=iabs(kf)
 c060223
 
-        if(adj12.eq.0)then   ! keep junction in 'pyjets'
+        if(adj12.eq.0)then   ! keep junction in 'pyjets' for sfm
         if(kfab.le.8 .or. kfab.eq.2101 .or. kfab.eq.3101
      c   .or. kfab.eq.3201 .or. kfab.eq.1103 .or. kfab.eq.2103
      c   .or. kfab.eq.2203 .or. kfab.eq.3103 .or. kfab.eq.3203
@@ -4450,7 +4436,7 @@ c060223
         endif   !
 
         if(adj12.ne.0)then   !! 300623 Lei -> .ne.0
-c100223 remove junction from 'pyjets' to 'sbh'
+c100223 remove junction from 'pyjets' to 'sbh' for coal
         if(kfab.le.8 .or. kfab.eq.2101 .or. kfab.eq.3101
      c   .or. kfab.eq.3201 .or. kfab.eq.1103 .or. kfab.eq.2103
      c   .or. kfab.eq.2203 .or. kfab.eq.3103 .or. kfab.eq.3203
@@ -4599,7 +4585,7 @@ c061123 Lei
 c300623 Lei
         pp(1,5)=am1
         pp(2,5)=am2
-        if( P(ii,5).le.1D-15 )then   ! Zero mass approximation in PYTHIA.
+        if( P(ii,5).le.1D-15 )then   ! If zero mass diquark from PYTHIA.
             pp(1,5) = 0D0
             pp(2,5) = 0D0
         end if
@@ -5614,6 +5600,7 @@ c       ia=(i1-ic)*(j1-jc)*(i1-jc)*(j1-ic)
 c       if(ia.eq.0) goto 400
         if(i1.eq.ic .or. i1.eq.jc)goto 400
         if(j1.eq.ic .or. j1.eq.jc)goto 400
+        if(i1.eq.j1) goto 400   ! 061123 Lei Avoid the particle collideing with itself.
         if((tc(i)-time).le.ddt) goto 400
 c       through away the pair whih tc<= time
         j=j+1
@@ -6292,6 +6279,7 @@ c       loop over old colliding pairs
         j1=lc(i,2)
         if(i1.eq.ic .or. i1.eq.jc)goto 400
         if(j1.eq.ic .or. j1.eq.jc)goto 400
+        if(i1.eq.j1) goto 400   ! 061123 Lei Avoid the particle collideing with itself.
         if((tc(i)-time).le.ddt) goto 400
 c      throw away the pair whih tc<= time
         j=j+1
@@ -6382,7 +6370,8 @@ c       forbiden scattered particles colliding with each other
 301     continue
 800     enddo
 
-700     if(tc(nctl).le.1.e-7) nctl=nctl-1
+c061123 700     if(tc(nctl).le.1.e-7) nctl=nctl-1   ! 061123 Lei
+700     nctl=nctl-1   ! 061123 Lei
         return
         end
 
