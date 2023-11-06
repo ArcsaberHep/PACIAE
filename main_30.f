@@ -1917,7 +1917,6 @@ c       'sbh' to 'pyjets'
         enddo
         n=n+nbh
 5000    continue   ! 300407
-c       if(iii.eq.3)call pylist(1)
         goto 888
         endif   ! 290505 271205 020718
 c271205
@@ -3442,10 +3441,10 @@ c120119
 csa****************************************************************
 
 c300623 Lei
-c       Outputs multiplicities, abscissa, 5-distributions of pi+K+p and 20 
+c       Outputs multiplicities, abscissa, 6-distributions of pi+K+p and 20 
 c        particles specified in usu.dat.
         call output_hadron_distribution(sao,sbo,saof,sbof)   ! in analy.f
-c       Outputs multiplicities, abscissa, 5-distributions of g, u+d+s +anti- 
+c       Outputs multiplicities, abscissa, 6-distributions of g, u+d+s +anti- 
 c        and q/qbar.
         call output_parton_distribution   ! in analy.f
 c300623 Lei

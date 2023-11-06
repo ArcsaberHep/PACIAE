@@ -420,8 +420,8 @@ c170204 if(tc(nctl).gt.1.0e-7) nctl=nctl+1
 c170204
         tci=tc(nctl)
 c110504
-c       if(tci.gt.1.0e-7)then
-        if(tci.eq.0.0)goto 600
+        if(tci.gt.1.0e-7)then
+c       if(tci.eq.0.0)goto 600
 c       from 'tcolij' unsuccessfully, goto 600
         if(nctl.eq.1)then
         nctl=nctl+1
@@ -433,7 +433,7 @@ c110504
         if(abs(tcj-tci).lt.ddt)goto 600
         enddo
         nctl=nctl+1
-c       endif
+        endif
 c170204
 600     continue
 500     continue
@@ -7916,6 +7916,7 @@ c       update the collision list for annihilation case
         j1=lc(i,2)
         if(i1.eq.ic .or. i1.eq.jc)goto 4000
         if(j1.eq.ic .or. j1.eq.jc)goto 4000
+        if(i1.eq.j1) goto 4000   ! 061123 Lei Avoid the particle collideing with itself.
         if((tc(i)-time).le.ddt) goto 4000
 c       through away the pairs with tc<= time
         j=j+1
@@ -8259,6 +8260,7 @@ c       ia=(i1-ic)*(j1-jc)*(i1-jc)*(j1-ic)
 c       if(ia.eq.0) goto 400
         if(i1.eq.ic .or. i1.eq.jc)goto 400
         if(j1.eq.ic .or. j1.eq.jc)goto 400
+        if(i1.eq.j1) goto 400   ! 061123 Lei Avoid the particle collideing with itself.
         if(abs(tc(i)-time).le.dddt) goto 400   ! 200204
 c       through away the pairs which have tc<= time
         j=j+1
@@ -8305,6 +8307,8 @@ c        sigma, lambda, delta, rho and psi
         if(j1.eq.ic .and. i.eq.jc)goto 600
         if(j1.eq.jc .and. i.eq.ic)goto 600
 c       forbiden scattered particles colliding with each other immediately
+
+        if( i.eq.j1 ) goto 600   ! 061123 Lei Avoid the particle collideing with itself.
 
         if(nctl.gt.nsize)then
         write(9,*)'2 nsa,nctl,dddt=',nsa,nctl,dddt
@@ -8364,7 +8368,8 @@ c141104
 300     if(ik.eq.2)goto 500
         j1=jc
 500     enddo
-700     if(tc(nctl).le.1.e-7) nctl=nctl-1
+c061123 700     if(tc(nctl).le.1.e-7) nctl=nctl-1   ! 061123 Lei
+700     nctl=nctl-1   ! 061123 Lei
         return
         end
 
@@ -10892,6 +10897,7 @@ c        (decaying particle)
         j1=lc(i,2)
         if(i1.eq.ll)goto 401
         if(j1.eq.ll)goto 401
+        if(i1.eq.j1) goto 401   ! 061123 Lei Avoid the particle collideing with itself.
         if((tc(i)-time).le.ddt) goto 401
 c       through away the pairs with tc<= time
         j=j+1
@@ -11022,6 +11028,9 @@ c        sigma, lambda, delta, rho and psi
         if(j11.eq.1 .and. i.eq.j22)goto 600
         if(j11.eq.2 .and. i.eq.j21)goto 600
 c       decayed particles could not collide with each other immediately
+
+        if( i.eq.j11 ) goto 600   ! 061123 Lei Avoid the particle collideing with itself.
+
         if(nctl.gt.nsize)then
         write(9,*)'3 nsa,nctl,dddt=',nsa,nctl,dddt
         write(9,*)'size of array "nsize" needs to be extended'
@@ -11084,7 +11093,8 @@ c141104
 600     enddo
 300     enddo
 
-700     if(tc(nctl).le.1.e-7) nctl=nctl-1
+c061123 700     if(tc(nctl).le.1.e-7) nctl=nctl-1   ! 061123 Lei
+700     nctl=nctl-1   ! 061123 Lei
         return
         end
 

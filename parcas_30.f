@@ -408,6 +408,7 @@ c       loop over old colliding pairs
         j1=lc(2,i)
         iii=(i1-ic)*(j1-ic)
         jjj=(i1-jc)*(j1-jc)
+        if(i1.eq.j1) goto 400   ! 061123 Lei Avoid the particle collideing with itself.
 c       throw away the pairs composed of ic and/or jc
         if(iii.eq.0.or.jjj.eq.0) goto 400
 380     continue
@@ -479,7 +480,8 @@ c141104 if(tcicol.gt.0.0) icol=icol+1
 200     enddo
 100     enddo
 450     continue
-        if(tcicol.le.0.0) icol=icol-1
+c061123 if(tcicol.le.0.0) icol=icol-1   ! 061123 Lei
+        icol=icol-1   ! 061123 Lei
         n0=n   ! 051122
         return
         end
@@ -508,6 +510,7 @@ c       loop over old colliding pairs
         j1=lc(2,i)
         iii=(i1-ic)*(j1-ic)
         jjj=(i1-jc)*(j1-jc)
+        if(i1.eq.j1) goto 400   ! 061123 Lei Avoid the particle collideing with itself.
 c       throw away the pairs composed of ic and/or jc
         if(iii.eq.0.or.jjj.eq.0) goto 400
 380     continue
@@ -598,7 +601,8 @@ c141104 if(tcicol.gt.0.0) icol=icol+1
 200     enddo
 100     enddo
 450     continue
-        if(tcicol.le.0.0) icol=icol-1
+c061123 if(tcicol.le.0.0) icol=icol-1   ! 061123 Lei
+        icol=icol-1   ! 061123 Lei
         n0=n   ! 051122
         return
         end
