@@ -2,7 +2,7 @@
      Written by Markdown language.
                  By Anke at CCNU on 17/10/2022 
                                                
-                    Last updated on 06/11/2023 
+                    Last updated on 20/11/2023 
  -->
 
 # The parton and hadron cascade model PACIAE
@@ -80,10 +80,12 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 
 ## Released papers
 
- - **Recent version:** Revisiting the centrality definition and observable centrality dependence of relativistic heavy-ion collisions in PACIAE model, [Comput. Phys. Commun. 284 (2023) 108615](https://doi.org/10.1016/j.cpc.2022.108615) or [arXiv:2212.04087 [nucl-th]](https://doi.org/10.48550/arXiv.2212.04087)
+ - **Recent version:** An introduction to the parton and hadron cascade model PACIAE 3.0, [2309.05110 [hep-ph]](https://arxiv.org/abs/2309.05110)
 <br/>
 
- - **Past version:** PACIAE 2.2.1: An updated issue of the parton and hadron cascade model PACIAE 2.2, [Comput. Phys. Commun. 274 (2022) 108289](https://doi.org/10.1016/j.cpc.2022.108289) <!-- or [arXiv: [nucl-th]](https://doi.org/) -->
+ - **Past version:** Revisiting the centrality definition and observable centrality dependence of relativistic heavy-ion collisions in PACIAE model, [Comput. Phys. Commun. 284 (2023) 108615](https://doi.org/10.1016/j.cpc.2022.108615) or [arXiv:2212.04087 [nucl-th]](https://doi.org/10.48550/arXiv.2212.04087)
+
+ - PACIAE 2.2.1: An updated issue of the parton and hadron cascade model PACIAE 2.2, [Comput. Phys. Commun. 274 (2022) 108289](https://doi.org/10.1016/j.cpc.2022.108289) <!-- or [arXiv: [nucl-th]](https://doi.org/) -->
 
  - Announcement for the replacement of the PACIAE 2.1 and PACIAE 2.2 series, [Comput. Phys. Commun. 224 (2018) 417-418](https://doi.org/10.1016/j.cpc.2017.10.006) <!-- or [arXiv: [nucl-th]](https://doi.org/) -->
 
@@ -119,7 +121,7 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 ### <font color=red> 11/2023: </font> In version PACIAE 3.0
 
 - In subroutines "break, break_sbe" of "parini_30.f, main_30.f", statements have been rewritten to get KF codes from corresponding diquark directly.
-- In subroutines "bream_sbe, bream, fsig & ti_li1 and break_glu & bream_glu" of "main_30, parini_30.f, parcas_30.f and coales_30.f", "i_mass"-statements have been added to control mass type of quarks.
+- Some debug statements were removed in "parini_30.f" and "parcas_30.f".
 - Redundant statements deleted / modified.
 - Bug fixed.
 
