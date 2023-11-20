@@ -8,9 +8,9 @@ C*   5. local /PYCBLS/ in PYMIHK and PYMIHG, 4000 -> 80000;         **
 C*   6. local MCN, ICR, MSCR, IOPT, RLOPTC in PYFSCR, 4000 -> 80000;**
 C*   7. printing FORMAT in PYLIST;                                  **
 C*   8. About iikk, kkii, smadel and shanul stemming from PACIAE.   **
-C*   9. iii and M13 in PYTUNE.                                      **
+C*   9. N_CALL_PYTUNE and M13 in PYTUNE.                            **
 c*                                                    By Ben-Hao Sa **
-c*                          Last updated by An-Ke Lei on 06/11/2023 **
+c*                          Last updated by An-Ke Lei on 14/11/2023 **
 C*********************************************************************
 
 C*********************************************************************
@@ -62036,7 +62036,7 @@ C...Global statements
 C...Commonblocks.
       COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
       COMMON/PYPARS/MSTP(200),PARP(200),MSTI(200),PARI(200)
-      common/sa1/kjp21,non1,bp,iii,neve,nout,nosc   ! 061123 Lei
+      DATA N_CALL_PYTUNE /0/   ! 141123 Lei
  
 C...SAVE statements
       SAVE /PYDAT1/,/PYPARS/
@@ -62186,9 +62186,10 @@ C...1) Shorthand notation
         GOTO 9999
       ENDIF
       
-c061123 Lei
-      if( iii.gt.1 ) M13 = 0   ! Output information noly once for PACIAE.
-c061123 Lei
+C141123 Lei
+      N_CALL_PYTUNE = N_CALL_PYTUNE + 1
+      if( N_CALL_PYTUNE.gt.1 ) M13 = 0   ! Output information noly once for PACIAE.
+C141123 Lei
       
 C...  2) Hello World
       IF (M13.GE.1) WRITE(M11,5000) CHDOC
@@ -68463,7 +68464,7 @@ C...Find hadron mass. Generate four-momentum.
             P(I,3)=0.0001D0
             P(I,4)=SQRT(PR)
             Z=P(I,4)/W
-           ENDIF
+          ENDIF
  
 C...Remaining flavour and momentum.
           KFL1=-KFL2

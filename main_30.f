@@ -74,7 +74,7 @@ c300623 &   v1(4,20),v2(4,20),v12(4,20),v22(4,20)   ! 300623 Lei
         common/sa37/nth,npadth,kth(kszj,5),pth(kszj,5),vth(kszj,5)   ! 150922
 c       common/sa38/csp_31,csp_32,csp_41,csp_42,csp_43,csp_51,csp_52,
 c    c   csp_53,csp_54,csp_61,csp_62,csp_63,csp_64,csp_65   ! 161022
-        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei
+        common/sa38/ prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei sa 111123
         common/sa6_c/ithroq,ithrob,ithroc,non6_c,throe(4)
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)
         common/sbe/nbe,non_be,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
@@ -223,7 +223,6 @@ c        vnu: \nu; fq2: Q^2=-q^2; w2l: W^2; yyl: y; zl: z; xb: x_B; pph: P_h
 
 c       para1_1: NN total cross section, used in parini_30.f 
 c       para1_2: NN total cross section, used in hadcas_30.f
-!Lei20230828 They will be re-calculated in 'sysini' of 'parini.f' now. (inelastic)
 c       dni: nucleon number density
 
 c       pj and ej: (pt)**2 and transverse energy of J/psi 
@@ -382,7 +381,7 @@ c       read(11,*)csp_31,csp_32   ! 161022
 c       read(11,*)csp_41,csp_42,csp_43   ! 161022
 c       read(11,*)csp_51,csp_52,csp_53,csp_54   ! 161022
 c       read(11,*)csp_61,csp_62,csp_63,csp_64,csp_65   ! 161022
-        read(11,*) i_mass, ( prob_ratio_q(i),i=1,6,1 )   ! 290823 Lei
+        read(11,*) ( prob_ratio_q(i),i=1,6,1 )   ! 290823 Lei
         close(11)
 c------------------------------   Input Reading   ------------------------------
 c-------------------------------------------------------------------------------
@@ -469,10 +468,6 @@ c               of the transverse-momentum spectrum for multiple interactions
 c               with MSTP(82) >= 2.   ! 280823 Lei
 c       i_tune: MSTP(5), tune number of PYTHIA. = 350, Perugia 2011 tune.
 
-c       i_mass: (D=3) mass definetion of quarks used in "break_f"
-c               =1, kinematical mass
-c               =2, current algebra mass
-c               =3, constituent mass (no top mass defined)
 c       prob_ratio_q: probability ratio u-ubar:d-dbar:s-sbar:c-cbar:b-bbar:t-tbar.
 
 c-------------------------------------------------------------------------------
@@ -710,6 +705,7 @@ c       For lN and lA, one just needs to specify ipden >= 11 and nzp/nat/nzt.
                 bmin = 0D0
                 bmax = 0D0
                 psno = 0D0
+                adj1(5) = 0D0   ! 300623 Lei Without nuclear shadowing
             end if
         else
 c       For NN , NA(AN) and AA, one just needs to specify nap/nzp/nat/nzt.
@@ -951,7 +947,7 @@ c210803
 c210803
         write(9,*)'parecc,iparres,smadel,dparj4,cp0,cr0,seco=',
      c   parecc,iparres,smadel,dparj4,cp0,cr0,seco   ! 120219 260219
-        write(9,*) "i_mass, prob_ratio_q=", i_massm, prob_ratio_q   ! 040923 Lei
+        write(9,*) "prob_ratio_q=", prob_ratio_q   ! 040923 Lei
         if(iflmax.ne.0)then
         do kk=1,ispmax
         do i=1,iflmax
@@ -1641,7 +1637,6 @@ c-----------------------------   e+e- Generating   -----------------------------
 
 c151021
         call pyedit(2)   ! in p_30.f
-c       call pylist(1)   ! in p_30.f
 
 c-----------------------------   B-loop Treating  ------------------------------
 c230722
@@ -4967,13 +4962,13 @@ c       Total.
     !     write(888,*) "iii, c & p sum tot=", iii, ic_tot/3., p_tot
 
 c       h + l.
-        if( ic_init.ne.(ic_h + ic_l) .OR. ABS(p_h(1) + p_l(1)).gt.1D-10 
-     &      .OR. ABS(p_h(2) + p_l(2)).gt.1D-10 
-     &      .OR. ABS(p_h(3) + p_l(3)).gt.1D-10 
-     &      .OR. ABS(p_h(4) + p_l(4) - p_init(4)).gt.1D-10 )then
-        write(2,*) "iii, c & p sum h+l=",iii,(ic_h + ic_l)/3., p_h + p_l
-        end if
-        if(iii.eq.neve) write(2,*) "Check! iii=", iii
+    !     if( ic_init.ne.(ic_h + ic_l) .OR. ABS(p_h(1) + p_l(1)).gt.1D-10 
+    !  &      .OR. ABS(p_h(2) + p_l(2)).gt.1D-10 
+    !  &      .OR. ABS(p_h(3) + p_l(3)).gt.1D-10 
+    !  &      .OR. ABS(p_h(4) + p_l(4) - p_init(4)).gt.1D-10 )then
+    !     write(2,*) "iii, c & p sum h+l=",iii,(ic_h + ic_l)/3., p_h + p_l
+    !     end if
+    !     if(iii.eq.neve) write(2,*) "Check! iii=", iii
     !    write(77,*) "iii, c & p sum h+l=",iii,(ic_h + ic_l)/3., p_h + p_l
 
 c       Prints information of 3-momentum and energy.
@@ -5015,160 +5010,6 @@ c           Prints gamma.
                 call prt_sgam(ngam,egam,8)
             endif
         endif
-
-
-        return
-        end
-
-
-
-ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        subroutine prt_pyj_sbe_sbh_sgam(win)
-c300623 Print particle list and sum of momentum and energy   ! 300623 Lei
-        IMPLICIT DOUBLE PRECISION(A-H, O-Z)
-        IMPLICIT INTEGER(I-N)
-        INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER (KSZJ=80000)
-        COMMON/PYJETS/N,NONJ,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
-        COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
-        common/sa1/kjp21,non1,bp,iii,neve,nout,nosc   ! 260419
-        common/sbe/nbe,nonbe,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
-        common/sbh/nbh,nonbh,kbh(kszj,5),pbh(kszj,5),vbh(kszj,5)
-        common/sgam/ngam,nongam,kgam(kszj,5),pgam(kszj,5),vgam(kszj,5)
-        common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
-     c   nap,nat,nzp,nzt,pio
-        dimension peo(4), p_org(4)
-
-        ich1=0
-        peo=0.
-        p_org=0.
-
-        ! PYJETS
-        do i1=1,N,1
-            kf   = K(i1,2)
-            ich1 = ich1 + PYCHGE(kf)
-            do i2=1,4,1
-                peo(i2) = peo(i2) + P(i1,i2)
-            end do
-        enddo
-        ! sbe
-        do i1=1,nbe,1
-            kf   = kbe(i1,2)
-            ich1 = ich1 + PYCHGE(kf)
-            do i2=1,4,1
-                peo(i2) = peo(i2) + pbe(i1,i2)
-            end do
-        enddo
-        ! sbh
-        do i1=1,nbe,1
-            kf   = kbh(i1,2)
-            ich1 = ich1 + PYCHGE(kf)
-            do i2=1,4,1
-                peo(i2) = peo(i2) + pbh(i1,i2)
-            end do
-        enddo
-        ! sgam
-        do i1=1,ngam,1
-            kf   = kgam(i1,2)
-            ich1 = ich1 + PYCHGE(kf)
-            do i2=1,4,1
-                peo(i2) = peo(i2) + pgam(i1,i2)
-            end do
-        enddo
-
-        cc = ich1/3.
-
-        i_org=(nzp+nzt)*PYCHGE(2212)
-        c_org = i_org/3.
-        e_org = win/2.*(nap+nat)
-    !     if( c_org.ne.cc .OR. ABS(peo(1)).gt.1D-10 .OR. 
-    !  &      ABS(peo(2)).gt.1D-10 .OR. ABS(peo(3)).gt.1D-10 .OR.
-    !  &      ABS(peo(4)-e_org).gt.1D-10 )then
-    !     write(2,*) "iii, c & p sum=", iii, cc, peo
-    !     end if
-    !     if(iii.eq.neve) write(2,*) "Check! iii=", iii
-    !     write(66,*) "iii, c & p sum=", iii, cc, peo
-
-
-        return
-        end
-
-
-
-ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        subroutine prt_pyj_sa1h_sa37!(win)
-c300623 Print particle list and sum of momentum and energy   ! 300623 Lei
-        IMPLICIT DOUBLE PRECISION(A-H, O-Z)
-        IMPLICIT INTEGER(I-N)
-        INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER (KSZJ=80000)
-        COMMON/PYJETS/N,NONJ,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
-        COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
-        common/sa1/kjp21,non1,bp,iii,neve,nout,nosc   ! 260419
-        common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
-        common/sa37/nth,npadth,kth(kszj,5),pth(kszj,5),vth(kszj,5)   ! 150922
-        common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
-     c   nap,nat,nzp,nzt,pio
-        dimension peo(4,3), p_org(4), pe(4)
-
-        ich1=0
-        ich2=0
-        ich3=0
-        peo=0.
-        p_org=0.
-        pe=0.
-
-        ! PYJETS
-        write(88,*)
-        write(88,*) "iii, N", N
-        do i1=1,N,1
-            kf   = K(i1,2)
-            write(88,*) i1, kf, (p(i1,i3),i3=1,5,1)
-            ich1 = ich1 + PYCHGE(kf)
-            do i2=1,4,1
-                peo(i2,1) = peo(i2,1) + P(i1,i2)
-                pe(i2) = pe(i2) + P(i1,i2)
-            end do
-        enddo
-        cc1 = ich1/3.
-        write(88,*) "iii, p sum and c", iii, (peo(i3,1),i3=1,4,1), cc1
-        ! sa1_h
-        write(88,*)
-        write(88,*) "iii, nn", nn
-        do i1=1,nn,1
-            kf   = kn(i1,2)
-            write(88,*) i1, kf, (pn(i1,i2),i2=1,5,1)
-            ich2 = ich2 + PYCHGE(kf)
-            do i2=1,4,1
-                peo(i2,2) = peo(i2,2) + pn(i1,i2)
-                pe(i2) = pe(i2) + pn(i1,i2)
-            end do
-        enddo
-        cc2 = ich2/3.
-        write(88,*) "iii, p sum & c", iii, (peo(i3,2),i3=1,4,1), cc2
-        ! sa37
-        write(88,*)
-        write(88,*) "iii, nth", nth
-        do i1=1,nth,1
-            kf   = kth(i1,2)
-            write(88,*) i1, kf, (pth(i1,i3),i3=1,5,1)
-            ich3 = ich3 + PYCHGE(kf)
-            do i2=1,4,1
-                peo(i2,3) = peo(i2,3) + pth(i1,i2)
-                pe(i2) = pe(i2) + pth(i1,i2)
-            end do
-        enddo
-        cc3 = ich3/3.
-        !     i_org=(nzp+nzt)*PYCHGE(2212) + (nap+nat-nzp-nzt)*PYCHGE(-2212)
-    !     c_org = i_org/3.
-    !     e_org = win/2.*(nap+nat)
-    !     if( c_org.ne.cc .OR. ABS(peo(1)).gt.1D-10 .OR. 
-    !  &      ABS(peo(2)).gt.1D-10 .OR. ABS(peo(3)).gt.1D-10 .OR.
-    !  &      ABS(peo(4)-e_org).gt.1D-10 )then
-        write(88,*)
-        write(88,*) "iii, p sum & c=", iii,  pe, cc1+cc2+cc3
-        write(88,*)
-    !         end if
 
 
         return
@@ -5723,34 +5564,15 @@ c       kf1,kf2: flavor codes of broken quarks
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
-        COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)   ! 250823 Lei
         common/sbe/n,npad,k(kszj,5),p(kszj,5),v(kszj,5)
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
-        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei
         dimension pi(4),pj(4),ps(4),pp(20,5),bb(3)   ! 260503
-
-c061123 Lei
-c       am1=pymass(kf1)
-c       am2=pymass(kf2)
-        if( i_mass.eq.1 )then
-c       Kinematical mass
-            am1 = PMAS( ABS(kf1), 1 )
-            am2 = PMAS( ABS(kf2), 1 )
-        elseif( i_mass.eq.2 )then
-c       Current algebra mass
-            am1 = PARF( 90 + ABS(kf1) )
-            am2 = PARF( 90 + ABS(kf2) )
-        elseif( i_mass.eq.3 )then
-c       Constituent mass
-            am1 = PARF( 100 + ABS(kf1) )
-            am2 = PARF( 100 + ABS(kf2) )
-        end if
-c061123 Lei
-
+        am1=pymass(kf1)
+        am2=pymass(kf2)
         pp(1,5)=am1
         pp(2,5)=am2
 c300623 Lei
-        if( p(ii,5).le.1D-15 )then   ! Zero mass approximation in PYTHIA.
+        if( p(ii,5).le.1D-15 )then   ! If zero mass diquark from PYTHIA.
             pp(1,5) = 0D0
             pp(2,5) = 0D0
         end if

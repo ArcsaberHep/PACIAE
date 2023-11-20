@@ -1,11 +1,11 @@
 10,1,0                  ! neve,nout,nosc
 197,79,197,79 ! nap,nzp,nat,nzt
 0.00001,0.85,0,3.72,10      ! ddt,x_ratio,bmin,bmax,nmax
-0,1,1.2,200,1     ! kjp21,ifram,para7,para10,kjp20
+1,1,1.2,200,1     ! kjp21,ifram,para7,para10,kjp20
 3.1416,1,1                  ! pio,ipden,itden
 20,6,2                                 ! ispmax,isdmax,iflmax
-0,0,0,0,0,0,0,0,0,0           ! KF code of particles not to decay
-0,0,0,0,0,0,0,0,0,0           ! KF code of particles not to decay
+0,0,0,0,0,0,0,0,0,0   ! KF code of particles not to decay
+0,0,0,0,0,0,0,0,0,0   ! KF code of particles not to decay
 211,-211,321,-321,3122,-3122,3312,-3312,3334,-3334   ! KF code of particles to be analyzed online
 2212,-2212,2112,-2112,3212,-3212,3112,3222,333,443   ! KF code of particles to be analyzed online
 0.35,0.25,0.35,0.25,25,0.25  ! asd(i), i=1,6
@@ -52,16 +52,16 @@
 2.7,1,200               ! parp21,yOrEta,win
 0.,0.5,1,1,8       ! ttaup,taujp,iabsb,iabsm,nchan
 7.2,4.,2,40.,20.,0.,0.1 ! para13,para14,psno,para15,para16,ajpsi,vneum
-40.,40.,25.,10.                 ! para1_1,para1_2,para2,para4
-3,0,1,0,0.77,0.05,0.005,2.,0   ! i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b,parp82,i_tune
+40,40,25,10                 ! para1_1,para1_2,para2,para4
+3,999,1,0,0.77,0.05,0.005,2.5,0   ! i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b,parp82,i_tune
 1,7,0,3,0.9,2        ! mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw
-1,0.47,0.4,1000,1,0.3,0.58,4,1.9,0.7    ! adj1(1)- adj1(10)  
-0.1,0,30,45,1.,999,1.8,0,0.03,1          ! adj1(11)- adj1(20) 
-0,4.,1,0.15,0.4,1,800000.,1,0,1      ! adj1(21)- adj1(30) 
-0.1,0.3,0.4,0.6,1,0,100.,3.,1.3,4    ! adj1(31)- adj1(40) 
+1,0.47,0.4,1000,1,0.3,0.1,4,1.9,2.5    ! adj1(1)- adj1(10)  
+0.1,0,30,45,1.,1,2,0,0.03,1          ! adj1(11)- adj1(20) 
+0,4.,1,0.15,0.4,1,800000.,1,0,1 ! adj1(21)- adj1(30) 
+0.1,0.3,0.4,0.45,1,0,100.,3.,2,4    ! adj1(31)- adj1(40) 
 4,2,2,0.025,0   ! kjp22,kjp23,kjp24,parp78,mstptj
 0.,0,0.,0.05,1.,0.2,0.05   ! parecc,iparres,smadel,dparj4,cp0,cr0,seco
-3,1,1,0.3,0,0,0   ! i_mass,prob_ratio_q
+1,1,0.3,0,0,0 ! prob_ratio_q
 
 ######################        Annotation of usu.dat         ####################
 # neve,nout,nosc (D=xxx, xxx/10, 0)
@@ -75,8 +75,8 @@
 #
 # nap,nzp,nat,nzt (D=197, 79, 197, 79 or 208, 82, 208, 82)
 # for NN, NA(AN), AA, etc.
-#  nap(nzp): nucleons (protons) number of projectile 
-#  nat(nzt): nucleons (protons) number of target 
+#  nap(nzp): nucleons (protons) number of projectile
+#  nat(nzt): nucleons (protons) number of target
 #            for NN along with ipden=itden=0
 #             p+p   : 1, 1, 1, 1 ;
 #             p+pbar: 1, 1, 1,-1 ;
@@ -93,11 +93,19 @@
 #             Ag+Ag: 108, 47, 108, 47; Cu+Cu:  63, 29,  63, 29;
 #             Ru+Ru:  96, 44,  96, 44; Zr+Zr:  96, 40,  96, 40;
 #             O + O:  16,  8,  16,  8; C + C:  12,  6,  12,  6.
-# for eA, nu_eA, etc.
-#  e^-A:     nap=1, nzp=-1, ipden=11, itden=1,
-#  e^+A:     nap=1, nzp= 1, ipden=11, itden=1,
-#  nu_eA:    nap=1, nzp=-1, ipden=12, itden=1,
-#  nu_ebarA: nap=1, nzp= 1, ipden=12, itden=1.
+#            for e+e-, lp & (lbar + p) and lA & (lbar + A) collisions:
+#             e+e-  : 1,1,1,-1;
+#             l+p   : 1,1,1,1  with ipden > 10;
+#             lbar+p: 1,-1,1,1 with ipden > 10;
+#             l+A   : 1,1,A,Z  with ipden > 10;
+#             lbar+A: 1,-1,A,Z with ipden > 10.
+#            for ep, eA, nu_eA, etc.
+#             e^-p:     nap=1, nzp=-1, ipden=11, itden=0,
+#             e^+p:     nap=1, nzp= 1, ipden=11, itden=0,
+#             e^-A:     nap=1, nzp=-1, ipden=11, itden=1,
+#             e^+A:     nap=1, nzp= 1, ipden=11, itden=1,
+#             nu_eA:    nap=1, nzp=-1, ipden=12, itden=1,
+#             nu_ebarA: nap=1, nzp= 1, ipden=12, itden=1.
 #
 # ddt,x_ratio,bmin,bmax,nmax (D=0.00001, 0.85, xxx, xxx, 10)
 #  ddt: minimum distinguishble collision time interval used in 
@@ -153,7 +161,7 @@
 #      i=1: rapidity distribution (dN/dy v.s. y)
 #       =2: invariant transverse momentum distribution (1/pT*dN/dpT v.s. pT)
 #       =3: pesudorapidity distribution (dN/deta v.s. eta)
-#       =4: transeverse mass distribution (1/mT*dN/dmT v.s. mT)
+#       =4: transverse mass distribution (1/mT*dN/dmT v.s. mT)
 #       =5: event-wise multiplicity distribution
 #       =6: transverse momentum distribution (dN/dpT v.s. pT)
 #  for ep, nu_ep, etc.
@@ -165,14 +173,14 @@
 #
 # afl(j,i,1): lower-boundary of i-th window for j-th particle
 # afl(j,i,2): upper-boundary  of i-th window for j-th particle
-#  for pp, pbarp, pA(Ap), AB etc. 
+#  for pp, pbarp, pA(Ap), AB etc.
 #      i=1, rapidity/pesudorapidity window (D= -1.,1. )
-#       =2, transverse monmentum           (D= 0.,50. )
-#  for ep, nu_ep, etc. 
+#       =2, transverse momentum           (D= 0.,50. )
+#  for ep, nu_ep, etc.
 #      i=1, Q^2=-q^2 window
 #       =2, W^2
 #       =3, y
-#       =4, p_h (haron momentum)
+#       =4, p_h (hadron momentum)
 #       =5: z
 #
 # parp21,yOrEta,win (D=2.7, 1, xxx)
@@ -185,15 +193,15 @@
 #
 # ttaup,taujp,iabsb,iabsm,nchan (D=0., 0.5, 1, 1, 8)
 #  ttaup: proper formation time of particles generated in hadronic rescattering
-#  taujp: formation time of J/Psi
-#  iabsb: =0, without J/Psi (Psi') + baryon
-#         =1, with J/Psi (Psi') + baryon
-#  iabsm: =0, without J/Psi (Psi') + meson
-#         =1, with J/Psi (Psi') + meson
+#  taujp: formation time of J/psi
+#  iabsb: =0, without J/psi (psi') + baryon
+#         =1, with J/psi (psi') + baryon
+#  iabsm: =0, without J/psi (psi') + meson
+#         =1, with J/psi (psi') + meson
 #  nchan: to choose which subset of parton-parton subprocesses to include in
 #         the generration
 #         =0, inelastic (INEL)
-#         =1, Non Single Difractive (NSD)
+#         =1, Non-Single Difractive (NSD)
 #         =2, Drell-Yan process
 #         =3, J/psi production
 #         =4, heavy-flavor production
@@ -204,13 +212,13 @@
 #         =9: Z0 production
 #
 # para13,para14,psno,para15,para16,ajpsi,vneum (D=7.2, 4., 2, 40., 20., 0, 0.1)
-#  para13: total cross-section of J/Psi + n
-#  para14: total cross-section of J/Psi + meson 
-#  psno: =0 fixed impact parameter 
+#  para13: total cross-section of J/psi + n
+#  para14: total cross-section of J/psi + meson
+#  psno: =0 fixed impact parameter
 #        =1 impact parameter is sampled by systematic sampling method
-#        =2 randomly sampled impact parameter 
-#  para15: total cross-section of Psi' + n
-#  para16: total cross-section of Psi' + meson
+#        =2 randomly sampled impact parameter
+#  para15: total cross-section of psi' + n
+#  para16: total cross-section of psi' + meson
 #  ajpsi: not used now
 #  vneum: relevant to average binary collision number, now it is recalculated
 #         in program
@@ -218,12 +226,11 @@
 # para1_1,para1_2,para2,para4 (D= 40, 40, 25, 10 for Au+Au; 70, 70... for Pb+Pb)
 #  para1_1: nn total cross section used in parton initiation
 #  para1_2: nn total cross section used in hadron cascade
-#           Now they will be recalculated in program.
 #  para2: total cross-section of pi-nucleon
 #  para4: total cross-section of pi-pi
 #
 # i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b,parp82,i_tune
-#  (D= 3, 999, 1, 0, 0.77, 0.05, 0.005, 2., 0)
+#  (D=3, 999, 0, 0.77, 0.05, 0.005, 2., 0)
 #  i_deex: the deexcitation mode used in coal
 #          = 1, light-cone variable mode
 #          = 2, energy mode
@@ -332,7 +339,7 @@
 #           For coal, sampling deexcited daughter qqbar-pair energy fraction z 
 #            taking from mother by 'PYZDIS' in PYTHIA or 'funcz' or random z.
 #           =1: Lund symmetric fragmentation function, see PARJ(41) - PARJ(45)
-#           =2: Field–Feynman + Peterson/SLAC, see PARJ(51) PARJ(59)
+#           =2: Field-Feynman + Peterson/SLAC, see PARJ(51) PARJ(59)
 #           =3: Lund + Peterson/SLAC (light flavor + heavier)
 #           =4: default PYTHIA. Lund + Bowler
 #           =5: as = 4, but interpolate for c and b; see PARJ(46) and PARJ(47)
@@ -367,7 +374,7 @@
 #         =2, variable multiple string tension and PARJ(1) etc.
 #         =3, variable (single+multiple) string tension and PARJ(1) etc.
 #         =4, default string tension and PARJ(1) etc.
-#  kjp23: optional model for the calculation of participant nucleon # (npart)
+#  kjp23: optional model for the calculation of participant nucleon (Npart)
 #         =1, geometric model
 #         =2, Glauber model
 #  kjp24: optional distribution in Glauber model
@@ -377,14 +384,14 @@
 #  mstptj: =0, input MSTP(111) (MSTJ(1)) for pp, pA (AP), and AA (for e+e-) in
 #              PACIAE simulation developed from partonic initial stage, 
 #              to partonic rescattering, hadronization, and to hadronic
-#              rescttering stage  
+#              rescttering stage
 #          =1, PYTHIA like simulation without partonic & hadronic 
 #              rescatterings but with setting of kjp21=0
 #          It will be set automatically in program now.
 #
 # parecc,iparres,smadel,dparj4,cp0,cr0,seco (D=0., 0, 0., 0.05, 1., 0.2, 0.05)
 #  parecc: proportional factor between initial spatial space eccentricity and final 
-#          momentum space ellipticity 
+#          momentum space ellipticity
 #  iparres: =0 consider elastic parton-parton collisions only in parton rescattering
 #           =1 otherwise
 #  smadel: small perpurbation of ellipse from circle
@@ -392,11 +399,7 @@
 #  cp0,cr0: parameters in parameterization of multiple string effect
 #  seco: parameter in popcorn mechanism for correction of PARJ(1)
 #
-# i_mass, prob_ratio_q (D=3, 1, 1, 0.3, 0, 0, 0)
-#  i_mass: mass definetion of quarks used in "break_f"
-#          =1, kinematical mass
-#          =2, current algebra mass
-#          =3, constituent mass
+# prob_ratio_q (D=1, 1, 0.3, 0, 0, 0)
 #  prob_ratio_q: probability ratio u-ubar:d-dbar:s-sbar:c-cbar:b-bbar:t-tbar.
 #
 #

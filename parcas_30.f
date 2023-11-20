@@ -224,6 +224,8 @@ c250803
         if(reaci.gt.0.)crose(i)=crose(i)/reaci
         enddo
 c250803
+
+
         return
         end
 
@@ -1009,17 +1011,15 @@ c       leadding order pQCD differential cross section of 2->2 processes
         external fs11_0,fs11_1,fs11_2,fs12_0,fs12_1,fsqq,fsgg_0,fsgg_1,
      c   fsqg
 
-        COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)   ! 250823 Lei
         common/sa1/kjp21,non1,bp,iiii,neve,nout,nosc   ! 220803
         common/sa24/adj1(40),nnstop,non24,zstop   ! 240803 181003
         common/sa33/smadel,ecce,secce,parecc,iparres   ! 230520
-        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei
         common/syspar_p/rsig1,pio,tcut
         common/papr_p/core,xs,xu,xt,sm,as,dta,xa,sl0,tl0,qa,
      c   ea,sqq,sqg,sgg,pa(3),pip(6,msca),mtime,kfk,nsca,kpip(msca)
 c250803 common/work7/reac(9),crose(9)
         dimension ssig(0:3),eee(0:1000),dd(0:1000),eee1(0:1000),
-     c   eee2(0:1000),eee3(0:1000), amqk(6)   ! 061123 Lei added amqk(6)
+     c   eee2(0:1000),eee3(0:1000)
         logical lgg,lqg,lqq,lqaq,lqqp,lqaqp
 
 c       classify the incident channel
@@ -1051,41 +1051,14 @@ c       calculate the total cross section for each incedent channel
         enddo
         idw=adj1(4)   ! 240803 changed from 1000
         adj120=adj1(20)   ! 230405
-
-c061123 Lei
 c250420
-c       dmass=pymass(1)*2.   ! umass=pymass(2)=dmass
-c       umass=pymass(2)*2.
-c       smass=pymass(3)*2.
-c       cmass=pymass(4)*2.
-c       bmass=pymass(5)*2.
-c       tmass=pymass(6)*2.
+        dmass=pymass(1)*2.   ! umass=pymass(2)=dmass
+        umass=pymass(2)*2.
+        smass=pymass(3)*2.
+        cmass=pymass(4)*2.
+        bmass=pymass(5)*2.
+        tmass=pymass(6)*2.
 c250420
-        amqk = 0D0
-c       Kinematical mass
-        if( i_mass.eq.1 )then
-            do i=1,6,1
-                am(i) = PMAS(i,1)   ! 1-6
-            end do
-c       Current algebra mass
-        elseif( i_mass.eq.2 )then
-            do i=1,6,1
-                am(i) = PARF(90 + i) ! 91-96
-            end do
-c       Constituent mass
-        elseif( i_mass.eq.3 )then
-            do i=1,6,1
-                am(i) = PARF(100 + i) ! 101-106
-            end do
-        end if
-        dmass = amqk(1)*2.   ! umass <= dmass
-        umass = amqk(2)*2.
-        smass = amqk(3)*2.
-        cmass = amqk(4)*2.
-        bmass = amqk(5)*2.
-        tmass = amqk(6)*2.
-c061123 Lei
-
         xs=eiej2
 c       xs: squared invariant mass of colliding pair   ! 230520
 c080520
@@ -1139,7 +1112,7 @@ c160902
         enddo
 c230520
         iparreso=iparres
-        if(iparres.eq.1 .and. eiej.lt.umass)then   ! 061123 Lei dmass -> umass
+        if(iparres.eq.1 .and. eiej.lt.dmass)then
         iparres=0
 c       treates as elastic (iparres=0), process 9 happens
         call integ(fsgg_1,uxt,dxt,idw,eee,sum)   ! process 7 doesn't happen
@@ -1203,7 +1176,7 @@ c160902
         enddo
 c300623 Lei
         iparreso=iparres
-        if(iparres.eq.1 .and. eiej.lt.umass)then   ! 061123 Lei dmass -> umass
+        if(iparres.eq.1 .and. eiej.lt.dmass)then
         iparres=0
 c       treates as elastic (iparres=0), process 5 or 6 happens
         call integ(fs11_1,uxt,dxt,idw,eee,sum) ! ->q'q'(-) (or q'(-)q') process 4 (inelastic) doesn't happen.
@@ -1616,106 +1589,23 @@ c080520 endif
 c       treats scattering parton pair (scattered parton pair has been
 c        treated as a new string above)
 
-c300623 Lei-------------
-c       Is ik1 a component of the normal/pure gluon string?
-        call adjst(ik1,ik1str,ik1sa,ik1sv,i_g1)
-        n_inStr1 = 0
-        if(ik1str.ne.0) n_inStr1 = ik1sv - ik1sa
-c       n_inStr1: number of entries (junction maybe) in the string to which ik1 belongs.
-c       ik1str: oredr number of string to which ik1 belongs, equal 0 otherwise
-c       ik1sa: line number of first component of above string, equal 0 otherwise
-c       ik1sv: line number of last component of above string, equal 0 otherwise
-c       i_g1: =1, ikl belongs to a pure gluon string, =0, ...normal string
-        call adjst(ik2,ik2str,ik2sa,ik2sv,i_g2)
-        n_inStr2 = 0
-        if(ik2str.ne.0) n_inStr2 = ik2sv - ik2sa
-        i_g = i_g1 + i_g2   ! 0: both ik1 and ik2 are in normal string.
-                            ! 1: one of ik1 & ik2 is in gluon string.
-                            ! 2: both ik1 and ik2 are in gluon string.
-c       Is ik1 a component of a diquark?
-        if(kf1.ne.21)then
-            call adjdi(ik1,idi1,iway1)
-            ifcom1 = 0
-            npt1   = 0
-            if(iway1.eq.2) npt1 = npt(idi1)
-            if(iway1.eq.1) ifcom1 = ifcom(idi1)
-c           npt1: line # (in 'sbe') of partner of idi1-th diquark
-c           ifcom1: line # (in 'sbe') of first component of idi1-th diquark
-        end if
-        if(kf2.ne.21)then
-            call adjdi(ik2,idi2,iway2)
-            ifcom2 = 0
-            npt2   = 0
-            if(iway2.eq.2) npt2 = npt(idi2)
-            if(iway2.eq.1) ifcom2 = ifcom(idi2)
-        end if
-
         if(lmn.eq.7)then   !! 2 gg->qqbar
 c       throws away scattering parton pair (ik1 & ik2)
-        write(3,*)"****************************************************"
-        write(3,*)"imn=7, parmov"
-c300623 Lei
-        if(i_g1.eq.0)then
-c300623 If ik1 belongs to a normal string.
-            call parmov(ik1,0,0,lmn)
-        elseif(i_g1.eq.1)then
-c300623 If ik1 belongs to a gluon string.   ! 300623 Lei
-c        Copys (and removes) the rest gluon (not ik1) to n+1, n+2 ...
-            do i_gStr=ik1sa,ik1sv,1
-                if(i_gStr.ne.ik1)then   ! ikl has been moved
-                    k(i_gStr,1) = 3   ! NOTE HERE!
-                    call coend(i_gStr)
-                    call parmov(i_g1,0,0,lmn)
-                end if
-            end do
-        end if
-        if(i_g2.eq.0)then
-            call parmov(ik2,0,0,lmn)
-        elseif(i_g2.eq.1)then
-            do i_gStr=ik2sa,ik2sv,1
-                if(i_gStr.ne.ik2)then   ! ikl has been moved
-                    k(i_gStr,1) = 3   ! NOTE HERE!
-                    call coend(i_gStr)
-                    call parmov(i_gStr,0,0,lmn)
-                end if
-            end do
-        end if
-c300623 Lei
-
-        if( INT(adj12).ne.0 .OR. (INT(adj12).eq.0 .AND. i_g.eq.0) )then   ! 300623 Lei
-c300623 If coal or sfm with ik1 & ik2 being in normal string.   ! 300623 Lei
-            if(ik1.gt.ik2)then
-                call parmov(ik1,ik1,ik2,lmn)
-                call parmov(ik2,ik1,ik2,lmn)
-            endif
-            if(ik1.lt.ik2)then
-                call parmov(ik2,ik1,ik2,lmn)
-                call parmov(ik1,ik1,ik2,lmn)
-            endif
-            n00=n-2   ! 300623 Lei New partons are above n-2 w/ or w/o branching.
-            call updpli_p(n00,time)   ! 300623 Lei
-            return
-        elseif(INT(adj12).eq.0 .AND. i_g.ne.0)then
-c300623 If sfm with ik1 &/or ik2 being in gluon string.   ! 300623 Lei
-            if(i_g1.eq.1)then
-c               Copys (and removes) the rest gluon (not ik1) to n+1, n+2 ...
-                do i_gStr=ik1sa,ik1sv,1
-                    if(i_gStr.ne.ik1)then   ! ikl has been moved
-                        k(i_gStr,1) = 3   ! NOTE HERE!
-                        call coend(i_gStr)
-                        call parmov(i_g1,i_g1,i_g1,lmn)
-                    end if
-                end do
-            end if
-        end if
+        if(ik1.gt.ik2)then
+        call parmov(ik1,ik1,ik2,lmn)
+        call parmov(ik2,ik1,ik2,lmn)
+        endif
+        if(ik1.lt.ik2)then
+        call parmov(ik2,ik1,ik2,lmn)
+        call parmov(ik1,ik1,ik2,lmn)
+        endif
+        n00=n-2   ! 300623 Lei New partons are above n-2 w/ or w/o branching.
+        call updpli_p(n00,time)   ! 300623 Lei
+        return
         endif   !! 2
-c300623 For the case the string the ik1 and/or ik2 belongs to is pure gluon string. 
-c        i.e. "g-g-g" string.
-c300623 Lei------------
 
         if(lmn.eq.4.or.lmn.eq.6)then   !! 3, 4:q1q1bar->q2q2bar, 6:qqbar->gg
-
-        if(adj12.ne.0)then   !! 4, fragments with coalescence 300623 Lei -> .ne.0
+        if(adj12.ne.0)then   !! 4, hadronization with coalescence 300623 Lei -> .ne.0
 c       throws away scattering parton pair (ik1 & ik2)
         if(ik1.gt.ik2)then
         call parmov(ik1,ik1,ik2,lmn)
@@ -1730,11 +1620,11 @@ c       throws away scattering parton pair (ik1 & ik2)
         return
         elseif(adj12.eq.0)then   !! 4
 c       does ik1 (ik2) is a component of string
-        call adjst(ik1,ik1str,ik1sa,ik1sv,i_g1)   ! 020620  300623 Lei
+        call adjst(ik1,ik1str,ik1sa,ik1sv)   ! 020620
 c       ik1str: oredr number of string to which ik1 belongs,equal 0 otherwise
 c       ik1sa: line number of first component of above string,equal 0 otherwise
 c       ik1sv: line number of last component of above string,equal 0 otherwise
-        call adjst(ik2,ik2str,ik2sa,ik2sv,i_g2)   ! 020620  300623 Lei
+        call adjst(ik2,ik2str,ik2sa,ik2sv)   ! 020620
 
 c       does ik1 is a component of diquark ?
         call adjdi(ik1,idi1,iway1)
@@ -1774,8 +1664,6 @@ c       moves conponents of string out & updates lists
 
         if(ik1str.eq.0 .and. ik2str.eq.0)then
 
-        write(3,*)"****************************************************"
-        write(3,*)"ik1str=0, ik2str=0, parmov"
 c       moves ik1 & ik2 out as well as updates lists
         if(ik1.gt.ik2)then
         call parmov(ik1,ik1,ik2,lmn)   ! 070720
@@ -1793,8 +1681,6 @@ c       moves ik1 & ik2 out as well as updates lists
 
         if(ik1str.eq.0 .and. ik2str.ne.0)then
 
-        write(3,*)"****************************************************"
-        write(3,*)"ik1str=0, ik2str /= 0, parmov"
         if(ik1.lt.ik2)then
         call strmov(ik2str,ik2sa,ik2sv,ik1,ik2,lmn)   ! 070720
         call parmov(ik1,ik1,ik2,lmn)   ! 070720
@@ -1811,8 +1697,6 @@ c       moves ik1 & ik2 out as well as updates lists
 
         if(ik1str.ne.0 .and. ik2str.eq.0)then
 
-        write(3,*)"****************************************************"
-        write(3,*)"ik1str /= 0, ik2str=0, parmov"
         if(ik1.lt.ik2)then
         call parmov(ik2,ik1,ik2,lmn)   ! 070720
         call strmov(ik1str,ik1sa,ik1sv,ik1,ik2,lmn)   ! 070720
@@ -1853,7 +1737,6 @@ c       proceeds for both of ik1str & ik2str are not equal to zero
 c280620
 
 1004    continue
-        write(3,*) "lmn, time-like branching"   !Lei
 c0500   initial state of time-like branching
         nsca=2
         kpip(1)=kf3
@@ -2102,7 +1985,7 @@ c0800   finished----------------------------------------------
 
 c220820 deals with third & fourth partons in 'nsca'
         if(nsca.eq.3)then
-        if(INT(adj12).eq.0.)then   ! 300623 Lei
+        if(INT(adj12).eq.0)then   ! 300623 Lei
 c       moves third induced partons to 'trs' for sfm
         ntrs=ntrs+1
         ktrs(ntrs,1)=3
@@ -2180,11 +2063,9 @@ c       ij: order # of spliting parton in parton list
         PARAMETER (MSCA=20000,MPLIS=80000)   ! 080520
 
         parameter (pio=3.1416)
-        COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)   ! 250823 Lei
         common/papr_p/core,xs,xu,xt,sm,as,dta,xa,sl0,tl0,qa,
      c   ea,sqq,sqg,sgg,pa(3),pip(6,msca),mtime,kfk,nsca,kpip(msca)
         common/sa24/adj1(40),nnstop,non24,zstop   ! 170205
-        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei
         dimension pa1(4),pa2(4),p00(4)
         il=1
 cc      il=1 means the branching will go on, il=0 means 'stop'.
@@ -2257,21 +2138,7 @@ c       pip(1-3,ij): three momentum of spliting particle ij
      c   pip(3,ij)*pip(3,ij)   ! 080520
         eaa=sqrt(eaa)   ! invariant mass of initial state gluon
 
-c061123 Lei
-c       if(eaa.lt.(PYMASS(1)*2.)) goto 200   ! 300623 Lei
-        amu = 0D0
-c       Kinematical mass
-        if( i_mass.eq.1 )then
-            amu = PMAS( 2, 1 )
-c       Current algebra mass
-        elseif( i_mass.eq.2 )then
-            amu = PARF( 90 + 2 )
-c       Constituent mass
-        elseif( i_mass.eq.3 )then
-            amu = PARF( 100 + 2 )
-        end if
-        if( eaa.lt.amu*2. ) goto 200
-c061123 Lei
+        if(eaa.lt.(PYMASS(1)*2.)) goto 200   ! 300623 Lei
 
         call break_f(eaa,kff,amq)   ! which is in coales_30.f 161022
         kf1=kff   ! 161022
@@ -3416,8 +3283,7 @@ c        enddo
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        subroutine adjst(ik1,ik1str,ik1sa,ik1sv,i_g)   ! 160110
-c300623 Added i_g for pure the gluon string "g-g-g".   ! 300623 Lei
+        subroutine adjst(ik1,ik1str,ik1sa,ik1sv)   ! 160110
 c       finds order number etc. of ik1 string    ! 270620
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
@@ -3426,7 +3292,6 @@ c       finds order number etc. of ik1 string    ! 270620
         common/sbe/nbe,nonbe,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
         common/sa28/nstr,nstra(kszj),nstrv(kszj),nstr0,
      c   nstr1,nstr1a(kszj),nstr1v(kszj)   ! 030620
-        i_g=0    ! 300623 Lei if ik1 does not belong to string
         ik1str=0   ! if ik1 not belong to string
         ik1sa=0   ! if ik1 not belong to string
         ik1sv=0   ! if ik1 not belong to string
@@ -3434,9 +3299,6 @@ c       finds order number etc. of ik1 string    ! 270620
         do i1=1,nstr0   ! nstr0 is giving after call break
         i1a=nstr1a(i1)   ! i1a: line number of 'A' of i1-th string
         i1v=nstr1v(i1)   ! i1v: line number of 'V' of i1-th string
-        kfa=kbe(i1a,2)   ! 300623 Lei kfa: KF code of 'A'
-        kfv=kbe(i1v,2)   ! 300623 Lei kfa: KF code of 'V'
-        if(kfa.eq.21 .AND. kfv.eq.21) i_g=1   ! 300623 Lei ik1 belongs to string
         if(ik1.ge.i1a .and. ik1.lt.i1v+1)then
         ik1str=i1   ! order number of string to which ik1 belongs
         ik1sa=i1a   ! line number of 'A' of above string
@@ -3449,9 +3311,6 @@ c       finds order number etc. of ik1 string    ! 270620
         do i1=nstr0+1,nstr1
         i1a=nstr1a(i1)
         i1v=nstr1v(i1)
-        kfa=kbe(i1a,2)   ! 300623 Lei kfa: KF code of 'A'
-        kfv=kbe(i1v,2)   ! 300623 Lei kfa: KF code of 'V'
-        if(kfa.eq.21 .AND. kfv.eq.21) i_g=1   ! 300623 Lei ik1 belongs to string
         if(ik1.ge.i1a .and. ik1.lt.i1v+1)then
         ik1str=i1
         ik1sa=i1a
@@ -3639,18 +3498,9 @@ c       updates the values of lc(1-2,m) if which is .ge. ii
         do m=1,icol
         lc1=lc(1,m)
         if(lc1.ge.ii)lc(1,m)=lc1-1
-        write(2,*)"parmov, m, lc1=", m, lc(1,m)   !Lei
         lc2=lc(2,m)
         if(lc2.ge.ii)lc(2,m)=lc2-1
-        write(2,*)"parmov, m, lc2=", m, lc(2,m)   !Lei
         enddo
-
-        write(3,*)"Af. parmov ------------------------------------"
-        write(3,*)"icol, lmn=",icol,lmn   !Lei
-        do iak=1,icol,1   !Lei
-        write(3,*)"i, lc1, lc2, tc1, tc2=",
-     &  iak, lc(1,iak), lc(2,iak), tc(1,iak), tc(2,iak)    !Lei
-        end do
 
 c300623 Lei
 c       Removing colliding pairs with lc=0. This case happens when ii 
@@ -3673,12 +3523,6 @@ c           Throw away the pairs with lc=0.
         icol = jcol
 c300623 Lei
 
-        write(3,*)"Af. parmov remove ----------------------------------"
-        write(3,*)"icol, lmn=",icol,lmn   !Lei
-        do iak=1,icol,1   !Lei
-        write(3,*)"i, lc1, lc2, tc1, tc2=",
-     &  iak, lc(1,iak), lc(2,iak), tc(1,iak), tc(2,iak)    !Lei
-        end do
 
         return
         end
@@ -3704,9 +3548,6 @@ c       ik1 & ik2 are line # of colliding pair in parton list 'pyjets'
         common/sa28/nstr,nstra(kszj),nstrv(kszj),nstr0,
      c   nstr1,nstr1a(kszj),nstr1v(kszj)   ! 030620
 c       moves components of istr1-th string out of parton list
-        write(3,*)"****************************************************"
-        write(3,*)"in strmov, parmov, istr1, istr1v, istr1a =",
-     &               istr1, istr1v, istr1a   !Lei
         do ii=istr1v,istr1a,-1
         call parmov(ii,ik1,ik2,lmn)   ! 070720
         enddo
@@ -3874,12 +3715,12 @@ c       Loop over new ii (greater than n00) and old jj partons (smaller than n00
         icol = icol + 1
         do 100 ii=n00+1,n,1
             i1 = ii
-            kfi = iabs(k(i,2))
+            kfi = ABS(k(i,2))
             if(kfi.gt.6 .and. kfi.ne.21) goto 100
 c           Consider d,u,s,c,b,t, their antiquarks, and gluon.
             do 200 jj=1,n00,1
                 j1 = jj
-                if(i1.eq.i1) goto 200
+                if(i1.eq.j1) goto 200
 
                 iflag=0
                 call rsfilt_p(j1,i1,iflag)

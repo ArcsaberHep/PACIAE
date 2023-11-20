@@ -2702,7 +2702,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine break_f(eg,kf,amq)
 c220823 Rewritten to use probability ratios directly.   ! 220823 Lei
 c       sample flavor (mass) of generated qqbar pair
-c       eg: energy of original q or qbar
+c       eg: energy of original q (qbar) or g   ! sa 111123
 c       kf (amq): flavor code (mass) of generated quark
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
@@ -2710,71 +2710,76 @@ c       kf (amq): flavor code (mass) of generated quark
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)   ! 250823 Lei
         common/sa1/kjp21,non1,bp,iii,neve,nout,nosc   ! 081222
         common/sa24/adj1(40),nnstop,non24,zstop   ! 170205
-        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei
+        common/sa38/ prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei sa 111123
+csa     prob_ratio_q(i): ratio probability of quark with kf=i  
+csa     In PYTHIA the ratio probability of d,u,s,c is equal to 
+csa      1,1,0.3,10^{11}, respectively.
 
-        kf  = 0
-        amq = 0D0
-c       Defined here 1-6: u, d, s, c, b, t
-c       In PYTHIA,   1-6: d, u, s, c, b, t. Note d and u.
-        if( iii.eq.1 )then
-            ! i_mass = 3   ! Hardcode
-c       Kinematical mass
-            if( i_mass.eq.1 )then
-                do i=1,6,1
-                    am(i) = PMAS(i,1)   ! 1-6
-                end do
-c       Current algebra mass
-            else if( i_mass.eq.2 )then
-                do i=1,6,1
-                    am(i) = PARF(90 + i) ! 91-96
-                end do
-c       Constituent mass
-            else if( i_mass.eq.3 )then
-                do i=1,6,1
-                    am(i) = PARF(100 + i) ! 101-106
-                end do
-            end if
-c       Exchanged u and d.
-            amd = am(1)
-            am(1) = am(2)   ! am(1) is mass of u now.
-            am(2) = amd     ! am(2) is mass of d now.
-c       Mass of qqbar.
-            amqq = 2*am
-        end if
-
-c       Samples flavor according to prob_ratio_q.
-        amuu = amqq(1)
-        if( eg.lt.amuu ) return   ! The energy is not enough to excite qqbar 
-c                                    pair. amuu <= amdd.
-        prob_ratio_tot = 0D0
+        dimension prob_ratio_sum(6)   ! sa 111123
+c       Constituent quark mass.
         do i=1,6,1
-            if( eg.ge.amqq(i) )then
+           am(i) = pymass(i) 
+        end do
+csa     Note: constituent quark mass is assumed in other parts of PACIAE3.0 . 
+c       Mass of qqbar pair.   ! sa
+            amqq = 2*am
+
+c       Samples flavor of generated quark pair according to prob_ratio_q.
+csa     General generated flavor candidates: kf=d,u,s,c,b,t.
+        rand_num = PYR(1)
+        amdd = amqq(1)
+        amss = amqq(3)
+csa     If energy ('eg') is not enough to excite dd_bar pair        
+        if( eg .lt. amdd ) return
+
+        if( eg .lt. amss)then   ! d and u only
+          if(rand_num.le.0.5)then
+          kf=1   ! d
+          amq = am(1)
+          else
+          kf=2   ! u
+          amq = am(2)
+          endif
+        endif  
+
+        prob_ratio_tot = prob_ratio_q(1)+prob_ratio_q(2)
+        do i=3,6,1
+csa     Sum of ratio probability upto i ($\sum_{j=1}^{j=i}$).
+        prob_ratio_tot = prob_ratio_tot + prob_ratio_q(i)
+            if( eg .ge. amqq(i) )then
                 n_flavor = i
-                prob_ratio_tot = prob_ratio_tot + prob_ratio_q(i)
+csa     Possible candidate with kf<=n_flavor at a given 'eg'.
+csa     Sum of those possible candidate ratio probability.
+                prob_ratio_sum(i)=prob_ratio_tot   ! sa
             end if
         end do
-c       Probability interval in (0,1), for example:
-c        For the case probability ratio is u:d:s=1:1:0.5, 
-c        the intervals are (0,0.4], (0.4,0.8], (0.8,1].
-c        Ratio: u:d:s=          1          :         1          :   0.5     
-c                     |____________________|____________________|__________|
-c        Interval:    0                   0.4                  0.8         1
         prob_interval_low = 0D0
         prob_interval_upp = 0D0
-        rand_num = PYR(1)
-        do j=1,n_flavor,1   ! Note n_flavor here.
-            ratio_interval = prob_ratio_q(j) / prob_ratio_tot
+csa     Calculate probability value at upper end point of each probability 
+c        interval and determine simulated flavor code.
+        do j=1,n_flavor,1   
+csa     Note: possible candidate with kf<=n_flavor at a given energy 'eg'.  
+            ratio_interval = prob_ratio_q(j) / prob_ratio_sum(n_flavor) ! sa
             prob_interval_upp = prob_interval_upp + ratio_interval
             if( rand_num.gt.prob_interval_low .AND.
      &          rand_num.le.prob_interval_upp )then
                 kf = j
-                if( j.eq.1 ) kf = 2
-                if( j.eq.2 ) kf = 1   ! Note they were exchanged above.
                 amq = am(j)
                 return
             end if
             prob_interval_low = prob_interval_upp
         end do
+
+csa     For example:         
+c        in the case of ratio probability is u:d:s:c:b:t=1:1:0.5:*:*:* 
+c        and has 'eg.ge.amqq(3)', the possible candidates are d,u,and s,
+c        the corresponding probability intervals are [0,0.4), (0.4,0.80), 
+c        and (0.8,1].
+c        Ratio: u:d:s=          1          :         1          :   0.5     
+c                     |____________________|____________________|__________|
+c        Interval:    0                   0.4                  0.8         1
+c        0.4=1/sum (sum=1+1+0.5); 0.8=(1+1)/sum.
+csa
 
 c       Mass defined in PYTHIA, in GeV.
 c       Kinematical mass:
@@ -2792,13 +2797,12 @@ c           amc = 1.23D0
 c           amb = 4.17D0
 c           amt = 165D0
 c       Constituent mass
-c           amd = 0.325D0
-c           amu = 0.325D0  ! amu=amd
+c           amd = 0.333   ! sa
+c           amu = 0.333   ! amu=amd
 c           ams = 0.5D0
-c           amc = 1.6D0
-c           amb = 5D0
-c           amt = 0D0   ! null, undefined.
-
+c           amc = 1.5D0   ! sa
+c           amb = 4.8D0   ! sa
+c           amt = 174.4   ! sa
 
         return
         end
@@ -2916,22 +2920,9 @@ c        filling in 'pyjets'
         common/sa24/adj1(40),nnstop,non24,zstop   ! 170205
         common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio   ! 080104 220110
         common/sa36/nglu,nongu,kglu(kszj,5),pglu(kszj,5),vglu(kszj,5) 
-        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei
         common/saf/naf,nonaf,kaf(kszj,5),paf(kszj,5),vaf(kszj,5)
 
-c061123 Lei
-c       amu=pymass(2)   ! 271022
-        if( i_mass.eq.1 )then
-c       Kinematical mass
-            amu = PMAS( 2, 1 )
-        elseif( i_mass.eq.2 )then
-c       Current algebra mass
-            amu = PARF( 90 + 2 )
-        elseif( i_mass.eq.3 )then
-c       Constituent mass
-            amu = PARF( 100 + 2 )
-        end if
-c061123 Lei
+       amu = pymass(2)   ! 271022
 
         amuu=2*amu   ! 271022
 c       throw away g with energy<amuu
@@ -3015,35 +3006,12 @@ c       kf1,kf2: flavor codes of broken quarks
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)   ! 250823 Lei
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
         common/sa36/nglu,nongu,kglu(kszj,5),pglu(kszj,5),vglu(kszj,5)
-        common/sa38/ i_mass, idummy, prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei
         dimension pi(4),pj(4),ps(4),pp(20,5),bb(3)
 
-c061123 Lei
-c       am1=pymass(kf1)
-c       am2=pymass(kf2)
-        if( i_mass.eq.1 )then
-c       Kinematical mass
-            am1 = PMAS( ABS(kf1), 1 )
-            am2 = PMAS( ABS(kf2), 1 )
-        elseif( i_mass.eq.2 )then
-c       Current algebra mass
-            am1 = PARF( 90 + ABS(kf1) )
-            am2 = PARF( 90 + ABS(kf2) )
-        elseif( i_mass.eq.3 )then
-c       Constituent mass
-            am1 = PARF( 100 + ABS(kf1) )
-            am2 = PARF( 100 + ABS(kf2) )
-        end if
-c061123 Lei
-
+        am1=pymass(kf1)
+        am2=pymass(kf2)
         pp(1,5)=am1   ! mass of first broken quark
         pp(2,5)=am2   ! mass of second broken quark
-c300623 Lei
-        ! if( P(ii,5).le.1D-15 )then   ! Zero mass approximation.
-        !     pp(1,5) = 0D0
-        !     pp(2,5) = 0D0
-        ! end if
-c300623 Lei
 c       pp : four momenta & mass of broken quarks, local variable
         do i1=1,4
         ps(i1)=pglu(ii,i1)
