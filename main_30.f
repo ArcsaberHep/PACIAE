@@ -377,15 +377,18 @@ c300623 read(11,*)tdh,cptl,cptu,cptl2,cptu2,itnum   ! 241108 300623 Lei
         read(11,*)(adj1(i),i=31,40)
         read(11,*)kjp22,kjp23,kjp24,parp78,mstptj   !  100821 230722
         read(11,*)parecc,iparres,smadel,dparj4,cp0,cr0,seco   ! 120219 260219
-c       read(11,*)csp_31,csp_32   ! 161022
-c       read(11,*)csp_41,csp_42,csp_43   ! 161022
-c       read(11,*)csp_51,csp_52,csp_53,csp_54   ! 161022
-c       read(11,*)csp_61,csp_62,csp_63,csp_64,csp_65   ! 161022
         read(11,*) ( prob_ratio_q(i),i=1,6,1 )   ! 290823 Lei
         close(11)
 c------------------------------   Input Reading   ------------------------------
 c-------------------------------------------------------------------------------
-
+csa221123
+c       if user wants to adjust the default value of prob_ratio_q(i) above, 
+c        you can active the following line:
+c       call ratio_prob(x)
+c       calculates the ratio probability of u(ubar):d(dbar):s(sbar)
+c        :c(cbar):b(bbar):t(tbar) by the law of {m_q}^{-x}, here x: adjustable 
+c        variable
+csa221123
 
 c       bmin,bmax : minimum and maximum impact parameters, bmin=bmax means
 c        definite impact parameter, 2*nmax: the number of 
@@ -1888,7 +1891,9 @@ c271205
         enddo
 c020718
         if(adj140.eq.3)call coales(iii,neve,nout,nap,nat,nzp,nzt,1)   ! 280825 Lei In coales.f
-
+csa221123       i_coal=1 or 0: with or without gluon splitting and 
+c                deexcitation 
+c                in coales_30.f
         n44=0
         do j=1,nbh
         kf=kbh(j,2)
@@ -5807,6 +5812,37 @@ c261002 rr(i1)=pyr(1)*v(ii,i1)
         v(n+1,4)=v(ii,4)
         return
         end
+
+
+
+csa221123cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+        subroutine ratio_prob(x)
+c       calculates the ratio probability (probability ratio) of 
+c        u(ubar):d(dbar):s(sbar):c(cbar):b(bbar):t(tbar) by the law of 
+c        {m_q}^{-x}
+        implicit double precision(A-H,O-Z) 
+        implicit integer(I-N)
+        INTEGER PYK,PYCHGE,PYCOMP
+        common/sa38/ prob_ratio_q(6), am(6), amqq(6)
+        dimension qmas(6)
+        data qmas/0.333,0.333,0.50,1.50,4.80,174.4/ 
+c       u,d,s,c,b,t constituent mass
+        dratio=qmas(1)**(-x)   
+        uratio=qmas(2)**(-x)   ! dratio=uratio
+        sratio=qmas(3)**(-x)
+        cratio=qmas(4)**(-x)
+        bratio=qmas(5)**(-x)
+        tratio=qmas(6)**(-x)
+c       normalized by 'dratio'
+        prob_ratio_q(1)=1.
+        prob_ratio_q(2)=1.
+        prob_ratio_q(3)=sratio/dratio
+        prob_ratio_q(4)=cratio/dratio
+        prob_ratio_q(5)=bratio/dratio
+        prob_ratio_q(6)=tratio/dratio
+        return
+        end
+csa221123cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
 
 
