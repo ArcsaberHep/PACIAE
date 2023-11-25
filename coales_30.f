@@ -2711,16 +2711,16 @@ c       kf (amq): flavor code (mass) of generated quark
         common/sa1/kjp21,non1,bp,iii,neve,nout,nosc   ! 081222
         common/sa24/adj1(40),nnstop,non24,zstop   ! 170205
         common/sa38/ prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei sa 111123
-csa     prob_ratio_q(i): ratio probability of quark with kf=i  
+csa     prob_ratio_q(i): ratio probability of quark with kf=i 
 csa     In PYTHIA the ratio probability of d,u,s,c is equal to 
 csa      1,1,0.3,10^{11}, respectively.
 
         dimension prob_ratio_sum(6)   ! sa 111123
-c       Constituent quark mass.
+c       Kinematical quark mass.
         do i=1,6,1
-           am(i) = pymass(i) 
+           am(i) = pymass(i)
         end do
-csa     Note: constituent quark mass is assumed in other parts of PACIAE3.0 . 
+csa     Note: constituent quark mass is assumed in other parts of PACIAE3.0.
 c       Mass of qqbar pair.   ! sa
             amqq = 2*am
 
@@ -2729,7 +2729,7 @@ csa     General generated flavor candidates: kf=d,u,s,c,b,t.
         rand_num = PYR(1)
         amdd = amqq(1)
         amss = amqq(3)
-csa     If energy ('eg') is not enough to excite dd_bar pair        
+csa     If energy ('eg') is not enough to excite dd_bar pair
         if( eg .lt. amdd ) return
 
         if( eg .lt. amss)then   ! d and u only
@@ -2740,7 +2740,7 @@ csa     If energy ('eg') is not enough to excite dd_bar pair
           kf=2   ! u
           amq = am(2)
           endif
-        endif  
+        endif
 
         prob_ratio_tot = prob_ratio_q(1)+prob_ratio_q(2)
         do i=3,6,1
@@ -2796,13 +2796,13 @@ c           ams = 0.199D0
 c           amc = 1.23D0
 c           amb = 4.17D0
 c           amt = 165D0
-c       Constituent mass
-c           amd = 0.333   ! sa
-c           amu = 0.333   ! amu=amd
+c       Constituent mass (Cf. PYTHIA6 manual P465 and program)
+c           amd = 0.325D0
+c           amu = 0.325D0   ! amu=amd
 c           ams = 0.5D0
-c           amc = 1.5D0   ! sa
-c           amb = 4.8D0   ! sa
-c           amt = 174.4   ! sa
+c           amc = 1.6D0
+c           amb = 5.0D0
+c           amt = 0D0 (null)
 
         return
         end
@@ -2922,8 +2922,8 @@ c        filling in 'pyjets'
         common/sa36/nglu,nongu,kglu(kszj,5),pglu(kszj,5),vglu(kszj,5) 
         common/saf/naf,nonaf,kaf(kszj,5),paf(kszj,5),vaf(kszj,5)
 
-       amu = pymass(2)   ! 271022
-
+c       Kinematical mass.
+        amu = pymass(2)   ! 271022
         amuu=2*amu   ! 271022
 c       throw away g with energy<amuu
         jb=1       ! 300623 Lei

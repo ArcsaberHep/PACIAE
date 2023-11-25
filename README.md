@@ -2,7 +2,7 @@
      Written by Markdown language.
                  By Anke at CCNU on 17/10/2022 
                                                
-                    Last updated on 20/11/2023 
+                    Last updated on 26/11/2023 
  -->
 
 # The parton and hadron cascade model PACIAE
@@ -71,8 +71,8 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
  - [An-Ke Lei](https://inspirehep.net/authors/1965068), ankeleihep@gmail.com or ankelei@mails.ccnu.edu.cn <!-- Key Laboratory of Quark and Lepton Physics (MOE) and Institute of Particle Physics, Central China Normal University, Wuhan 430079, China. -->
  - [Zhi-Lei She](https://inspirehep.net/authors/1903611), shezhilei@cug.edu.cn <!-- School of Mathematical and Physical Sciences, Wuhan Textile University, Wuhan 430200, China --> 
  - [Dai-Mei Zhou](https://inspirehep.net/authors/1030208), zhoudm@mail.ccnu.edu.cn <!-- Key Laboratory of Quark and Lepton Physics (MOE) and Institute of Particle Physics, Central China Normal University, Wuhan 430079, China. -->
- - [Yu-Liang Yan](https://inspirehep.net/authors/1051028), yanyl@ciae.ac.cn <!-- China Institute of Atomic Energy, P.O. Box 275 (10), Beijing, 102413,China. -->
- - [Ben-Hao Sa](https://inspirehep.net/authors/990834), sabh@ciae.ac.cn <!-- China Institute of Atomic Energy, P.O. Box 275 (10), Beijing, 102413,China. -->
+ - [Yu-Liang Yan](https://inspirehep.net/authors/1051028), yuliang86@yeah.net <!-- China Institute of Atomic Energy, P.O. Box 275 (10), Beijing, 102413,China. -->
+ - [Ben-Hao Sa](https://inspirehep.net/authors/990834), sabhliuym35@qq.com <!-- China Institute of Atomic Energy, P.O. Box 275 (10), Beijing, 102413,China. -->
 
 ## License
 
@@ -122,6 +122,7 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 
 - In subroutines "break, break_sbe" of "parini_30.f, main_30.f", statements have been rewritten to get KF codes from corresponding diquark directly.
 - Some debug statements were removed in "parini_30.f" and "parcas_30.f".
+- The kinematical masses of quarks were used in PACIAE3.0 now.
 - Redundant statements deleted / modified.
 - Bug fixed.
 
