@@ -1,7 +1,7 @@
         subroutine parcas(time_par,jjj,iijk,win,nap,rnt,rnp)
 c       deals with parton cascade (partonic rescattering)
 c       writen by Ben-Hao Sa at 19/11/2002
-c       input messages are in 'pyjets'   ! 051122 
+c       input messages are in 'pyjets'   ! 051122
 c       working block is 'pyjets'   ! 051122
 c       output messages are in 'pyjets'   ! 051122
 c160110 iiii: number of run
