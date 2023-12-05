@@ -10994,7 +10994,7 @@ c       common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         common/sa24/adj1(40),nnstop,non24,zstop   ! 210803 181003 141104
         common/ctllist_h/nctl,noinel(600),nctl0,noel
         dimension lc(nsize,5),tc(nsize),tw(nsize)
-c       idec: store line number (in the particle list) of decayed particles 
+c       idec: store line number (in the particle list) of decayed particles
         dddt=adj1(11)   ! 141104
 
         nctl=nctl+1

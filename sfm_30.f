@@ -352,7 +352,7 @@ c       give zero to the time of hadronized and decayed particles
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine samp1(xf,i,rr)
 c       give the position,on the surface of sphere with
-c        radius xf,to particle i
+c        radius xf, to particle i
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP

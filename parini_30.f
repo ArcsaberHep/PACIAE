@@ -9,7 +9,7 @@ c            =3: PACIAE C-loop
 c260223 input message is in 'pyjets'
 c       intermediate working arraies are in 'sa2'
 c110123 'saf' is consistent with 'sa2'
-c       'saf' to 'pyjets' after call 'scat'   ! 220110 
+c       'saf' to 'pyjets' after call 'scat'   ! 220110
 c110123 output message is in 'pyjets' (partons) and 'sbh' (hadrons) for case
 c260223  of mstptj=0 (C-loop), but is in 'sbh' for mstptj=1 (A- and B-loops)
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
