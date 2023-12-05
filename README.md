@@ -118,6 +118,11 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 ...(waiting for updating)
 
 <!----------------------------------------------------------------------------->
+### <font color=red> 12/2023: </font> In version PACIAE 3.0
+
+- Bug fixed.
+
+<!----------------------------------------------------------------------------->
 ### <font color=red> 11/2023: </font> In version PACIAE 3.0
 
 - In subroutines "break, break_sbe" of "parini_30.f, main_30.f", statements have been rewritten to get KF codes from corresponding diquark directly.
