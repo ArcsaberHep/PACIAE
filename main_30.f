@@ -3454,8 +3454,8 @@ c140223 Lei
         write(10,*)'#! average frequency of the occurring of each '//
      c   'inela. in hadron cascade ='
         do i=1,60,1
-            j=(i-1)*6
-            write(10,*) (dineli(j+kt),kt=1,6,1)
+            j=(i-1)*10
+            write(10,*) (dineli(j+kt),kt=1,10,1)
         end do
 c140223 Lei
 

@@ -29,7 +29,7 @@
                         multiplicity_q_qbar_total_full, multiplicity_gluon_full,                &
                         kapa_effective
         real(kind=8) :: n_process_parton_rescattering(9),  sum_n_process_parton_rescattering(9),    &
-                        n_process_hadron_rescattering(6,60), sum_n_process_hadron_rescattering(6,60),    &
+                        n_process_hadron_rescattering(10,60), sum_n_process_hadron_rescattering(10,60),    &
                         multiplicity_specie_partial(21), sum_multiplicity_specie_partial(21),       &
                         multiplicity_specie_full(21), sum_multiplicity_specie_full(21),             &
                         multiplicity_parton_partial(14), sum_multiplicity_parton_partial(14),       &
@@ -527,7 +527,7 @@
             ! Reads out data.
             n_process_hadron_rescattering = 0D0
             do j=1,60,1
-                read(99,*) ( n_process_hadron_rescattering(k,j), k=1,6,1 )
+                read(99,*) ( n_process_hadron_rescattering(k,j), k=1,10,1 )
             end do
             sum_n_process_hadron_rescattering = sum_n_process_hadron_rescattering +     &
                                                     n_process_hadron_rescattering
@@ -960,7 +960,7 @@
         write(100,*) "#! average frequency of the occurring of each inela. in hadron cascade ="
         ! Outputs data.
         do j=1,60,1
-            write(100,*) ( sum_n_process_hadron_rescattering(k,j), k=1,6,1 )
+            write(100,*) ( sum_n_process_hadron_rescattering(k,j), k=1,10,1 )
         end do
 !Lei20230819E----------
 
