@@ -61,7 +61,7 @@
 0.1,0.3,0.4,0.45,1,0,100.,3.,2,4    ! adj1(31)- adj1(40) 
 4,2,2,0.025,0   ! kjp22,kjp23,kjp24,parp78,mstptj
 0.,0,0.,0.05,1.,0.2,0.05   ! parecc,iparres,smadel,dparj4,cp0,cr0,seco
-1,1,0.227,4.11d-3,5.89d-5,1.2d-10 ! prob_ratio_q
+1,1,0.227,0,0,0 ! prob_ratio_q
 
 ######################        Annotation of usu.dat         ####################
 # neve,nout,nosc (D=xxx, xxx/10, 0)

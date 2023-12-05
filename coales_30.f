@@ -1166,6 +1166,9 @@ c       Give proper variables to the primary baryon.
                 nn    = nn+1
                 kn(nn,1) = 1
                 kn(nn,2) = kfii
+                kn(nn,3) = 0
+                kn(nn,4) = 0
+                kn(nn,5) = 0
                 pn(nn,5) = amasi
                 pn(nn,1) = sump1
                 pn(nn,2) = sump2
@@ -1306,6 +1309,9 @@ c       Give proper variables to the primary anti-baryon.
         nn   = nn + 1
         kn(nn,1) = 1
         kn(nn,2) = kfii
+        kn(nn,3) = 0
+        kn(nn,4) = 0
+        kn(nn,5) = 0
         pn(nn,5) = amasi
         pn(nn,1) = sump1
         pn(nn,2) = sump2
@@ -1437,6 +1443,8 @@ c       Give proper variables to the primary meson.
         kn(nn,1) = 1
         kn(nn,2) = kfii
         kn(nn,3) = 0
+        kn(nn,4) = 0
+        kn(nn,5) = 0
         pn(nn,5) = amasi
         pn(nn,1) = sump1
         pn(nn,2) = sump2
@@ -2715,51 +2723,39 @@ csa     prob_ratio_q(i): ratio probability of quark with kf=i
 csa     In PYTHIA the ratio probability of d,u,s,c is equal to 
 csa      1,1,0.3,10^{11}, respectively.
 
-        dimension prob_ratio_sum(6)   ! sa 111123
+        kf  = 0
+        amq = 0D0
 c       Kinematical quark mass.
         do i=1,6,1
-           am(i) = pymass(i)
+           am(i) = PYMASS(i)
         end do
 csa     Note: constituent quark mass is assumed in other parts of PACIAE3.0.
 c       Mass of qqbar pair.   ! sa
-            amqq = 2*am
+        amqq = 2*am
 
 c       Samples flavor of generated quark pair according to prob_ratio_q.
 csa     General generated flavor candidates: kf=d,u,s,c,b,t.
-        rand_num = PYR(1)
         amdd = amqq(1)
-        amss = amqq(3)
 csa     If energy ('eg') is not enough to excite dd_bar pair
         if( eg .lt. amdd ) return
-
-        if( eg .lt. amss)then   ! d and u only
-          if(rand_num.le.0.5)then
-          kf=1   ! d
-          amq = am(1)
-          else
-          kf=2   ! u
-          amq = am(2)
-          endif
-        endif
-
-        prob_ratio_tot = prob_ratio_q(1)+prob_ratio_q(2)
-        do i=3,6,1
+        prob_ratio_tot = 0D0
+        do i=1,6,1
 csa     Sum of ratio probability upto i ($\sum_{j=1}^{j=i}$).
-        prob_ratio_tot = prob_ratio_tot + prob_ratio_q(i)
             if( eg .ge. amqq(i) )then
                 n_flavor = i
 csa     Possible candidate with kf<=n_flavor at a given 'eg'.
 csa     Sum of those possible candidate ratio probability.
-                prob_ratio_sum(i)=prob_ratio_tot   ! sa
+                prob_ratio_tot = prob_ratio_tot + prob_ratio_q(i)
             end if
         end do
         prob_interval_low = 0D0
         prob_interval_upp = 0D0
 csa     Calculate probability value at upper end point of each probability 
 c        interval and determine simulated flavor code.
-        do j=1,n_flavor,1   
-csa     Note: possible candidate with kf<=n_flavor at a given energy 'eg'.  
-            ratio_interval = prob_ratio_q(j) / prob_ratio_sum(n_flavor) ! sa
+        rand_num = PYR(1)
+        do j=1,n_flavor,1
+csa     Note: possible candidate with kf<=n_flavor at a given energy 'eg'.
+            ratio_interval = prob_ratio_q(j) / prob_ratio_tot
             prob_interval_upp = prob_interval_upp + ratio_interval
             if( rand_num.gt.prob_interval_low .AND.
      &          rand_num.le.prob_interval_upp )then
@@ -2770,11 +2766,11 @@ csa     Note: possible candidate with kf<=n_flavor at a given energy 'eg'.
             prob_interval_low = prob_interval_upp
         end do
 
-csa     For example:         
+csa     For example:
 c        in the case of ratio probability is u:d:s:c:b:t=1:1:0.5:*:*:* 
-c        and has 'eg.ge.amqq(3)', the possible candidates are d,u,and s,
-c        the corresponding probability intervals are [0,0.4), (0.4,0.80), 
-c        and (0.8,1].
+c        and has 'eg.ge.amqq(3)', the possible candidates are u, d and s,
+c        the corresponding probability intervals are (0,0.4), (0.4,0.8], 
+c        and (0.8,1).
 c        Ratio: u:d:s=          1          :         1          :   0.5     
 c                     |____________________|____________________|__________|
 c        Interval:    0                   0.4                  0.8         1

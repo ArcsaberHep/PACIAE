@@ -780,10 +780,13 @@ c       Finds the storing locations of pi, K and p.
 c       Calculates the multiplicities of pi, K and p, partial and full.
         sum_mul_h_partial = 0.
         sum_mul_h_full = 0.
-        do ll=1,6,1
-            sum_mul_h_partial = sum_mul_h_partial + sbo(i_h(ll))
-            sum_mul_h_full    = sum_mul_h_full + sbof(i_h(ll))
-        end do
+        if( i_h(1).ne.0 .AND. i_h(2).ne.0 .AND. i_h(3).ne.0 .AND.
+     &      i_h(4).ne.0 .AND. i_h(5).ne.0 .AND. i_h(6).ne.0 )then   !051223 Lei
+            do ll=1,6,1
+                sum_mul_h_partial = sum_mul_h_partial + sbo(i_h(ll))
+                sum_mul_h_full    = sum_mul_h_full + sbof(i_h(ll))
+            end do
+        end if   !051223 Lei
 c       Outputs particle multiplicities of 20 particles specified in usu.dat.
         write(10,*)"#!-------------------------------------"//
      &             "----------------------------------------"
@@ -795,16 +798,19 @@ c       Outputs particle multiplicities of 20 particles specified in usu.dat.
         write(10,*) sum_mul_h_full, (sbof(ll),ll=1,ispmax)
 c       Calculates the distributions of pi, K and p, partial and full.
         sum_h = 0.
-        do m2=1,isdmax,1
-            do m1=1,40,1
+        if( i_h(1).ne.0 .AND. i_h(2).ne.0 .AND. i_h(3).ne.0 .AND.
+     &      i_h(4).ne.0 .AND. i_h(5).ne.0 .AND. i_h(6).ne.0 )then   !051223 Lei
+            do m2=1,isdmax,1
+                do m1=1,40,1
                 sum_h(m1,m2,1) = sao(m1,m2,i_h(1)) + sao(m1,m2,i_h(2))
      &                         + sao(m1,m2,i_h(3)) + sao(m1,m2,i_h(4))
      &                         + sao(m1,m2,i_h(5)) + sao(m1,m2,i_h(6))
                 sum_h(m1,m2,2) = saof(m1,m2,i_h(1)) + saof(m1,m2,i_h(2))
      &                         + saof(m1,m2,i_h(3)) + saof(m1,m2,i_h(4))
      &                         + saof(m1,m2,i_h(5)) + saof(m1,m2,i_h(6))
+                end do
             end do
-        end do
+        end if   !051223 Lei
 c       Outputs abscissa, 6-distributions of pi+K+p and 20 particles specified in usu.dat.
         write(10,*)
         write(10,*)
