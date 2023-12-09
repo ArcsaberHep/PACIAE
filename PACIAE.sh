@@ -104,7 +104,7 @@ RUN="RAW"            # Additional option. Not required to be modified usually.
 #                                                                              #
 #                                           By An-Ke Lei at CCNU on 17/10/2022 #
 #                                                                              #
-#                                      Last updated by An-Ke Lei on 05/12/2023 #
+#                                      Last updated by An-Ke Lei on 09/12/2023 #
 ################################################################################
 ################################################################################
 ################################################################################
@@ -212,8 +212,8 @@ i_stage=4   # (D=4) adj(40), =1, stops event after parini
             #                 4, ... whole simulation
 i_tune=0    # (D=0) i_tune. i.e. MSTP(5) in PYTHIA, tune number
 ##------------------------------------------------------------------------------
-# Setups for A-loop.
-prob_Delta_decay=0.9 # (D=0.9) decpro, Delta decay probability in A-loop
+# Setups for A-framework.
+prob_Delta_decay=0.9 # (D=0.9) decpro, Delta decay probability in A-framework
 
 #*******************************************************************************
 # Setups of the parton initialization (parini).
@@ -289,10 +289,10 @@ i_hadcas=1  # (D=1) kjp21, = 0, without hadron cascade; 1, with
 ratio_xSec_inel_over_tot=0.85   # (D=0.85) x_ratio, ratio of inela. cross 
                                 #              section to total cross section 
                                 #              of hadron-hadron collisions in 
-                                #              A-loop and hadcas.
-                                #              = 0.85 for B- & C-loop
+                                #              A-framework and hadcas.
+                                #              = 0.85 for B- & C-framework
                                 #              = automatically calculated at 
-                                #                E_CMS < 3 GeV in A-loop
+                                #                E_CMS < 3 GeV in A-framework
 
 
 ################################################################################
@@ -566,7 +566,7 @@ echo "#  ddt: minimum distinguishble collision time interval used in "          
 echo "#       partonic initiation in parini.f"                                              >> usu.dat
 echo "#  x_ratio: param(6), ratio of inel. cross section to total cross "                   >> usu.dat
 echo "#           section of hadron-hadron scattering, automatically "                      >> usu.dat
-echo "#           calculated at E_CMS < 3 GeV in A-loop"                                    >> usu.dat
+echo "#           calculated at E_CMS < 3 GeV in A-framework"                               >> usu.dat
 echo "#  bmin: minimum impact parameters, "                                                 >> usu.dat
 echo "#  bmax: maximum impact parameters,"                                                  >> usu.dat
 echo "#  nmax: the number of intervals segmented in [bmin,bmax] when psno=1"                >> usu.dat
@@ -719,10 +719,10 @@ echo "#  i_inel_proc: = 6, with inelastic processes 4, 6, and 7 if iparres=1"   
 echo "#               = 7, with inelastic process 7 only if iparres=1 (in parcas.f)"        >> usu.dat
 echo "#  i_time_shower: = 0, w/o final state time-like parton shower if iparres=1"          >> usu.dat
 echo "#                 = 1, w/ final state time-like parton shower if iparres=1"           >> usu.dat
-echo "#  iMode: =1, low energy simulation A-loop"                                           >> usu.dat
-echo "#         =2, PYTHIA-like simulation B-loop"                                          >> usu.dat
-echo "#         =3, PACIAE simulation C-loop"                                               >> usu.dat
-echo "#  decpro: is Delta decay probability in low energy A-loop"                           >> usu.dat
+echo "#  iMode: =1, low energy simulation A-framework"                                      >> usu.dat
+echo "#         =2, PYTHIA-like simulation B-framework"                                     >> usu.dat
+echo "#         =3, PACIAE simulation C-framework"                                          >> usu.dat
+echo "#  decpro: is Delta decay probability in low energy A-framework"                      >> usu.dat
 echo "#  itorw: =1, executing pyevnt"                                                       >> usu.dat
 echo "#         =2, executing pyevnw"                                                       >> usu.dat
 echo "#"                                                                                    >> usu.dat
@@ -1450,19 +1450,19 @@ cd ./${proj_name}_${targ_name}_${coll_name}
 #*******************************************************************************
 # iStg: i_stage
 # iChl: i_channel
-# Loop name
+# framework name
 if [ "${i_sim_mode}" = "1" ]; then
-    loop_name="A"
+    framework_name="A"
 elif [ "${i_sim_mode}" = "2" ]; then
-    loop_name="B"
+    framework_name="B"
 elif [ "${i_sim_mode}" = "3" ]; then
-    loop_name="C"
+    framework_name="C"
 else
-    loop_name="${i_sim_mode}"
+    framework_name="${i_sim_mode}"
 fi
-dir_energy="${energy}GeV_iChl${i_channel}_iStg${i_stage}_loop${loop_name}"
+dir_energy="${energy}GeV_iChl${i_channel}_iStg${i_stage}_frame${framework_name}"
 if [ "${i_sim_mode}" = "1" ]; then
-    dir_energy="${energy}GeV_loop${loop_name}"
+    dir_energy="${energy}GeV_frame${framework_name}"
 fi
 if [ -d "./${dir_energy}/" ]; then
     echo "Folder ${dir_energy} already exists."

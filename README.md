@@ -2,7 +2,7 @@
      Written by Markdown language.
                  By Anke at CCNU on 17/10/2022 
                                                
-                    Last updated on 26/11/2023 
+                    Last updated on 09/12/2023 
  -->
 
 # The parton and hadron cascade model PACIAE
@@ -120,6 +120,8 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 <!----------------------------------------------------------------------------->
 ### <font color=red> 12/2023: </font> In version PACIAE 3.0
 
+- The name "-loop" was renamed as "-framework".
+- Some comments updated in program.
 - Bug fixed.
 
 <!----------------------------------------------------------------------------->

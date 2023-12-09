@@ -112,7 +112,7 @@
 #       partonic initiation in parini.f
 #  x_ratio: param(6), ratio of inel. cross section to total cross 
 #           section of hadron-hadron scattering, automatically 
-#           calculated at E_CMS < 3 GeV in A-loop
+#           calculated at E_CMS < 3 GeV in A-framework
 #  bmin: minimum impact parameters, 
 #  bmax: maximum impact parameters,
 #  nmax: the number of intervals segmented in [bmin,bmax] when psno=1
@@ -265,10 +265,10 @@
 #               = 7, with inelastic process 7 only if iparres=1 (in parcas.f)
 #  i_time_shower: = 0, w/o final state time-like parton shower if iparres=1
 #                 = 1, w/ final state time-like parton shower if iparres=1
-#  iMode: =1, low energy simulation A-loop
-#         =2, PYTHIA-like simulation B-loop
-#         =3, PACIAE simulation C-loop
-#  decpro: is Delta decay probability in low energy A-loop
+#  iMode: =1, low energy simulation A-framework
+#         =2, PYTHIA-like simulation B-framework
+#         =3, PACIAE simulation C-framework
+#  decpro: is Delta decay probability in low energy A-framework
 #  itorw: =1, executing pyevnt
 #         =2, executing pyevnw
 #
