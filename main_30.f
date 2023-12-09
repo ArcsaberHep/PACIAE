@@ -436,10 +436,10 @@ c       kjp23: = 1 npart is calculated by geometric model
 c       kjp23: = 2 npart is calculated by Glauber model
 c       kjp24: = 1 sharp sphere in Glauber model
 c       kjp24: = 2 Woods-Saxon in Glauber model
-c260223 iMode: =1, low energy simulation A-loop
-c              =2, PYTHIA-like simulation B-loop
-c              =3, PACIAE simulation C-loop
-c260223 decpro is Delta decay probability in low energy A-loop
+c260223 iMode: =1, low energy simulation A-framework
+c              =2, PYTHIA-like simulation B-framework
+c              =3, PACIAE simulation C-framework
+c260223 decpro is Delta decay probability in low energy A-framework
 
 c       pathn: collision numer suffered by projectile nucleon in target nucleus
 
@@ -1152,7 +1152,7 @@ c       MDCY( KC , 1 ) = 0 means the particle will not decay (stable).
             if( KF.ne.0 ) MDCY( PYCOMP(KF), 1 ) = 0
         end do
 c       MDCY( KC , 1 ) = 1 means the particle will decay (unstable).
-        if(iMode.eq.1)then   ! For A-loop, hardcode
+        if(iMode.eq.1)then   ! For A-framework, hardcode
             MDCY( PYCOMP(111),  1 ) = 1   ! pi0
             MDCY( PYCOMP(1114), 1 ) = 1   ! Delta-
             MDCY( PYCOMP(2114), 1 ) = 1   ! Delta0
@@ -1300,10 +1300,10 @@ c       for nucleon (antinucleon)-nucleon (antinucleon) or e+e-
         ishp=0
         tau=0.
 
-c--------------------------   NN Low Energy A-loop   ---------------------------
+c------------------------   NN Low Energy A-framework   ------------------------
 c161222
         if((ipden.eq.0.and.itden.eq.0).and.iMode.eq.1)then  !!! 161222
-c260223 changed from 'win.lt.parp21' to iMode.eq.1, for low energy A-loop
+c260223 changed from 'win.lt.parp21' to iMode.eq.1, for low energy A-framework
 
 c       initiation for a nucleon-nucleon collision in 'pyjets'
         n=2
@@ -1569,13 +1569,13 @@ c150323 call padecy(1,2)
 
         endif   !! 161222
 
-c       low energy NN collision A-loop finished
+c       low energy NN collision A-framework finished
 
         endif   !!! 161222
 c161222
-c--------------------------   NN Low Energy A-loop   ---------------------------
+c------------------------   NN Low Energy A-framework   ------------------------
 
-c------------------------   NN B- & C-loop Generating  -------------------------
+c----------------------   NN B- & C-framework Generating  ----------------------
         if(ipden.eq.0 .and. itden.eq.0)then
 
 99999   continue   ! 300623 Lei
@@ -1629,7 +1629,7 @@ c       Counts single-event cross sections.
 c300623 Lei
 
         endif
-c------------------------   NN B- & C-loop Generating  -------------------------
+c----------------------   NN B- & C-framework Generating  ----------------------
 
 c-----------------------------   e+e- Generating   -----------------------------
         if(ipden.eq.2 .and. itden.eq.2)then
@@ -1641,7 +1641,7 @@ c-----------------------------   e+e- Generating   -----------------------------
 c151021
         call pyedit(2)   ! in p_30.f
 
-c-----------------------------   B-loop Treating  ------------------------------
+c---------------------------   B-framework Treating  ---------------------------
 c230722
         if(mstptj.eq.1)then   !! 230722 PYTHIA-like simulation for pp & e+e-
 c       give four position to the particles generated in PYTHIA ('pyjets')
@@ -1649,9 +1649,9 @@ c       give four position to the particles generated in PYTHIA ('pyjets')
         goto 998   ! toward hadron rescattering ('call hadcas') for pp & e+e-
         else   !! 230722
 c230722
-c-----------------------------   B-loop Treating  ------------------------------
+c---------------------------   B-framework Treating  ---------------------------
 
-c*****************************   C-loop Treating  ******************************
+c***************************   C-framework Treating  ***************************
 c----------------------------   Gamma 66 Removing   ----------------------------
 c       remove gamma from 'pyjets' to 'sgam'
         n66=0
@@ -1756,7 +1756,7 @@ c-----------------------------   String Locating   -----------------------------
         goto 999   ! toward parton rescattering ('call parcas')
 
         endif   !! 230722
-c*****************************   C-loop Treating  ******************************
+c***************************   C-framework Treating  ***************************
 
         endif   ! if
 c210921
@@ -1769,7 +1769,10 @@ c---------------------------   Partonic Initiation   ---------------------------
         time_ini=0.d0   ! 081010
 c120620 mstp(111)=0   ! 050620 
         npctlm=0   ! 180121
-c       partonic initiation for a nuclear-nuclear collision   ! 161222
+csa011223
+c       generate initial partonic state in C-framework or generate
+c        intermidiate final hadronic state in A- and B- frameworks, for a 
+c        nuclear-nuclear collision
         call parini(time_ini,parp21,win,psno,ijk,iMode,decpro,i_tune)   ! in parini.f
 c300623 Lei Added i_tune 280823 Lei Removed parp22
 c       081010 240513 260223
@@ -1817,7 +1820,7 @@ c-------------------------------------------------------------------------------
 
 
 c-------------------------------------------------------------------------------
-c-----------------------------   B-loop Treating  ------------------------------
+c---------------------------   B-framework Treating  ---------------------------
         if(mstptj.eq.1)then   !! 100223
 c121222 PYTHIA like simulation for pA (Ap) & AB, and low energy simulation
 c       'sbh' to 'pyjets'
@@ -1835,24 +1838,25 @@ c       'sbh' to 'pyjets'
         endif   !!
 
 c240123 if(win.lt.parp21)goto 998!toward hadron rescattering,pA(Ap),&,AB,161222
-c-----------------------------   B-loop Treating  ------------------------------
+c---------------------------   B-framework Treating  ---------------------------
 c-------------------------------------------------------------------------------
 
 
 
 c*******************************************************************************
-c-----------------------------   C-loop Treating  ------------------------------
+c---------------------------   C-framework Treating  ---------------------------
 c230722
 999     continue   ! 230722
         if(mstptj.eq.0)then   ! 230722
 
 
 c-------------------------------------------------------------------------------
-c-----------------------   Diffractive Event Treating  -------------------------
+c-------------------   Diffractive & Hadron Remnants Event ---------------------
 c       no parton produced at all
         if(n.le.0)then
         NN_diff=NN_diff+1   ! 061123 Lei nncoll -> NN_diff
-c300623 Diffractive event in PYTHIA. Do not throw it away.   ! 300623 Lei
+c300623 Diffractive and Hadron Remnants event in PYTHIA.
+c       Do not throw it away.   ! 300623 Lei
         if(nbh.gt.0) goto 333
 c060814 if(NN_diff.gt.neve)then   ! 061123 Lei nncoll -> NN_diff
 c       stop 8888
@@ -1860,7 +1864,7 @@ c060814 endif
         iii=iii-1
         goto 300
         endif
-c-----------------------   Diffractive Event Treating  -------------------------
+c-------------------   Diffractive & Hadron Remnants Event ---------------------
 c-------------------------------------------------------------------------------
 
 
@@ -1984,7 +1988,7 @@ c-------------------------------------------------------------------------------
 
 
         endif   ! 230722
-c-----------------------------   C-loop Treating  ------------------------------
+c---------------------------   C-framework Treating  ---------------------------
 c*******************************************************************************
 
 
@@ -2754,7 +2758,7 @@ c230722
 
 
 c-------------------------------------------------------------------------------
-c---------------------------   NN A-loop Treating  -----------------------------
+c-------------------------   NN A-framework Treating  --------------------------
 c150323
         if((ipden.eq.0.and.itden.eq.0).and.iMode.eq.1)then
         if(inorex.eq.1)then
@@ -2771,12 +2775,12 @@ c       'sa2' to 'pyjets'
         if(inorex.eq.2)call padecy(1,2)   ! in parini.f
         endif
 c150323
-c---------------------------   NN A-loop Treating  -----------------------------
+c-------------------------   NN A-framework Treating  ---------------------------
 c-------------------------------------------------------------------------------
 
 
 c-------------------------------------------------------------------------------
-c------------------------   B-loop Gamma 77 Removing  --------------------------
+c----------------------   B-framework Gamma 77 Removing  -----------------------
         if(mstptj.eq.1.and.iMode.eq.2)then   !!! 161222 260223
 c       removes gammas ('77') after hadronization from 'pyjets' to 'sgam'
         n77=0
@@ -2792,7 +2796,7 @@ c       move "77" from 'pyjets' to 'sgam'
         if(n77.gt.0)call remo_gam_hadro(77)
         endif  !!! 161222
 c230722
-c------------------------   B-loop Gamma 77 Removing  --------------------------
+c----------------------   B-framework Gamma 77 Removing  -----------------------
 c-------------------------------------------------------------------------------
 
 
@@ -2930,7 +2934,7 @@ c130205 call pyexec   ! in p_30.f
 
 
 c-------------------------------------------------------------------------------
-c-----------------------------   A-loop Treating   -----------------------------
+c---------------------------   A-framework Treating   --------------------------
 c150323 
         if(iMode.eq.1)then
 
@@ -2978,7 +2982,7 @@ c       decay the pi^0
 
         endif
 c150323
-c-----------------------------   A-loop Treating   -----------------------------
+c---------------------------   A-framework Treating   --------------------------
 c-------------------------------------------------------------------------------
 
 
@@ -3520,7 +3524,8 @@ c*******************************************************************************
 
 
 
-        write(9,*)'NN_diff (total diffractive NN)=',NN_diff   ! sa 060814 300623 Lei 061123 Lei nncoll => NN_diff
+        write(9,*)'NN_diff (total diffractive & hadron remnants NN)=',
+     &             NN_diff   ! sa 060814 300623 Lei 061123 Lei nncoll => NN_diff
 c060813 statistics of processes generated
         write(MSTU(11),*)
         write(MSTU(11),*)

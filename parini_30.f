@@ -1,17 +1,18 @@
         subroutine parini(time_ini,parp21,win,psno,ijk,iMode,
      c   decpro,i_tune)  ! 260223 300623 Lei Added i_tune 220823 Lei Removed parp22
 c210921 generate partonic initial state in relativistic
-c        pA,Ap,AA,lp, & lA collision based on 'PYTHIA'   ! 140414
+c        pA,Ap,AA,lp, & lA collision based on 'PYTHIA' for C-framework
+csa011223
+c        (iMode=3). generate intermediate final hadronic state before hadronic 
+c        rescattering for A- and B-frameworks (iMode=1 and 2, respectively)
 c       it was composed by Ben-Hao Sa on 04/12/2003
-c260223 iMode=1: low energy simulation A-loop;
-c            =2: PYTHIA-like B-loop;
-c            =3: PACIAE C-loop
 c260223 input message is in 'pyjets'
 c       intermediate working arraies are in 'sa2'
 c110123 'saf' is consistent with 'sa2'
 c       'saf' to 'pyjets' after call 'scat'   ! 220110
 c110123 output message is in 'pyjets' (partons) and 'sbh' (hadrons) for case
-c260223  of mstptj=0 (C-loop), but is in 'sbh' for mstptj=1 (A- and B-loops)
+c260223  of mstptj=0 (C-framework), but is in 'sbh' for mstptj=1 (A- and 
+csa011223  B-frameworks)
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -66,8 +67,8 @@ c       bp : impact parameter
 c       'sbe': store initial parton confiquration (with diquark)
 c       'saf': store parton configuration after parton rescattering
 c              (w/o diquark) 
-c       c17(i,1-3) : three position of i-th nucleon (origin is set at the center 
-c                     of target nucleus)
+c       c17(i,1-3) : three position of i-th nucleon (origin is set at 
+c                    the center of overlap region)   ! sa011223
 c       tp(i) : time of i-th nucleon counted since collision of two nuclei
 c       p17(i,1-4) : four momentum of i-th nucleon
 c       ishp(i)=1 if i-th particle inside the simulated volume
@@ -697,6 +698,9 @@ c        common block 'sa4', and the array 'numb' in common block 'sa5'
         time=time_ini   ! 081010
         irecon=0
 
+csa011223
+c       upto here the initial nucleon list is available
+
 c140223 Lei full_events_history of OSC1999A
         call oscar(win,0)
 
@@ -709,6 +713,9 @@ c       creat the initial collision list, note: be sure that the initial
 c       collision list must not be empty
         call ctlcre(lc,tc,tw)
 
+csa011223
+c       upto here the initial NN collision time list is available
+csa     time origin is set at the time of first NN collision
 c       find out colli. pair with least colli. time
         call find(icp,tcp,lc,tc,tw,0)
         if(icp.eq.0)stop 'initial collision list is empty'   !
@@ -728,7 +735,10 @@ c070417 move origin of time to collision time of first nucleon-nucleon collision
         call copl(time)
 400     continue
 
-c       administrate a nucleus-nucleus collision   ! 180520
+csa011223
+c       loop over implementing NN (hh) collision, updating hadron list, and 
+c        updating collision time list untill the collision time list is empty.
+c       It is equivalent to implementing a nucleus-nucleus collision
         call scat(time,lc,tc,tw,win,parp21,psno,ijk,ipau,irecon,
      c   gamt,iMode,decpro,i_tune)   ! 021207 260223
 c300623 Lei Added i_tune 280823 Lei Removed parp22
@@ -1403,7 +1413,10 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine scat(time,lc,tc,tw,win,parp21,psno,ijk,
      c   ipau,irecon,gamt,iMode,decpro,i_tune)   !021207 260223
 c300623 Lei Added i_tune 280823 Lei Removed parp22
-c       administrate a nucleus-nucleus collision !060813 120214
+csa011223
+c       loop over implementing NN (hh) collision, updating hadron list, and
+c        updating collision time list untill the collision time list is empty.
+c       It is equivalent to implementing a nucleus-nucleus collision
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -1460,7 +1473,7 @@ c       administrate a nucleus-nucleus collision !060813 120214
 c       arraies in 'pyjets' are given after calling 'PYTHIA'
 c       arraies in 'sa2' are used in the collision processes
 c       arraies in 'sbh' are used to store hadron after calling 'PYTHIA'
-c       numbs(i) is is given in 'filt', updated with transport processes, and 
+c       numbs(i) is given in 'filt', updated with transport processes, and 
 c        numbs(i)->numb(i) in the initiation of nucleus-nucleus collisin only
 c        numb(i) is updated with transport processes
 c!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1494,7 +1507,7 @@ c       nstra(i): line number of first component of i-th string
 c       nstrv(i): line number of last component of i-th string
 c220110 nstr0: number of strings after call break
         adj140=adj1(40)   ! 180520
-        ! decpro=0.9 ! Delta decay probability in low energy A-loop 260223
+        ! decpro=0.9 ! Delta decay probability in A-framework 260223 sa 011223
         ijk=0
         nni=0
         ndi=0
@@ -1533,6 +1546,8 @@ c       find out the binary colli. with minimum collsion time
 c       icp=0 means the collision list is empty
         l=lc(icp,1)
         l1=lc(icp,2)
+csa011223
+c       l and l1: line numbers of current hh colliding pair in 'sa2'
 c131019 writing initialization and differential cross section maximum
         if(iiii.eq.1 .and. iii.eq.1)then
         mstp(122)=1
@@ -1556,6 +1571,8 @@ cc      tlco(l1,4)=tcp
         ilo=0
         pi(4)=psa(l,4)
         pj(4)=psa(l1,4)
+csa011223
+c       pi (pj): four momentum of current colliding hadron of l (l1)
         if(pi(4).lt.1.e-20)pi(4)=1.e-20   ! 041204
         if(pj(4).lt.1.e-20)pj(4)=1.e-20   ! 041204
         do i=1,3
@@ -1606,7 +1623,7 @@ c300623 updated numb(i)   ! 300623 Lei
         m7=numb(7)
 c300623
 
-        if(iMode.eq.2.or.iMode.eq.3)then !! if 110123, high energy loop 260223
+        if(iMode.eq.2.or.iMode.eq.3)then !! if 110123, high energy frameworks 260223
 c060805 if((l.le.m4 .and. l1.le.m4) .and. ss.ge.parp21)then   ! if 1
 c241110 if(((l.le.m2 .and. l1.le.m2).or.(kfa.eq.2212.and.kfb.eq.-2212)
 c241110     c   .or.(kfb.eq.2212.and.kfa.eq.-2212)) .and. ss.ge.parp21)
@@ -1636,6 +1653,11 @@ c       if(cctai.gt.0.99)goto 1002
 c       'cctai.gt.0.99' means pi (or pj) nearly on the z axis, don't need 
 c         rotation
 c       perform the rotate for produced particle from calling 'PYTHIA'
+csa011223
+c       original orientation of generated particle is relative to the 
+c        colliding particle, so before boost back to Lab. or to cms of 
+c        nucleus-nucleus collision system one has first rotating to being 
+c        relative to the cms of incident channel
         call rosa(cfi1,sfi1,ccta1,scta1,cfis,sfis,cctas,sctas,pint)
         do j1=1,4
         p(j,j1)=pint(j1)
@@ -1643,7 +1665,8 @@ c       perform the rotate for produced particle from calling 'PYTHIA'
         enddo
 
 1002    continue
-c       boost back to Lab.
+csa011223
+c       boost back to Lab. or to cms of nucleus-nucleus collision system
         ilo=1
         do j=1,n,2
         if(j.eq.n)then
@@ -1702,7 +1725,7 @@ c       otherwise, remove current hh collision pair from collision list
 c131019
 c-------------------------------------------------------------------
 c       give four position to the particles after calling pyevnt
-c110517 for particles in pyjets
+c110517 for particles in 'pyjets' Sa011223
         call ptcre(l,l1,time)
 c       arrange particles (quark,diquark, and gluon mainly) after
 c        calling pyevnt into the overlap region randomly
@@ -1711,7 +1734,7 @@ c--------------------------------------------------------------------
         noinel(592)=noinel(592)+1   ! 280722
 c       592-th scattering process is referred to calling 'PYTHIA'
 
-        if(mstptj.eq.1)goto 997   ! toward the case PYTHIA-like 230722
+        if(mstptj.eq.1)goto 997   ! for B-framework 230722 sa011223
 
 c260314 statistics of number of leptons studied, identify scattered lepton, 
 c        and fill up pscal(5) 
@@ -1775,7 +1798,7 @@ c        lepton only, in cms
         xb=fq2/2./pdotq   ! x_b
         endif   !
 c260314
-c300623 Lei Diffractive event in PYTHIA. Do not throw it away.
+c300623 Lei Diffractive and hadron remnants event in PYTHIA. Do not throw it away.
         goto 333
         igq=0
         do j1=1,n
@@ -1806,7 +1829,7 @@ c       remove current nn collision pair from collision list
         goto 10   ! 241110
         endif
 
-c300623 Lei Diffractive event in PYTHIA. Do not throw it away.
+c300623 Lei Diffractive and hadron remnants event in PYTHIA. Do not throw it away.
 333     continue
 
 c040423 Lei Move to here. The NN collision is successful then removes gamma.
@@ -1850,7 +1873,7 @@ c               call recons_gg (irecon,l,l1,ss,time,iii)
 c161021 endif
 
 c080104
-c       'pyjets' to 'sbe'. etc.
+c       'pyjets' to 'sbe', etc. . i. e. record diquark,etc.  sa011223
         if(n.ge.1)then   ! 1
         do i1=1,n
         i3=i1+nbe
@@ -2019,7 +2042,7 @@ c       'pyjets' to 'sbh'
 5001    continue
         nbh=n   !Lei20231010 Moved to here.
 c       n=0
-        endif
+        endif   ! 230722 sa011223
 c140414
 c281121 update hadron list 'sa2' after calling PYTHIA ('sbh' to 'sa2'), 
 c        remove collision pair composed of l and/or l1, remove l (l1)
@@ -2038,8 +2061,9 @@ c170121
         endif   ! if 1
 
 c010223 if ss is not enough to call PYTHIA or current hadron-hadron
-c        collision pair is not in the plan of calling PYTHIA, then it is 
-c        as ela. scattering
+c        collision pair is not in the plan of calling PYTHIA, 
+csa011223
+c        then current hh collision is impremented as ela. scattering
         noinel(593)=noinel(593)+1   ! 140820
 c140820 noinel(593): statistics of # of hadron-hadron collition which energy 
 c        is not enough to call PYTHIA or current hadron-hadron
@@ -2056,10 +2080,10 @@ c       update the collision list after ela. scattering
 c       note: CME is not included for ela. scattering
         if(nctl.eq.0)goto 100
         goto 300
-        endif   !! if 110123, high energy loop end
+        endif   !! if 110123, high energy frameworks end
 
-c161222 low energy A-loop
-        if(iMode.eq.1)then    !!! if 110123, low energy A-loop 260223
+c161222 A-framewouk (low energy) sa011223
+        if(iMode.eq.1)then    !!! if 110123, A-framework 260223 sa011223
 
         if((ikfa.eq.2212.or.ikfa.eq.2112.or.ikfa.eq.211.or.kfa.eq.1114
      c   .or.kfa.eq.2114.or.kfa.eq.2214.or.kfa.eq.2224).and.
@@ -2150,17 +2174,25 @@ c260223 adjudge current two-body inelas. scattering to be really treated as
 c       elas. (if inorex=1) or inelas. (if inorex=2) deu to threshol energy
         if(inorex.eq.1)then
         call coelas_nn(l,l1,pi,pj,lc,tc,tw,time,b,nsa0)   ! 120323
-c       call prt_sa2(nsa,c)
+csa011223
 c       perform two-body elastic scattering
         goto 300
         endif
         if(inorex.eq.2)then
-c       give four momentum to inelastically scattered particles
         call coinel_nn(l,l1,2214,2212,pi,pj)   ! 260223
+csa011223
+c       treat inelastic scattering of current hh collision pair, 
+c       i.e. give four momentum to scattered particles
         if(rpy1.le.decpro)then
         call sa2pyj(l,l1)
+csa011223
+c       a part of update particle list ('sa2' to 'pyjets') after inela.
+c        scattering in case of outgoing channel with \Delta particle
         else
         call padecy(l,l1)
+csa011223 
+c       a part of update particle list ('sa2' to 'pyjets') after inela. 
+c        scattering in case of outgoing channel without \Delta particle
         endif
         jorn=3
 c       call prt_sa2(nsa,c)
@@ -2672,7 +2704,11 @@ c010223
         endif   !!
 
 301     continue
-c       prepare rotation
+csa011223
+c       originally the orientation of scattered particle is relative to the 
+c        scattering particle, so before boost back to Lab. or cms of 
+c        nucleus-nucleus collision system one has first rotating to being 
+c        relative to the cms of incident channel
         do j=1,n
         do j1=1,4
         pint(j1)=p(j,j1)
@@ -2686,7 +2722,7 @@ c       perform the rotate for inelas. scattered particles in 'PYTHIA'
 
 c       boost back to Lab. or nucleus-nucleus collider
         ilo=1
-c140423 for resonance production
+c140423 for case of resonance production, sa011223
         if(n.eq.1)then
         do j1=1,4
         pi(j1)=p(n,j1)
@@ -2748,7 +2784,7 @@ c       update collision time list after inela. scattering
 
         endif   !!!!
 
-        endif   !!! if 110123, low energy loop end 260223
+        endif   !!! if 110123, low energy framework ends 260223
 
 300     continue
         iii=iii+1
@@ -5136,7 +5172,7 @@ c       through away the pair whih tc<= time
 200     nctl=j+1
 
 c010223 101023 Lei Moved to here avoiding potential bugs with "nctl=0".
-        if(mstptj.eq.1)then   ! for B-loop (PYTHIA-like loop)
+        if(mstptj.eq.1)then   ! for B-framework (PYTHIA-like framework)
         nctl=j
         return
         endif
@@ -5239,7 +5275,7 @@ c060813
         endif   ! 250423
 
 c250423
-        if(iMode.eq.1)then    ! low energy loop A
+        if(iMode.eq.1)then    ! low energy A-framework
 c       consider NN, (Delta)N and (pi)N collisions
         if((klab.eq.2212.or.klab.eq.2112.or.klab.eq.211.or.kl.eq.1114
      c   .or.kl.eq.2114.or.kl.eq.2214.or.kl.eq.2224).and.
@@ -5835,7 +5871,7 @@ c       move particle list (pyjets) one step forward from ii-1 to 1
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc260223
         subroutine adjudg_nn(l,l1,kl,kl1,pi,pj,inorex)
 c       adjudge current hadron-hadron collision pair to be treated as 
-c        elas. or inelas. two-body scattering
+c        elas. or inelas. two-body scattering in A-framework ! sa011223
 c       l (l1): order number in 'sa2' of current hh collision pair
 c       kl (kl1): flavor code of scattered particle  
 c       pi (pj): four momentum of scattering particle before scatering
@@ -5864,6 +5900,7 @@ c       thres: .gt.0, treat as exothermic reaction, inorex=2 & inela.
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc260223
         subroutine coelas_nn(l,l1,pi,pj,lc,tc,tw,time,b,nsa0)
 c       treat two-body elas. scattering of current hh collision pair
+c        in A-framework ! sa011223
 c       input and output messages are all in 'sa2'
 c       l (l1): order number in 'sa2' of current hh collision pair
 c       pi (pj): four momentum of scattering particle before scatering
@@ -5906,6 +5943,7 @@ c       treat inelastic scattering of current hh collision pair
 c       i.e. simulate four momentum of scattered particles in inela. 
 c        hh collision according formula of (4. 33) in book of Ben-Hao Sa, 
 c        etc., 'Simulation Physics for High Energy Nucleus Collisions'
+c        in A-framework ! sa011223
 c       l (l1): order number in 'sa2' of current hadron-hadron collision pair
 c       kl (kl1): flavor code of scattered particle
 c       pi (pj): four momentum of scattering particle before scatering
@@ -5953,6 +5991,9 @@ c       energy of one particle (between two) after scattering
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine padecy(l,l1)   ! 161222
 c       deacy of a hardron
+c       part of 'sa2' to 'pyjets', i.e. a part of updating particle list after
+c        inela. scattering in case of outgoing channel without \Delta particle
+c        in A-framework ! sa011223
 c       l: order # of colliding hadron in 'sa2'
 c       l1: order # of another colliding hadron in 'sa2'
 c       input messages in 'sa2'
@@ -5996,7 +6037,7 @@ C...Double precision and integer declarations.
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine padecy_delt(l)   ! 161222
-c       deacy of a hardron
+c       deacy of a hardron in A-framework ! sa011223
 c       l: order # of colliding hadron in 'delt'
 c       input messages in 'delt'
 c       output messages compose 'pyjets'
@@ -6046,7 +6087,7 @@ C...Double precision and integer declarations.
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine padecy_1(l)   ! 140423
-c       deacy of a hardron
+c       deacy of a hardron in A-framework ! sa011223
 c       l: order # of colliding hadron in 'sa2'
 c       input messages in 'sa2'
 c       output messages compose 'pyjets'
@@ -6082,7 +6123,9 @@ C...Double precision and integer declarations.
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine sa2pyj(l,l1)   ! 161222
-c       part of 'sa2' to 'pyjets'
+c       part of 'sa2' to 'pyjets', i.e. a part of updating particle list after 
+c        inela. scattering in case of outgoing channel with \Delta particle  
+c        in A-framework ! sa011223
 c       l: order # of colliding hadron in 'sa2'
 c       l1: order # of another colliding hadron in 'sa2'
 c       output hadrons compose 'pyjets'
@@ -6121,6 +6164,7 @@ c140423
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine updpip_nn(l,l1,icp,lc,tc,tw,time)   ! 250123
 c       update particle list 'sa2' ('sbh' to 'sa2') after inela. scattering 
+c        in A-framework ! sa011223
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -6182,6 +6226,7 @@ c140423
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine updatl_nn(ic,jc,time,lc,tc,tw,ik,nsa0,iMode) ! 250423
 c       update collision time list after two-body inelastic scattering
+c        in A-framework ! sa011223
 c       ic (jc): order number of scattering particle in 'sa2'
 c       ik=3 (0): scattered hadron joins (not joins) reconstrution of hh 
 c        collision pair
@@ -6311,7 +6356,7 @@ c061123 700     if(tc(nctl).le.1.e-7) nctl=nctl-1   ! 061123 Lei
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine remo_delt   ! 110517 150323
-c       moves delta from 'pyjets' to 'delt'
+c       moves delta from 'pyjets' to 'delt' in A-framework ! sa011223
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
