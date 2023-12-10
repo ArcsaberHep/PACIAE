@@ -11,7 +11,7 @@
 
 ## Installation
 
-Just install the file and decompress it. Then you can get the PACIAE source code directly.
+Just download the file and decompress it. Then you can get the PACIAE source code directly.
 
 ## Usage
 
