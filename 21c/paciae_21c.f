@@ -1,42 +1,42 @@
-        program paciae   ! 020708 121110
-c	partron and hadron cascade model for relativistic nucleus-nucleus 
-c        collision 
-c	it is composed of paciae_20b.f, parini_20b.f, parcas._20b.f, 
-c        sfm_20b.f, coales_20b.f, hadcas_20b.f, and p20b.f
-c       paciae_20b.f: user program 
-c	parini_20b.f: generate a partonic initial state for a
-c        nucleus-nucleus collision  
-c	parcas_20b.f: perform parton rescattering, where only 2->2 processes 
-c	 are considered and LO pQCD cross section or its regularized 
-c	 approximation is used
-c	sfm_20b.f: hadronization according to LUND string fragmentation model 
-c	coales_20b.f: hadronization according to Monte Carlo coalescence model
-c	select sfm_20b.f or coales_20b.f by parameter adj1(12) 
-c	hadcas_20b.f: perform hadronic rescattering
-c	read ``paciae_guide" for the details
-c       note: the statistics made here is either for parton or    
-c        hadron according to purpose 
-	parameter (kszj=40000,mplis=40000,KSZ1=30)
+        program paciae   ! 020708 241110
+c	parton and hadron cascade model for relativistic nucleus-nucleus
+c	 collision 
+c	it is composed of paciae_20c.f, parini_20c.f, parcas_20c.f, sfm_20c.f,  
+c	 coales_20c.f, hadcas_20c.f, and p20c.f
+c       paciae_20c.f: user program
+c       parini_20c.f: generate a partonic initial state for a
+c        nucleus-nucleus collision
+c       parcas_20c.f: perform parton rescattering, where only 2->2 processes
+c        are considered and LO pQCD cross section or its regularized
+c        approximation is used
+c       sfm_20c.f: hadronization according to LUND string fragmentation model
+c       coales_20c.f: hadronization according to Monte Carlo coalescence model
+c       select sfm_20c.f or coales_20c.f by parameter adj1(12) 
+c       hadcas_20c.f: perform hadronic rescattering
+c       read paciae_guide for the details
+c	note: the statistics made here is either for parton or   
+c	 hadron according to purpose
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
+	parameter (kszj=40000,mplis=40000,KSZ1=30)
       COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
       COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
       COMMON/PYDAT3/MDCY(500,3),MDME(8000,2),BRAT(8000),KFDP(8000,5)
-      COMMON/PYJETS/N,NONJ,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
+      COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
       COMMON/PYPARS/MSTP(200),PARP(200),MSTI(200),PARI(200)
       COMMON/PYSUBS/MSEL,MSELPD,MSUB(500),KFIN(2,-40:40),CKIN(200)
         common/pyint1/mint(400),vint(400)
-        COMMON/pycidat1/KFACOT(100),DISDET(100),ISINELT(600)
+        COMMON/PYCIDAT1/KFACOT(100),DISDET(100),ISINELT(600)
 	common/pycidat2/kfmaxt,nont2,param(20),weigh(600)
 	common/sa1/kjp21,non1,bp,iii,neve,nout,nosc
-	common/sa2/nsa,nonsa,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
+	common/sa2/nsa,non2,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
 	common/sa4/tau(kszj),tlco(kszj,4)
 	common/sa5/kfmax,kfaco(100),numb(100),numbs(100),non5,
-     c  disbe(100,100)
+     c   disbe(100,100)
 	common/sa6/kfmaxi,nwhole
 	common/sa7/ispmax,isdmax,iflmax,ispkf(20),non7,asd(5),
-     c  afl(20,5,2)
+     c   afl(20,5,2)
         common/sa10/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
      &  iabsb,iabsm,non10,ajpsi,csspn,csspm
 	common/sa12/ppsa(5),nchan,nsjp,sjp,ttaup,taujp
@@ -47,7 +47,7 @@ c        hadron according to purpose
      &	 ,emin(10),eminf(10),eplu(10),epluf(10)   ! 033101
 	common/sa18/tdh,itnum,non18,cptl,cptu,cptl2,cptu2,snum(4,20),
      &	 v1(4,20),v2(4,20),v12(4,20),v22(4,20)
-        common/sa18_pt/snum_pt(21,20),v1_pt(21,20),v2_pt(21,20),
+	common/sa18_pt/snum_pt(21,20),v1_pt(21,20),v2_pt(21,20),
      c   v12_pt(21,20),v22_pt(21,20)   ! 280607
         common/sa18_eta/snum_eta(21,20),v1_eta(21,20),v2_eta(21,20),
      c   v12_eta(21,20),v22_eta(21,20)   ! 280607
@@ -55,19 +55,20 @@ c        hadron according to purpose
 	common/sa23/kpar,knn,kpp,knp   ! 200601
 	common/sa24/adj1(40),nnstop,non24,zstop   ! 210803 181003
 	common/sa25/mstj1_1,mstj1_2,para1_1,para1_2   
-        common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio
+        common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio   ! 220110
         common/sa27/itime,kjp22,gtime,astr,akapa(5),parj1,parj2,parj3,
      c   parj21   ! 020708
-	common/sa30/vneump,vneumt   ! 191110
+        common/sa29/effk1,lcub   ! 150612 yan
+	common/sa30/vneump,vneumt   ! 241110
         common/sa31/rmax,bbb(200),TA1(200),TA2(200),TA1A2(200),
      c  part1(200),part2(200)   ! 020511
-        common/sa6_c/ithroq,ithrob,ithroc,non_c,throe(4)
+        common/sa33/smadel,ecce,parecc,iparres   ! 220312 240412
+        common/sa6_c/ithroq,ithrob,ithroc,non6_c,throe(4)
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)
         common/sa6_t/ithroq_t,ithrob_t,ich_t,non6_t,throe_t(4)
-        common/sbe/nbe,nonbe,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
+        common/sbe/nbe,non_be,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
 	common/sbh/nbh,nonbh,kbh(kszj,5),pbh(kszj,5),vbh(kszj,5)   ! 050603
-        common/sgam/ngam,nongam,kgam(kszj,5),pgam(kszj,5),vgam(kszj,5) ! 240209
-        common/sa1_h/nn,non_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)   ! 050603
+        common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)   ! 050603
         common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
 	common/show/vip(mplis),xap(mplis)
@@ -80,12 +81,13 @@ c        hadron according to purpose
 	common/ctllist/npctl,npinel(600),npctl0,npel   ! 061103
         common/ctllist_p/nreac(9),nrel   ! 071103
 	common/ctllist_h/nctl,noinel(600),nctl0,noel
-        common/throqb/iprlth,nonqb,rpth(4,mplis),ppth(4,mplis),
-     c  idpth(mplis),rmpth(mplis)   ! 070905
+        common/sgam/ngam,nongam,kgam(kszj,5),pgam(kszj,5),vgam(kszj,5) ! 250209
+        common/ssin/nsin,nonsin,ksin(kszj,5),psin(kszj,5),vsin(kszj,5),
+     c   bsin(kszj)   ! 250209
         dimension an(20,5,20),bn(20),san(20,5,20),sbn(20),
      c	 anf(20,5,20),bnf(20),sanf(20,5,20),sbnf(20)
 	dimension sao(20,5,20),sbo(20),saof(20,5,20),sbof(20)
-        dimension skapa(5),skapao(5),snreac(9)   ! 020708 280809
+        dimension skapa(5),skapao(5),snreac(9)   ! 020708 220110
 	dimension c(5),dinel(600),dineli(600),sthroe(4),wthroe(4)
 	dimension bpp(20),kdiq(kszj,5),dgmas(kszj)
 	dimension acoll(20),acollp(20),acollt(20)
@@ -107,119 +109,138 @@ c033101
      	dimension ssnum(4,20),sv1(4,20),sv2(4,20),
      c	 sv12(4,20),sv22(4,20),
      c	 sv1o(4,20),sv2o(4,20),sv12o(4,20),sv22o(4,20)
-c220607
-        dimension ssnum_pt(21,20),sv1_pt(21,20),sv2_pt(21,20),
-     c   sv12_pt(21,20),sv22_pt(21,20),sv1o_pt(21,20),sv2o_pt(21,20),
+     	dimension ssnum_pt(21,20),sv1_pt(21,20),sv2_pt(21,20),
+     c	 sv12_pt(21,20),sv22_pt(21,20),sv1o_pt(21,20),sv2o_pt(21,20),
      c   sv12o_pt(21,20),sv22o_pt(21,20)   ! 280607
-        dimension ssnum_eta(21,20),sv1_eta(21,20),sv2_eta(21,20),
-     c   sv12_eta(21,20),sv22_eta(21,20),sv1o_eta(21,20),sv2o_eta(21,20)
+     	dimension ssnum_eta(21,20),sv1_eta(21,20),sv2_eta(21,20),
+     c	 sv12_eta(21,20),sv22_eta(21,20),sv1o_eta(21,20),sv2o_eta(21,20)
      c   ,sv12o_eta(21,20),sv22o_eta(21,20)   ! 280607
-c220607
-c021107
+c021207
         dimension ssv1_pt(21,20),ssv2_pt(21,20),ssv12_pt(21,20),
      c   ssv22_pt(21,20),ssv1o_pt(21,20),ssv2o_pt(21,20),
-     c   ssv12o_pt(21,20),ssv22o_pt(21,20)      
+     c   ssv12o_pt(21,20),ssv22o_pt(21,20)
         dimension ssv1_eta(21,20),ssv2_eta(21,20),ssv12_eta(21,20),
      c   ssv22_eta(21,20),ssv1o_eta(21,20),ssv2o_eta(21,20),
-     c   ssv12o_eta(21,20),ssv22o_eta(21,20)      
-c021107
+     c   ssv12o_eta(21,20),ssv22o_eta(21,20)
+c021207
+c010412
+        common/fsa18_pt/fsnum_pt(21,20),fv1_pt(21,20),fv2_pt(21,20),
+     c   fv12_pt(21,20),fv22_pt(21,20)
+        common/fsa18_eta/fsnum_eta(21,20),fv1_eta(21,20),fv2_eta(21,20)
+     c   ,fv12_eta(21,20),fv22_eta(21,20)
+
+        dimension fssnum_pt(21,20),fsv1_pt(21,20),fsv2_pt(21,20),
+     c   fsv12_pt(21,20),fsv22_pt(21,20),fsv1o_pt(21,20),
+     c   fsv2o_pt(21,20),fsv12o_pt(21,20),fsv22o_pt(21,20)
+        dimension fssnum_eta(21,20),fsv1_eta(21,20),fsv2_eta(21,20),
+     c   fsv12_eta(21,20),fsv22_eta(21,20),fsv1o_eta(21,20),
+     c   fsv2o_eta(21,20),fsv12o_eta(21,20),fsv22o_eta(21,20)
+
+        dimension fssv1_pt(21,20),fssv2_pt(21,20),fssv12_pt(21,20),
+     c   fssv22_pt(21,20),fssv1o_pt(21,20),fssv2o_pt(21,20),
+     c   fssv12o_pt(21,20),fssv22o_pt(21,20)
+        dimension fssv1_eta(21,20),fssv2_eta(21,20),fssv12_eta(21,20),
+     c   fssv22_eta(21,20),fssv1o_eta(21,20),fssv2o_eta(21,20),
+     c   fssv12o_eta(21,20),fssv22o_eta(21,20)
+c010412
 c	dimension uds(3),udsb(3),duds(3),dudsb(3),
 c     c   uuds(3),uudsb(3)   ! 261002
         dimension fuds(3),fudsb(3),fduds(3),fdudsb(3)   ! 261002
         dimension avpt(20),savpt(20),avpto(20),navpt(20),nsavpt(20)  ! 170705
         dimension fvpt(20),sfvpt(20),fvpto(20),nfvpt(20),nsfvpt(20)  ! 170705
 	dimension asdd(20),ptrus(3)   ! 300404 131204 130605
-	dimension numbth(3)   ! 070905
+        dimension nreaco(9)   ! 220110
         real nmin,nminf,ncha,nchaf,nmine,nminef,nplue,npluef!020203
 c210803 avpt: average transverse momentum of produced particle
 c210803 navpt: number of given piece of particle in a event
 c210803 
 c	common block sa24: adjustable variables
 c	adj1(i), i=
-c       1: k factor used in parton cascade
-c       2: parameter \alpha_s (as in program) in parton cascade
-c       3: parameter tcut in program, to avoid divergence in calculating
-c          parton-parton differential cross section in parton cascade
-c       4: parameter idw, number of intervals in numerical integration in parton
-cascade
-c       5: =1 and 0, with and without nuclear shadowing, respectively
-c       6: parameter a, i.e. parj(41) in Lund string fragmentation function
-c          if adj1(12)=0
-c          parameter a in FF string fragmentation function if adj1(12)=1
+c	1: k factor used in parton cascade
+c	2: parameter \alpha_s (as in program) in parton cascade
+c	3: parameter tcut in program, to avoid divergence in calculating 
+c          parton-parton differential cross section in parton cascade 
+c	4: parameter idw, number of intervals in numerical integration in parton cascade
+c	5: =1 and 0, with and without nuclear shadowing, respectively
+c	6: parameter a, i.e. parj(41) in Lund string fragmentation function
+c	   if adj1(12)=0
+c	   parameter a in FF string fragmentation function if adj1(12)=1
 c       7: parameter b, i.e. parj(42) in Lund string fragmentation function
 c       8: mstp(82) in PYTHIA 6.4
-c       9: parp(81), (D=1.4 GeV/c), effective minimum transverse momentum for
-c          multiple interactions with mstp(82)=1
-c       10: parp(31),k factor in pythia (parp(31))
-c       11: time accuracy used in hadron cascade (time accuracy used in
+c       9: parp(81), (D=1.4 GeV/c), effective minimum transverse momentum for 
+c	   multiple interactions with mstp(82)=1                      
+c	10: parp(31),k factor in pythia (parp(31))
+c	11: time accuracy used in hadron cascade (time accuracy used in 
 c           parton cascade is dddt)
-c       12: model of hadronization: =0 string fragmentation; =1: coalescence
-c       13: dimension of meson table considered
+c	12: model of hadronization: =0 string fragmentation; =1: coalescence
+c	13: dimension of meson table considered
 c       14: dimension of baryon table considered
-c       15: string tension
-c       16: number of loops in deexcitation of energetic quark in coalescence
-c       17: the threshold energy in deexcitation of energetic quark in
-coalescence
-c       18: =0 and 1 without and with partonic Pauli in parton cascade,
-c           respectively
-c       19: time accuracy used in parton cascade (dddt in program)
-c       20: =0 exact pQCD parton-parton cross section
-c           =1 limited and regularized parton-parton cross section (B. Zhang)
-c           =2 the same as 0 but flat scattering angle distribution is assumed
+c	15: string tension  
+c	16: number of loops in deexcitation of energetic quark in coalescence
+c	17: the threshold energy in deexcitation of energetic quark in coalescence
+c	18: =0 and 1 without and with partonic Pauli in parton cascade, respectively
+c	19: time accuracy used in parton cascade (dddt in program)
+c	20: =0 exact pQCD parton-parton cross section
+c	    =1 limited and regularized parton-parton cross section (B. Zhang)
+c	    =2 the same as 0 but flat scattering angle distribution is assumed
 c           =3 the same as 1 but flat scattering angle distribution is assumed
-c       21: =0 and 1 without and with phase space adjudgment, respectively,
-c        in coalescence
-c       22: critical value of the product of radii both  in coordinate and
-c        momentum phase space (4 is assumed)
-c       23: =0 LUND fragmentation function used in subroutine 'ffm' in
-coalescence
-c           =1 IF fragmentation function used
-c       24: the virtuality cut ('tl0') in time-like radiation in parton cascade
-c       25: \Lambda_QCD in parton cascade
-c       26: number of random number thrown away
+c	21: =0 and 1 without and with phase space adjudgment, respectively, 
+c	 in coalescence
+c	22: critical value of the product of radii both  in coordinate and 
+c	 momentum phase space (4 is assumed) 
+c	23: =0 LUND fragmentation function used in subroutine 'ffm' in coalescence
+c	    =1 IF fragmentation function used 
+c	24: the virtuality cut ('tl0') in time-like radiation in parton cascade
+c	25: \Lambda_QCD in parton cascade
+c	26: number of random number thrown away
 c       27: largest momentum allowed for particle('dpmax')
-c       28: largest position allowed for particle (drmax=para10*max(rnt,rnp),
-c           giving 1 to it in usu.dat and calculating it in the running)
-c       29: width of two dimension Gaussian distribution sampling px and py of
-c           produced quark pair in deexcitation of the energetic quark in
-coalescence
-c       30: maximum $p_T^2$ in above two dimension Gaussian distribution
-c       31: parj(1) in pythia
-c       32: parj(2) in pythia
-c       33: parj(3) in pythia
-c       34: parj(21) in pythia
-c       35: mstp(91) in pythia,parton transverse momentum (k_{\perp})
-c           distribution inside hadron;
-c           =1, Gaussian;
+c       28: largest position allowed for particle (drmax=para10*max(rnt,rnp), giving 1 
+c           to it in usu.dat and calculating it in the running)  
+c	29: width of two dimension Gaussian distribution sampling px and py of
+c           produced quark pair in deexcitation of the energetic quark in coalescence
+c	30: maximum $p_T^2$ in above two dimension Gaussian distribution 
+c	31: parj(1) in pythia
+c	32: parj(2) in pythia
+c	33: parj(3) in pythia
+c	34: parj(21) in pythia
+c	35: mstp(91) in pythia,parton transverse momentum (k_{\perp}) distribution 
+c           inside hadron; 
+c	    =1, Gaussian; 
 c           =2, exponential
-c       36: =0 without phenomenological parton energy loss in parton cascade
-c           =1 with phenomenological parton energy loss
-c       37: the coefficient ('c') in phenomenological parton energy loss
-c       38: pt cut in phenomenological parton energy loss
-c       39: width of Gaussian k_{\perp} distribution in hadron if mstp(91)=1
+c	36: =0 without phenomenological parton energy loss in parton cascade
+c	    =1 with phenomenological parton energy loss
+c	37: the coefficient ('c') in phenomenological parton energy loss
+c	38: pt cut in phenomenological parton energy loss 
+c	39: width of Gaussian k_{\perp} distribution in hadron if mstp(91)=1
 c           width of exponential k_{\perp} distribution in hadron if mstp(91)=2
-c       40: =1 transport processes endded after parton initiation
-c           =2 after parton rescattering
-c           =4 after hadron rescattering
+c	40: =1 transport processes endded after parton initiation
+c	    =2 after parton rescattering
+c	    =4 after hadron rescattering
 c210803
+c220312 smadel: small perpurbation of ellipse from circle
+c220312 parecc: a parameter converting initial spatial space eccentricity 
+c220312	 to final momentum space
+c240412 iparres: =0 consider ela. parton-parton collisions only
+c240412 iparres: =1 otherwise
+
 c       para1_1: total cross section of nn, used in parton initiation
 c        for nuclus-nucleus collision, this is irrelevant
-c        to the inelastic cross section of nn used in PYTHIA
+c	 to the inelastic cross section of nn used in PYTHIA
 c       para1_2: total cross section of nn, used in hadron cascade
-c       dni: nucleon number density
-c       dpi: particle (nucleon, pion, kaon ...) number density
-c       edi: energy density of particle (nucleon, pion, kaon ...)
-c       all of above three densities are calculated in r less or equal
-c        2 fm and t less or equal 10 fm/c
-c       pj and ej: (pt)**2 and Et of J/psi
-c       pjp and ejp: (pt)**2 and Et of (J/psi)
-c       ett: total Et
-c       acoll: array, the demension of which should be larger
-c        than or equal to 'nmax'
-c       note: the dimension of 'bpp' must be < or = nmax
+c	dni: nucleon number density
+c	dpi: particle (nucleon, pion, kaon ...) number density
+c	edi: energy density of particle (nucleon, pion, kaon ...)
+c	all of above three densities are calculated in r less or equal
+c	 2 fm and t less or equal 10 fm/c
+c	pj and ej: (pt)**2 and Et of J/psi 
+c	pjp and ejp: (pt)**2 and Et of (J/psi)
+c	ett: total Et 
+c	acoll: array, the demension of which should be larger
+c	 than or equal to 'nmax' 
+c	note: the dimension of 'bpp' must be < or = nmax
 c       ipden: =0,if projectile is proton
 c              =1, projectile is nucleus
-c              =2, projectile is e+   ! 060605
+c	       =2, projectile is e+   ! 060605
 c       itden: =0, if target is proton
 c              =1, target is nucleus
 c              =2, target is e-   ! 060605
@@ -227,70 +248,70 @@ c       suppm: the upper bound in sampling the radius of projectile nucleon
 c       suptm: the upper bound in sampling the radius of target nucleon
 c       suppc: the maximum radius in sampling for projectile
 c       suptc: the maximum radius in sampling for target
-c       r0p: projectile radius
-c       r0t: target radius
+c       r0p: projectile radius 
+c       r0t: target radius 
 c       pio: 3.1416
-c       bp: impact parameter
-c       iii: current run number
-c       coor: position of CM
-c       ispmax: maximum # of kinds of particles wanted to statistics
-c       ispkf(i): flavor of i-th kind of particle wanted to statistics
-c       kfmax: the maximum # of particles with different flavor considered
-c       kfaco(i): i-th particle flavor
-c       numb(i): sum of particles up to the last one with flavor code of
-c         kfaco(i) in particle list
-c       an(l,i,j) (san(l,i,j)):
-c        l: value of distribution argument (e. g. value of y or pt)
-c        i: identify the distribution (e. g. i=2 is y distribution)
-c        j: order # of kf code of particle wanded to statistics (1 to ispmax)
-c       bn,sbn,sbo: record the multiplicity of particles
-c       anf(l,i,j) (sanf(l,i,j)), for instance, is corresponding to an(l,i,j)
+c	bp: impact parameter
+c	iii: current run number
+c	coor: position of CM
+c	ispmax: maximum # of kinds of particles wanted to statistics
+c	ispkf(i): flavor of i-th kind of particle wanted to statistics
+c	kfmax: the maximum # of particles with different flavor considered 
+c	kfaco(i): i-th particle flavor
+c	numb(i): sum of particles up to the last one with flavor code of kfaco(i) 
+c                in particle list
+c	an(l,i,j) (san(l,i,j)):
+c	 l: value of distribution argument (e. g. value of y or pt) 
+c	 i: identify the distribution (e. g. i=2 is y distribution)
+c	 j: order # of kf code of particle wanded to statistics (1 to ispmax)
+c	bn,sbn,sbo: record the multiplicity of particles
+c       anf(l,i,j) (sanf(l,i,j)), for instance, is corresponding to an(l,i,j) 
 c        (san(l,i,j)) but is statistics of full phase space instead of partical
 c        phase space
-c       isdmax: maximum # of distributions wanted to calculate
-c       asd(i): interval segmented for i-th distribution
-c        i=1: for y
-c        i=2: for pt
+c	isdmax: maximum # of distributions wanted to calculate
+c	asd(i): interval segmented for i-th distribution  
+c	 i=1: for y
+c	 i=2: for pt
+c         .      . 
 c         .      .
 c         .      .
-c         .      .
-c       iflmax: maximum # of filters,=0 means no filter at all
-c       afl(j,i,1): lower limit of i-th filter for the j-th particle
-c       afl(j,i,2): upper limit of i-th filter for the j-th particle
-c        i=1: y filter
-c        i=2: pt filter
+c	iflmax: maximum # of filters,=0 means no filter at all
+c	afl(j,i,1): lower limit of i-th filter for the j-th particle
+c	afl(j,i,2): upper limit of i-th filter for the j-th particle
+c 	 i=1: y filter	
+c	 i=2: pt filter
 c         .        .
+c         .        . 
 c         .        .
-c         .        .
-c       ifram: = 0 for fixed target, = 1 for collider
-c       cspipi (fm^2): total cross section of pion + pion
-c       sig (fm^2): cross section of pion + pion to kaon + kaon
-c       cspin (fm^2): total cross section of pion + nucleon interaction
-c       cskn (fm^2): total cross section of kaon + nucleon interaction
-c       csnn (fm^2): total cross section of n + n interaction
-c       rcsit: ratio of inelastic to total cross section
-c       disbe(i,j): allowable minimum distance between two particles of
+c	ifram: = 0 for fixed target, = 1 for collider 
+c	cspipi (fm^2): total cross section of pion + pion
+c	sig (fm^2): cross section of pion + pion to kaon + kaon
+c	cspin (fm^2): total cross section of pion + nucleon interaction
+c	cskn (fm^2): total cross section of kaon + nucleon interaction
+c	csnn (fm^2): total cross section of n + n interaction
+c	rcsit: ratio of inelastic to total cross section
+c	disbe(i,j): allowable minimum distance between two particles of
 c        kfaco(i) & kfaco(j).
-c       c17(i,1-3): position of particle i
-c       tp(i): time of particle i
-c       ishp(i): =1 if i-th particle inside the simulated volume
-c                =0 if i-th particle outside
-c       tau(i): formation time of particle i.
-c       isinel(i): = 0 without i-th inelastic process
-c                  = 1 with i-th inelastic process
+c	c17(i,1-3): position of particle i
+c	tp(i): time of particle i
+c	ishp(i): =1 if i-th particle inside the simulated volume
+c	         =0 if i-th particle outside 
+c	tau(i): formation time of particle i.
+c	isinel(i): = 0 without i-th inelastic process
+c	           = 1 with i-th inelastic process
 c       nreac(i): statistics of successful i-th collision in parton cascade
 c       nrel: statistics of blocked collisions in parton cascade
-c       npel: statistics of bolcked nn collisions in parton initiation
+c	npel: statistics of bolcked nn collisions in parton initiation
 c       npinel(600): statistics of successful nn collisions in parton initiation
-c       noel : statistics of elastic collisions in hadron cascade
-c       noinel(i): statistics the i-th inelastic channel in hadron cascade
-c       nosc = 1 : pythia type output only
-c              2 : also OSC1999A standard output event-by-event
-c              3 : no used
+c	noel : statistics of elastic collisions in hadron cascade
+c       noinel(i): statistics the i-th inelastic channel in hadron cascade 
+c	nosc = 1 : pythia type output only
+c	       2 : also OSC1999A standard output event-by-event
+c	       3 : no used 
 c020708
-c       itime is the number of strings in current event
-c       astr is the number of strings in current event
-c       gtime is the number of gluon in current event
+c       itime: number of strings in current event
+c       astr: number of strings in current event
+c       gtime: number of gluon in current event
 c       akapa(1): sum of string tension over strings in the current event
 c       akapa(2): sum of parj(2) over strings in the current event
 c       akapa(3): sum of parj(21) over strings in the current event
@@ -324,7 +345,7 @@ c	close(1)
 	open(22,file='main.out',status='unknown')
 	read(11,*)neve,nout,nosc   
 	read(11,*)nap,nzp,nat,nzt
-	read(11,*)ddt,dtt,bmin,bmax,nmax   ! 201208 
+	read(11,*)ddt,dtt,bmin,bmax,nmax   ! 241108
 	read(11,*)kjp21,ifram,para7,para10,kjp20
 	read(11,*)pio,ipden,itden
 	read(11,*)ispmax,isdmax,iflmax
@@ -338,10 +359,10 @@ c	close(1)
 	enddo
 	enddo
 200     read(11,*)parp21,parp22,win   
-	read(11,*)ttaup,taujp,iabsb,iabsm,nchan   ! 201208
+	read(11,*)ttaup,taujp,iabsb,iabsm,nchan   ! 241108
 	read(11,*)para13,para14,psno,para15,para16,ajpsi,vneum
 	read(11,*)para1_1,para1_2,para2,para4   
-	read(11,*)tdh,cptl,cptu,cptl2,cptu2,itnum   ! 201208
+	read(11,*)tdh,cptl,cptu,cptl2,cptu2,itnum   ! 241108
 	read(11,*)mstu21,mstj1_1,mstj1_2,mstj2,mstj3
 c210803
 	read(11,*)(adj1(i),i=1,10)
@@ -349,10 +370,11 @@ c210803
         read(11,*)(adj1(i),i=21,30)
         read(11,*)(adj1(i),i=31,40)
 c210803
-        read(11,*)kjp22,kjp23,kjp24   ! 020708 020511
+        read(11,*)kjp22,kjp23,kjp24,effk1   ! 020708 020511 150612 yan
+	read(11,*)parecc,iparres   ! 220312 240412
 	close(11)
-c	tdh and itnum: time step and number of time steps used in subroutine 'flow' 
-c	cptl,cptu;cptl2,cptu2 : pt cut in 'flow' for particle 1;particle 2
+c	tdh and itnum: time step and number of time steps used in subroutine 'flow_t'
+c	cptl,cptu;cptl2,cptu2 : pt cut in 'flow_t' for particle 1;particle 2
 c       nchan=0: inelastic (INEL)
 c	nchan=1: Non Single Difractive (NSD) 
 c	nchan=2: qqb --> gamma^*/Z^0, used to generate Drell-Yen
@@ -373,21 +395,20 @@ c	rou0 : normal nuclear density
 c	rao : enlarge factor in the radius of simulated volume
 c	bmin,bmax : minimum and maximum impact parameters, bmin=bmax means
 c	 definite impact parameter, 2*nmax: the number of 
-c	 intervals segmented in [bmin,bmax]
-c       kjp20: =1 constant cross sections 
-c              =0 energy dependent cross sections
-c       kjp21: = 0 without hadron rescattering,  
-c              = 1 with hadron rescattering
+c	 intervals segmented in [bmin,bmax]	
+c	kjp20: =1 constant cross sections 
+c	       =0 energy dependent cross sections
+c	kjp21: = 0 without hadron rescattering, 
+c	       = 1 with hadron rescattering
 c020708
-c       kjp22: = 0 constant string tension with calculation for string 
-c                  effective tension
+c       kjp22: = 0 constant string tension with calculation for string effective tension
 c       kjp22: = 1 variable effective string tension
 c       kjp22: = 2 original case (constant string tension)
 c020511 kjp23: = 1 npart calculated by geometric model
-c020511 kjp23: = 2 npart calculated by Glauber model
+c020511	kjp23: = 2 npart calculated by Glauber model
 c020511 kjp24: = 1 sharp sphere in Glauber model
-c020511 kjp24: = 2 Woods-Saxon in Glauber model
-c020708	
+c020511	kjp24: = 2 Woods-Saxon in Glauber model
+c020708
 c	param(1)=para1
 	param(2)=para2
 	param(4)=para4
@@ -403,11 +424,11 @@ c	totle cross-section of Psi' + n
 	param(16)=para16
 c	totle cross-section of Psi' + meson
         idw=adj1(4)   ! 020511
-c020511 # of segments in integration        
+c020511 # of segments in integration
 	mstp(82)=adj1(8)
-c        =0: soft (two-string) only; =1: both of soft and hard
-        parp(81)=adj1(9)
-c       effective minimum transverse momentum
+c	 =0: soft (two-string) only; =1: both of soft and hard
+	parp(81)=adj1(9)
+c	effective minimum transverse momentum  
 	parj(2)=adj1(32)
         parj2=parj(2)   ! 020708
 c	the suppression of s quark pair production (D=0.3)
@@ -430,7 +451,7 @@ c       parp21: lowest CM energy for calling 'pythia' (D=10.), for
 c	 case of nchan=6
 c       parp22: lowest CM energy for calling 'pythia' (D=10.), for 
 c	 case of nchan=3
-	mstp(33)=1   
+	mstp(33)=1      
 c	inclusion of k factor in hard cross sections for parton-parton 
 c	 interactions (default=0)
 	parp(31)=adj1(10)   ! D=1.5
@@ -451,8 +472,8 @@ c	parameters in Lund string fragmentation function
 	parj(41)=adj1(6)   ! D=0.3
 	parj(42)=adj1(7)   ! D=0.58
 
- 	ept=sqrt(win*win+0.938*0.938)
-        rots=sqrt((ept+0.938)*(ept+0.938)-win*win)
+ 	ept=dsqrt(win*win+0.938*0.938)
+        rots=dsqrt((ept+0.938)*(ept+0.938)-win*win)
         if(ifram.eq.1)rots=win
         degd=(1.-3.097/rots)**12
 	do i1=1,20
@@ -482,8 +503,8 @@ c061103
 	pel=0.
 c061103
 c071103
-c230210 rinel=0.
-c230210 rel=0.
+	rinel=0.
+	rel=0.
 c071103
 	sinel=0.
 	sel=0.
@@ -521,9 +542,13 @@ c033101
 	sabaf2(i1)=0.
 c033101
 	enddo
-	stime_neu=0.   ! 121110
+c081010	stime=0.
+        stime_ini=0.d0   ! 081010
 	stime_par=0.
 	stime_had=0.
+        stimei=0.d0   ! 081010
+        stimep=0.d0   ! 081010
+        stimeh=0.d0   ! 081010
 	snspe=0.   ! 111899
 
 csa*********************************************************************
@@ -540,28 +565,27 @@ csa*********************************************************************
 	sv22o(i2,i1)=0.
 	enddo
 	enddo
-c220607
-        do i2=1,21
-        do i1=1,20
+	do i2=1,21
+	do i1=1,20
         ssnum_pt(i2,i1)=0.   ! 280607
         ssnum_eta(i2,i1)=0.   ! 280607
-        sv1_pt(i2,i1)=0.
-        sv2_pt(i2,i1)=0.
-        sv1o_pt(i2,i1)=0.
-        sv2o_pt(i2,i1)=0.
-        sv12_pt(i2,i1)=0.
-        sv22_pt(i2,i1)=0.
-        sv12o_pt(i2,i1)=0.
-        sv22o_pt(i2,i1)=0.
-        sv1_eta(i2,i1)=0.
-        sv2_eta(i2,i1)=0.
-        sv1o_eta(i2,i1)=0.
-        sv2o_eta(i2,i1)=0.
-        sv12_eta(i2,i1)=0.
-        sv22_eta(i2,i1)=0.
-        sv12o_eta(i2,i1)=0.
-        sv22o_eta(i2,i1)=0.
-c021107
+	sv1_pt(i2,i1)=0.
+	sv2_pt(i2,i1)=0.
+	sv1o_pt(i2,i1)=0.
+	sv2o_pt(i2,i1)=0.
+	sv12_pt(i2,i1)=0.
+	sv22_pt(i2,i1)=0.
+	sv12o_pt(i2,i1)=0.
+	sv22o_pt(i2,i1)=0.
+	sv1_eta(i2,i1)=0.
+	sv2_eta(i2,i1)=0.
+	sv1o_eta(i2,i1)=0.
+	sv2o_eta(i2,i1)=0.
+	sv12_eta(i2,i1)=0.
+	sv22_eta(i2,i1)=0.
+	sv12o_eta(i2,i1)=0.
+	sv22o_eta(i2,i1)=0.
+c021207
         ssv1_pt(i2,i1)=0.
         ssv2_pt(i2,i1)=0.
         ssv1o_pt(i2,i1)=0.
@@ -578,10 +602,51 @@ c021107
         ssv22_eta(i2,i1)=0.
         ssv12o_eta(i2,i1)=0.
         ssv22o_eta(i2,i1)=0.
-c021107
+c021207
+	enddo
+	enddo
+c010412
+        do i2=1,21
+        do i1=1,20
+        fssnum_pt(i2,i1)=0.   
+        fssnum_eta(i2,i1)=0.   
+        fsv1_pt(i2,i1)=0.
+        fsv2_pt(i2,i1)=0.
+        fsv1o_pt(i2,i1)=0.
+        fsv2o_pt(i2,i1)=0.
+        fsv12_pt(i2,i1)=0.
+        fsv22_pt(i2,i1)=0.
+        fsv12o_pt(i2,i1)=0.
+        fsv22o_pt(i2,i1)=0.
+        fsv1_eta(i2,i1)=0.
+        fsv2_eta(i2,i1)=0.
+        fsv1o_eta(i2,i1)=0.
+        fsv2o_eta(i2,i1)=0.
+        fsv12_eta(i2,i1)=0.
+        fsv22_eta(i2,i1)=0.
+        fsv12o_eta(i2,i1)=0.
+        fsv22o_eta(i2,i1)=0.
+
+        fssv1_pt(i2,i1)=0.
+        fssv2_pt(i2,i1)=0.
+        fssv1o_pt(i2,i1)=0.
+        fssv2o_pt(i2,i1)=0.
+        fssv12_pt(i2,i1)=0.
+        fssv22_pt(i2,i1)=0.
+        fssv12o_pt(i2,i1)=0.
+        fssv22o_pt(i2,i1)=0.
+        fssv1_eta(i2,i1)=0.
+        fssv2_eta(i2,i1)=0.
+        fssv1o_eta(i2,i1)=0.
+        fssv2o_eta(i2,i1)=0.
+        fssv12_eta(i2,i1)=0.
+        fssv22_eta(i2,i1)=0.
+        fssv12o_eta(i2,i1)=0.
+        fssv22o_eta(i2,i1)=0.
         enddo
         enddo
-c220607
+c010412       
+
 csa**********************************************************************
 c210803
         do i1=1,20
@@ -661,25 +726,27 @@ c181003
 	adj12=adj1(12)
 	dpmax=adj1(27)   ! 281194
 	adj140=adj1(40)   ! 290505
-c	give values to some important variables
-	call sysini
-	adj1(28)=para10*max(rnt,rnp)
-	iii=0
 	open(5,file='sxp.out',status='unknown')   ! sa 26/05/99
 	open(9,file='rms0.out',status='unknown')
 	open(34,file='oscar.out',status='unknown')
+c	give values to some important variables
+	call sysini
+c	write(9,*)'af. sysini csnn,kjp23,rou0,idw=',csnn,kjp23,rou0,idw !310805
 c020511
         csnn1=csnn*10   ! csnn in fm^2 csnn1 in mb^2
         idw1=idw/50   ! *100
 c        write(9,*)'csnn1,kjp24,idw1=',csnn1,kjp24,idw1
         call overlap(nap,nat,rnp,rnt,csnn1,kjp23,kjp24,rou0,idw1)
 c020511
+	adj1(28)=para10*dmax1(rnt,rnp)
+	iii=0
 c	write(9,100)frame
 c	write(9,100)beam
 c	write(9,100)target
-	write(9,*)'nap,nzp,nat,nzt,win=',nap,nzp,nat,nzt,win
+	write(9,*)'win,nap,nzp,nat,nzt=',win,nap,nzp,nat,nzt
 	write(9,*)'neve,nout,nosc=',neve,nout,nosc
-	write(9,*)'bmin,bmax,dtt,nmax=',bmin,bmax,dtt,nmax
+	write(9,*)'dtt,bmin,bmax,nmax,effk1=',dtt,bmin,bmax,nmax,effk1
+c150612 yan
 	write(9,*)'kjp21,ifram,para7,para10,kjp20,kjp22,kjp23,kjp24=',
      c   kjp21,ifram,para7,para10,kjp20,kjp22,kjp23,kjp24   ! 020511
 	write(9,*)ispmax,isdmax,iflmax
@@ -687,8 +754,8 @@ c	write(9,100)target
 	write(9,*)(asd(i),i=1,isdmax)
 c020708
         if(kjp22.eq.0 .or. kjp22.eq.1)then
-        write(9,*)'kjp22,par1,par2,par3,par21=',kjp22,
-     c   parj(1),parj(2),parj(3),parj(21)
+        write(9,*)'par1,par2,par3,par21,kjp22=',
+     c   parj(1),parj(2),parj(3),parj(21),kjp22
         endif
 c020708
 	write(9,*)'parp21,parp22,ttaup,taujp=',parp21,parp22,ttaup,taujp
@@ -697,7 +764,7 @@ c020708
 	write(9,*)'psno,rots,ajpsi,vneum=',psno,rots,ajpsi,vneum
         write(9,*)'para1_1,para1_2,para2,para4=',para1_1,para1_2,para2,
      c	 para4   
-	write(9,*)'tdh,itnum,cptl=',tdh,itnum,cptl
+	write(9,*)'tdh,cptl,itnum=',tdh,cptl,itnum
 	write(9,*)'cptu,cptl2,cptu2=',cptu,cptl2,cptu2
 	write(9,*)'mstu21,mstj1_1,mstj1_2,mstj2,mstj3=',
      c	 mstu21,mstj1_1,mstj1_2,mstj2,mstj3   
@@ -709,6 +776,7 @@ c210803
 c210803
 c	write(9,*)'41-45=',parj(41),parj(42),parj(43),parj(44),
 c     c	 parj(45)
+	write(9,*)'parecc,iparres=',parecc,iparres   ! 2203122 240412
 	if(iflmax.ne.0)then
 	do kk=1,ispmax
 	do i=1,iflmax
@@ -750,16 +818,16 @@ c010607
 c       write(9,*)'rnt,para10,adj1(28)=',rnt,para10,adj1(28)   ! sa
 	jjj=1
 c	for given b (impact parameter)
-	if(abs(bmin-bmax).lt.10d-4)then
+	if(dabs(bmin-bmax).lt.10d-4)then
 	bp=bmin
         r4=rnp
         if(rnt.gt.rnp)r4=rnt
         rr4=bp/r4
-        vneu=exp(-rr4*rr4)
-c	calculate the overlap region of two nuclei at given b geometric
-c020511  or Glauber method
+        vneu=dexp(-rr4*rr4)
+c	calculate the overlap region of two nuclei at given b by geometric 
+c020511	 or Glauber method
 c060605
-	if(nap.ne.1 .and. nat.ne.1)then   ! 020511
+	if(nap.ne.1 .and. nat.ne.1)then   ! 020511   
 c020511
         ibpp=int(bp/0.1+1.0)
         ibpp=min(ibpp,200)
@@ -768,11 +836,11 @@ c020511
 c       write(9,*)'bp,ibpp,part1,part2=',bp,ibpp,pir,tir
         endif
 c020511
-	if(nap.eq.1)pir=1.
-	if(nat.eq.1)tir=1.
+	if(nap.eq.1)pir=1.   
+	if(nat.eq.1)tir=1.   
 c060605
-	vneump=pir   ! 111399
-	vneumt=tir   ! 111399
+        vneump=pir   ! 111399
+        vneumt=tir   ! 111399
 	write(9,*)'bp,vneump,vneumt=',bp,vneump,vneumt   ! 190309
 	goto 300
 	endif
@@ -783,7 +851,7 @@ c	systematic sampling method for given interval of b according to b**2 law
 	i2=0
 	do i1=1,nmax2,2
 	i2=i2+1
-	bpp(i2)=sqrt(i1*bmaxn+bmin2)
+	bpp(i2)=dsqrt(i1*bmaxn+bmin2)
 	enddo
 	write(9,*)'b=',(bpp(i1),i1=1,i2)   !!
 	stb=0.
@@ -794,7 +862,7 @@ c	systematic sampling method for given interval of b according to b**2 law
 	r4=rnp
 	if(rnt.gt.rnp)r4=rnt
 	rr4=bp/r4
-	acoll(i1)=exp(-rr4*rr4)
+	acoll(i1)=dexp(-rr4*rr4)
 c	calculate the overlap region of two nuclei at given b 
 c060605
 	if(nap.ne.1 .and. nat.ne.1)then   ! 020511
@@ -815,20 +883,20 @@ c	write(*,*)'bp,din,vneu,tb=',bp,din,acoll(i1),tb
 	stbt=stbt+acollt(i1)
 	stb=stb+acoll(i1)
 	enddo
-	aneump=stbp/float(i2)   ! 191110
-	aneumt=stbt/float(i2)   ! 191110
-	vneum=stb/float(i2)
-        write(9,*)'neu=',(acoll(i1),i1=1,i2)   !!
-	write(9,*)'(N_part)_p=',(acollp(i1),i1=1,i2)   ! 191110
-	write(9,*)'(N_part)_t=',(acollt(i1),i1=1,i2)   ! 191110
-	write(9,*)'(ave. participant)geo.=',aneump,aneumt,vneum   ! 191110	
+	aneump=stbp/dfloat(i2)   ! 241110
+	aneumt=stbt/dfloat(i2)   ! 241110
+	vneum=stb/dfloat(i2)
+	write(9,*)'neu=',(acoll(i1),i1=1,i2)   !!
+	write(9,*)'(N_part)_p=',(acollp(i1),i1=1,i2)   ! 241110
+        write(9,*)'(N_part)_t=',(acollt(i1),i1=1,i2)   ! 241110
+	write(9,*)'(ave. participant)geo.=',aneump,aneumt,vneum   ! 241110
 c	average b in [bmin,bmax]
         avb=2./3.*(bmin+bmax)
 c	above equation is correct when bmin=0 only
 	r4=rnp
 	if(rnt.gt.rnp)r4=rnt
 	rr4=avb/r4
-	avneu=exp(-rr4*rr4)
+	avneu=dexp(-rr4*rr4)
 c	calculate the overlap region of two nuclei at given b 
 c060605
 	if(nap.ne.1 .and. nat.ne.1)then   ! 020511
@@ -844,21 +912,42 @@ c020511
 c060605
 	astbp=pir
 	astbt=tir
-c280809
+c220110
         nrel=0
         nrea=0
         do i=1,9
         nreac(i)=0
         enddo
-c280809
+c220110
+        aecce=0.   ! 220312
 c	generate a event for nucleus-nucleou collision
 	iran=adj1(26)
 	if(iran.eq.0)goto 300
 	do i1=1,iran
 	thrr=pyr(1)
 	enddo
+	nncoll=0
 300	iii=iii+1
-c220607
+c220110
+        do i1=1,9
+        nreaco(i1)=nreac(i1)
+        enddo
+c220110
+c250209
+        ngam=0
+        nsin=0   
+        do i1=1,kszj
+        do j1=1,5
+        kgam(i1,j1)=0
+        pgam(i1,j1)=0.
+        vgam(i1,j1)=0.
+        ksin(i1,j1)=0   
+        psin(i1,j1)=0.   
+        vsin(i1,j1)=0.   
+        enddo
+        bsin(i1)=0.   
+        enddo
+c250209
         do i1=1,21
         do i2=1,20
         snum_pt(i1,i2)=0.   ! 280607
@@ -873,45 +962,28 @@ c220607
         v22_eta(i1,i2)=0.
         enddo
         enddo
-c220607
-c070905
-        ithroq=0
-        ithrob=0
-        ithroc=0
-        ithroq_p=0
-        ithrob_p=0
-        ich_p=0
-        ithroq_t=0
-        ithrob_t=0
-        ich_t=0
-        do i=1,4
-        throe(i)=0.
-        throe_t(i)=0.
-        throe_p(i)=0.
-        enddo
-	iprlth=0
-        do j=1,mplis
-        idpth(j)=0
-        rmpth(j)=0.
-        do i=1,4
-        rpth(i,j)=0.
-        ppth(i,j)=0.
+c010412
+        do i1=1,21
+        do i2=1,20
+        fsnum_pt(i1,i2)=0.
+        fsnum_eta(i1,i2)=0.
+        fv1_pt(i1,i2)=0.
+        fv2_pt(i1,i2)=0.
+        fv12_pt(i1,i2)=0.
+        fv22_pt(i1,i2)=0.
+        fv1_eta(i1,i2)=0.
+        fv2_eta(i1,i2)=0.
+        fv12_eta(i1,i2)=0.
+        fv22_eta(i1,i2)=0.
         enddo
         enddo
-c070905
-	nncoll=0
+c010412        
 	siijk=0   ! 201203
 c061103
 	npel=0
         do i=1,600
         npinel(i)=0
         enddo
-c071103
-c280809 nrel=0
-c       do i=1,9
-c       nreac(i)=0
-c280809 enddo
-c071103
 	noel=0
         do i=1,600
         noinel(i)=0
@@ -931,16 +1003,16 @@ c010607
 	tabar=0
 	tabarf=0 
 c010507
+        non6_c=123456   ! 141208
 	sbp(jjj)=sbp(jjj)+1
 c        open(22,file='main.out',status='unknown')
-	if(abs(bmin-bmax).lt.10d-4)goto 800
+	if(dabs(bmin-bmax).lt.10d-4)goto 800
 	bp=bpp(jjj) 
-c191110
-	vneump=acollp(jjj)
-	vneumt=acollt(jjj)
-c191110 if(psno.eq.2)bp=sqrt(pyr(1)*(bmax*bmax-bmin2)+bmin2)   ! 291207 
-        if(psno.eq.2)then
-	bp=sqrt(pyr(1)*(bmax*bmax-bmin2)+bmin2)
+	vneump=acollp(jjj)   ! 241110
+	vneumt=acollt(jjj)   ! 241110  
+c241110 if(psno.eq.2)bp=dsqrt(pyr(1)*(bmax*bmax-bmin2)+bmin2)   ! 291207
+	if(psno.eq.2)then
+        bp=sqrt(pyr(1)*(bmax*bmax-bmin2)+bmin2)
 c       calculate the overlap region of two nuclei at given bp 
         if(nap.ne.1 .and. nat.ne.1)then   ! 020511
 c020511
@@ -952,11 +1024,11 @@ c020511
 c020511
         if(nap.eq.1)pir=1.
         if(nat.eq.1)tir=1.
-        vneump=pir   
-        vneumt=tir  
-	write(9,*)'bp,vneump,vneumt=',bp,vneump,vneumt 
-	endif
-c191110
+        vneump=pir
+        vneumt=tir
+        write(9,*)'bp,vneump,vneumt=',bp,vneump,vneumt
+        endif
+c241110
 c291207 psno: =1 systematic sampling method
 c291207       =2 random sampling method
 c       in case of psno=2 the outputs concerning jjj are nonsense
@@ -998,11 +1070,10 @@ c210803
         fvptp=0.
 c210803
 c	forbiden decay of particle, if mdcy(...)=0
-c291207 mdcy(pycomp(111),1)=0   ! 190606
-c291207 mdcy(pycomp(221),1)=0   ! 190606
-c251108        mdcy(pycomp(310),1)=0   ! k0_S
-c251108        mdcy(pycomp(333),1)=0   ! phi
-        mdcy(pycomp(3122),1)=0   ! Lambda0
+c	mdcy(pycomp(111),1)=0
+        mdcy(pycomp(310),1)=0   ! k0_S
+        mdcy(pycomp(333),1)=0   ! phi
+        mdcy(pycomp(3122),1)=0   ! Lambda
         mdcy(pycomp(-3122),1)=0
 c	mdcy(pycomp(443),1)=0   ! j/psi
 c	mdcy(pycomp(10441),1)=0
@@ -1020,16 +1091,16 @@ c	mdcy(pycomp(30443),1)=0   ! j/psi
 
 c	mdcy(pycomp(3212),1)=0
 c	mdcy(pycomp(-3212),1)=0
-c251108        mdcy(pycomp(3112),1)=0   ! Sigma-
+        mdcy(pycomp(3112),1)=0   ! Sigma-
 c	mdcy(pycomp(-3112),1)=0
-c251108        mdcy(pycomp(3222),1)=0   ! Sigma+
+        mdcy(pycomp(3222),1)=0   ! Sigma+
 c	mdcy(pycomp(-3222),1)=0
-c251108        mdcy(pycomp(3312),1)=0   ! Xi-
-c251108        mdcy(pycomp(-3312),1)=0
+        mdcy(pycomp(3312),1)=0   ! Xi-
+        mdcy(pycomp(-3312),1)=0
 c	mdcy(pycomp(3322),1)=0
 c	mdcy(pycomp(-3322),1)=0
-c251108        mdcy(pycomp(3334),1)=0   ! Omega-
-c251108        mdcy(pycomp(-3334),1)=0
+        mdcy(pycomp(3334),1)=0   ! Omega-
+        mdcy(pycomp(-3334),1)=0
 c       mdcy(pycomp(1114),1)=0
 c       mdcy(pycomp(2114),1)=0
 c       mdcy(pycomp(2214),1)=0
@@ -1059,7 +1130,7 @@ c       ??????????????? oscar stander output ??????????????????????
 503     format(10hPACIAE 1.0)   ! osc
         ntest=1   ! osc
         if(ifram.eq.0)then   ! osc
-        ebeam=sqrt(win*win+0.938*0.938)   ! osc
+        ebeam=dsqrt(win*win+0.938*0.938)   ! osc
         write(34,504)nap,nzp,nat,nzt,ebeam,ntest   ! osc
         endif   ! osc
         if(ifram.eq.1)then   ! osc
@@ -1077,138 +1148,546 @@ c       ??????????????? oscar stander output ??????????????????????
 c       ??????????????? oscar stander output ??????????????????????
 c	creat an event
 c	parton initiation   
-	ijk=0 
-cs	write(9,*)'be. parini iii,itden=',iii,itden   ! sa
-	if(itden.eq.1)call parini(time_neu,time_par,time_had,parp21
-     c	 ,parp22,win,psno,ijk)   ! 111010 121110
-c060605	for p+A and A+A
-cs	write(9,*)'af. parini ijk=',ijk ! sa
-        if(ijk.eq.1)goto 300   ! 071005
-	rrp=1.16   ! 130205
-c070905
-c	goto 777   ! temporary
-	if(adj12.ne.0)then   ! 2
-        call pyedit(2)
-        if(nout.eq.1 .or. iii.eq.1 .or. mod(iii,nout).eq.0 .or. iii
-     c   .eq.neve)then   ! 3
-        write(mstu(11),*)'event=',iii
-        call pylist(1)
-        write(mstu(11),*)'ppsa=',(ppsa(i1),i1=1,5)
-        write(22,*)'throe_t=',throe_t
-        write(22,*)'ithroq_t,ithrob_t,ich_t=',ithroq_t,ithrob_t,
-     c   float(ich_t)/3.
-        write(22,*)'throe_p=',throe_p
-        write(22,*)'ithroq_p,ithrob_p,ich_p=',ithroq_p,ithrob_p,
-     c   float(ich_p)/3.
-        write(22,*)'throe=',throe
-        write(22,*)'ithroq,ithrob,ithroc=',ithroq,ithrob,
-     c   float(ithroc)/3.
-        call prt_sgam(ngam)   ! 240209
-c       call prt_sbh(nbh)
-	endif   ! 3
-c	recoalescent the q and qbar
-c       reconstruct parton list ('parlist')
-c       make the partons in order of qba and q
-        iij=0
-        jji=0   ! 291207
-        do ii=2,3   ! 1,3
-c       1: refers to g, 2: qba, 3: q
-        kf=21
-        do j=iij+1,iprlth
-        call ord_th(jji,j,kf,ii)   ! 291207
+	ijk=0
+        time_ini=0.d0   ! 081010 
+c	write(9,*)'before call parini iii=',iii   ! sa
+	if(itden.eq.1)call parini(time_ini,parp21,parp22,win,psno,ijk) ! 081010   
+c060605	 for p+A and A+A
+        if(ijk.eq.1)goto 300
+	call pyedit(2)
+c	no parton produced at all
+	if(n.le.0)then
+c	write(9,*)'neve,nncoll,n=',neve,nncoll,n   ! sa
+	nncoll=nncoll+1
+	if(nncoll.gt.neve)then
+	write(9,*)'nncoll=',nncoll   ! sa
+	stop 8888
+	endif
+	iii=iii-1
+	goto 300
+	endif
+c        if(iii.eq.3)then 
+c        write(mstu(11),*)'af parini'
+c        call pylist(1)
+c        write(mstu(11),*)'ppsa=',(ppsa(i1),i1=1,5)
+c        call prt_sbh(nbh,cc)   
+c        endif
+	if(adj140.eq.1)then   ! 290505 271205 
+c271205
+        eevp=0.
+        do i1=1,n
+        eevp=eevp+p(i1,4)
         enddo
-        iij=jji   ! 291207
-        numbth(ii)=jji   ! 291207
-c       numbth(1),(2) and (3): the line # of last g,qba and q
+        eevh=0.
+        do i1=1,nbh
+        eevh=eevh+pbh(i1,4)
         enddo
-c271004 n1=numbth(1)
-        n2=numbth(2)
-        n3=numbth(3)
-c	write(9,*)'af ord_th n1,n2,n3,iprlth,ithroq,ithrob=',
-c     c   n1,n2,n3,iprlth,ithroq,ithrob   ! sa
-c061005	write(9,600)(idpth(i2),i2=1,n3)   ! sa
-        iqba=ithrob
-        n3=iqba+ithroq
-        do i1=1,n3
-        idp(i1)=idpth(i1)
-        rmp(i1)=rmpth(i1)
-        do j1=1,4
-        pp(j1,i1)=ppth(j1,i1)
-        rp(j1,i1)=rpth(j1,i1)
-        enddo
-        enddo
-        do i1=n3+1,mplis
-        idp(i1)=0
-        rmp(i1)=0.
-        do j1=1,4
-        pp(j1,i1)=0.
-        rp(j1,i1)=0.
-        enddo
-        enddo
-c	write(9,*)'iii,iqba,n3=',iii,iqba,n3   ! sa
-c	write(9,*)'idp=',(idp(i1),i1=1,n3)   ! sa
-c061005	sumch=0.
-c	p1=0.
-c	p2=0.
-c	p3=0.
-c	p4=0.
-c	do i1=1,n3
-c	kk=idp(i1)
-c	sumch=sumch+pychge(kk)
-c	p1=p1+ppth(1,i1)
-c	p2=p2+ppth(2,i1)
-c	p3=p3+ppth(3,i1)
-c	p4=p4+ppth(4,i1)
-c	enddo
-c061005	write(9,*)'sumch,p1,p2,p3,p4=',sumch/3.,p1,p2,p3,p4   ! sa
-        ithroq=0
-        ithrob=0
-        ithroc=0
-        do i=1,4
-        throe(i)=0.
-        enddo
-	iprlth=0
-        do j=1,mplis
-        idpth(j)=0
-        rmpth(j)=0.
-        do i=1,4
-        rpth(i,j)=0.
-        ppth(i,j)=0.
-        enddo
-        enddo
-        nn=0
-        do i1=1,kszj
-        do j1=1,5
-        kn(i1,j1)=0.
-        pn(i1,j1)=0.
-        rn(i1,j1)=0.
-        enddo
-        enddo
-        call coal(n3,iqba,iii,rrp,0,0)
-c       'sa1_h' to 'PYJETS'
-        if(nn.ne.0)then   ! 4
-        do l=1,nn
+c       'sbh' to 'pyjets'
+        if(nbh.eq.0)goto 5000   ! 261103
+        do l=1,nbh
         l1=n+l
         do m=1,5
-        k(l1,m)=kn(l,m)
-        p(l1,m)=pn(l,m)
-        v(l1,m)=rn(l,m)
+        k(l1,m)=kbh(l,m)
+        p(l1,m)=pbh(l,m)
+        v(l1,m)=vbh(l,m)
         enddo
         enddo
-        n=n+nn
-        endif   ! 4
-	endif   ! 2
-c070905 
-	goto 777
-c       perform particle, declared unstable in 'mdcy' array, decay
+        n=n+nbh
+        do i=n+1,kszj   ! 261103
+        do j=1,5
+        k(i,j)=0
+        k(i,j)=0
+        p(i,j)=0.
+        v(i,j)=0.
+        enddo
+        enddo
+5000    continue   ! 300407
+c        if(iii.eq.3)call pylist(1)
+        goto 888
+        endif
+c271205  
+c	goto 889   ! temporal
+c250209
+        n44=0
+        do j=1,nbh
+        kf=kbh(j,2)
+        if(kf.eq.22)then
+        kbh(j,2)=44   ! '44': prompt direct photon
+        n44=n44+1
+        endif
+        enddo
+c       move "44" from 'sbh' to 'sgam'
+        if(n44.gt.0)call remo_gam_sbh(44)
+c250209
+	if(n.lt.2)goto 889   ! 151302
+	if(itden.ne.1)goto 890   ! for e+e-,p+p,pbar_p, or p+pbar 080806 
+c	partonic cascade
+c	write(9,*)'before parcas iii=',iii   ! sa
+c201203
+c	'pyjets' to 'parlist'
+        iprl=n
+        do i=1,n
+        idp(i)=k(i,2)
+        rp(4,i)=0.
+c       parton cascade process is assumed to start at time 0.
+        eee=p(i,4)
+        pp(4,i)=eee
+        do j=1,3
+        rp(j,i)=v(i,j)
+        ppp=p(i,j)
+        pp(j,i)=ppp
+        vp(j,i)=ppp/eee
+        enddo
+        rmp(i)=p(i,5)
+        taup(i)=0.
+        vip(i)=0.
+        xap(i)=0.
+        enddo
+        do i=n+1,mplis
+        do j=1,3
+        rp(j,i)=0.
+        pp(j,i)=0.
+        vp(j,i)=0.
+        enddo
+        rp(4,i)=0.
+        pp(4,i)=0.
+        taup(i)=0.
+        vip(i)=0.
+        xap(i)=0.
+        idp(i)=0
+        rmp(i)=0.
+        enddo
+c201203
+c	goto 890
+        time_par=0.d0   ! 081010
+	iijk=0   ! 151203
+	call parcas(time_par,nnn,iijk,win,nap,rnt,rnp,n00)   ! 120603 220110
+c220110 nnn: nnn-th parton-parton interacion in a nucleus-nucleus collision
+c2	write(9,*)'after parcas iii,iijk,time_par=',
+c2     c	iii,iijk,time_par! sa
+c120603
+	if(iijk.eq.1)then
+c	write(9,*)'iii,iijk=',iii,iijk
+	goto 300   ! give up current event avoiding infinite collision loop
+	endif
+c120603
+	if(iijk.eq.2)siijk=siijk+1   ! 201203
+c201203
+c       'parlist' to 'pyjets'
+        n=iprl
+	if(n.eq.0)goto 300   ! no parton at all, give up current event
+        do i=1,n
+c220110 k(i,1)=1
+        k(i,2)=idp(i)
+c220110 do j=3,5
+c       k(i,j)=0
+c220110 enddo
+        do j=1,4
+        v(i,j)=rp(j,i)
+        p(i,j)=pp(j,i)
+        enddo
+        p(i,5)=rmp(i)
+        v(i,5)=0.
+        enddo
+c	do i=n+1,kszj
+c	do j=1,5
+c	k(i,j)=0
+c	p(i,j)=0.
+c	v(i,j)=0.
+c	enddo
+c	enddo
+c       if(iii.eq.5)then 
+c       write(22,*)'af parcas'
+c       call pyedit(2)
+c       call pylist(1)
+c       call prt_sbh(nbh,cc)   
+c       endif
+c201203 
+	if(adj140.eq.2)then   ! 290505 271205  
+c271205
+        eevp=0.
+        do i1=1,n
+        eevp=eevp+p(i1,4)
+        enddo
+        eevh=0.
+        do i1=1,nbh
+        eevh=eevh+pbh(i1,4)
+        enddo
+c       'sbh' to 'pyjets'
+        if(nbh.eq.0)goto 6000   ! 261103
+        do l=1,nbh
+        l1=n+l
+        do m=1,5
+        k(l1,m)=kbh(l,m)
+        p(l1,m)=pbh(l,m)
+        v(l1,m)=vbh(l,m)
+        enddo
+        enddo
+        n=n+nbh
+        do i=n+1,kszj   ! 261103
+        do j=1,5
+        k(i,j)=0
+        p(i,j)=0.
+        v(i,j)=0.
+        enddo
+        enddo
+6000    continue   ! 300407
+        goto 888
+        endif
+c271205
+c250209
+        n55=0
+        do i1=1,n
+        kf=k(i1,2)
+        if(kf.eq.22)then
+        k(i1,2)=55
+        n55=n55+1
+        endif
+        enddo
+c       write(9,*)'iiii,iii,n55=',iiii,iii,n55   ! sa
+c       move '55' from 'lujets' to 'sgam'
+        if(n55.gt.0)call remo_gam_par(55)
+c250209
+890	continue   ! 020512
+c020512	if(adj12.ne.0)goto 889   ! coalescence
+        if(adj12.ne.0.or.(adj12.eq.0.and.(nreac(4).gt.nreaco(4).or.
+     c   nreac(6).gt.nreaco(6).or.nreac(7).gt.nreaco(7))))goto 889 ! 020512   
+c       coalescence  
+c	recover parton configuration in 'sbe' 
+c220110
+c       if(iii.eq.12.or.iii.eq.29.or.iii.eq.151.or.iii.eq.213)then
+c       write(22,*)'be. recover n,nbe,n00,idi=',n,nbe,n00,idi
+c       call prt_sbe(nbe,cc)
+c       endif
+c220110
+c	loop over 'sbe'
+	idii=0
+c	write(9,*)'sbe nbe=',nbe
+	do i=1,nbe
+	kf=kbe(i,2)
+        kfab=iabs(kf)
+        if(kfab.eq.2101 .or. kfab.eq.3101 .or. kfab.eq.3201 .or. kfab
+     c   .eq.1103 .or. kfab.eq.2103 .or. kfab.eq.2203 .or. kfab.eq.3103
+c060805     c   .or. kfab.eq.3203 .or. kfab.eq.3303 .or. kfab.eq.21)then
+     c   .or. kfab.eq.3203 .or. kfab.eq.3303)then   ! 060805
+	idii=idii+1
+	do j=1,5
+	kdiqq=kbe(i,j)
+	kdiq(idii,j)=kdiqq
+	enddo
+	dgmas(idii)=pbe(i,5)
+c	write(9,*)'i,kfab,idii,kdiq=',i,kfab,idii,(kdiq(idii,j),j=1,5)
+	endif
+	enddo
+c	loop over 'pyjets'
+c	write(9,*)'pyjets n=',n
+	idij=0
+	jb=0
+	dele=0.
+880	do 980 i=jb+1,n
+	jb=jb+1
+	ndiqi=ndiq(i)
+	if(ndiqi.ne.0)then   ! diquark (anti-diquark)
+	idij=idij+1
+	j=npt(ndiqi) 
+	do i1=1,5
+        k(i,i1)=kdiq(idij,i1)
+	enddo
+c	write(9,*)'i,p=',i,(p(i,i1),i1=1,5)
+c	write(9,*)'j,p=',j,(p(j,i1),i1=1,5)
+	do i1=1,3   
+	p(i,i1)=p(i,i1)+p(j,i1)
+	enddo
+	dimass=dgmas(idij)
+	pi1=p(i,1)
+	pi2=p(i,2)
+	pi3=p(i,3)
+	pi4=dsqrt(pi1*pi1+pi2*pi2+pi3*pi3+dimass*dimass)
+	dele=dele+p(i,4)+p(j,4)-pi4
+c	write(9,*)'dele,p(i,4),p(j,4),pi4=',dele,p(i,4),p(j,4),pi4
+	p(i,4)=pi4
+	p(i,5)=dimass
+c	write(9,*)'ndiqi,pi1,pi2,pi3,pi4,dimass=',ndiqi,pi1,pi2,
+c     c	pi3,pi4,dimass
+c060805
+	if(j.eq.n)then
+	n=n-1
+	goto 1800
+	endif
+c060805
+	goto 1100
+	endif
+980	continue
+	goto 1800
+1100	continue
+c       move particle list,'pyjets',and 'ndiq'one step downward from 
+c	 j+1 to n
+        do j1=j+1,n
+	ndiq(j1-1)=ndiq(j1)
+        do jj=1,5
+        k(j1-1,jj)=k(j1,jj)
+        p(j1-1,jj)=p(j1,jj)
+        v(j1-1,jj)=v(j1,jj)
+        enddo
+        enddo
+        n=n-1
+c	subtract 'npt' by one from idij+1 to idi
+	if(idij.lt.idi)then
+	do j1=idij+1,idi
+	npt(j1)=npt(j1)-1
+	enddo
+	endif
+        goto 880
+1800	continue
+c060805	n=jb
+c	write(22,*)'af recover jb,n=',jb,n
+c	call prt_pyj(n,cc)
+
+c       share energy 'dele' into particles
+c	write(9,*)'n,dele=',n,dele
+	del=dele/dfloat(n)
+	do j3=1,n
+        p(j3,4)=p(j3,4)+del
+        if(del.lt.0.)then
+        if(p(j3,4).lt.0.)p(j3,4)=p(j3,4)-del
+        pabs=dabs(p(j3,3))
+        if(pabs.ge.p(j3,4))p(j3,4)=p(j3,4)-del
+        endif
+        enddo
+c	write(22,*)'af share jb,n=',jb,n
+c	call prt_pyj(n,cc)
+
+        if(iparres.eq.0 .or. (iparres.eq.1.and.(nreaco(4).eq.nreac(4))
+     c   .and.(nreaco(6).eq.nreac(6)).and.(nreaco(7).eq.nreac(7))))
+     c   then   !    ela. parton-parton collisions only 240412
+	do i1=1,n
+	do j1=1,5
+	pbe(i1,j1)=p(i1,j1)
+	enddo
+	enddo
+c       'sbe' to 'pyjets'
+	call tran_sbe 
+        endif   ! 240412
+c       if(iii.eq.12.or.iii.eq.29.or.iii.eq.151.or.iii.eq.213)then
+c       write(22,*)'af. recover n,nbh,nbe,noo,idi=',n,nbh,nbe,n00,idi   ! sa
+cs      write(9,*)'af. recover n,nbh=',n,nbh   ! sa
+c       call luedit(2)
+c       call lulist(1)
+cs      call prt_sbh(nbh,cc)
+c       endif
+c220110
+889	continue
+c	hadronization
+c	write(9,*)'before hadronization iii=',iii   ! sa
+c220110
+	if(adj12.eq.0)then   ! 
+c       write(9,*)'iii,4,4o,6,6o=',
+c     c   iii,nreac(4),nreaco(4),nreac(6),nreaco(6)
+        if(nreac(4).gt.nreaco(4) .or. nreac(6).gt.nreaco(6)
+     c	 .or. nreac(7).gt.nreaco(7))then   ! 020512
+c020512	for inela. processes 4,6,and 7
+        call coales(iii,neve,nout,nap,nat,nzp,nzt)
+        else
+c       otherwise
+        call sfm   ! string fragmentation 110604
+        endif
+        endif   !
+c220110
+	if(adj12.ne.0)then
+c	write(9,*)'af parcas iprl=',iprl   ! sa
+c	write(9,887)(idp(i2),i2=1,iprl)   ! sa
+	call coales(iii,neve,nout,nap,nat,nzp,nzt)   ! coalescence
+	endif
+887	format(20(1x,i3))
+c2	write(9,*)'after hadniz iii,nn,nbh=',iii,nn,nbh   ! sa
+c161203
+c010305	if(nout.eq.1 .or. iii.eq.1 .or. iii.eq.neve)then
+c300407	if(nout.eq.1 .or. iii.eq.1 .or. mod(iii,nout).eq.0 .or. iii
+c     c	 .eq.neve)then 
+c       if(iii.eq.5)then  
+c	write(mstu(11),*)'af hadniz.'
+c	call pyedit(2)
+c	call pylist(1)
+c	write(22,*)'throe_t=',throe_t
+c	write(22,*)'ithroq_t,ithrob_t,ich_t=',ithroq_t,ithrob_t,
+c     c	 dfloat(ich_t)/3.
+c	write(22,*)'throe_p=',throe_p
+c	write(22,*)'ithroq_p,ithrob_p,ich_p=',ithroq_p,ithrob_p,
+c     c	 dfloat(ich_p)/3.
+c	write(22,*)'throe=',throe
+c	write(22,*)'ithroq,ithrob,ithroc=',ithroq,ithrob,
+c     c	 dfloat(ithroc)/3.
+c300407	endif
+c       endif
+c141208
+        jb=1
+111     do i1=jb,n   !
+        kf=k(i1,2)
+        kfab=iabs(kf)
+        if(kfab.le.10.or.kfab.eq.21.or.kf.eq.2101.or.kf.eq.3101.or.
+     c   kf.eq.3201.or.kf.eq.1103.or.kf.eq.2103.or.kf.eq.2203.or.kf
+     c   .eq.3103.or.kf.eq.3203.or.kf.eq.3303)then   !!
+        if(i1.eq.n)then
+        n=n-1
+        goto 222
+        endif
+        goto 333
+        endif   !!
+        enddo   !
+        goto 222
+333     continue
+c       move particle list 'pyjets' one step downward since i1+1
+        call updad_pyj(n,i1+1,1)
+        n=n-1
+        jb=i1
+        goto 111
+222     continue
+c141208
+c161203
+	if(kjp21.eq.1)then   ! 1
+        call filt
+        do i=1,kfmax
+        nup=numbs(i)
+        enddo
+        nbh1=n-nup
+c       nup is the number of particles kept in 'pyjets'
+c       nbh1 is the number of particles storing in 'sbh'
+        if(nbh1.eq.0)goto 7000
+        do i=nup+1,n
+        nbh=i-nup
+        do j=1,5
+        kbh(nbh,j)=k(i,j)
+        pbh(nbh,j)=p(i,j)
+        vbh(nbh,j)=v(i,j)
+        enddo
+        enddo
+7000    continue
+	n=nup
+	nbh=nbh1   ! 261103
+c       'pyjets' to 'sa1_h'
+        nn=n
+        do i1=1,n
+        do i2=1,5
+        kn(i1,i2)=k(i1,i2)
+        pn(i1,i2)=p(i1,i2)
+        rn(i1,i2)=v(i1,i2)
+        enddo
+        enddo
+	do i=nn+1,kszj
+	do j=1,5
+	kn(i,j)=0
+	pn(i,j)=0.
+	rn(i,j)=0.
+	enddo
+	enddo
+c241103
+c	hadron cascade (rescattering)
+c	if(nout.eq.1 .or. iii.eq.1 .or. iii.eq.neve)then
+c	write(9,*)'be hadcas iii,n,nbh=',iii,n,nbh   ! sa
+c	write(22,*)'be hadcas iii=',iii   !sa
+c	call prt_sbh(nbh,cc)
+c	call prt_sa1_h(nn)
+c	endif  
+        time_had=0.d0   ! 081010
+	call hadcas(iii,neve,nout,time_had,ijkk)   ! 241103
+c	write(9,*)'after hadcas iii,ijkk,time_had=',
+c     c	 iii,ijkk,time_had   ! sa
+	if(ijkk.eq.1)then   ! 161203   
+c110603	iii=iii-1   ! it has been executed in 'scat' in 'hadcas' 
+	goto 300   ! give up current event avoiding infinite collision loop
+	endif
+c241103
+c	if(nout.eq.1 .or. iii.eq.1 .or. iii.eq.neve)then
+c	write(22,*)'af hadcas iii=',iii   !sa
+c	write(9,*)'af hadcas iii=',iii   ! sa
+c	call prt_sbh(nbh,cc)
+c	call prt_sa1_h(nn)
+c	endif  
+c201203
+c	'sa1_h' to 'pyjets'
+c	call trans_h
+        n=nn
+        do i1=1,n
+        do i2=1,5
+        k(i1,i2)=kn(i1,i2)
+        p(i1,i2)=pn(i1,i2)
+        v(i1,i2)=rn(i1,i2)
+        enddo
+        enddo
+	do i=n+1,kszj
+	do j=1,5
+	k(i,j)=0
+	p(i,j)=0.
+	v(i,j)=0.
+	enddo
+	enddo
+c201203
+c241103
+c       'sbh' to 'pyjets'
+	if(nbh.eq.0)goto 9000   ! 261103
+        do l=1,nbh
+        l1=n+l
+        do m=1,5
+        k(l1,m)=kbh(l,m)
+        p(l1,m)=pbh(l,m)
+        v(l1,m)=vbh(l,m)
+        enddo
+        enddo
+        n=n+nbh
+	do i=n+1,kszj   ! 261103
+	do j=1,5
+	k(i,j)=0
+	p(i,j)=0.
+	v(i,j)=0.
+	enddo
+	enddo
+9000	continue
+	endif   ! 1 241103
+c       change K0,K0ba to K0L and K0S
+	do j=1,n
+	kf=k(j,2)
+        if(kf.eq.311 .or. kf.eq.-311)then
+        rrlu=pyr(1)
+        k(j,2)=130
+        if(rrlu.gt.0.5)k(j,2)=310
+        endif
+	enddo
+c	if(iii.eq.7)then
+c	write(mstu(11),*)'be luexec'
+c	call pyedit(2)
+c	call pylist(1)
+c	write(22,*)'throe_t=',throe_t
+c	write(22,*)'ithroq_t,ithrob_t,ich_t=',ithroq_t,ithrob_t,
+c     c	 dfloat(ich_t)/3.
+c	write(22,*)'throe_p=',throe_p
+c	write(22,*)'ithroq_p,ithrob_p,ich_p=',ithroq_p,ithrob_p,
+c     c	 dfloat(ich_p)/3.
+c	write(22,*)'throe=',throe
+c	write(22,*)'ithroq,ithrob,ithroc=',ithroq,ithrob,
+c     c	 dfloat(ithroc)/3.
+c	call prt_sbh(nbh,cc)
+c	endif  
+c250209
+        n66=0
+        do j=1,n
+        kf=k(j,2)
+        if(kf.eq.22)then
+        k(j,2)=66
+        n66=n66+1
+        endif
+        enddo
+c       move "66" from 'lujets' to 'sgam'
+        if(n66.gt.0)call remo_gam(66)
+c250209
+c       perform particle, declared unstable in the 'mdcy' array, decay
 c130205	call pyexec
-777	continue   ! 070905
-	if(adj140.eq.4)call decayh(rrp)   ! 130205
+	rrp=1.16   ! 130205
+	call decayh(rrp)   ! 130205
 c181003
 888	continue
 c	write(9,*)'paciae, nnstop,zstop=',nnstop,zstop
         if(nnstop.ne.0)then
-        sstop1=zstop/float(nnstop)
+        sstop1=zstop/dfloat(nnstop)
         sstop=sstop+sstop1
         else
         nzstop=nzstop+1
@@ -1237,15 +1716,15 @@ c050603
         write(mstu(11),*)'ppsa=',(ppsa(i1),i1=1,5)
 	write(22,*)'throe_t=',throe_t
 	write(22,*)'ithroq_t,ithrob_t,ich_t=',ithroq_t,ithrob_t,
-     c	 float(ich_t)/3.
+     c	 dfloat(ich_t)/3.
 	write(22,*)'throe_p=',throe_p
 	write(22,*)'ithroq_p,ithrob_p,ich_p=',ithroq_p,ithrob_p,
-     c	 float(ich_p)/3.
+     c	 dfloat(ich_p)/3.
 	write(22,*)'throe=',throe
 	write(22,*)'ithroq,ithrob,ithroc=',ithroq,ithrob,
-     c	 float(ithroc)/3.
-        call prt_sgam(ngam)   ! 240209
-	if(itden.ne.1)call prt_sbh(nbh)
+     c	 dfloat(ithroc)/3.
+c	call prt_sbh(nbh,cc)
+        call prt_sgam(ngam)   ! 250209
 	endif  
 c050603
 600	format(25(1x,i2)/)
@@ -1285,6 +1764,10 @@ c261002
 	pzmax=0.
 	emax=0.
 c261002
+c220312
+        aecce=aecce+ecce
+c       write(9,*)'iii,ecce=',iii,ecce
+c220312
 
 c	analyse an event
 c130605	calculate trust axis for e+e-
@@ -1307,8 +1790,7 @@ c	upper hemisphere
 	endif
 	enddo
 	endif
-c130605
-c       write(5,*)'momentu, b=',bp   !150408	
+c130605	
 	do 400 j=1,n
 	ik=k(j,2)
         plu6=pyp(j,6)
@@ -1320,38 +1802,38 @@ c       write(5,*)'momentu, b=',bp   !150408
 	p4=p(j,4)
 	p5=p(j,5)   ! sa 26/05/99
 	yy=pyp(j,17)
-c261107 print p1,p2,p3 of charged particles
-c        abplu6=abs(plu6)
+c021207 print p1,p2,p3 of charged particles
+c        abplu6=dabs(plu6)
 c        if(adj140.eq.4. .and. abplu6.gt.0.9)then
 c        write(5,*)p1,p2,p3
 c        endif
 c        if(adj140.ne.4. .and. abplu6.gt.0.2)then
 c        write(5,*)p1,p2,p3
 c        endif
-c261107
+c021207
+	ppt=pyp(j,10)
 c060605
 c	calculate the y_T for e+e-
 	if(ipden.eq.2 .and. itden.eq.2)then
 	ppm=p1*ptrus(1)+p2*ptrus(2)+p3*ptrus(3)
 	pptru=ptrus(1)*ptrus(1)+ptrus(2)*ptrus(2)+ptrus(3)*ptrus(3)
-	if(pptru.gt.1.d20)pptru=1.d20
-	if(pptru.lt.1.d-20)pptru=1.d-20
-	pptru=sqrt(pptru)
+	if(pptru.gt.1.e20)pptru=1.e20
+	if(pptru.lt.1.e-20)pptru=1.e-20
+	pptru=dsqrt(pptru)
 	ppm=ppm/pptru
 	epm=ppm*ppm+0.0196
 c	0.0196=0.140*0.140
-	if(epm.gt.1.d20)epm=1.d20
-        if(epm.lt.1.d-20)epm=1.d-20
-	epm=sqrt(epm)
+	if(epm.gt.1.e20)epm=1.e20
+        if(epm.lt.1.e-20)epm=1.e-20
+	epm=dsqrt(epm)
 	denom=epm-ppm
 	epnum=epm+ppm
-	if(denom.lt.1.d-20)denom=1.d-20
-	yy=0.5*log(epnum/denom)
+	if(denom.lt.1.e-20)denom=1.e-20
+	yy=0.5*dlog(epnum/denom)
 	endif
 c060605
-	ppt=pyp(j,10)
 c281104
-	ppm=sqrt(p1*p1+p2*p2+p3*p3)
+	ppm=dsqrt(p1*p1+p2*p2+p3*p3)
 	if(ppm.le.dpmax.and.p4.le.dpmax)then
 	goto 3000
 	else
@@ -1370,12 +1852,12 @@ c261002
         r2=v(j,2)
         r3=v(j,3)
 	r4=v(j,4)
-	ar1=abs(r1)
-	ar2=abs(r2)
-	ar3=abs(r3)
-	ap1=abs(p1)
-	ap2=abs(p2)
-	ap3=abs(p3)
+	ar1=dabs(r1)
+	ar2=dabs(r2)
+	ar3=dabs(r3)
+	ap1=dabs(p1)
+	ap2=dabs(p2)
+	ap3=dabs(p3)
 	if(ar1.gt.xmax)xmax=ar1
 	if(ar2.gt.ymax)ymax=ar2
 	if(ar3.gt.zmax)zmax=ar3
@@ -1448,10 +1930,10 @@ c010220
 c       statistics of charged particles multiplicity
 c033101	statistics positive multiplicity
 c070802
-c       if(abs(plu6).gt.0.9 .and. iabs(ik).ne.11)then
+c       if(dabs(plu6).gt.0.9 .and. iabs(ik).ne.11)then
         if(adj140.eq.4. .and. plu6.gt.0.9)then   ! for hadron
 c070802
-        nchaf=nchaf+plu6
+        nchaf=nchaf+plu6 
 	npluef=npluef+plu6
 c210803
         nfvptp=nfvptp+1
@@ -1460,7 +1942,7 @@ c210803
         do i=1,iflmax
         if(c(i).lt.afl(kkk,i,1) .or. c(i).gt.afl(kkk,i,2))goto 701
         enddo
-        ncha=ncha+plu6
+        ncha=ncha+plu6 
 	nplue=nplue+plu6
 c210803
         navptp=navptp+1
@@ -1525,15 +2007,15 @@ c?????????????????????????????????????????????????????????????????????
 
 
 c	statistics of transverse energy
-c	if(abs(ik).eq.2212 .or. abs(ik).eq.211 .or. abs(ik).eq.321)
+c	if(iabs(ik).eq.2212 .or. iabs(ik).eq.211 .or. iabs(ik).eq.321)
 c     c	 then
 c	if(ik.eq.2112 .or. ik.eq.111 .or. ik.eq.310 .or. ik.eq.130 .or. 
-c     c	 abs(ik).eq.3122)then   ! neutral Et
-	if(plu6.gt.-1.d-5 .and. plu6.lt.1.d-5)then   ! neutral Et
+c     c	 iabs(ik).eq.3122)then   ! neutral Et
+	if(plu6.gt.-1.e-5 .and. plu6.lt.1.e-5)then   ! neutral Et
 cc	if(ik.eq.22 .or. ik.eq.111)then   ! electro-magnetic Et (NA50)
 	eii=pyp(j,4)
 	set=pyp(j,13)
-	sset=sin(set)
+	sset=dsin(set)
 	eiis=eii*sset
 c	if(ik.eq.310)then
 c	fettm(jjj)=fettm(jjj)+2.   ! counted due to neutral particles
@@ -1542,7 +2024,7 @@ c	fettm(jjj)=fettm(jjj)+2.*0.333   ! counted due to gamma
 c	fett(jjj)=fett(jjj)+2*eiis*0.333   ! counted due to gamma
 c	endif
 c	assume K_L0 has the same transverse energy as K_S0
-c	0.333 : branch ratio of K_S0 -> gamma
+c	0.333: branch ratio of K_S0 -> gamma
 	fettm(jjj)=fettm(jjj)+1.
 	fett(jjj)=fett(jjj)+eiis
 c	if(eta.ge.1.7 .and. eta.le.4.1)then   ! NA38 (PL,B262,362,1991)
@@ -1563,7 +2045,7 @@ c	statistics of transverse momentum of J/psi
 	ibjf=ibjf+1
 	eii=pyp(j,4)
 	set=pyp(j,13)
-	sset=sin(set)
+	sset=dsin(set)
 	eiis=eii*sset
 	pluj9=pyp(j,9)
 c        write(9,*)'iii,J/psi Pt=',iii,pluj9   ! sa
@@ -1577,12 +2059,12 @@ c        write(9,*)'iii,J/psi Pt=',iii,pluj9   ! sa
 	pbj=pbj+pluj9
 820	endif
 
-c	statistics of transverse momentum of psi'
+c	statistics of transverse momentum of psi prime
 	if(nchan.eq.3 .and. ik.eq.30443)then
 	ibpf=ibpf+1
 	eii=pyp(j,4)
 	set=pyp(j,13)
-	sset=sin(set)
+	sset=dsin(set)
 	eiis=eii*sset
 	pluj9=pyp(j,9)
 	fejp(jjj)=fejp(jjj)+eiis
@@ -1602,7 +2084,7 @@ c	statistics of y, pt, ect. distributions
 
 c????????????????????????????????????????????????????????????????????
         if(ik.eq.2212 .or. ik.eq.2112)then
-c	eep=sqrt(win*win+0.938*0.938)
+c	eep=dsqrt(win*win+0.938*0.938)
 c	if(ifram.eq.1)eep=0.5*win
 c	eepd=eep-0.001
 c	eepu=eep+0.001
@@ -1612,7 +2094,7 @@ c	nspe=nspe+1   ! 111899
 c	goto 500
 c	endif   ! 111899
 c	if(ifram.eq.1 .and. (p4.gt.eepd .and. p4.lt.eepu))then
-	if(ppt.le.1.d-4)then   
+	if(ppt.le.1.e-4)then   
 	nspe=nspe+1   ! 111899
 	goto 500
 	endif   ! 111899 
@@ -1630,7 +2112,13 @@ c210803
 c210803
 
 840	call stati(yy,ppt,eta,p5,ik,kk,w,bn,an,bnf,anf)   ! 010600
-        call flow_f(p1,p2,ppt,eta,p5,ik,kk)   ! 220607
+	call flow_f(p1,p2,ppt,yy,eta,p5,ik,kk)   ! 010412
+c	write(9,*)'p1,p2,pt,p5,ik,kk=',p1,p2,ppt,p5,ik,kk   ! sa
+c	write(9,*)'final state v1(pt)'
+c	do i1=1,20
+c	write(9,*)'i1=',i1
+c	write(9,602)(v1_pt(i1,i2),i2=1,20)
+c	enddo
 	goto 901   ! sa 26/05/99 (originally  'goto 400')
 500	continue
 c?????? follow three statements are increaded on 26/05/99 by sa ******
@@ -1672,8 +2160,8 @@ c	statistics of multiplicity distributions,
 c	 spectator nucleons are excluded
 	do kkk=1,ispmax
 c	ik=ispkf(kkk)
-c        if(abs(ik).eq.2212.or.abs(ik).eq.2112.or.abs(ik).eq.3122.or.
-c     &   abs(ik).eq.3212.or.ik.eq.3222.or.ik.eq.3112)then
+c        if(iabs(ik).eq.2212.or.iabs(ik).eq.2112.or.iabs(ik).eq.3122.or.
+c     &   iabs(ik).eq.3212.or.ik.eq.3222.or.ik.eq.3112)then
 c	multiplicity is located at which interval
 c	if(ik.eq.2212)then
 	idf=bnf(kkk)/asd(5)+1
@@ -1701,20 +2189,19 @@ csa*******************************************************************
 	sv22(i1,i2)=sv22(i1,i2)+v22(i1,i2)
 	enddo
 	enddo
-c220607
-        do i1=1,21
-        do i2=1,20
+	do i1=1,21
+	do i2=1,20
         ssnum_pt(i1,i2)=ssnum_pt(i1,i2)+snum_pt(i1,i2)   ! 280607
         ssnum_eta(i1,i2)=ssnum_eta(i1,i2)+snum_eta(i1,i2)   ! 280607
-        sv1_pt(i1,i2)=sv1_pt(i1,i2)+v1_pt(i1,i2)
-        sv2_pt(i1,i2)=sv2_pt(i1,i2)+v2_pt(i1,i2)
-        sv12_pt(i1,i2)=sv12_pt(i1,i2)+v12_pt(i1,i2)
-        sv22_pt(i1,i2)=sv22_pt(i1,i2)+v22_pt(i1,i2)
-        sv1_eta(i1,i2)=sv1_eta(i1,i2)+v1_eta(i1,i2)
-        sv2_eta(i1,i2)=sv2_eta(i1,i2)+v2_eta(i1,i2)
-        sv12_eta(i1,i2)=sv12_eta(i1,i2)+v12_eta(i1,i2)
-        sv22_eta(i1,i2)=sv22_eta(i1,i2)+v22_eta(i1,i2)
-c021107
+	sv1_pt(i1,i2)=sv1_pt(i1,i2)+v1_pt(i1,i2)
+	sv2_pt(i1,i2)=sv2_pt(i1,i2)+v2_pt(i1,i2)
+	sv12_pt(i1,i2)=sv12_pt(i1,i2)+v12_pt(i1,i2)
+	sv22_pt(i1,i2)=sv22_pt(i1,i2)+v22_pt(i1,i2)
+	sv1_eta(i1,i2)=sv1_eta(i1,i2)+v1_eta(i1,i2)
+	sv2_eta(i1,i2)=sv2_eta(i1,i2)+v2_eta(i1,i2)
+	sv12_eta(i1,i2)=sv12_eta(i1,i2)+v12_eta(i1,i2)
+	sv22_eta(i1,i2)=sv22_eta(i1,i2)+v22_eta(i1,i2)
+c021207
         sspt=snum_pt(i1,i2)
         if(sspt.gt.0.)then
         ssv1_pt(i1,i2)=ssv1_pt(i1,i2)+v1_pt(i1,i2)/sspt
@@ -1729,19 +2216,49 @@ c021107
         ssv12_eta(i1,i2)=ssv12_eta(i1,i2)+v12_eta(i1,i2)/sseta
         ssv22_eta(i1,i2)=ssv22_eta(i1,i2)+v22_eta(i1,i2)/sseta
         endif
-c021107
+c021207
+	enddo
+	enddo
+c010412
+        do i1=1,21
+        do i2=1,20
+        fssnum_pt(i1,i2)=fssnum_pt(i1,i2)+fsnum_pt(i1,i2)   
+        fssnum_eta(i1,i2)=fssnum_eta(i1,i2)+fsnum_eta(i1,i2)   
+        fsv1_pt(i1,i2)=fsv1_pt(i1,i2)+fv1_pt(i1,i2)
+        fsv2_pt(i1,i2)=fsv2_pt(i1,i2)+fv2_pt(i1,i2)
+        fsv12_pt(i1,i2)=fsv12_pt(i1,i2)+fv12_pt(i1,i2)
+        fsv22_pt(i1,i2)=fsv22_pt(i1,i2)+fv22_pt(i1,i2)
+        fsv1_eta(i1,i2)=fsv1_eta(i1,i2)+fv1_eta(i1,i2)
+        fsv2_eta(i1,i2)=fsv2_eta(i1,i2)+fv2_eta(i1,i2)
+        fsv12_eta(i1,i2)=fsv12_eta(i1,i2)+fv12_eta(i1,i2)
+        fsv22_eta(i1,i2)=fsv22_eta(i1,i2)+fv22_eta(i1,i2)
+
+	fsspt=fsnum_pt(i1,i2)
+        if(fsspt.gt.0.)then
+        fssv1_pt(i1,i2)=fssv1_pt(i1,i2)+fv1_pt(i1,i2)/fsspt
+        fssv2_pt(i1,i2)=fssv2_pt(i1,i2)+fv2_pt(i1,i2)/fsspt
+        fssv12_pt(i1,i2)=fssv12_pt(i1,i2)+fv12_pt(i1,i2)/fsspt
+        fssv22_pt(i1,i2)=fssv22_pt(i1,i2)+fv22_pt(i1,i2)/fsspt
+        endif
+        fsseta=fsnum_eta(i1,i2)
+        if(fsseta.gt.0.)then
+        fssv1_eta(i1,i2)=fssv1_eta(i1,i2)+fv1_eta(i1,i2)/fsseta
+        fssv2_eta(i1,i2)=fssv2_eta(i1,i2)+fv2_eta(i1,i2)/fsseta
+        fssv12_eta(i1,i2)=fssv12_eta(i1,i2)+fv12_eta(i1,i2)/fsseta
+        fssv22_eta(i1,i2)=fssv22_eta(i1,i2)+fv22_eta(i1,i2)/fsseta
+        endif
         enddo
         enddo
-c220607
-csa*************n******************************************************
-	fibjf=float(ibjf)
-	if(fibjf.gt.1.d-15)fpj(jjj)=fpj(jjj)+pbjf/fibjf
-	fibj=float(ibj)
-	if(fibj.gt.1.d-15)pj(jjj)=pj(jjj)+pbj/fibj
-	fibpf=float(ibpf)
-	if(fibpf.gt.1.d-15)fpjp(jjj)=fpjp(jjj)+pbpf/fibpf
-	fibp=float(ibp)
-	if(fibp.gt.1.d-15)pjp(jjj)=pjp(jjj)+pbp/fibp
+c010412
+csa*******************************************************************
+	fibjf=dfloat(ibjf)
+	if(fibjf.gt.1.e-15)fpj(jjj)=fpj(jjj)+pbjf/fibjf
+	fibj=dfloat(ibj)
+	if(fibj.gt.1.e-15)pj(jjj)=pj(jjj)+pbj/fibj
+	fibpf=dfloat(ibpf)
+	if(fibpf.gt.1.e-15)fpjp(jjj)=fpjp(jjj)+pbpf/fibpf
+	fibp=dfloat(ibp)
+	if(fibp.gt.1.e-15)pjp(jjj)=pjp(jjj)+pbp/fibp
 
 	do kk=1,ispmax
 	sbn(kk)=sbn(kk)+bn(kk)
@@ -1753,10 +2270,12 @@ csa*************n******************************************************
 	enddo
 	enddo
 	enddo
+        eevpav=eevpav+eevp   ! 271205
+        eevhav=eevhav+eevh   ! 271205
 c	write(9,*)'npel,npinel(592)=',npel,npinel(592)   ! 061103
 	pel=pel+npel   ! 061103
 	pinel=pinel+npinel(592)   
-c280809 rel=rel+nrel   ! 071103
+c220110 rel=rel+nrel   ! 071103
 	sel=sel+noel
 	do i1=1,600
 c	pinel=pinel+npinel(i1)   ! 061103
@@ -1764,7 +2283,6 @@ c	pinel=pinel+npinel(i1)   ! 061103
 	dinel(i1)=dinel(i1)+noinel(i1)
 	enddo
 c071103
-        rinel=0.   ! 230210
 	do i1=1,9
 	rinel=rinel+nreac(i1)
 	enddo
@@ -1832,42 +2350,47 @@ c200601
 	do i1=1,4
 	sthroe(i1)=sthroe(i1)+throe(i1)+throe_p(i1)+throe_t(i1)
 	enddo
-	stime_neu=stime_neu+time_neu
+c081010	stime=stime+time_par+time_had
+        stime_ini=stime_ini+time_ini   ! 081010
 	stime_par=stime_par+time_par
 	stime_had=stime_had+time_had
+        if(time_ini.gt.0.d0)stimei=stimei+1.d0   ! 081010
+        if(time_par.gt.0.d0)stimep=stimep+1.d0   ! 081010
+        if(time_had.gt.0.d0)stimeh=stimeh+1.d0   ! 081010
 	snspe=snspe+nspe   ! 111899
 c210803
         do i1=1,20
-        davpt=float(navpt(i1))
+        davpt=dfloat(navpt(i1))
         if(davpt.gt.0.)then   ! 170705
 	savpt(i1)=savpt(i1)+avpt(i1)/davpt
 	nsavpt(i1)=nsavpt(i1)+1 ! statistics of event with particle i1 (partial)
 	endif   ! 170705
-        davpt=float(nfvpt(i1))
+        davpt=dfloat(nfvpt(i1))
         if(davpt.gt.0.)then   ! 170705
 	sfvpt(i1)=sfvpt(i1)+fvpt(i1)/davpt
         nsfvpt(i1)=nsfvpt(i1)+1 ! statistics of event with particle i1 (full)
 	endif   ! 170705
         enddo
-        davpt=float(navptn)
+        davpt=dfloat(navptn)
         if(davpt.gt.0.)savptn=savptn+avptn/davpt
-        davpt=float(navptp)
+        davpt=dfloat(navptp)
         if(davpt.gt.0.)savptp=savptp+avptp/davpt
-        davpt=float(nfvptn)
+        davpt=dfloat(nfvptn)
         if(davpt.gt.0.)sfvptn=sfvptn+fvptn/davpt
-        davpt=float(nfvptp)
+        davpt=dfloat(nfvptp)
         if(davpt.gt.0.)sfvptp=sfvptp+fvptp/davpt
 c210803
 
 	if(nchan.eq.3)then
 	call stapsi(nspsf,nspsif,nsps,nspsi)
-        if(nssjp.ge.1 .and. ssjp.ge.1.d-15)then
+        if(nssjp.ge.1 .and. ssjp.ge.1.e-15)then
         edeg=ssjp/nssjp
         degn=(1.-3.097/edeg)**12
         degr=degn/degd
 	endif
 c       degr : suppression factor caused by degradation
         endif
+
 c020708
         if(kjp22.eq.0 .or. kjp22.eq.1)then
         skapa(1)=skapa(1)+akapa(1)
@@ -1880,7 +2403,7 @@ c020708
         if(itime.ne.0)mkapa=mkapa+1
         endif
 c       mkapa: number of events with string
-c020708        
+c020708
 	open(8,file='nout.out',status='unknown')
 	write(8,*)'iii=',iii
 	close(8)
@@ -1930,12 +2453,12 @@ c       pt1.dat, for example, stores pt dis. (two column) of 1-th particle
 	open(79,file='pt19f.dat',status='unknown')
 	open(80,file='pt20f.dat',status='unknown')
 c300404
-	flaa=float(iii-ich)   ! July/20/98
+	flaa=dfloat(iii-ich)   ! July/20/98
 c181003
-	flaaa=float(iii-ich-nzstop)
+	flaaa=dfloat(iii-ich-nzstop)
 	if(flaaa.gt.1.d-20)dsstop=sstop/flaaa
 c181003
-	if(flaa.le.1.d-20)goto 1200
+	if(flaa.le.1.e-20)goto 1200
 c261002
 	dxmax=sxmax/flaa
 	dymax=symax/flaa
@@ -1955,6 +2478,7 @@ c       dudsb(i1)=udsb(i1)/flaa/qvolum
         enddo
 	fdg=fg/flaa   
 c261002
+	aecceo=aecce/flaa   ! 220312
 	dnmino=nmin/flaa
 	dnminfo=nminf/flaa
 c010200
@@ -2019,74 +2543,76 @@ c020708
         if(kjp22.eq.0 .or. kjp22.eq.1)then
         sastro=sastr/flaa
         if(mkapa.gt.0)then
-        sgtimeo=sgtime/float(mkapa)
+        sgtimeo=sgtime/dfloat(mkapa)
 c       sgtimeo: average number of gluons in a string over strings with gluon
         do i1=1,5
-        skapao(i1)=skapa(i1)/float(mkapa)
+        skapao(i1)=skapa(i1)/dfloat(mkapa)
         enddo
         endif
         endif
 c020708
+        eevpao=eevpav/flaa   ! 271205
+        eevhao=eevhav/flaa   ! 271205
 
 csa*******************************************************************
 	do i1=1,2
 	do i2=1,itnum
 	sss=ssnum(i1,i2)
-	if(sss.gt.1.d-5)then
+	if(sss.gt.1.e-5)then
 	sss1=sv1(i1,i2)/sss
 	sss2=sv2(i1,i2)/sss
 	sv1o(i1,i2)=sss1
         sv2o(i1,i2)=sss2
-c121207	sv12o(i1,i2)=sqrt((sv12(i1,i2)/sss-sss1*sss1)/(sss-1))
-c121207 sv22o(i1,i2)=sqrt((sv22(i1,i2)/sss-sss2*sss2)/(sss-1))
-	sv12o(i1,i2)=sqrt(sv12(i1,i2)/sss-sss1*sss1)   ! 121207
-        sv22o(i1,i2)=sqrt(sv22(i1,i2)/sss-sss2*sss2)   ! 121207
+c121207 sv12o(i1,i2)=dsqrt((sv12(i1,i2)/sss-sss1*sss1)/(sss-1))
+c121207 sv22o(i1,i2)=dsqrt((sv22(i1,i2)/sss-sss2*sss2)/(sss-1))
+        sv12o(i1,i2)=dsqrt(sv12(i1,i2)/sss-sss1*sss1)   ! 121207
+        sv22o(i1,i2)=dsqrt(sv22(i1,i2)/sss-sss2*sss2)   ! 121207
 	endif
 	enddo
-	enddo
+	enddo   
 c220607
         do i1=1,21
         do i2=1,20
         sss=ssnum_pt(i1,i2)   ! 280607
-        if(sss.gt.1.d-5)then   ! 280607
+        if(sss.gt.1.e-5)then   ! 280607
         sv1op=sv1_pt(i1,i2)/sss   ! direct, average
         sv1o_pt(i1,i2)=sv1op
         sv12op=sv12_pt(i1,i2)/sss   ! direct, squared average
-c121207 if(sss-1.gt.1.d-5)then   ! 280607
+c121207 if(sss-1.gt.1.e-5)then   ! 280607
 c121207 sv12op=(sv12op-sv1op*sv1op)/(sss-1.)
         sv12op=sv12op-sv1op*sv1op   ! 121207
-        if(sv12op.le.1.d-20)sv12op=1.d-20
-        sv12o_pt(i1,i2)=sqrt(sv12op)   !  direct, error
+        if(sv12op.le.1.e-20)sv12op=1.e-20
+        sv12o_pt(i1,i2)=dsqrt(sv12op)   !  direct, square root of variance
 c121207 endif   ! 280607
         sv2op=sv2_pt(i1,i2)/sss   ! elliptic, average
         sv2o_pt(i1,i2)=sv2op
         sv22op=sv22_pt(i1,i2)/sss   ! elliptic, squared average
-c121207 if(sss-1.gt.1.d-5)then   ! 280607
+c121207 if(sss-1.gt.1.e-5)then   ! 280607
 c121207 sv22op=(sv22op-sv2op*sv2op)/(sss-1.)
         sv22op=sv22op-sv2op*sv2op   ! 121207
-        if(sv22op.le.1.d-20)sv22op=1.d-20
-        sv22o_pt(i1,i2)=sqrt(sv22op)   ! elliptic, error
+        if(sv22op.le.1.e-20)sv22op=1.e-20
+        sv22o_pt(i1,i2)=dsqrt(sv22op)   ! elliptic, square root of variance
 c121207 endif   ! 280607
         endif   ! 280607
         sss=ssnum_eta(i1,i2)   ! 280607
-        if(sss.gt.1.d-5)then   ! 280607
+        if(sss.gt.1.e-5)then   ! 280607
         sv1oe=sv1_eta(i1,i2)/sss   ! direct, average
         sv1o_eta(i1,i2)=sv1oe   
         sv12oe=sv12_eta(i1,i2)/sss   ! direct, squared average
-c121207 if(sss-1.gt.1.d-5)then   ! 280607
+c121207 if(sss-1.gt.1.e-5)then   ! 280607
 c121207 sv12oe=(sv12oe-sv1oe*sv1oe)/(sss-1.)
         sv12oe=sv12oe-sv1oe*sv1oe   ! 121207
-        if(sv12oe.le.1.d-20)sv12oe=1.d-20
-        sv12o_eta(i1,i2)=sqrt(sv12oe)   !  direct, error
-c121207 endif   ! 280607
+        if(sv12oe.le.1.e-20)sv12oe=1.e-20
+        sv12o_eta(i1,i2)=dsqrt(sv12oe)   !  direct, square root of variance
+c121207 endif   ! 280607   
         sv2oe=sv2_eta(i1,i2)/sss   ! elliptic, average
         sv2o_eta(i1,i2)=sv2oe   
         sv22oe=sv22_eta(i1,i2)/sss   ! elliptic, squared average
-c121207 if(sss-1.gt.1.d-5)then   ! 280607
+c121207 if(sss-1.gt.1.e-5)then   ! 280607
 c121207 sv22oe=(sv22oe-sv2oe*sv2oe)/(sss-1.)
-        sv22oe=sv22oe-sv2oe*sv2oe   ! 121207   
-        if(sv22oe.le.1.d-20)sv22oe=1.d-20
-        sv22o_eta(i1,i2)=sqrt(sv22oe)   ! elliptic, error
+        sv22oe=sv22oe-sv2oe*sv2oe   ! 121207
+        if(sv22oe.le.1.e-20)sv22oe=1.e-20
+        sv22o_eta(i1,i2)=dsqrt(sv22oe)   ! elliptic, square root of variance
 c121207 endif   ! 280607
         endif   ! 280607
         enddo
@@ -2097,7 +2623,7 @@ c061103
 	pineli=pinel/flaa
 c061103
 c071103
-	reli=nrel/flaa   ! original =rel/flaa
+	reli=nrel/flaa   ! original =rel/flaa 220110
 	rineli=rinel/flaa
 c071103
 	seli=sel/flaa
@@ -2130,7 +2656,7 @@ c200601
 	skppo=skpp/flaa
 	sknpo=sknp/flaa
 c200601
-c021107
+c021207
         do i1=1,21
         do i2=1,20
         sv1op=ssv1_pt(i1,i2)/flaa
@@ -2139,17 +2665,17 @@ c021107
 c121207 if(flaa-1.gt.0.)then
 c121207 sv12op=(sv12op-sv1op*sv1op)/(flaa-1.)
         sv12op=sv12op-sv1op*sv1op   ! 121207
-        if(sv12op.le.1.d-20)sv12op=1.d-20
-        ssv12o_pt(i1,i2)=sqrt(sv12op)   !  direct, error
+        if(sv12op.le.1.e-20)sv12op=1.e-20
+        ssv12o_pt(i1,i2)=dsqrt(sv12op)   !  direct, square root of variance
 c121207 endif
-        sv2op=ssv2_pt(i1,i2)/flaa   
+        sv2op=ssv2_pt(i1,i2)/flaa
         ssv2o_pt(i1,i2)=sv2op   ! elliptic, average
         sv22op=ssv22_pt(i1,i2)/flaa   ! elliptic, squared average
 c121207 if(flaa-1.gt.0.)then
 c121207 sv22op=(sv22op-sv2op*sv2op)/(flaa-1.)
-        sv22op=sv22op-sv2op*sv2op   !121207
-        if(sv22op.le.1.d-20)sv22op=1.d-20
-        ssv22o_pt(i1,i2)=sqrt(sv22op)   ! elliptic, error
+        sv22op=sv22op-sv2op*sv2op   ! 121207
+        if(sv22op.le.1.e-20)sv22op=1.e-20
+        ssv22o_pt(i1,i2)=dsqrt(sv22op)   ! elliptic, square root of variance
 c121207 endif
         sv1op=ssv1_eta(i1,i2)/flaa
         ssv1o_eta(i1,i2)=sv1op   ! direct, average
@@ -2157,45 +2683,149 @@ c121207 endif
 c121207 if(flaa-1.gt.0.)then
 c121207 sv12op=(sv12op-sv1op*sv1op)/(flaa-1.)
         sv12op=sv12op-sv1op*sv1op   ! 121207
-        if(sv12op.le.1.d-20)sv12op=1.d-20
-        ssv12o_eta(i1,i2)=sqrt(sv12op)   !  direct, error
+        if(sv12op.le.1.e-20)sv12op=1.e-20
+        ssv12o_eta(i1,i2)=dsqrt(sv12op)   !  direct, square root of variance
 c121207 endif
-        sv2op=ssv2_eta(i1,i2)/flaa   
+        sv2op=ssv2_eta(i1,i2)/flaa
         ssv2o_eta(i1,i2)=sv2op   ! elliptic, average
         sv22op=ssv22_eta(i1,i2)/flaa   ! elliptic, squared average
 c121207 if(flaa-1.gt.0.)then
 c121207 sv22op=(sv22op-sv2op*sv2op)/(flaa-1.)
         sv22op=sv22op-sv2op*sv2op   ! 121207
-        if(sv22op.le.1.d-20)sv22op=1.d-20
-        ssv22o_eta(i1,i2)=sqrt(sv22op)   ! elliptic, error
+        if(sv22op.le.1.e-20)sv22op=1.e-20
+        ssv22o_eta(i1,i2)=dsqrt(sv22op)   ! elliptic, square root of variance
 c121207 endif
         enddo
         enddo
-c021107
+c021207
+c010412
+        do i1=1,21
+        do i2=1,20
+        fsss=fssnum_pt(i1,i2)   ! 280607
+        if(fsss.gt.1.d-5)then   ! 280607
+        fsv1op=fsv1_pt(i1,i2)/fsss   ! direct, average
+        fsv1o_pt(i1,i2)=fsv1op
+        fsv12op=fsv12_pt(i1,i2)/fsss   ! direct, squared average
+c121207 if(sss-1.gt.1.d-5)then   ! 280607
+c121207 sv12op=(sv12op-sv1op*sv1op)/(sss-1.)
+        fsv12op=fsv12op-fsv1op*fsv1op   ! 121207
+        if(fsv12op.le.1.d-20)fsv12op=1.d-20
+        fsv12o_pt(i1,i2)=sqrt(fsv12op)   !  direct, square root of variance
+c121207 endif   ! 280607
+        fsv2op=fsv2_pt(i1,i2)/fsss   ! elliptic, average
+        fsv2o_pt(i1,i2)=fsv2op
+        fsv22op=fsv22_pt(i1,i2)/fsss   ! elliptic, squared average
+c121207 if(sss-1.gt.1.d-5)then   ! 280607
+c121207 sv22op=(sv22op-sv2op*sv2op)/(sss-1.)
+        fsv22op=fsv22op-fsv2op*fsv2op   ! 121207
+        if(fsv22op.le.1.d-20)fsv22op=1.d-20
+        fsv22o_pt(i1,i2)=sqrt(fsv22op)   ! elliptic, square root of variance
+c121207 endif   ! 280607
+        endif   ! 280607
+        fsss=fssnum_eta(i1,i2)   ! 280607
+        if(fsss.gt.1.d-5)then   ! 280607
+        fsv1oe=fsv1_eta(i1,i2)/fsss   ! direct, average
+        fsv1o_eta(i1,i2)=fsv1oe
+        fsv12oe=fsv12_eta(i1,i2)/fsss   ! direct, squared average
+c121207 if(sss-1.gt.1.d-5)then   ! 280607
+c121207 sv12oe=(sv12oe-sv1oe*sv1oe)/(sss-1.)
+        fsv12oe=fsv12oe-fsv1oe*fsv1oe   ! 121207
+        if(fsv12oe.le.1.d-20)fsv12oe=1.d-20
+        fsv12o_eta(i1,i2)=sqrt(fsv12oe)   !  direct, square root of variance
+c121207 endif   ! 280607
+        fsv2oe=fsv2_eta(i1,i2)/fsss   ! elliptic, average
+        fsv2o_eta(i1,i2)=fsv2oe
+        fsv22oe=fsv22_eta(i1,i2)/fsss   ! elliptic, squared average
+c121207 if(sss-1.gt.1.d-5)then   ! 280607
+c121207 sv22oe=(sv22oe-sv2oe*sv2oe)/(sss-1.)
+        fsv22oe=fsv22oe-fsv2oe*fsv2oe   ! 121207   
+        if(fsv22oe.le.1.d-20)fsv22oe=1.d-20
+        fsv22o_eta(i1,i2)=sqrt(fsv22oe)   ! elliptic, square root of variance
+c121207 endif   ! 280607
+        endif   ! 280607
+        enddo
+        enddo
+
+        do i1=1,21
+        do i2=1,20
+        fsv1op=fssv1_pt(i1,i2)/flaa
+        fssv1o_pt(i1,i2)=fsv1op   ! direct, average
+        fsv12op=fssv12_pt(i1,i2)/flaa   ! direct, squared average
+c121207 if(flaa-1.gt.0.)then
+c121207 sv12op=(sv12op-sv1op*sv1op)/(flaa-1.)
+        fsv12op=fsv12op-fsv1op*fsv1op   ! 121207
+        if(fsv12op.le.1.d-20)fsv12op=1.d-20
+        fssv12o_pt(i1,i2)=sqrt(fsv12op)   !  direct, square root of variance
+c121207 endif
+        fsv2op=fssv2_pt(i1,i2)/flaa   
+        fssv2o_pt(i1,i2)=fsv2op   ! elliptic, average
+        fsv22op=fssv22_pt(i1,i2)/flaa   ! elliptic, squared average
+c121207 if(flaa-1.gt.0.)then
+c121207 sv22op=(sv22op-sv2op*sv2op)/(flaa-1.)
+        fsv22op=fsv22op-fsv2op*fsv2op   !121207
+        if(fsv22op.le.1.d-20)fsv22op=1.d-20
+        fssv22o_pt(i1,i2)=sqrt(fsv22op)   ! elliptic, square root of variance
+c121207 endif
+        fsv1op=fssv1_eta(i1,i2)/flaa
+        fssv1o_eta(i1,i2)=fsv1op   ! direct, average
+        fsv12op=fssv12_eta(i1,i2)/flaa   ! direct, squared average
+c121207 if(flaa-1.gt.0.)then
+c121207 sv12op=(sv12op-sv1op*sv1op)/(flaa-1.)
+        fsv12op=fsv12op-fsv1op*fsv1op   ! 121207
+        if(fsv12op.le.1.d-20)fsv12op=1.d-20
+        fssv12o_eta(i1,i2)=sqrt(fsv12op)   !  direct, square root of variance
+c121207 endif
+        fsv2op=fssv2_eta(i1,i2)/flaa   
+        fssv2o_eta(i1,i2)=fsv2op   ! elliptic, average
+        fsv22op=fssv22_eta(i1,i2)/flaa   ! elliptic, squared average
+c121207 if(flaa-1.gt.0.)then
+c121207 sv22op=(sv22op-sv2op*sv2op)/(flaa-1.)
+        fsv22op=fsv22op-fsv2op*fsv2op   ! 121207
+        if(fsv22op.le.1.d-20)fsv22op=1.d-20
+        fssv22o_eta(i1,i2)=sqrt(fsv22op)   ! elliptic, square root of variance
+c121207 endif
+        enddo
+        enddo
+c010412
 	wthroq=sthroq/flaa
 	wthrob=sthrob/flaa
         wthroc=sthroc/flaa
 	do i1=1,4
 	wthroe(i1)=sthroe(i1)/flaa
 	enddo
-c280809
-        srea=0.   ! 230210
+c220110
         do i1=1,9
-c230210 nrea=nrea+nreac(i1)
+        nrea=nrea+nreac(i1)
         snreac(i1)=nreac(i1)/flaa
-        srea=srea+snreac(i1)   ! 230210
         enddo
-c230210 srea=float(nrea)/flaa
-c280809
-	timeo_neu=stime_neu/flaa   ! 121110
-	timeo_par=stime_par/flaa
-	timeo_had=stime_had/flaa
+        srea=float(nrea)/flaa
+c220110
+c081010	timeo=stime/flaa
+c081010	timeo_par=stime_par/flaa
+        if(stimei.gt.0.d0)then
+        timeo_ini=stime_ini/stimei
+        else
+        timeo_ini=0.d0
+        endif
+        if(stimep.gt.0.d0)then
+        timeo_par=stime_par/stimep
+        else
+        timeo_par=0.d0
+        endif
+c081010	timeo_had=stime_had/flaa
+        if(stimeh.gt.0.d0)then
+        timeo_had=stime_had/stimeh
+        else
+        timeo_had=0.d0
+        endif
+        timeo=timeo_ini+timeo_par+timeo_had
+c081010
 	snspeo=snspe/flaa   ! 111899
 c210803
         do i1=1,20
-	avpti1=float(nsavpt(i1)) !   170705
+	avpti1=dfloat(nsavpt(i1)) !   170705
         if(avpti1.gt.0.)avpto(i1)=savpt(i1)/avpti1 !   flaa 170705
-	avpti1=float(nsfvpt(i1)) !   170705
+	avpti1=dfloat(nsfvpt(i1)) !   170705
         if(avpti1.gt.0.)fvpto(i1)=sfvpt(i1)/avpti1 !   flaa 170705
         enddo
         avptno=savptn/flaa
@@ -2205,13 +2835,13 @@ c210803
 c210803
 	do i1=1,10
 	sbpi=sbp(i1)
-	if(sbpi.gt.1.d-15)then
+	if(sbpi.gt.1.e-15)then
 	etti1=ett(i1)/sbpi
 	etti(i1)=etti1
 	fetti1=fett(i1)/sbpi
 	fetti(i1)=fetti1
-        if(etti1.ge.1.d-15)ettmi(i1)=ettm(i1)/sbpi/etti1
-        if(fetti1.ge.1.d-15)fettmi(i1)=fettm(i1)/sbpi/fetti1
+        if(etti1.ge.1.e-15)ettmi(i1)=ettm(i1)/sbpi/etti1
+        if(fetti1.ge.1.e-15)fettmi(i1)=fettm(i1)/sbpi/fetti1
 	endif
 	enddo
 
@@ -2222,7 +2852,7 @@ c210803
 	spsio=nspsi/flaa
 	do i1=1,10
 	sbpi=sbp(i1)
-	if(sbpi.gt.1.d-15)then
+	if(sbpi.gt.1.e-15)then
 	eji(i1)=ej(i1)/sbpi
 	pji(i1)=pj(i1)/sbpi
 	ejpi(i1)=ejp(i1)/sbpi
@@ -2245,43 +2875,42 @@ c061103
 	write(10,*)(msub(i),i=126,150)
         write(10,*)(msub(i),i=151,175) 
 	write(10,*)(msub(i),i=176,200)
-	write(10,*)'mstp82,parp81,bp=',mstp(82),parp(81),bp   ! 291207
+	write(10,*)'parp81,bp,mstp82=',parp(81),bp,mstp(82)    ! 291207  
 	write(10,*)'nn colli. # and blocked # in parton initialization=',
      c	 pineli,peli,peli+pineli
 c071103
 	write(10,*)'# of successful and blocked collision in parton 
      c	 cascade=',rineli,reli,reli+rineli
 c071103
-c280809
+c220110
         write(10,*)'average collision # in parton cascade=',srea
         write(10,*)'total # of scaterring processes in parton cascade'
         write(10,*)(snreac(i1),i1=1,9)
-c280809
+c220110
 	write(10,*)'el. and inela. colli. # and sum in hadron cascade=',
      c	 seli,sineli,seli+sineli
-	write(10,*)'time_neu,par,had=',timeo_neu,timeo_par,timeo_had   ! 121110
-c121110	timeo_neu: time in nucleon cascade averaged over enents
-c111010 timeo_par: time in parton cascade averaged over enents
-c111010 timeo_had: time in hadron cascade averaged over enents
+	write(10,*)'time_ini,par,had, sum=',timeo_ini,timeo_par,
+     c   timeo_had,timeo   ! 081010
 c061103
 	write(10,*)'statistics case of no colli. in parcas =',siijk!201203  
 c200601
 	write(10,*)'(Npart)mini-jet,Nnn,Npp=',skparo,sknno,skppo
 	write(10,*)'Nnp,Ntot=',sknpo,sknno+skppo+sknpo
 c200601
-	write(10,*)'(Npart)spec. and z=',nap+nat-snspeo,dsstop
+	write(10,*)'(Npart)spec.,z,aecceo=',nap+nat-snspeo,dsstop,
+     c   aecceo   ! 220312 
 c020708
         if(kjp22.eq.0 .or. kjp22.eq.1)then
         write(10,*)'kjp22=0, par1,par2,par3,par21=',
      c   parj1,parj2,parj3,parj21
         write(10,*)'keff2,par2,par21,par1,par3=',
      c   (skapao(i1),i1=1,5)
-        write(10,*)'average # of events with string,average # of gluons'
-        write(10,*)'in a string and average # of strings in an event',
-     c   mkapa,sgtimeo,sastro
+        write(10,*)'average # of gluons in a string,average # of'
+        write(10,*)'strings in an event and average # of events' 
+        write(10,*)'with string',sgtimeo,sastro,mkapa
         endif
 c020708
-	write(10,*)'multiplicity of negative particles=',dnmino
+        write(10,*)'multiplicity of negative particles=',dnmino
 	write(10,*)'multiplicity of negative particles=',dnminfo
 c010220
 c033101	write(10,*)'multiplicity of charged particles,partial=',dncha
@@ -2346,7 +2975,7 @@ c	if(tabafo.ne.0.)write(10,*)(tabaf2-tabafo*tabafo)/tabafo
 c	write(10,*)'final net baryon fluctuation per ...,partial'
 c	write(10,*)'tbard,tbard2=',tbard,tbard2
 c	if(tbaro+tabaro.ne.0.)write(10,*)(tbard2-tbard*tbard)/
-c     &	 (tbaro+tabaro)
+c    &	 (tbaro+tabaro)
 c	write(10,*)'final net baryon fluctuation per ...,full'
 c	write(10,*)'tbardf,tbadf2=',tbardf,tbadf2	
 c	if(tbarfo+tabafo.ne.0.)write(10,*)(tbadf2-tbardf*tbardf)/
@@ -2354,7 +2983,7 @@ c     &	 (tbarfo+tabafo)
 
 c033101
 c        write(10,*)'avb,avneu,astbp,astbt=',avb,avneu,astbp,astbt
-c	write(10,*)'ave. participant=',aneump,aneumt,vneum   ! 191110
+c	write(10,*)'ave. participant=',aneump,aneumt,vneum   ! 241110
 c        write(10,*)'ich=',ich   ! July/20/98
         write(10,*)'particle multiplicity=',(sbof(ll),ll=1,ispmax)
 	write(10,*)'particle multiplicity=',(sbo(ll),ll=1,ispmax)
@@ -2385,7 +3014,7 @@ c	else
 c	write(10,*)'<o2>,<o>2=',bb,bb2
 c	endif
 c	enddo
-c       write(10,*)'antibaryon number fluctuation per antibaryon,partial'
+c      write(10,*)'antibaryon number fluctuation per antibaryon,partial'
 c	do i1=1,10
 c	bb=oabar(i1)
 c	bb2=oabar2(i1)
@@ -2429,28 +3058,28 @@ c033101
 c	write(10,*)'total transverse energy='
 c	write(10,*)(fetti(i1),i1=1,10)
 c	write(10,*)(etti(i1),i1=1,10)
-c        write(10,*)'total transverse energy distribution='
+c       write(10,*)'total transverse energy distribution='
 c        write(10,*)(fettmi(i1),i1=1,10)
 c        write(10,*)(ettmi(i1),i1=1,10)
 c        if(nchan.eq.3)then
 c        write(10,*)'iii,njp,edeg,degr=',iii,nssjp,edeg,degr
 c        write(10,*)'J/psi and psi=',spsfo,spsifo,spso,spsio
-c	if(spsfo.gt.1.d-10)sbof6=sbof(6)/spsfo
+c	if(spsfo.gt.1.e-10)sbof6=sbof(6)/spsfo
 c	write(10,*)'J/psi S fac. without and with D=',sbof6,sbof6*degr
-c	if(spsifo.gt.1.d-10)sbof7=sbof(7)/spsifo
+c	if(spsifo.gt.1.e-10)sbof7=sbof(7)/spsifo
 c	write(10,*)'psi S fac. without and with D=',sbof7,sbof7*degr
 c        sbof67=sbof(6)+sbof(7)
 c        spsfot=spsfo+spsifo
-c        if(spsfot.gt.1.d-10)sboft=sbof67/spsfot
+c        if(spsfot.gt.1.e-10)sboft=sbof67/spsfot
 c        write(10,*)'S fac. without and with D=',sboft,sboft*degr
-c	if(spso.gt.1.d-10)sbo6=sbo(6)/spso
+c	if(spso.gt.1.e-10)sbo6=sbo(6)/spso
 c	write(10,*)'J/psi S fac. without and with D=',sbo6,sbo6*degr
-c	if(spsio.gt.1.d-10)sbo7=sbo(7)/spsio
+c	if(spsio.gt.1.e-10)sbo7=sbo(7)/spsio
 c	write(10,*)'psi S fac. without and with D=',sbo7,sbo7*degr
-c        sbo67=sbo(6)+sbo(7)
+c       sbo67=sbo(6)+sbo(7)
 c        spsot=spso+spsio
-c        if(spsot.gt.1.d-10)sbot=sbo67/spsot
-c       write(10,*)'S fac. without and with D=',sbot,sbot*degr
+c        if(spsot.gt.1.e-10)sbot=sbo67/spsot
+c        write(10,*)'S fac. without and with D=',sbot,sbot*degr
 c	write(10,*)'J/psi transverse energy='
 c	write(10,*)(feji(i1),i1=1,10)
 c	write(10,*)(eji(i1),i1=1,10)
@@ -2466,108 +3095,194 @@ c	write(10,*)(pjpi(i1),i1=1,10)
 c	endif
 
 csa****************************************************************
-c	write(10,*)'proton v1'
+c	write(10,*)'time dependent gluon v1'
 c	write(10,601)(sv1o(1,i2),i2=1,itnum)
-c	write(10,*)'error of proton v1'
+c	write(10,*)'square root of variance of gluon v1'
 c	write(10,601)(sv12o(1,i2),i2=1,itnum)
-c	write(10,*)'proton v2'
+c	write(10,*)'time dependent gluon v2'
 c	write(10,601)(sv2o(1,i2),i2=1,itnum)
-c	write(10,*)'error of proton v2'
+c	write(10,*)'square root of variance of gluon v2'
 c	write(10,601)(sv22o(1,i2),i2=1,itnum)
-c	write(10,*)'pion v1'
+c	write(10,*)'time dependent u pair v1'
 c	write(10,601)(sv1o(2,i2),i2=1,itnum)
-c	write(10,*)'error of pion v1'
+c	write(10,*)'square root of variance of u pair v1'
 c	write(10,601)(sv12o(2,i2),i2=1,itnum)
-c	write(10,*)'pion v2'
+c	write(10,*)'time dependent u pair v2'
 c	write(10,601)(sv2o(2,i2),i2=1,itnum)
-c	write(10,*)'error of pion v2'
+c	write(10,*)'square root of variance of u pair v2'
 c	write(10,601)(sv22o(2,i2),i2=1,itnum)
-c220607
-        write(10,*)'final state v1(pt)'
-        do i1=1,21
-        write(10,*)'i1=',i1
-        write(10,602)(sv1o_pt(i1,i2),i2=1,20)
-        enddo
-        write(10,*)'error of v1(pt)'
-        do i1=1,21
-        write(10,*)'i1=',i1
-        write(10,602)(sv12o_pt(i1,i2),i2=1,20)
-        enddo
-        write(10,*)'final state v2(pt)'
-        do i1=1,21
-        write(10,*)'i1=',i1
-        write(10,602)(sv2o_pt(i1,i2),i2=1,20)
-        enddo
-        write(10,*)'error of v2(pt)'
-        do i1=1,21
-        write(10,*)'i1=',i1
-        write(10,602)(sv22o_pt(i1,i2),i2=1,20)
-        enddo
-        write(10,*)'final state v1(eta)'
-        do i1=1,21
-        write(10,*)'i1=',i1
-        write(10,602)(sv1o_eta(i1,i2),i2=1,20)
-        enddo
-        write(10,*)'error of v1(eta)'
-        do i1=1,21
-        write(10,*)'i1=',i1
-        write(10,602)(sv12o_eta(i1,i2),i2=1,20)
-        enddo
-        write(10,*)'final state v2(eta)'
-        do i1=1,21
-        write(10,*)'i1=',i1
-        write(10,602)(sv2o_eta(i1,i2),i2=1,20)
-        enddo
-        write(10,*)'error of v2(eta)'
-        do i1=1,21
-        write(10,*)'i1=',i1
-        write(10,602)(sv22o_eta(i1,i2),i2=1,20)
-        enddo
+
+        write(10,*)'particle-wise average, partial phase space'   ! 010412
+	write(10,*)'final state v1(pt)'
+	do i1=1,21
+	write(10,*)'i1=',i1
+	write(10,602)(sv1o_pt(i1,i2),i2=1,20)
+	enddo
+	write(10,*)'square root of variance of v1(pt)'
+	do i1=1,21
+	write(10,*)'i1=',i1
+	write(10,602)(sv12o_pt(i1,i2),i2=1,20)
+	enddo
+	write(10,*)'final state v2(pt)'
+	do i1=1,21
+	write(10,*)'i1=',i1
+	write(10,602)(sv2o_pt(i1,i2),i2=1,20)
+	enddo
+	write(10,*)'square root of variance of v2(pt)'
+	do i1=1,21
+	write(10,*)'i1=',i1
+	write(10,602)(sv22o_pt(i1,i2),i2=1,20)
+	enddo
+	write(10,*)'final state v1(eta)'
+	do i1=1,21
+	write(10,*)'i1=',i1
+	write(10,602)(sv1o_eta(i1,i2),i2=1,20)
+	enddo
+	write(10,*)'square root of variance of v1(eta)'
+	do i1=1,21
+	write(10,*)'i1=',i1
+	write(10,602)(sv12o_eta(i1,i2),i2=1,20)
+	enddo
+	write(10,*)'final state v2(eta)'
+	do i1=1,21
+	write(10,*)'i1=',i1
+	write(10,602)(sv2o_eta(i1,i2),i2=1,20)
+	enddo
+	write(10,*)'square root of variance of v2(eta)'
+	do i1=1,21
+	write(10,*)'i1=',i1
+	write(10,602)(sv22o_eta(i1,i2),i2=1,20)
+	enddo
+601	format(8(1x,f7.4))
 602     format(6(1x,e10.3))
-c220607
-c021107
-        write(10,*)'final state v1(pt) s'
+c021207
+        write(10,*)'event-wise average, partial phase space'   ! 010412
+        write(10,*)'final state v1(pt) e'
         do i1=1,21
         write(10,*)'i1=',i1
         write(10,602)(ssv1o_pt(i1,i2),i2=1,20)
         enddo
-        write(10,*)'error of v1(pt) s'
+        write(10,*)'square root of variance of v1(pt) e'
         do i1=1,21
         write(10,*)'i1=',i1
         write(10,602)(ssv12o_pt(i1,i2),i2=1,20)
         enddo
-        write(10,*)'final state v2(pt) s'
+        write(10,*)'final state v2(pt) e'
         do i1=1,21
         write(10,*)'i1=',i1
         write(10,602)(ssv2o_pt(i1,i2),i2=1,20)
         enddo
-        write(10,*)'error of v2(pt) s'
+        write(10,*)'square root of variance of v2(pt) e'
         do i1=1,21
         write(10,*)'i1=',i1
         write(10,602)(ssv22o_pt(i1,i2),i2=1,20)
         enddo
-        write(10,*)'final state v1(eta) s'
+        write(10,*)'final state v1(eta) e'
         do i1=1,21
         write(10,*)'i1=',i1
         write(10,602)(ssv1o_eta(i1,i2),i2=1,20)
         enddo
-        write(10,*)'error of v1(eta) s'
+        write(10,*)'square root of variance of v1(eta) e'
         do i1=1,21
         write(10,*)'i1=',i1
         write(10,602)(ssv12o_eta(i1,i2),i2=1,20)
         enddo
-        write(10,*)'final state v2(eta) s'
+        write(10,*)'final state v2(eta) e'
         do i1=1,21
         write(10,*)'i1=',i1
         write(10,602)(ssv2o_eta(i1,i2),i2=1,20)
         enddo
-        write(10,*)'error of v2(eta) s'
+        write(10,*)'square root of variance of v2(eta) e'
         do i1=1,21
         write(10,*)'i1=',i1
         write(10,602)(ssv22o_eta(i1,i2),i2=1,20)
         enddo
-c021107
-601	format(8(1x,f6.4))
+c021207
+c010412
+	write(10,*)'particle-wise average, full phase space'
+        write(10,*)'final state v1(pt)'
+        do i1=1,21
+        write(10,*)'i1=',i1
+        write(10,602)(fsv1o_pt(i1,i2),i2=1,20)
+        enddo
+        write(10,*)'square root of variance of v1(pt)'
+        do i1=1,21
+        write(10,*)'i1=',i1
+        write(10,602)(fsv12o_pt(i1,i2),i2=1,20)
+        enddo
+        write(10,*)'final state v2(pt)'
+        do i1=1,21
+        write(10,*)'i1=',i1
+        write(10,602)(fsv2o_pt(i1,i2),i2=1,20)
+        enddo
+        write(10,*)'square root of variance of v2(pt)'
+        do i1=1,21
+        write(10,*)'i1=',i1
+        write(10,602)(fsv22o_pt(i1,i2),i2=1,20)
+        enddo
+        write(10,*)'final state v1(eta)'
+        do i1=1,21
+        write(10,*)'i1=',i1
+        write(10,602)(fsv1o_eta(i1,i2),i2=1,20)
+        enddo
+        write(10,*)'square root of variance of v1(eta)'
+        do i1=1,21
+        write(10,*)'i1=',i1
+        write(10,602)(fsv12o_eta(i1,i2),i2=1,20)
+        enddo
+        write(10,*)'final state v2(eta)'
+        do i1=1,21
+        write(10,*)'i1=',i1
+        write(10,602)(fsv2o_eta(i1,i2),i2=1,20)
+        enddo
+        write(10,*)'square root of variance of v2(eta)'
+        do i1=1,21
+        write(10,*)'i1=',i1
+        write(10,602)(fsv22o_eta(i1,i2),i2=1,20)
+        enddo
+
+	write(10,*)'event-wise average, full phase space'
+        write(10,*)'final state v1(pt) e'
+        do i1=1,21
+        write(10,*)'i1=',i1
+        write(10,602)(fssv1o_pt(i1,i2),i2=1,20)
+        enddo
+        write(10,*)'square root of variance of v1(pt) e'
+        do i1=1,21
+        write(10,*)'i1=',i1
+        write(10,602)(fssv12o_pt(i1,i2),i2=1,20)
+        enddo
+        write(10,*)'final state v2(pt) e'
+        do i1=1,21
+        write(10,*)'i1=',i1
+        write(10,602)(fssv2o_pt(i1,i2),i2=1,20)
+        enddo
+        write(10,*)'square root of variance of v2(pt) e'
+        do i1=1,21
+        write(10,*)'i1=',i1
+        write(10,602)(fssv22o_pt(i1,i2),i2=1,20)
+        enddo
+        write(10,*)'final state v1(eta) e'
+        do i1=1,21
+        write(10,*)'i1=',i1
+        write(10,602)(fssv1o_eta(i1,i2),i2=1,20)
+        enddo
+        write(10,*)'square root of variance of v1(eta) e'
+        do i1=1,21
+        write(10,*)'i1=',i1
+        write(10,602)(fssv12o_eta(i1,i2),i2=1,20)
+        enddo
+        write(10,*)'final state v2(eta) e'
+        do i1=1,21
+        write(10,*)'i1=',i1
+        write(10,602)(fssv2o_eta(i1,i2),i2=1,20)
+        enddo
+        write(10,*)'square root of variance of v2(eta) e'
+        do i1=1,21
+        write(10,*)'i1=',i1
+        write(10,602)(fssv22o_eta(i1,i2),i2=1,20)
+        enddo
+c010412
 csa****************************************************************
 
 	do m2=1,isdmax
@@ -2587,6 +3302,7 @@ c	sumine=sumine+dineli(i1)
 c	enddo
 c	write(10,*)'average total number of inela. colli.=',sumine
 c300404
+        write(10,*)'eevpav,eevhav=',eevpao,eevhao   ! 271205
 	asd2=asd(2)
 	asd22=asd(2)/2.
 	do m1=1,20
@@ -2757,10 +3473,10 @@ c300404
 	endif
 
 1000	if(iii.lt.neve)then
-	if(abs(bmin-bmax).lt.10d-4)goto 300
+	if(dabs(bmin-bmax).lt.10d-4)goto 300
 	if(jjj.ge.10)then
-c	10 : the total number of impact paremeters in systematic sampling for
-c            impact  parameter
+c	10: total number of impact paremeters in systematic sampling for impact
+c           parameter
 	jjj=1
 	goto 300
 	endif
@@ -2789,17 +3505,17 @@ c	on line statistics
 	COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
 	common/sa1/kjp21,non1,bp,iii,neve,nout,nosc
 	common/sa7/ispmax,isdmax,iflmax,ispkf(20),non7,asd(5),
-     c  afl(20,5,2)
+     c   afl(20,5,2)
         common/sa10/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
      &  iabsb,iabsm,non10,ajpsi,csspn,csspm
 	dimension a(20),b(20,5,20),c(5),af(20),bf(20,5,20),id(5)
 	amass=p5   ! 010600
         amass2=amass*amass
         pt2=pt*pt
-        et=sqrt(pt2+amass2)
+        et=dsqrt(pt2+amass2)
         do 10000 i=1,iflmax
         goto (10,20,30,40,50) i
-10	c(i)=y   
+10      c(i)=y   
 	if(ifram.eq.1)c(i)=eta   
 	goto 10000
 20	c(i)=pt
@@ -2812,7 +3528,7 @@ c	calculate the abscissa one by one
 40000	do 20000 i=1,isdmax
 	goto (100,200,300,400,500) i
 c	y is located in which interval?
-100	ii=abs(y)/asd(i)+1
+100	ii=dabs(y)/asd(i)+1
 	if(ifram.eq.1 .and. y.gt.0.)ii=ii+10
         if(ifram.eq.1 .and. y.lt.0.)ii=10-ii+1
 c       note: 10 here should be change together with the dimension
@@ -2826,7 +3542,7 @@ c	pt is located in which interval?
 c	if(id(i).le.0)id(i)=1
 	goto 20000
 c	eta is located in which interval?
-300	ii=abs(eta)/asd(i)+1
+300	ii=dabs(eta)/asd(i)+1
 	if(ifram.eq.1 .and. eta.gt.0.)ii=ii+10
         if(ifram.eq.1 .and. eta.lt.0.)ii=10-ii+1
 c       note: 10 here should be change together with the dimension
@@ -2836,11 +3552,11 @@ c        20
 c	et is counted in which eta interval ?
 400	id(i)=id(i-1)
 	if(kk.eq.3)id(i)=p5/0.1+1
-c	statistcs the mass dis. of rho0
+c	statistcs of the mass dis. of rho0
         goto 20000
 500	continue
 20000	continue
-c	make statistics for particle yield and desired distributions
+c	make statistics of particle yield and desired distributions
 	af(kk)=af(kk)+ww
 	do i=1,isdmax
         ii=id(i)
@@ -2894,27 +3610,36 @@ c010600
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	subroutine flow_f(px,py,pt,eta,p5,ik,kk)
+	subroutine flow_f(px,py,pt,y,eta,p5,ik,kk)   ! 010412
 c	calculate pt (eta) dependent direct and elliptic flow at final
 c        state (partonic or hadronic)
-	parameter (kszj=40000,KSZ1=30)
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-c210607        common/PYJETS/nsa,nonsa,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
+	parameter (kszj=40000,KSZ1=30)
+c210607        common/pyjets/nsa,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
 	common/sa7/ispmax,isdmax,iflmax,ispkf(20),non7,asd(5),
-     c  afl(20,5,2)
+     c   afl(20,5,2)
         common/sa10/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
      c  iabsb,iabsm,non10,ajpsi,csspn,csspm
         common/sa18_pt/snum_pt(21,20),v1_pt(21,20),v2_pt(21,20),
-     c   v12_pt(21,20),v22_pt(21,20)   ! 280607
+     c   v12_pt(21,20),v22_pt(21,20)   ! 280607        
 	common/sa18_eta/snum_eta(21,20),v1_eta(21,20),v2_eta(21,20),
      c   v12_eta(21,20),v22_eta(21,20)   ! 280607
         common/sa24/adj1(40),nnstop,non24,zstop   ! 120707
+c010412
+        common/fsa18_pt/fsnum_pt(21,20),fv1_pt(21,20),fv2_pt(21,20),
+     c   fv12_pt(21,20),fv22_pt(21,20)   
+        common/fsa18_eta/fsnum_eta(21,20),fv1_eta(21,20),fv2_eta(21,20),
+     c   fv12_eta(21,20),fv22_eta(21,20)        
+        yoe=y   
+        if(ifram.eq.1)yoe=eta   
+c010412        
 c	snum(1,i1)=snum(1,i1)+1.
 c	write(9,*)'px,py,pt,p5,ik,kk=',px,py,pt,p5,ik,kk   ! sa
 	amass=p5   
         amass2=amass*amass
+	if(pt.lt.1.e-20)pt=1.e-20 ! 080512, yan
         pt2=pt*pt
 	iik=iabs(ik)
         adj140=adj1(40)
@@ -2922,7 +3647,7 @@ c	write(9,*)'px,py,pt,p5,ik,kk=',px,py,pt,p5,ik,kk   ! sa
 c       pt is located at which interval ?
 	idpt=pt/asd(2)+1
 c       eta is located at which interval ?
-        ii=abs(eta)/asd(3)+1
+        ii=dabs(eta)/asd(3)+1
         if(ifram.eq.1 .and. eta.gt.0.)ii=ii+10
         if(ifram.eq.1 .and. eta.lt.0.)ii=10-ii+1
 c       note: 10 here should be change together with the dimension
@@ -2935,6 +3660,36 @@ c        20
 	pxt2=(px2-py2)/pt2   ! v2
 c	write(9,*)'v1,v2=',pxt,pxt2   ! sa
         if(idpt.lt.1 .or. idpt.gt.20)goto 100
+c010412	
+c	statistics of v1(pt) (v2(pt)) in full eta phase space
+        fsnum_pt(kk,idpt)=fsnum_pt(kk,idpt)+1   ! 280607
+	fv1_pt(kk,idpt)=fv1_pt(kk,idpt)+pxt
+	fv2_pt(kk,idpt)=fv2_pt(kk,idpt)+pxt2
+	fv12_pt(kk,idpt)=fv12_pt(kk,idpt)+pxt*pxt
+	fv22_pt(kk,idpt)=fv22_pt(kk,idpt)+pxt2*pxt2
+c120607 direct and elliptic flows of charged particle in hadronic final state
+        if(adj140.eq.3 .or. adj140.eq.4 .or. adj140.eq.5)then   ! 120707
+	if(iik.eq.211 .or. iik.eq.321 .or. iik.eq.2212)then
+        fsnum_pt(21,idpt)=fsnum_pt(21,idpt)+1   ! 280607
+	fv1_pt(21,idpt)=fv1_pt(21,idpt)+pxt
+	fv2_pt(21,idpt)=fv2_pt(21,idpt)+pxt2
+	fv12_pt(21,idpt)=fv12_pt(21,idpt)+pxt*pxt
+	fv22_pt(21,idpt)=fv22_pt(21,idpt)+pxt2*pxt2
+        endif
+        endif   ! 120707
+c120707
+        if(adj140.eq.1 .or. adj140.eq.2)then
+        if(iik.eq.1 .or. iik.eq.2 .or. iik.eq.3)then
+        fsnum_pt(21,idpt)=fsnum_pt(21,idpt)+1   ! 280607
+        fv1_pt(21,idpt)=fv1_pt(21,idpt)+pxt
+        fv2_pt(21,idpt)=fv2_pt(21,idpt)+pxt2
+        fv12_pt(21,idpt)=fv12_pt(21,idpt)+pxt*pxt
+        fv22_pt(21,idpt)=fv22_pt(21,idpt)+pxt2*pxt2
+        endif
+        endif
+c	statistics of v1(pt) (v2(pt)) in partial eta phase space
+	if(yoe.lt.afl(kk,1,1) .or. yoe.gt.afl(kk,1,2))goto 100   
+c010412
         snum_pt(kk,idpt)=snum_pt(kk,idpt)+1   ! 280607
 	v1_pt(kk,idpt)=v1_pt(kk,idpt)+pxt
 	v2_pt(kk,idpt)=v2_pt(kk,idpt)+pxt2
@@ -2962,6 +3717,37 @@ c120707
         endif
 c120707
 100     if(idmt.lt.1 .or. idmt.gt.20)goto 200
+c010412
+c	statistics of v1(eta) (v2(eta)) in full pt phase space
+	
+        fsnum_eta(kk,idmt)=fsnum_eta(kk,idmt)+1   ! 280607
+	fv1_eta(kk,idmt)=fv1_eta(kk,idmt)+pxt
+        fv2_eta(kk,idmt)=fv2_eta(kk,idmt)+pxt2
+        fv12_eta(kk,idmt)=fv12_eta(kk,idmt)+pxt*pxt
+        fv22_eta(kk,idmt)=fv22_eta(kk,idmt)+pxt2*pxt2
+        if(adj140.eq.3 .or. adj140.eq.4 .or. adj140.eq.5)then   ! 120707
+        if(iik.eq.211 .or. iik.eq.321 .or. iik.eq.2212)then
+        fsnum_eta(21,idmt)=fsnum_eta(21,idmt)+1   ! 280607
+	fv1_eta(21,idmt)=fv1_eta(21,idmt)+pxt
+        fv2_eta(21,idmt)=fv2_eta(21,idmt)+pxt2
+        fv12_eta(21,idmt)=fv12_eta(21,idmt)+pxt*pxt
+        fv22_eta(21,idmt)=fv22_eta(21,idmt)+pxt2*pxt2
+	endif
+        endif   ! 120707
+c120707
+        if(adj140.eq.1 .or. adj140.eq.2)then
+        if(iik.eq.1 .or. iik.eq.2 .or. iik.eq.3)then
+        fsnum_eta(21,idmt)=fsnum_eta(21,idmt)+1   ! 280607
+        fv1_eta(21,idmt)=fv1_eta(21,idmt)+pxt
+        fv2_eta(21,idmt)=fv2_eta(21,idmt)+pxt2
+        fv12_eta(21,idmt)=fv12_eta(21,idmt)+pxt*pxt
+        fv22_eta(21,idmt)=fv22_eta(21,idmt)+pxt2*pxt2
+        endif
+        endif
+c120707
+c	statistics of v1(eta) (v2(eta)) in partial pt phase space
+	if(pt.lt.afl(kk,2,1) .or. pt.gt.afl(kk,2,2))goto 200   
+c010412
         snum_eta(kk,idmt)=snum_eta(kk,idmt)+1   ! 280607
 	v1_eta(kk,idmt)=v1_eta(kk,idmt)+pxt
         v2_eta(kk,idmt)=v2_eta(kk,idmt)+pxt2
@@ -2999,7 +3785,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       INTEGER PYK,PYCHGE,PYCOMP
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         common/sa7/ispmax,isdmax,iflmax,ispkf(20),non7,asd(5),
-     c  afl(20,5,2)
+     c   afl(20,5,2)
 	common/sa10/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
      &  iabsb,iabsm,non10,ajpsi,csspn,csspm
         common/sa15/nps,npsi,pps(5000,5),ppsi(5000,5)
@@ -3015,22 +3801,22 @@ c       iflmax = 0 : no filter at all
 	py=pps(i,2)
 	pz=pps(i,3)
 	pp=px*px+py*py+pz*pz
-        e=sqrt(pp)
-        ee=sqrt(amass*amass+pp)
+        e=dsqrt(pp)
+        ee=dsqrt(amass*amass+pp)
         ppp=e-pz
-        if(ppp.le.1.d-20)ppp=1.d-20
+        if(ppp.le.1.e-20)ppp=1.e-20
 	ppy=ee-pz   ! 081102
-        if(ppy.le.1.d-20)ppy=1.d-20   !081102
+        if(ppy.le.1.e-20)ppy=1.e-20   !081102
         eee=e+pz
 	eey=ee+pz   !081102
-	if(eee.lt.1.d-20)then
+	if(eee.lt.1.e-20)then
 	write(9,*)'in stapsi eee,e=',eee,e
 	write(9,*)'some thing wrong p=',px,py,pz
-	eee=1.d-20
+	eee=1.e-20
 	endif
-        y=0.5*log(eey/ppy)   ! 081102
-        eta=0.5*log(eee/ppp)   ! 081102
-	pt=sqrt(px**2+py**2)
+        y=0.5*dlog(eey/ppy)   ! 081102
+        eta=0.5*dlog(eee/ppp)   ! 081102
+	pt=dsqrt(px**2+py**2)
 	c(1)=y
 	if(ifram.eq.1)c(1)=eta   !081102
 	c(2)=pt
@@ -3048,22 +3834,22 @@ c	.
 	py=ppsi(i,2)
 	pz=ppsi(i,3)
 	pp=px*px+py*py+pz*pz
-        e=sqrt(pp)
-        ee=sqrt(amass*amass+pp)
+        e=dsqrt(pp)
+        ee=dsqrt(amass*amass+pp)
         ppp=e-pz
-        if(ppp.le.1.d-20)ppp=1.d-20
+        if(ppp.le.1.e-20)ppp=1.e-20
 	ppy=ee-pz
-        if(ppy.le.1.d-20)ppy=1.d-20   ! 081102
+        if(ppy.le.1.e-20)ppy=1.e-20   ! 081102
         eee=e+pz
         eey=ee+pz   !081102
-	if(eee.lt.1.d-20)then
+	if(eee.lt.1.e-20)then
 	write(9,*)'in stapsi eee,e=',eee,e
 	write(9,*)'some thing wrong p=',px,py,pz
-	eee=1.d-20
+	eee=1.e-20
 	endif
-        y=0.5*log(eey/ppy)
-        eta=0.5*log(eee/ppp)   ! 081102
-	pt=sqrt(px**2+py**2)
+        y=0.5*dlog(eey/ppy)
+        eta=0.5*dlog(eee/ppp)   ! 081102
+	pt=dsqrt(px**2+py**2)
 	c(1)=y
 	if(ifram.eq.1)c(1)=eta   ! 081102
 	c(2)=pt
@@ -3095,12 +3881,12 @@ c        x3=r3-coor(3)
         x1=r1-coor(1)
         x2=r2-coor(2)
         x3=r3-coor(3)
-	ax1=abs(x1)
-	ax2=abs(x2)
-	ax3=abs(x3)
-	ap1=abs(p1)
-	ap2=abs(p2)
-	ap3=abs(p3)
+	ax1=dabs(x1)
+	ax2=dabs(x2)
+	ax3=dabs(x3)
+	ap1=dabs(p1)
+	ap2=dabs(p2)
+	ap3=dabs(p3)
         if(ax1.le.0.5 .and. ax2.le.0.5 .and. ax3.le.0.5 .and. 
      c	 ap1.le.0.25 .and. ap2.le.0.25 .and. ap3.le.0.25)iadj=1
         return
@@ -3111,8 +3897,8 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine shanul(kf,x,q2,xpq)
 c       calculate nuclear ratio R^A_i=f_{i/A}(x,Q2)/f_i(x,Q2) according
 c        to Xin-Nian Wang's paper (PL, B527(2002)85), multiply it to
-c        the parton distribution function in pythia, resulted parton
-c        distribution function is including nuclear shadowing effect
+c        the parton distribution function in pythia, resulted parton distribution 
+c        function is including nuclear shadowing effect 
 c       it was proved in Eur. Phys. J. C9(1999)61 that nuclear ratio does
 c        not depend strongly on the choice for the parton distribution
 c        function in nucleon f_i(x,Q2)
@@ -3125,7 +3911,7 @@ c        function in nucleon f_i(x,Q2)
         sq=0.1
         sg=0.26
         x35=x**0.35
-        xsqr=sqrt(x)
+        xsqr=dsqrt(x)
         x2=x*x
         x3=x2*x
         xx=x3-1.2*x2+0.21*x
@@ -3133,12 +3919,12 @@ c        function in nucleon f_i(x,Q2)
 c       what is the definition of "a" for asymmetry reaction system ?
         a13=a**0.3333
         aa=(a13-1)**0.6
-        coa=log(a)
+        coa=dlog(a)
         coa16=coa**0.16666
         bbq=1.-3.5*xsqr
         bbg=1.-1.5*x35
-        eq=exp(-x2/0.01)
-        eg=exp(-x2/0.004)
+        eq=dexp(-x2/0.01)
+        eg=dexp(-x2/0.004)
 c       raq=a*(1.+1.19*coa16*xx-sq*aa*bbq*eq)
 c       rag=a*(1.+1.19*coa16*xx-sg*aa*bbg*eg)
         raq=1.+1.19*coa16*xx-sq*aa*bbq*eq
@@ -3168,8 +3954,8 @@ c       'sa1_h' to 'pyjets' after finish calculation
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (kszj=40000,KSZ1=30)
-        COMMON/PYJETS/N,NONJ,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
-        common/sa1_h/nsa,nonsa,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
+        COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
+        common/sa1_h/nsa,non1_h,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         do l=1,nsa
         do m=1,5
         p(l,m)=psa(l,m)
@@ -3203,7 +3989,7 @@ c        OSC1999A
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
         parameter (kszj=40000,KSZ1=30)
-        common/PYJETS/nsa,nonsa,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
+        common/pyjets/nsa,npad,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
 c        common/wz/c17(500,3),ishp(kszj),tp(500),coor(3),p17(500,4)
         write(34,*)'history orderring=',iii
 c       write(34,*)'event orderring=',iii
@@ -3225,8 +4011,145 @@ c       write(34,*)'event orderring=',iii
 	end
 
 
-ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        subroutine prt_sgam(nn)   ! 240209
+
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+	subroutine remo_gam_sbh(ii)   ! 250209
+c	move particles with flavor code ii ('44') from  'sbh' to 'sgam'
+	parameter (kszj=40000)
+      IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+      IMPLICIT INTEGER(I-N)
+      INTEGER PYK,PYCHGE,PYCOMP
+	COMMON/sbh/N,NONJ,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
+	common/sgam/ngam,nongam,kgam(kszj,5),pgam(kszj,5),vgam(kszj,5)
+	jb=0
+201     do i1=jb+1,n
+        kf=k(i1,2)
+	if(kf.ne.ii)then
+	jb=jb+1
+	goto 202
+	endif
+        ngam=ngam+1
+        do i2=1,5
+        kgam(ngam,i2)=k(i1,i2)
+        pgam(ngam,i2)=p(i1,i2)
+        vgam(ngam,i2)=v(i1,i2)
+        enddo
+        if(i1.eq.n)then
+        n=n-1
+        goto 203
+        endif
+c       move particle list 'pyjets' one step downward from i1+1 to n
+        do j=i1+1,n
+	j1=j-1
+        do jj=1,5
+        k(j1,jj)=k(j,jj)
+        p(j1,jj)=p(j,jj)
+        v(j1,jj)=v(j,jj)
+        enddo
+        enddo
+        n=n-1
+        goto 201
+202     enddo
+203     continue
+        return
+	end
+
+
+
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+	subroutine remo_gam_par(ii)   ! 250209
+c	move particles with flavor code ii ('55') from 'lujets' to 'sgam'
+	parameter (kszj=40000)
+      IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+      IMPLICIT INTEGER(I-N)
+      INTEGER PYK,PYCHGE,PYCOMP
+	COMMON/PYJETS/N,NONJ,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
+	common/sgam/ngam,nongam,kgam(kszj,5),pgam(kszj,5),vgam(kszj,5)
+	common/ssin/nsin,nonsin,ksin(kszj,5),psin(kszj,5),vsin(kszj,5),
+     c   bsin(kszj)   ! 140506
+	jb=0
+201     do i1=jb+1,n
+        kf=k(i1,2)
+	if(kf.ne.ii)then
+	jb=jb+1
+	goto 202
+	endif
+        ngam=ngam+1
+        do i2=1,5
+        kgam(ngam,i2)=k(i1,i2)
+        pgam(ngam,i2)=p(i1,i2)
+        vgam(ngam,i2)=v(i1,i2)
+        enddo
+        if(i1.eq.n)then
+c	bsin(n)=0.
+        n=n-1
+        goto 203
+        endif
+c       move particle list 'pyjets' one step downward from i1+1 to n
+        do j=i1+1,n
+	j1=j-1
+        do jj=1,5
+        k(j1,jj)=k(j,jj)
+        p(j1,jj)=p(j,jj)
+        v(j1,jj)=v(j,jj)
+        enddo
+	bsin(j1)=bsin(j)
+        enddo
+        n=n-1
+        goto 201
+202     enddo
+203     continue
+        return
+	end
+
+
+
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+	subroutine remo_gam(ii)   ! 250209
+c	move particles with flavor code ii ('66') from  'lujets' to 'sgam'
+	parameter (kszj=40000)
+      IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+      IMPLICIT INTEGER(I-N)
+      INTEGER PYK,PYCHGE,PYCOMP
+	COMMON/PYJETS/N,NONJ,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
+	common/sgam/ngam,nongam,kgam(kszj,5),pgam(kszj,5),vgam(kszj,5)
+	jb=0
+201     do i1=jb+1,n
+        kf=k(i1,2)
+	if(kf.ne.ii)then
+	jb=jb+1
+	goto 202
+	endif
+        ngam=ngam+1
+        do i2=1,5
+        kgam(ngam,i2)=k(i1,i2)
+        pgam(ngam,i2)=p(i1,i2)
+        vgam(ngam,i2)=v(i1,i2)
+        enddo
+        if(i1.eq.n)then
+        n=n-1
+        goto 203
+        endif
+c       move particle list 'pyjets' one step downward from i1+1 to n
+        do j=i1+1,n
+	j1=j-1
+        do jj=1,5
+        k(j1,jj)=k(j,jj)
+        p(j1,jj)=p(j,jj)
+        v(j1,jj)=v(j,jj)
+        enddo
+        enddo
+        n=n-1
+        goto 201
+202     enddo
+203     continue
+        return
+	end
+
+
+
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+        subroutine prt_sgam(nn)   ! 250209
 c       print particle list 'sgam' and sum of momentum and energy
         parameter (kszj=40000)
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
@@ -3242,25 +4165,24 @@ c       print particle list 'sgam' and sum of momentum and energy
         if(kf.eq.22 .or. kf.eq.44 .or. kf.eq.55 .or. kf.eq.66)goto 100
         ch1=ch1+pychge(kf)
 100     enddo
-        write(22,*)ch1/3.,peo   !
+        write(22,*)'c & p sum=',ch1/3.,peo   !
         do i=1,nn
         write(22,*)i,kgam(i,1),kgam(i,2),(pgam(i,j),j=1,4)
         enddo
         return
         end
 
-
-                                                              
+                                                                                             
 *******************************************************************************
 c This code calculates the nuclear overlap functions which are needed 
 c to scale pp to pA and AB.
-c Units are fm
+c Units are fm.paciae_20cg.f
 c TAB is overlap function in 1/fm^2; divide the value by 10 to get it in mb^-1
 c scal1 is sigma(A1,A2)/sigma(p,p)
-c scal2 is n(A1,A2)/sigma(p,p)
+c scal2 is n(A1,A2)/sigma(p,p)paciae_20paciae_20cg.fpaciae_20cg.fcg.f
 c The calculation is done in steps of 0.1 fm. 
 c The cutoff R and b are 10 and 20 fm, respectively.
-c D.Miskowiec 1997, updated in 2001, http://www-linux.gsi.de/~misko/overlap/ . 
+c D.Miskowiec 1997, updated in 2001. 
 *******************************************************************************
       subroutine overlap(A1,A2,rnp,rnt,sigma_NN,kjp23,denflag,density0,
      c  nshot)   ! 020511
@@ -3319,7 +4241,7 @@ c-----------
  901  format(2a6,5a10)
  902    format(2a6,2a10)
  905  format(i5,2x,f6.2,5(f10.3))
- 906  format(i5,2x,f6.2,2(f10.3,1x))
+ 906  format(i5,2x,f6.2,2(f10.3))
       return
       end
 
@@ -3443,7 +4365,7 @@ c denflag=2 - Woods-Saxon
         density=0.0
         if (r.le.RA) density=density0
       elseif (denflag.eq.2) then 
-        RA=1.12*A**0.333333   ! -0.86/A**0.333333   020511
+        RA=1.12*A**0.333333   ! -0.86/A**0.333333 020511 
 c       RA=1.19*A**0.333333-1.61/A**0.333333
 c       density0=3./4.*A/3.1416/RA**3/(1+3.1416**2*0.54**2/RA**2)
         DR=0.54
@@ -3966,7 +4888,7 @@ C
 C     ..................................................................        
 C                                                                               
       REAL A(N), B(N), MUZERO, ALPHA, BETA                                      
-      REAL ABI, A2B2, GAMMA, PI, DSQRT, AB                                     
+      REAL ABI, A2B2, GAMMA, PI, DSQRT, AB   ! 081010                                     
       DATA PI / 3.141592653589793E0/                                            
 C                                                                               
       NM1 = N - 1                                                               
@@ -4021,7 +4943,7 @@ C
    50 AB = ALPHA + BETA                                                         
       ABI = 2.0E0 + AB                                                          
       MUZERO = 2.0E0 ** (AB + 1.0E0) * GAMMA(ALPHA + 1.0E0) * GAMMA(          
-     X BETA + 1.0E0) / GAMMA(ABI)                                              
+     X BETA + 1.0E0) / GAMMA(ABI)   ! 081010                                              
       A(1) = (BETA - ALPHA)/ABI                                                 
       B(1) = SQRT(4.0E0*(1.0E0 + ALPHA)*(1.0E0 + BETA)/((ABI + 1.0E0)*          
      1  ABI*ABI))                                                               
@@ -4039,7 +4961,7 @@ C              KIND = 6:  LAGUERRE POLYNOMIALS L(ALPHA)(X) ON
 C              (0, +INFINITY), W(X) = EXP(-X) * X**ALPHA, ALPHA GREATER         
 C              THAN -1.                                                         
 C                                                                               
-   60 MUZERO = GAMMA(ALPHA + 1.0E0)                                            
+   60 MUZERO = GAMMA(ALPHA + 1.0E0)   ! 081010                                            
       DO 61 I = 1, NM1                                                          
          A(I) = 2.0E0*I - 1.0E0 + ALPHA                                         
    61    B(I) = SQRT(I*(I + ALPHA))                                             
@@ -4179,7 +5101,7 @@ C                EIGENVALUE           AFTER 30 ITERATIONS
  1001 RETURN                                                                    
 C                                                                               
       END                                                                       
-      FUNCTION GAMMA(X)                                                        
+      FUNCTION GAMMA(X)   ! 081010                                                      
       C=1.0E0                                                                   
       Y=X                                                                       
       IF(Y-2.0E0)1,2,2                                                          
@@ -4212,6 +5134,6 @@ C
      4  -.002777777777777778E0)*C+.08333333333333333E0)*D                       
      5  +.9189385332046727E0+(Y-.5E0)*LOG(Y)-Y                                  
       VALUE=EXP(G)                                                              
-    7 GAMMA=VALUE                                                              
+    7 GAMMA=VALUE   ! 081010                                                           
       RETURN                                                                    
       END 

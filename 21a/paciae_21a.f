@@ -39,6 +39,10 @@ c051108
      c   parj21
         common/sa28/nstr,nstr00,nstra(kszj),nstrv(kszj)   ! 160110
         common/sa29/effk1,lcub   ! 160110
+        common/sa33/smadel,ecce,parecc,iparres   ! 220312 240412
+c220312	smadel: small perpurbation of ellipse from circle
+c240412 iparres: =0 consider ela. parton-parton collisions only
+c240412 iparres: =1 otherwise
 c       effk1,parj1,parj2,parj3,and parj21 are the tuned effective string
 c        tension,parj(1),(2),(3),and (21),respectively
 c       lcub: size of cubic used in energy density calculation
@@ -93,6 +97,46 @@ c       ichh: total charge of the partons thrown away in coales.f
 c161007
         common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
      c  nap,nat,nzp,nzt,pio   ! 141208
+c220312
+        common/sa18_pt/snum_pt(21,20),v1_pt(21,20),v2_pt(21,20),
+     c   v12_pt(21,20),v22_pt(21,20)   
+        common/sa18_eta/snum_eta(21,20),v1_eta(21,20),v2_eta(21,20),
+     c   v12_eta(21,20),v22_eta(21,20)
+ 
+        dimension ssnum_pt(21,20),sv1_pt(21,20),sv2_pt(21,20),
+     c   sv12_pt(21,20),sv22_pt(21,20),sv1o_pt(21,20),sv2o_pt(21,20),
+     c   sv12o_pt(21,20),sv22o_pt(21,20)   
+        dimension ssnum_eta(21,20),sv1_eta(21,20),sv2_eta(21,20),
+     c   sv12_eta(21,20),sv22_eta(21,20),sv1o_eta(21,20),sv2o_eta(21,20)
+     c   ,sv12o_eta(21,20),sv22o_eta(21,20)   
+
+        dimension ssv1_pt(21,20),ssv2_pt(21,20),ssv12_pt(21,20),
+     c   ssv22_pt(21,20),ssv1o_pt(21,20),ssv2o_pt(21,20),
+     c   ssv12o_pt(21,20),ssv22o_pt(21,20)
+        dimension ssv1_eta(21,20),ssv2_eta(21,20),ssv12_eta(21,20),
+     c   ssv22_eta(21,20),ssv1o_eta(21,20),ssv2o_eta(21,20),
+     c   ssv12o_eta(21,20),ssv22o_eta(21,20)  
+c220312
+c010412
+        common/fsa18_pt/fsnum_pt(21,20),fv1_pt(21,20),fv2_pt(21,20),
+     c   fv12_pt(21,20),fv22_pt(21,20)
+        common/fsa18_eta/fsnum_eta(21,20),fv1_eta(21,20),fv2_eta(21,20)
+     c   ,fv12_eta(21,20),fv22_eta(21,20)
+
+        dimension fssnum_pt(21,20),fsv1_pt(21,20),fsv2_pt(21,20),
+     c   fsv12_pt(21,20),fsv22_pt(21,20),fsv1o_pt(21,20),
+     c   fsv2o_pt(21,20),fsv12o_pt(21,20),fsv22o_pt(21,20)
+        dimension fssnum_eta(21,20),fsv1_eta(21,20),fsv2_eta(21,20),
+     c   fsv12_eta(21,20),fsv22_eta(21,20),fsv1o_eta(21,20),
+     c   fsv2o_eta(21,20),fsv12o_eta(21,20),fsv22o_eta(21,20)
+
+        dimension fssv1_pt(21,20),fssv2_pt(21,20),fssv12_pt(21,20),
+     c   fssv22_pt(21,20),fssv1o_pt(21,20),fssv2o_pt(21,20),
+     c   fssv12o_pt(21,20),fssv22o_pt(21,20)
+        dimension fssv1_eta(21,20),fssv2_eta(21,20),fssv12_eta(21,20),
+     c   fssv22_eta(21,20),fssv1o_eta(21,20),fssv2o_eta(21,20),
+     c   fssv12o_eta(21,20),fssv22o_eta(21,20)
+c010412
         dimension an(20,5,20),bn(20),san(20,5,20),sbn(20),c(5)
         dimension anf(20,5,20),bnf(20),sanf(20,5,20),sbnf(20)
 	dimension sao(20,5,20),sbo(20),saof(20,5,20),sbof(20)
@@ -165,6 +209,7 @@ c061007
 c051108
         read(5,*)effk1,kjp20,kjp21,kjp22,lcub   ! 171108
         read(5,*)ttaup,taujp,iabsb,iabsm   ! 171108
+	read(5,*)smadel,iparres   ! 220312 240412
 c171108 kjp21 = 0 (1): without (with) hadronic rescattering   
         close(5)   
 c       kjp22 = 0 : constant string tension with string tension calculation 
@@ -224,7 +269,7 @@ c       msub(91)=1
         msub(94)=1
         msub(95)=1
 	elseif(nchan.eq.1)then
-c       Non Single Difractive (NSD)
+c       Non Single Diffractive (NSD)
 	msel=0
 	msub(11)=1
 	msub(12)=1
@@ -386,11 +431,126 @@ c091007
         write(9,*)'adj1=',(adj1(i),i=11,20)
         write(9,*)'adj1=',(adj1(i),i=21,30)
         write(9,*)'adj1=',(adj1(i),i=31,40)
+	write(9,*)'smadel,iparres=',smadel,iparres   ! 220312 240412
 c091007
 c061007	do 300 i=1,nn
+c220312
+        do i2=1,21
+        do i1=1,20
+        ssnum_pt(i2,i1)=0.   
+        ssnum_eta(i2,i1)=0.   
+        sv1_pt(i2,i1)=0.
+        sv2_pt(i2,i1)=0.
+        sv1o_pt(i2,i1)=0.
+        sv2o_pt(i2,i1)=0.
+        sv12_pt(i2,i1)=0.
+        sv22_pt(i2,i1)=0.
+        sv12o_pt(i2,i1)=0.
+        sv22o_pt(i2,i1)=0.
+        sv1_eta(i2,i1)=0.
+        sv2_eta(i2,i1)=0.
+        sv1o_eta(i2,i1)=0.
+        sv2o_eta(i2,i1)=0.
+        sv12_eta(i2,i1)=0.
+        sv22_eta(i2,i1)=0.
+        sv12o_eta(i2,i1)=0.
+        sv22o_eta(i2,i1)=0.
+
+        ssv1_pt(i2,i1)=0.
+        ssv2_pt(i2,i1)=0.
+        ssv1o_pt(i2,i1)=0.
+        ssv2o_pt(i2,i1)=0.
+        ssv12_pt(i2,i1)=0.
+        ssv22_pt(i2,i1)=0.
+        ssv12o_pt(i2,i1)=0.
+        ssv22o_pt(i2,i1)=0.
+        ssv1_eta(i2,i1)=0.
+        ssv2_eta(i2,i1)=0.
+        ssv1o_eta(i2,i1)=0.
+        ssv2o_eta(i2,i1)=0.
+        ssv12_eta(i2,i1)=0.
+        ssv22_eta(i2,i1)=0.
+        ssv12o_eta(i2,i1)=0.
+        ssv22o_eta(i2,i1)=0.
+        enddo
+        enddo
+c220312
+c010412
+        do i2=1,21
+        do i1=1,20
+        fssnum_pt(i2,i1)=0.   
+        fssnum_eta(i2,i1)=0.   
+        fsv1_pt(i2,i1)=0.
+        fsv2_pt(i2,i1)=0.
+        fsv1o_pt(i2,i1)=0.
+        fsv2o_pt(i2,i1)=0.
+        fsv12_pt(i2,i1)=0.
+        fsv22_pt(i2,i1)=0.
+        fsv12o_pt(i2,i1)=0.
+        fsv22o_pt(i2,i1)=0.
+        fsv1_eta(i2,i1)=0.
+        fsv2_eta(i2,i1)=0.
+        fsv1o_eta(i2,i1)=0.
+        fsv2o_eta(i2,i1)=0.
+        fsv12_eta(i2,i1)=0.
+        fsv22_eta(i2,i1)=0.
+        fsv12o_eta(i2,i1)=0.
+        fsv22o_eta(i2,i1)=0.
+
+        fssv1_pt(i2,i1)=0.
+        fssv2_pt(i2,i1)=0.
+        fssv1o_pt(i2,i1)=0.
+        fssv2o_pt(i2,i1)=0.
+        fssv12_pt(i2,i1)=0.
+        fssv22_pt(i2,i1)=0.
+        fssv12o_pt(i2,i1)=0.
+        fssv22o_pt(i2,i1)=0.
+        fssv1_eta(i2,i1)=0.
+        fssv2_eta(i2,i1)=0.
+        fssv1o_eta(i2,i1)=0.
+        fssv2o_eta(i2,i1)=0.
+        fssv12_eta(i2,i1)=0.
+        fssv22_eta(i2,i1)=0.
+        fssv12o_eta(i2,i1)=0.
+        fssv22o_eta(i2,i1)=0.
+        enddo
+        enddo
+c010412
 	i=0   ! 061007
 	nncoll=0   ! 061007
 300	i=i+1   ! 061007
+c220312
+        do i1=1,21
+        do i2=1,20
+        snum_pt(i1,i2)=0.   
+        snum_eta(i1,i2)=0.   
+        v1_pt(i1,i2)=0.
+        v2_pt(i1,i2)=0.
+        v12_pt(i1,i2)=0.
+        v22_pt(i1,i2)=0.
+        v1_eta(i1,i2)=0.
+        v2_eta(i1,i2)=0.
+        v12_eta(i1,i2)=0.
+        v22_eta(i1,i2)=0.
+        enddo
+        enddo
+c220312
+c010412
+        do i1=1,21
+        do i2=1,20
+        fsnum_pt(i1,i2)=0.
+        fsnum_eta(i1,i2)=0.
+        fv1_pt(i1,i2)=0.
+        fv2_pt(i1,i2)=0.
+        fv12_pt(i1,i2)=0.
+        fv22_pt(i1,i2)=0.
+        fv1_eta(i1,i2)=0.
+        fv2_eta(i1,i2)=0.
+        fv12_eta(i1,i2)=0.
+        fv22_eta(i1,i2)=0.
+        enddo
+        enddo
+c010412
 c160110
         do i1=1,9
         nreaco(i1)=nreac(i1)
@@ -633,7 +793,10 @@ c201203
         endif   !!! parton rescattering finished 151107
 c151107
         if(adj140.eq.2)goto 304   ! run terminats after parton rescattering
-305     if(adj112.ne.0)goto 302   ! coalescence
+305     continue   ! 030512
+c030512	if(adj112.ne.0)goto 302   ! coalescence
+	if(adj112.ne.0.or.(adj112.eq.0.and.(nreac(4).gt.nreaco(4).or.
+     c   nreac(6).gt.nreaco(6))))goto 302   ! coalescence
 c	recover parton configuration in 'sbe' 
         if(idi.gt.0)then   ! 160110
 c160110
@@ -743,13 +906,17 @@ cs	write(22,*)'af share jb,n=',jb,n
 cs	call prt_luj(n)
 cs	call prt_sbh(nbh)
 
-c160110 do i1=1,n
-c       do j1=1,5
-c	pbe(i1,j1)=p(i1,j1)
-c       enddo
-c       enddo
+        if(iparres.eq.0 .or. (iparres.eq.1.and.(nreaco(4).eq.nreac(4))
+     c   .and.(nreaco(6).eq.nreac(6)).and.(nreaco(7).eq.nreac(7))))
+     c   then   !    ela. parton-parton collisions only 240412
+	do i1=1,n
+	do j1=1,5
+	pbe(i1,j1)=p(i1,j1)
+	enddo
+	enddo
 c       'sbe' to 'pyjets'
-c	call tran_sbe
+	call tran_sbe
+	endif   ! 240412
         n00=n   ! 160110
 c        if(i.eq.1409 .or. i.eq.1531 .or. i.eq.2771)then
 c       write(22,*)'af. recover n,nbh,nbe,n00,idi=',n,nbh,nbe,n00,idi   ! sa
@@ -1110,15 +1277,15 @@ c       endif
         kf=ispkf(kk)
         if(kf.ne.ik)goto 500
 c250510
-cc      if(ik.eq.2212 .or. ik.eq.2112)then
-cc      if(ppt.le.2.d-1)goto 500
-cc      endif
+	if(ik.eq.2212 .or. ik.eq.2112)then
+	if(ppt.le.2.d-1)goto 500
+	endif
 c       exclude the projectile and target spectator nucleons 
-c        (exclude pT<0.01's proton and neutron for pp) 
+c        (exclude pT<0.01 proton and neutron for pp) 
 c250510
 c080610
-       if((ik.eq.1 .or. ik.eq.2) .and. (p5.ge.(0.330d0-0.001d0) .and. 
-     c  p5.lt.(0.330d0+0.001d0)))goto 500
+c	if((ik.eq.1 .or. ik.eq.2) .and. (p5.ge.(0.330d0-0.001d0) .and. 
+c	c  p5.lt.(0.330d0+0.001d0)))goto 500
         if((ik.eq.1 .or. ik.eq.2) .and. p5.eq.0.330d0)goto 500
 c       exclude the valence quark
 c080610
@@ -1128,6 +1295,7 @@ c       write(9,*)'yy,ppt,eta,p5=',yy,ppt,eta,p5
 c       write(9,*)'be. particle multiplicity=',(bn(ll),ll=1,ispmax)
 c       endif
         call stati(yy,ppt,eta,p5,ik,kk,w,bn,an,bnf,anf,p3)
+        call flow_f(p1,p2,ppt,yy,eta,p5,ik,kk)   ! 220312 010412
 c       write(9,*)'af. particle multiplicity=',(bn(ll),ll=1,ispmax)
         goto 400
 500     continue
@@ -1140,6 +1308,68 @@ cccccccc--ayut-stop
 400     continue
 c       write(9,*)'event=',i
 c       write(9,*)'particle multiplicity=',(bn(ll),ll=1,ispmax)
+c220312
+        do i1=1,21
+        do i2=1,20
+        ssnum_pt(i1,i2)=ssnum_pt(i1,i2)+snum_pt(i1,i2)   
+        ssnum_eta(i1,i2)=ssnum_eta(i1,i2)+snum_eta(i1,i2)   
+        sv1_pt(i1,i2)=sv1_pt(i1,i2)+v1_pt(i1,i2)
+        sv2_pt(i1,i2)=sv2_pt(i1,i2)+v2_pt(i1,i2)
+        sv12_pt(i1,i2)=sv12_pt(i1,i2)+v12_pt(i1,i2)
+        sv22_pt(i1,i2)=sv22_pt(i1,i2)+v22_pt(i1,i2)
+        sv1_eta(i1,i2)=sv1_eta(i1,i2)+v1_eta(i1,i2)
+        sv2_eta(i1,i2)=sv2_eta(i1,i2)+v2_eta(i1,i2)
+        sv12_eta(i1,i2)=sv12_eta(i1,i2)+v12_eta(i1,i2)
+        sv22_eta(i1,i2)=sv22_eta(i1,i2)+v22_eta(i1,i2)
+
+	sspt=snum_pt(i1,i2)
+        if(sspt.gt.0.)then
+        ssv1_pt(i1,i2)=ssv1_pt(i1,i2)+v1_pt(i1,i2)/sspt
+        ssv2_pt(i1,i2)=ssv2_pt(i1,i2)+v2_pt(i1,i2)/sspt
+        ssv12_pt(i1,i2)=ssv12_pt(i1,i2)+v12_pt(i1,i2)/sspt
+        ssv22_pt(i1,i2)=ssv22_pt(i1,i2)+v22_pt(i1,i2)/sspt
+        endif
+        sseta=snum_eta(i1,i2)
+        if(sseta.gt.0.)then
+        ssv1_eta(i1,i2)=ssv1_eta(i1,i2)+v1_eta(i1,i2)/sseta
+        ssv2_eta(i1,i2)=ssv2_eta(i1,i2)+v2_eta(i1,i2)/sseta
+        ssv12_eta(i1,i2)=ssv12_eta(i1,i2)+v12_eta(i1,i2)/sseta
+        ssv22_eta(i1,i2)=ssv22_eta(i1,i2)+v22_eta(i1,i2)/sseta
+        endif
+        enddo
+        enddo
+c220312
+c010412
+        do i1=1,21
+        do i2=1,20
+        fssnum_pt(i1,i2)=fssnum_pt(i1,i2)+fsnum_pt(i1,i2)   
+        fssnum_eta(i1,i2)=fssnum_eta(i1,i2)+fsnum_eta(i1,i2)   
+        fsv1_pt(i1,i2)=fsv1_pt(i1,i2)+fv1_pt(i1,i2)
+        fsv2_pt(i1,i2)=fsv2_pt(i1,i2)+fv2_pt(i1,i2)
+        fsv12_pt(i1,i2)=fsv12_pt(i1,i2)+fv12_pt(i1,i2)
+        fsv22_pt(i1,i2)=fsv22_pt(i1,i2)+fv22_pt(i1,i2)
+        fsv1_eta(i1,i2)=fsv1_eta(i1,i2)+fv1_eta(i1,i2)
+        fsv2_eta(i1,i2)=fsv2_eta(i1,i2)+fv2_eta(i1,i2)
+        fsv12_eta(i1,i2)=fsv12_eta(i1,i2)+fv12_eta(i1,i2)
+        fsv22_eta(i1,i2)=fsv22_eta(i1,i2)+fv22_eta(i1,i2)
+
+	fsspt=fsnum_pt(i1,i2)
+        if(fsspt.gt.0.)then
+        fssv1_pt(i1,i2)=fssv1_pt(i1,i2)+fv1_pt(i1,i2)/fsspt
+        fssv2_pt(i1,i2)=fssv2_pt(i1,i2)+fv2_pt(i1,i2)/fsspt
+        fssv12_pt(i1,i2)=fssv12_pt(i1,i2)+fv12_pt(i1,i2)/fsspt
+        fssv22_pt(i1,i2)=fssv22_pt(i1,i2)+fv22_pt(i1,i2)/fsspt
+        endif
+        fsseta=fsnum_eta(i1,i2)
+        if(fsseta.gt.0.)then
+        fssv1_eta(i1,i2)=fssv1_eta(i1,i2)+fv1_eta(i1,i2)/fsseta
+        fssv2_eta(i1,i2)=fssv2_eta(i1,i2)+fv2_eta(i1,i2)/fsseta
+        fssv12_eta(i1,i2)=fssv12_eta(i1,i2)+fv12_eta(i1,i2)/fsseta
+        fssv22_eta(i1,i2)=fssv22_eta(i1,i2)+fv22_eta(i1,i2)/fsseta
+        endif
+        enddo
+        enddo
+c010412
         do kk=1,ispmax
         sbn(kk)=sbn(kk)+bn(kk)
 	sbnf(kk)=sbnf(kk)+bnf(kk)
@@ -1227,6 +1457,184 @@ c       sgtimeo: average number of gluons in a string over strings with gluon
         endif
         endif
 c051108
+c220312
+        do i1=1,21
+        do i2=1,20
+        sss=ssnum_pt(i1,i2)   ! 280607
+        if(sss.gt.1.d-5)then   ! 280607
+        sv1op=sv1_pt(i1,i2)/sss   ! direct, average
+        sv1o_pt(i1,i2)=sv1op
+        sv12op=sv12_pt(i1,i2)/sss   ! direct, squared average
+c121207 if(sss-1.gt.1.d-5)then   ! 280607
+c121207 sv12op=(sv12op-sv1op*sv1op)/(sss-1.)
+        sv12op=sv12op-sv1op*sv1op   ! 121207
+        if(sv12op.le.1.d-20)sv12op=1.d-20
+        sv12o_pt(i1,i2)=sqrt(sv12op)   !  direct, square root of variance
+c121207 endif   ! 280607
+        sv2op=sv2_pt(i1,i2)/sss   ! elliptic, average
+        sv2o_pt(i1,i2)=sv2op
+        sv22op=sv22_pt(i1,i2)/sss   ! elliptic, squared average
+c121207 if(sss-1.gt.1.d-5)then   ! 280607
+c121207 sv22op=(sv22op-sv2op*sv2op)/(sss-1.)
+        sv22op=sv22op-sv2op*sv2op   ! 121207
+        if(sv22op.le.1.d-20)sv22op=1.d-20
+        sv22o_pt(i1,i2)=sqrt(sv22op)   ! elliptic, square root of variance
+c121207 endif   ! 280607
+        endif   ! 280607
+        sss=ssnum_eta(i1,i2)   ! 280607
+        if(sss.gt.1.d-5)then   ! 280607
+        sv1oe=sv1_eta(i1,i2)/sss   ! direct, average
+        sv1o_eta(i1,i2)=sv1oe
+        sv12oe=sv12_eta(i1,i2)/sss   ! direct, squared average
+c121207 if(sss-1.gt.1.d-5)then   ! 280607
+c121207 sv12oe=(sv12oe-sv1oe*sv1oe)/(sss-1.)
+        sv12oe=sv12oe-sv1oe*sv1oe   ! 121207
+        if(sv12oe.le.1.d-20)sv12oe=1.d-20
+        sv12o_eta(i1,i2)=sqrt(sv12oe)   !  direct, square root of variance
+c121207 endif   ! 280607
+        sv2oe=sv2_eta(i1,i2)/sss   ! elliptic, average
+        sv2o_eta(i1,i2)=sv2oe
+        sv22oe=sv22_eta(i1,i2)/sss   ! elliptic, squared average
+c121207 if(sss-1.gt.1.d-5)then   ! 280607
+c121207 sv22oe=(sv22oe-sv2oe*sv2oe)/(sss-1.)
+        sv22oe=sv22oe-sv2oe*sv2oe   ! 121207   
+        if(sv22oe.le.1.d-20)sv22oe=1.d-20
+        sv22o_eta(i1,i2)=sqrt(sv22oe)   ! elliptic, square root of variance
+c121207 endif   ! 280607
+        endif   ! 280607
+        enddo
+        enddo
+
+        do i1=1,21
+        do i2=1,20
+        sv1op=ssv1_pt(i1,i2)/flaa
+        ssv1o_pt(i1,i2)=sv1op   ! direct, average
+        sv12op=ssv12_pt(i1,i2)/flaa   ! direct, squared average
+c121207 if(flaa-1.gt.0.)then
+c121207 sv12op=(sv12op-sv1op*sv1op)/(flaa-1.)
+        sv12op=sv12op-sv1op*sv1op   ! 121207
+        if(sv12op.le.1.d-20)sv12op=1.d-20
+        ssv12o_pt(i1,i2)=sqrt(sv12op)   !  direct, square root of variance
+c121207 endif
+        sv2op=ssv2_pt(i1,i2)/flaa   
+        ssv2o_pt(i1,i2)=sv2op   ! elliptic, average
+        sv22op=ssv22_pt(i1,i2)/flaa   ! elliptic, squared average
+c121207 if(flaa-1.gt.0.)then
+c121207 sv22op=(sv22op-sv2op*sv2op)/(flaa-1.)
+        sv22op=sv22op-sv2op*sv2op   !121207
+        if(sv22op.le.1.d-20)sv22op=1.d-20
+        ssv22o_pt(i1,i2)=sqrt(sv22op)   ! elliptic, square root of variance
+c121207 endif
+        sv1op=ssv1_eta(i1,i2)/flaa
+        ssv1o_eta(i1,i2)=sv1op   ! direct, average
+        sv12op=ssv12_eta(i1,i2)/flaa   ! direct, squared average
+c121207 if(flaa-1.gt.0.)then
+c121207 sv12op=(sv12op-sv1op*sv1op)/(flaa-1.)
+        sv12op=sv12op-sv1op*sv1op   ! 121207
+        if(sv12op.le.1.d-20)sv12op=1.d-20
+        ssv12o_eta(i1,i2)=sqrt(sv12op)   !  direct, square root of variance
+c121207 endif
+        sv2op=ssv2_eta(i1,i2)/flaa   
+        ssv2o_eta(i1,i2)=sv2op   ! elliptic, average
+        sv22op=ssv22_eta(i1,i2)/flaa   ! elliptic, squared average
+c121207 if(flaa-1.gt.0.)then
+c121207 sv22op=(sv22op-sv2op*sv2op)/(flaa-1.)
+        sv22op=sv22op-sv2op*sv2op   ! 121207
+        if(sv22op.le.1.d-20)sv22op=1.d-20
+        ssv22o_eta(i1,i2)=sqrt(sv22op)   ! elliptic, square root of variance
+c121207 endif
+        enddo
+        enddo
+c220312
+c010412
+        do i1=1,21
+        do i2=1,20
+        fsss=fssnum_pt(i1,i2)   ! 280607
+        if(fsss.gt.1.d-5)then   ! 280607
+        fsv1op=fsv1_pt(i1,i2)/fsss   ! direct, average
+        fsv1o_pt(i1,i2)=fsv1op
+        fsv12op=fsv12_pt(i1,i2)/fsss   ! direct, squared average
+c121207 if(sss-1.gt.1.d-5)then   ! 280607
+c121207 sv12op=(sv12op-sv1op*sv1op)/(sss-1.)
+        fsv12op=fsv12op-fsv1op*fsv1op   ! 121207
+        if(fsv12op.le.1.d-20)fsv12op=1.d-20
+        fsv12o_pt(i1,i2)=sqrt(fsv12op)   !  direct, square root of variance
+c121207 endif   ! 280607
+        fsv2op=fsv2_pt(i1,i2)/fsss   ! elliptic, average
+        fsv2o_pt(i1,i2)=fsv2op
+        fsv22op=fsv22_pt(i1,i2)/fsss   ! elliptic, squared average
+c121207 if(sss-1.gt.1.d-5)then   ! 280607
+c121207 sv22op=(sv22op-sv2op*sv2op)/(sss-1.)
+        fsv22op=fsv22op-fsv2op*fsv2op   ! 121207
+        if(fsv22op.le.1.d-20)fsv22op=1.d-20
+        fsv22o_pt(i1,i2)=sqrt(fsv22op)   ! elliptic, square root of variance
+c121207 endif   ! 280607
+        endif   ! 280607
+        fsss=fssnum_eta(i1,i2)   ! 280607
+        if(fsss.gt.1.d-5)then   ! 280607
+        fsv1oe=fsv1_eta(i1,i2)/fsss   ! direct, average
+        fsv1o_eta(i1,i2)=fsv1oe
+        fsv12oe=fsv12_eta(i1,i2)/fsss   ! direct, squared average
+c121207 if(sss-1.gt.1.d-5)then   ! 280607
+c121207 sv12oe=(sv12oe-sv1oe*sv1oe)/(sss-1.)
+        fsv12oe=fsv12oe-fsv1oe*fsv1oe   ! 121207
+        if(fsv12oe.le.1.d-20)fsv12oe=1.d-20
+        fsv12o_eta(i1,i2)=sqrt(fsv12oe)   !  direct, square root of variance
+c121207 endif   ! 280607
+        fsv2oe=fsv2_eta(i1,i2)/fsss   ! elliptic, average
+        fsv2o_eta(i1,i2)=fsv2oe
+        fsv22oe=fsv22_eta(i1,i2)/fsss   ! elliptic, squared average
+c121207 if(sss-1.gt.1.d-5)then   ! 280607
+c121207 sv22oe=(sv22oe-sv2oe*sv2oe)/(sss-1.)
+        fsv22oe=fsv22oe-fsv2oe*fsv2oe   ! 121207   
+        if(fsv22oe.le.1.d-20)fsv22oe=1.d-20
+        fsv22o_eta(i1,i2)=sqrt(fsv22oe)   ! elliptic, square root of variance
+c121207 endif   ! 280607
+        endif   ! 280607
+        enddo
+        enddo
+
+        do i1=1,21
+        do i2=1,20
+        fsv1op=fssv1_pt(i1,i2)/flaa
+        fssv1o_pt(i1,i2)=fsv1op   ! direct, average
+        fsv12op=fssv12_pt(i1,i2)/flaa   ! direct, squared average
+c121207 if(flaa-1.gt.0.)then
+c121207 sv12op=(sv12op-sv1op*sv1op)/(flaa-1.)
+        fsv12op=fsv12op-fsv1op*fsv1op   ! 121207
+        if(fsv12op.le.1.d-20)fsv12op=1.d-20
+        fssv12o_pt(i1,i2)=sqrt(fsv12op)   !  direct, square root of variance
+c121207 endif
+        fsv2op=fssv2_pt(i1,i2)/flaa   
+        fssv2o_pt(i1,i2)=fsv2op   ! elliptic, average
+        fsv22op=fssv22_pt(i1,i2)/flaa   ! elliptic, squared average
+c121207 if(flaa-1.gt.0.)then
+c121207 sv22op=(sv22op-sv2op*sv2op)/(flaa-1.)
+        fsv22op=fsv22op-fsv2op*fsv2op   !121207
+        if(fsv22op.le.1.d-20)fsv22op=1.d-20
+        fssv22o_pt(i1,i2)=sqrt(fsv22op)   ! elliptic, square root of variance
+c121207 endif
+        fsv1op=fssv1_eta(i1,i2)/flaa
+        fssv1o_eta(i1,i2)=fsv1op   ! direct, average
+        fsv12op=fssv12_eta(i1,i2)/flaa   ! direct, squared average
+c121207 if(flaa-1.gt.0.)then
+c121207 sv12op=(sv12op-sv1op*sv1op)/(flaa-1.)
+        fsv12op=fsv12op-fsv1op*fsv1op   ! 121207
+        if(fsv12op.le.1.d-20)fsv12op=1.d-20
+        fssv12o_eta(i1,i2)=sqrt(fsv12op)   !  direct, square root of variance
+c121207 endif
+        fsv2op=fssv2_eta(i1,i2)/flaa   
+        fssv2o_eta(i1,i2)=fsv2op   ! elliptic, average
+        fsv22op=fssv22_eta(i1,i2)/flaa   ! elliptic, squared average
+c121207 if(flaa-1.gt.0.)then
+c121207 sv22op=(sv22op-sv2op*sv2op)/(flaa-1.)
+        fsv22op=fsv22op-fsv2op*fsv2op   ! 121207
+        if(fsv22op.le.1.d-20)fsv22op=1.d-20
+        fssv22o_eta(i1,i2)=sqrt(fsv22op)   ! elliptic, square root of variance
+c121207 endif
+        enddo
+        enddo
+c010412
 c161007
         wthroq=sthroq/flaa
         wthrob=sthrob/flaa
@@ -1270,6 +1678,177 @@ c161007
         write(8,*)'wthroe=',wthroe   ! 161007
         write(8,*)'wthroq,wthrob,wthroc=',wthroq,wthrob,wthroc/3.
 c161007
+c220312
+	write(8,*)'particle-wise average, partial phase space'   ! 010412
+        write(8,*)'final state v1(pt)'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(sv1o_pt(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'square root of variance of v1(pt)'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(sv12o_pt(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'final state v2(pt)'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(sv2o_pt(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'square root of variance of v2(pt)'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(sv22o_pt(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'final state v1(eta)'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(sv1o_eta(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'square root of variance of v1(eta)'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(sv12o_eta(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'final state v2(eta)'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(sv2o_eta(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'square root of variance of v2(eta)'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(sv22o_eta(i1,i2),i2=1,20)
+        enddo
+602     format(6(1x,e10.3))
+
+	write(8,*)'event-wise average, partial phase space'   ! 010412
+        write(8,*)'final state v1(pt) e'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(ssv1o_pt(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'square root of variance of v1(pt) e'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(ssv12o_pt(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'final state v2(pt) e'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(ssv2o_pt(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'square root of variance of v2(pt) e'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(ssv22o_pt(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'final state v1(eta) e'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(ssv1o_eta(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'square root of variance of v1(eta) e'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(ssv12o_eta(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'final state v2(eta) e'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(ssv2o_eta(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'square root of variance of v2(eta) e'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(ssv22o_eta(i1,i2),i2=1,20)
+        enddo
+c220312
+c010412
+	write(8,*)'particle-wise average, full phase space'
+        write(8,*)'final state v1(pt)'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(fsv1o_pt(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'square root of variance of v1(pt)'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(fsv12o_pt(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'final state v2(pt)'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(fsv2o_pt(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'square root of variance of v2(pt)'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(fsv22o_pt(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'final state v1(eta)'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(fsv1o_eta(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'square root of variance of v1(eta)'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(fsv12o_eta(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'final state v2(eta)'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(fsv2o_eta(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'square root of variance of v2(eta)'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(fsv22o_eta(i1,i2),i2=1,20)
+        enddo
+
+	write(8,*)'event-wise average, full phase space'
+        write(8,*)'final state v1(pt) e'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(fssv1o_pt(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'square root of variance of v1(pt) e'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(fssv12o_pt(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'final state v2(pt) e'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(fssv2o_pt(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'square root of variance of v2(pt) e'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(fssv22o_pt(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'final state v1(eta) e'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(fssv1o_eta(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'square root of variance of v1(eta) e'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(fssv12o_eta(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'final state v2(eta) e'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(fssv2o_eta(i1,i2),i2=1,20)
+        enddo
+        write(8,*)'square root of variance of v2(eta) e'
+        do i1=1,21
+        write(8,*)'i1=',i1
+        write(8,602)(fssv22o_eta(i1,i2),i2=1,20)
+        enddo
+c010412
         do m2=1,isdmax
         write(8,*)'ID of distribution m2=',m2
         do m3=1,ispmax
@@ -2062,6 +2641,172 @@ c       print particle list and sum of momentum and energy
         write(22,*)ich1/3,peo   !
         return
         end
+
+
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+	subroutine flow_f(px,py,pt,y,eta,p5,ik,kk)   ! 220312 010412
+c	calculate pt (eta) dependent direct and elliptic flow at final
+c        state (partonic or hadronic)
+	parameter (kszj=40000,KSZ1=30)
+      IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+      IMPLICIT INTEGER(I-N)
+      INTEGER PYK,PYCHGE,PYCOMP
+	common/sa7/ispmax,isdmax,iflmax,ispkf(20),non7,asd(5),
+     c  afl(20,5,2),ifram
+        common/sa18_pt/snum_pt(21,20),v1_pt(21,20),v2_pt(21,20),
+     c   v12_pt(21,20),v22_pt(21,20)   ! 280607
+	common/sa18_eta/snum_eta(21,20),v1_eta(21,20),v2_eta(21,20),
+     c   v12_eta(21,20),v22_eta(21,20)   ! 280607
+        common/sa24/adj1(40),nnstop,non24,zstop   ! 120707
+c010412
+        common/fsa18_pt/fsnum_pt(21,20),fv1_pt(21,20),fv2_pt(21,20),
+     c   fv12_pt(21,20),fv22_pt(21,20)   
+        common/fsa18_eta/fsnum_eta(21,20),fv1_eta(21,20),fv2_eta(21,20),
+     c   fv12_eta(21,20),fv22_eta(21,20)  
+        yoe=y
+        if(ifram.eq.1)yoe=eta
+c010412
+c	snum(1,i1)=snum(1,i1)+1.
+c	write(9,*)'px,py,pt,p5,ik,kk=',px,py,pt,p5,ik,kk   ! sa
+	amass=p5   
+        amass2=amass*amass
+		if(pt.lt.1.e-20)pt=1.e-20 ! 080512, yan
+        pt2=pt*pt
+	iik=iabs(ik)
+        adj140=adj1(40)
+
+c       pt is located at which interval ?
+	idpt=pt/asd(2)+1
+c       eta is located at which interval ?
+        ii=abs(eta)/asd(3)+1
+        if(ifram.eq.1 .and. eta.gt.0.)ii=ii+10
+        if(ifram.eq.1 .and. eta.lt.0.)ii=10-ii+1
+c       note: 10 here should be change together with the dimension
+c        20
+	idmt=ii
+
+	px2=px*px
+        py2=py*py
+	pxt=px/pt   ! v1
+	pxt2=(px2-py2)/pt2   ! v2
+c	write(9,*)'v1,v2=',pxt,pxt2   ! sa
+        if(idpt.lt.1 .or. idpt.gt.20)goto 100
+c010412	
+c	statistics of v1(pt) (v2(pt)) in full eta phase space
+        fsnum_pt(kk,idpt)=fsnum_pt(kk,idpt)+1   ! 280607
+	fv1_pt(kk,idpt)=fv1_pt(kk,idpt)+pxt
+	fv2_pt(kk,idpt)=fv2_pt(kk,idpt)+pxt2
+	fv12_pt(kk,idpt)=fv12_pt(kk,idpt)+pxt*pxt
+	fv22_pt(kk,idpt)=fv22_pt(kk,idpt)+pxt2*pxt2
+c120607 direct and elliptic flows of charged particle in hadronic final state
+        if(adj140.eq.3 .or. adj140.eq.4 .or. adj140.eq.5)then   ! 120707
+	if(iik.eq.211 .or. iik.eq.321 .or. iik.eq.2212)then
+        fsnum_pt(21,idpt)=fsnum_pt(21,idpt)+1   ! 280607
+	fv1_pt(21,idpt)=fv1_pt(21,idpt)+pxt
+	fv2_pt(21,idpt)=fv2_pt(21,idpt)+pxt2
+	fv12_pt(21,idpt)=fv12_pt(21,idpt)+pxt*pxt
+	fv22_pt(21,idpt)=fv22_pt(21,idpt)+pxt2*pxt2
+        endif
+        endif   ! 120707
+c120707
+        if(adj140.eq.1 .or. adj140.eq.2)then
+        if(iik.eq.1 .or. iik.eq.2 .or. iik.eq.3)then
+        fsnum_pt(21,idpt)=fsnum_pt(21,idpt)+1   ! 280607
+        fv1_pt(21,idpt)=fv1_pt(21,idpt)+pxt
+        fv2_pt(21,idpt)=fv2_pt(21,idpt)+pxt2
+        fv12_pt(21,idpt)=fv12_pt(21,idpt)+pxt*pxt
+        fv22_pt(21,idpt)=fv22_pt(21,idpt)+pxt2*pxt2
+        endif
+        endif
+c	statistics of v1(pt) (v2(pt)) in partial eta phase space
+	if(yoe.lt.afl(kk,1,1) .or. yoe.gt.afl(kk,1,2))goto 100   
+c010412
+        snum_pt(kk,idpt)=snum_pt(kk,idpt)+1   ! 280607
+	v1_pt(kk,idpt)=v1_pt(kk,idpt)+pxt
+	v2_pt(kk,idpt)=v2_pt(kk,idpt)+pxt2
+	v12_pt(kk,idpt)=v12_pt(kk,idpt)+pxt*pxt
+	v22_pt(kk,idpt)=v22_pt(kk,idpt)+pxt2*pxt2
+c120607 direct and elliptic flows of charged particle in hadronic final state
+        if(adj140.eq.3 .or. adj140.eq.4 .or. adj140.eq.5)then   ! 120707
+	if(iik.eq.211 .or. iik.eq.321 .or. iik.eq.2212)then
+        snum_pt(21,idpt)=snum_pt(21,idpt)+1   ! 280607
+	v1_pt(21,idpt)=v1_pt(21,idpt)+pxt
+	v2_pt(21,idpt)=v2_pt(21,idpt)+pxt2
+	v12_pt(21,idpt)=v12_pt(21,idpt)+pxt*pxt
+	v22_pt(21,idpt)=v22_pt(21,idpt)+pxt2*pxt2
+        endif
+        endif   ! 120707
+c120707
+        if(adj140.eq.1 .or. adj140.eq.2)then
+        if(iik.eq.1 .or. iik.eq.2 .or. iik.eq.3)then
+        snum_pt(21,idpt)=snum_pt(21,idpt)+1   ! 280607
+        v1_pt(21,idpt)=v1_pt(21,idpt)+pxt
+        v2_pt(21,idpt)=v2_pt(21,idpt)+pxt2
+        v12_pt(21,idpt)=v12_pt(21,idpt)+pxt*pxt
+        v22_pt(21,idpt)=v22_pt(21,idpt)+pxt2*pxt2
+        endif
+        endif
+c120707
+100     if(idmt.lt.1 .or. idmt.gt.20)goto 200
+c010412
+c	statistics of v1(eta) (v2(eta)) in full pt phase space
+	
+        fsnum_eta(kk,idmt)=fsnum_eta(kk,idmt)+1   ! 280607
+	fv1_eta(kk,idmt)=fv1_eta(kk,idmt)+pxt
+        fv2_eta(kk,idmt)=fv2_eta(kk,idmt)+pxt2
+        fv12_eta(kk,idmt)=fv12_eta(kk,idmt)+pxt*pxt
+        fv22_eta(kk,idmt)=fv22_eta(kk,idmt)+pxt2*pxt2
+        if(adj140.eq.3 .or. adj140.eq.4 .or. adj140.eq.5)then   ! 120707
+        if(iik.eq.211 .or. iik.eq.321 .or. iik.eq.2212)then
+        fsnum_eta(21,idmt)=fsnum_eta(21,idmt)+1   ! 280607
+	fv1_eta(21,idmt)=fv1_eta(21,idmt)+pxt
+        fv2_eta(21,idmt)=fv2_eta(21,idmt)+pxt2
+        fv12_eta(21,idmt)=fv12_eta(21,idmt)+pxt*pxt
+        fv22_eta(21,idmt)=fv22_eta(21,idmt)+pxt2*pxt2
+	endif
+        endif   ! 120707
+c120707
+        if(adj140.eq.1 .or. adj140.eq.2)then
+        if(iik.eq.1 .or. iik.eq.2 .or. iik.eq.3)then
+        fsnum_eta(21,idmt)=fsnum_eta(21,idmt)+1   ! 280607
+        fv1_eta(21,idmt)=fv1_eta(21,idmt)+pxt
+        fv2_eta(21,idmt)=fv2_eta(21,idmt)+pxt2
+        fv12_eta(21,idmt)=fv12_eta(21,idmt)+pxt*pxt
+        fv22_eta(21,idmt)=fv22_eta(21,idmt)+pxt2*pxt2
+        endif
+        endif
+c120707
+c	statistics of v1(eta) (v2(eta)) in partial pt phase space
+	if(pt.lt.afl(kk,2,1) .or. pt.gt.afl(kk,2,2))goto 200   
+c010412
+        snum_eta(kk,idmt)=snum_eta(kk,idmt)+1   ! 280607
+	v1_eta(kk,idmt)=v1_eta(kk,idmt)+pxt
+        v2_eta(kk,idmt)=v2_eta(kk,idmt)+pxt2
+        v12_eta(kk,idmt)=v12_eta(kk,idmt)+pxt*pxt
+        v22_eta(kk,idmt)=v22_eta(kk,idmt)+pxt2*pxt2
+        if(adj140.eq.3 .or. adj140.eq.4 .or. adj140.eq.5)then   ! 120707
+        if(iik.eq.211 .or. iik.eq.321 .or. iik.eq.2212)then
+        snum_eta(21,idmt)=snum_eta(21,idmt)+1   ! 280607
+	v1_eta(21,idmt)=v1_eta(21,idmt)+pxt
+        v2_eta(21,idmt)=v2_eta(21,idmt)+pxt2
+        v12_eta(21,idmt)=v12_eta(21,idmt)+pxt*pxt
+        v22_eta(21,idmt)=v22_eta(21,idmt)+pxt2*pxt2
+	endif
+        endif   ! 120707
+c120707
+        if(adj140.eq.1 .or. adj140.eq.2)then
+        if(iik.eq.1 .or. iik.eq.2 .or. iik.eq.3)then
+        snum_eta(21,idmt)=snum_eta(21,idmt)+1   ! 280607
+        v1_eta(21,idmt)=v1_eta(21,idmt)+pxt
+        v2_eta(21,idmt)=v2_eta(21,idmt)+pxt2
+        v12_eta(21,idmt)=v12_eta(21,idmt)+pxt*pxt
+        v22_eta(21,idmt)=v22_eta(21,idmt)+pxt2*pxt2
+        endif
+        endif
+c120707
+200	return
+	end
 
 
 

@@ -85,6 +85,7 @@ c	noel: statistics of the blocked nn colli. #
 	common/sa12/ppsa(5),nchan,nsjp,sjp,taup,taujp
 	common/sa15/nps,npsi,pps(5000,5),ppsi(5000,5)
 	common/sa23/kpar,knn,kpp,knp   ! 200601
+        common/sa33/smadel,ecce,parecc,iparres   ! 270312 240412
 
 	dimension peo(4),pi(4),pj(4),xi(4),xj(4)
 	dimension inoin(kszj)
@@ -147,6 +148,15 @@ c	pythia
 	endif
 	endif
 
+c270312 initiation of x,y,x^2,y^2 and sump (statistics of the number of
+c	 nucleons in overlap region)
+        sumx=0.
+        sumy=0.
+        sumx2=0.
+        sumy2=0.
+        sump=0.
+c270312
+
 c	initiate the nucleus-nucleus collision system
 c241110
 c       creat the initial particle list (nucleon)
@@ -195,7 +205,7 @@ c	if(iii.eq.10)write(9,*)'nap,vneump,ratps=',nap,vneump,ratps
 	if(rann.lt.ratps)then
 c       sample position of projectile nucleon in overlap region of colliding 
 c	 nuclei
-	call arrove(i1,1)
+	call arrove(i1,1,sumx,sumy,sumx2,sumy2,sump)   ! 270312
 	else
 c	sample position of projectile nucleon according to Woods-Saxon
 c	 distribution
@@ -245,7 +255,7 @@ c	distribute target nucleons
 	rann=pyr(1)
 	if(rann.lt.ratps)then
 c       sample position of target nucleon in overlap region of colliding nuclei
-	call arrove(i2,0)
+	call arrove(i2,0,sumx,sumy,sumx2,sumy2,sump)   ! 270312
 	else
 c	sample position of target nucleon according to Woods-Saxon
 c	 distribution
@@ -302,6 +312,25 @@ c	distribute target nucleons
         enddo        
         endif   !!
 c230311
+c270312
+        if(sump.ne.0.)then
+        asumx=sumx/sump
+        sigmx2=sumx2/sump-asumx*asumx
+        asumy=sumy/sump
+        sigmy2=sumy2/sump-asumy*asumy
+c       reaction plane eccentricity of participant nucleons
+        ecce=(sigmy2-sigmx2)/(sigmy2+sigmx2)
+c       assuming ecce=geometric eccentricity of ellipsoid (\sqrt{(1-b^2/a^2)})
+c        with half major axis b=pt*(1+smadel) and half minor axis
+c        a==pt*(1-smadel), the resulted smadel=-ecce*ecce/4 (if neglecting
+c        the samll term of ecce*ecce*(-2*smadel+smadel*smadel)
+	smadel=parecc*ecce*ecce/4.
+c       here a sign change is introduced because of asymmetry of initial
+c        spatial space is oppsed to the final momentum space
+c       write(9,*)'vneump,vneumt,sump,ecce,smadel=',
+c     c  vneump,vneumt,sump,ecce,smadel
+        endif   
+c270312
 c191110
 	r0pt=r0p+r0t
         if(itden.ne.0)then   ! A+B or p+A, 230311
@@ -729,7 +758,7 @@ c        kfmaxi=kfmax
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	subroutine arrove(ii,jj)   ! 191110
+	subroutine arrove(ii,jj,sumx,sumy,sumx2,sumy2,sump)   ! 191110 270312
 c	arrange randomly particle ii in overlap region of colliding nuclei 
 c	jj=0 and 1 for target and projectile, respectively  
 	PARAMETER (kszj=40000,KSZ1=30)
@@ -765,6 +794,13 @@ c	adjudge does (x-b,y,z) is in the sphere of projectile
         c17(ii,1)=x
         c17(ii,2)=y
         c17(ii,3)=z
+c270312
+        sumx=sumx+x
+        sumy=sumy+y
+        sumx2=sumx2+x*x
+        sumy2=sumy2+y*y
+        sump=sump+1.
+c270312
 	endif
 	if(jj.eq.1)then   ! ii in projectile
 	x=x*r0p
@@ -777,6 +813,13 @@ c	adjudge does (x+b,y,z) is in the sphere of target
 	c17(ii,1)=x
         c17(ii,2)=y
         c17(ii,3)=z
+c270312
+        sumx=sumx+x
+        sumy=sumy+y
+        sumx2=sumx2+x*x
+        sumy2=sumy2+y*y
+        sump=sump+1.
+c270312
 	endif
 55	return
 	end

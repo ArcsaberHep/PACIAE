@@ -2,11 +2,11 @@
 c	deal with parton cascade (partonic rescattering)
 c	input messages are in 'parlist' ('pyjets' to 'parlist' in paciae.f)
 c	working block is 'parlist'
-c	output messages are in 'parlist' (parlist' to 'pyjets' in paciae.f)   
+c	output messages are in 'parlist' ('parlist' to 'pyjets' in paciae.f)   
 c	writen by Ben-Hao Sa 19/11/2002
 c160110 iiii: number of run
 c       jjj: jjj-th parton-parton interaction in a NN collision
-c       n00: 'largest line number' in 'pyjets' after call 'break'
+c       n00: largest line number in 'pyjets' after call 'break'
 c160110  partons above n00 are all appearing after inelastic collision
 	parameter (mplis=40000,msca=2000)
         parameter(kszj=40000)   ! 160110
@@ -332,9 +332,13 @@ c	update collision list
 c	'old' method
 c160110 update collis. list for els. parton-paron interaction
 c       for inela. parton-parton collision the collision time list is updated
-c160110 in ubroutine collis'
-        if(lmn.ne.4 .or. lmn.ne.6 .or. lmn.ne.7)
-     c  call update_ctl(tcp,iway)   ! 120505 160110
+c160110 in ubroutine 'collis'
+c030512	if(lmn.ne.4 .or. lmn.ne.6 .or. lmn.ne.7)
+c030512	c  call update_ctl(tcp,iway)   ! 120505 160110
+c030512 update collis. list for els. parton-paron interactions and 4 & 6
+c        inela. parton-parton collisions, for 7 the collis. time list is
+c030512  updated in subroutine 'collis'
+	if(lmn.ne.7) call update_ctl(tcp,iway)   ! 030512
 c120505
 c	'new' method
 c1	if(adj136.eq.0)call update_ctl(tcp,iway)   
@@ -648,6 +652,8 @@ c	write(9,*)'in find, icp,tcp=',icp,tcp   ! sa
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	subroutine update_ctl(time,iway)   ! 120505
 c160110 update the collision time list for ela. parton-parton scattering
+c030512 update the collision time list for ela. parton-parton scattering
+c030512  & 4 and 6 inels. parton-parton scattering
 	parameter (mplis=40000,mclis=240000)
 	IMPLICIT DOUBLE PRECISION(A-H, O-Z)
 	IMPLICIT INTEGER(I-N)
@@ -2188,6 +2194,7 @@ c       another part of 'update collision list', i. e. find out collis. pairs
 c        composed of partons one of which is ic (jc) and another one 
 c        in 'parlist'
         endif
+	return   ! 030512
 
         if(adj12.eq.0 .and. (lmn.eq.4 .or. lmn.eq.6))then   ! 1   
 c       process 4: q1(q1bar)->q2(q2bar); process 6: q(qbar)->gg
@@ -3629,8 +3636,13 @@ c	differential cross section of q1*q1(-) -> q2*q2(-), process 4
         common/syspar_p/rsig1,pio,tcut
 c210803
         common/sa24/adj1(40),nnstop,non24,zstop   ! 181003
+c240412
+        common/sa33/smadel,ecce,parecc,iparres
+        if(iparres.eq.0)then
         fs11_1=0.   ! 160110
         return   ! 160110
+        endif
+c240412
         adj11=adj1(1)
 	adj20=adj1(20)  
 c210803
@@ -3698,8 +3710,13 @@ c	differential cross section of q*q(-) -> g*g, process 6
         common/syspar_p/rsig1,pio,tcut
 c210803
         common/sa24/adj1(40),nnstop,non24,zstop   ! 181003
+c240412
+        common/sa33/smadel,ecce,parecc,iparres
+        if(iparres.eq.0)then
         fsqq=0.   ! 160110
         return   ! 160110
+	endif
+c240412
         adj11=adj1(1)
 	adj20=adj1(20)  
 c210803
@@ -3768,8 +3785,14 @@ c	differential cross section of g*g ->q*q(-), process 7
         common/syspar_p/rsig1,pio,tcut
 c210803
         common/sa24/adj1(40),nnstop,non24,zstop   ! 181003
+c240412
+        common/sa33/smadel,ecce,parecc,iparres
+c       write(9,*)'iparres=',iparres
+        if(iparres.eq.0)then
         fsgg_1=0.   ! 160110
         return   ! 160110
+        endif
+c240412
         adj11=adj1(1)
 	adj20=adj1(20)  
 c210803
