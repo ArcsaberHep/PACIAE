@@ -1,15 +1,16 @@
 	subroutine hadcas(ijk,neve,nout,time_had,ijkk)
-c       deal with the hadronic rescattering composed by Ben-Hao Sa, 20/09/2000
-c       input message is in 'sa1_h', which plays wooking block as well
-c       output message is in 'sa1_h'
+c       deals with the hadronic rescattering, 
+c        composed by Ben-Hao Sa, 20/09/2000
+c	input message is in 'sa1_h', which plays wooking block as well
+c	output message is in 'sa1_h'
 c       ijk: the event number
 c       neve: total number of events
-c       nout: a internal write out per nout events
-c060112 if ijkk=1 give up current event (avoiding infinite loops)
+c       nout: a internal output per nout events
+c060112 if ijkk=1 give up current event avoiding infinite loop
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter(kszj=40000,nsize=720000)
+	parameter(kszj=80000,nsize=750000)
         common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
 	common/sa8_h/tau(kszj),ishp(kszj)
         common/sa9_h/kfmax,kfaco(100),numb(100),non9,disbe(100,100)
@@ -24,17 +25,18 @@ c060112 if ijkk=1 give up current event (avoiding infinite loops)
 	common/sa24/adj1(40),nnstop,non24,zstop   ! 231104
         common/sa25/mstj1_1,mstj1_2,para1_1,para1_2   ! 221203 250204
         common/pycidat2/kfmaxt,nont2,param(20),weigh(600)   ! 250204
-c       ifram = 0 for fixed target, = 1 for collider
+c       ifram = 0 for fixed target, = 1 for collider 
 c       cspipi (fm^2): total cross section of pion + pion
-c       cspin (fm^2): total cross section of pion + nucleon
-c       cskn (fm^2): total cross section of kaon + nucleon
-c       csnn (fm^2): total cross section of n + n
+c       cspin (fm^2): total cross section of pion + nucleon 
+c       cskn (fm^2): total cross section of kaon + nucleon 
+c       csnn (fm^2): total cross section of n + n 
 c       cspsn: total cross section of J/Psi (Psi') + n
 c       cspsm: total cross section of J/Psi (Psi') + meson
 c       rcsit: ratio of inelastic to total cross section
-c       kfmax: the maximum # of particles with different flavor code
+c       kfmax: the maximum # of particles with given flavor code 
 c       kfaco(i): flavor code of i-th particle among kfmax
-c       numb(i): # of particles up to the last one with flavor of kfaco(i)
+c       numb(i): order # of last particle of particles with same flavor of 
+c        kfaco(i) in particle list
 c       disbe(i,j): allowable minimum approaching distance between particles
 c                   kfaco(i) & kfaco(j)
 c       sig (fm^2): cross section of pion + pion to kaon + kaon
@@ -43,14 +45,14 @@ c       epin: largest interaction distance between pion and nucleon.
 c       ekn: largest interaction distance between kaon and nucleon.
 c       ecsnn: largest interaction distance between two nucleons.
 c       t0: average proper formation time at rest.
-c       ddt: time accuracy used in hadron cascade
+c       ddt: time accuracy 
 c!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 c       0. is hard core distance between two pions
 c       0.5 is hard core distance between two nucleons
 c       0. is hard core distance between pion and nucleon
 c!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 c       tau(i) : formation time of particle i.
-c       ishp(i)=1 if i-th particle inside the simulated volume
+c	ishp(i)=1 if i-th particle inside the simulated volume
 c              =0 if i-th particle outside the simulated volume
 c       isinel(i) = 0 without i-th inelastic process
 c                 = 1 with i-th inelastic process
@@ -58,9 +60,9 @@ c       lc(i,1) and lc(i,2) are, respectively, line # in particle
 c        list of the colliding particles of i-th collision pair
 c       lc(i,3) and lc(i,4) are the flavor codes of scattered particles
 c        of i-th collision pair
-c       lc(i,5) identifies the different inelastic processes,
+c       lc(i,5) identifies the different inelastic process,
 c        lc(i,5)=592, not used
-c       tc(i): collision time of i-th colli pair
+c       tc(i): collision time of i-th colliding pair
 c       tw(i): cross section ratio of (i-th inelas.)/tot
 c       pio : 3.1416
 c       nctl: number of collision pairs in the current collision list
@@ -69,9 +71,8 @@ c       noinel(i): statistics of the occurring of i-th inelastic process
 c       noel: statistics of the occurring of elastic process
         dimension lc(nsize,5),tc(nsize),tw(nsize)
         dimension peo(4)
-	time=0.   ! recovered on 280910 121110
+	time=time_had   ! recovered on 280910
 	param(1)=para1_2   ! 250204
-c	write(9,*)'para1_2=',param(1)   ! 250204
 	pio=3.1416
 	iabsb=0
 	iabsm=0
@@ -82,9 +83,10 @@ c             = 1 : with J/Psi (Psi') + meson
 
 c280910	if(ijk.eq.1)then
 c       give initial value to quantities needed in hardon rescattering
-	call sysini_h   ! it has been called in paciae.f
-c	write(9,*)'sig,rcsit=',sig,rcsit   ! sa
+	call sysini_h   ! it has been called in main.f
 c280910	endif
+
+c	initiation
         nctl=0
         do i=1,nsize
         do j=1,5
@@ -150,43 +152,32 @@ c       change K0S, K0L to K0, K0ba
         endif
         enddo
 
-c	write(9,*)'before filt ijk=',ijk   ! sa
-c	call prt_sa1_h(nsa) ! sa
 c       filter out particles wanted to study and make in order of proton, 
-c        neutron, ... 
+c        neutron, ...
+c	initial particle list is compsed of the arraies in common block 
+c        'sa1_h', 'tau' and 'ishp' in 'sa8_h', and 'numb' in 'sa9_h'
+c	call prt_sa1_h(nsa) ! sa 
         call filt_h
-c	write(9,*)'after filt'   ! sa
 c	call prt_sa1_h(nsa) ! sa
 c280910	time=0.
+ 
 c       calculate position of center of mass of the system. distance of a 
 c        particle from this cms is used to check whether it is freezes out 
-c        or not 
+c        or not
         call copl_h(time)
-c       initial particle list is compsed of the arraies in common block 
-c        'sa1_h', 'tau' and 'ishp' in 'sa8_h', and 'numb' in 'sa9_h'
+
 c       creat the initial collision list, note: be sure that the initial
 c        collision list must not be empty
-c	write(9,100)(numb(i),i=1,10)   ! sa
-c        write(9,100)(numb(i),i=11,20)   ! sa
-c        write(9,100)(numb(i),i=21,30)   ! sa
-c        write(9,100)(numb(i),i=31,40)   ! sa
 100	format(10(1x,i5))   
         call ctlcre_h(lc,tc,tw,time)
-c	write(9,*)'af ctlcre, nctl,time=',nctl,time   ! sa
-cm	call prt_sa1_h(nsa) ! sa
-cm	do iop=1,nctl   ! sa
-cm	write(9,*)iop,lc(iop,1),lc(iop,2),tc(iop)   ! sa,coli. time list
-cm	enddo   ! sa
+
 c	administrate hadron rescattering        
 	call scat_h(time,lc,tc,tw,ijkk,ijk,neve)
 	if(ijkk.eq.1)return   ! 100603
 c       if ijkk=1 (infinite loops) give up the event 
 c	call prt_sa1_h(nsa) ! sa
-c	do iop=1,nctl   ! sa
-c	write(9,*)iop,lc(iop,1),lc(iop,2),tc(iop)   ! sa
-c	enddo   ! sa 
-	time_had=time_had+time   ! 121110
-c	write(9,*)'af scat, time_had,time=',time_had,time   ! sa
+	time_had=time
+
 c       change K0,K0ba to K0L and K0S
         do j=1,nsa
         kf=ksa(j,2)
@@ -196,7 +187,6 @@ c       change K0,K0ba to K0L and K0S
         if(rrlu.gt.0.5)ksa(j,2)=310
         endif
         enddo
-c       write(9,*)'before return, time=',time   ! sa
 c       call prt_sa1_h(nsa) ! sa
 	return
 	end
@@ -205,11 +195,11 @@ c       call prt_sa1_h(nsa) ! sa
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine sysini_h
-c       give the initial values to the quantities needed in hadron rescattering
+c       give the initial values to the quantities needed in hardon rescattering
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter (kszj=40000)
+        parameter (kszj=80000)
         COMMON/PYCIDAT1/KFACOT(100),DISDET(100),ISINELT(600)
         COMMON/PYCIDAT2/KFMAXT,NONT2,PARAM(20),WEIGH(600)
         common/sa9_h/kfmax,kfaco(100),numb(100),non9,disbe(100,100)
@@ -220,7 +210,6 @@ c       give the initial values to the quantities needed in hadron rescattering
 	common/sa24/adj1(40),nnstop,non24,zstop   ! 060404
         common/syspar_h/pio
         common/count_h/isinel(600)
-c       set initial values to some quantities
 c       cross sections are given in fm.
         csnn=PARAM(1)*0.1
         cspin=PARAM(2)*0.1
@@ -261,7 +250,6 @@ c        rao=PARAM(10)
         enddo
         enddo
         do j=1,kfmax
-c       tai, something might be missing here
         disbe(1,j)=DISDET(j)
         disbe(2,j)=DISDET(j)
         disbe(3,j)=DISDET(j)
@@ -285,16 +273,18 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine filt_h
 c       filter out particles wanted to study and make
 c       in order of proton,neutron,pba,nba,pi+,pi-,pi0,k-,k0-,sigma0,
-c       sigma-,sigma+,sigma0ba,sigma-ba,sigma+ba,lamda,lamdaba,k0,k+,
-c       cascade-,cascade-ba,cascade0,cascade0ba,omega-,omega+,Delta-,
-c       Delta0,Delta+,Delta++,rho+,rho-,rho0,J/Psi,Psi',x0c,x1c,x2c,
-c       D,Dba,D0,D0ba,lamdac+,sigmac0,sigmac+,sigmac++,omega,k*+,K*0,
-c       D*,D*ba,D*0,D*0ba
-c       (52 kinds of particle altogether)
+c        sigma-,sigma+,sigma0ba,sigma-ba,sigma+ba,lamda,lamdaba,k0,k+,
+c        cascade-,cascade-ba,cascade0,cascade0ba,Omega-,Omega+,Delta-,
+c        Delta0,Delta+,Delta++,rho+,rho-,rho0,J/Psi,Psi',Upsilon,
+c        Upsilon',x0c,x1c,x2c,D+,D+ba,D0,D0ba,lamdac+,sigmac0,sigmac+,
+c        sigmac++,omega,k*+,K*0,D*+,D*+ba,D*0,D*0ba,Ds+,Ds+ba,B0,B0ba,
+c        B+,B+ba,Bs0,Bs0ba,Bc+,Bc+ba,B*0,B*0ba,B*+,B*+ba,Bs*0,Bs*0ba,
+c        Bc*+,Bc*+ba   ! 250420
+c        (72 kinds of particle altogether)   ! 250420
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter(kszj=40000)
+	parameter(kszj=80000)
         common/sa1_h/n,non1,k(kszj,5),p(kszj,5),v(kszj,5)
         common/sa9_h/kfmax,kfaco(100),numb(100),non9,disbe(100,100)
         iii=0
@@ -321,7 +311,7 @@ c       ipi : j-th particle should order after ipi
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter(kszj=40000)
+        parameter(kszj=80000)
         common/sa1_h/n,non1,k(kszj,5),p(kszj,5),v(kszj,5)
         dimension kk(5),pp(5),vv(5)
         ik=k(j,2)
@@ -352,11 +342,11 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine copl_h(tt)
 c       calculate position of center of mass of the non-freeze-out system 
 c       distance of a particle from this cms is used to checke whether
-c        it freezes out or not
+c        it freezes out or not 
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter(kszj=40000)
+        parameter(kszj=80000)
         common/sa1_h/n,non1,k(kszj,5),p(kszj,5),v(kszj,5)
          COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         common/sa8_h/tau(kszj),ishp(kszj)
@@ -388,7 +378,7 @@ c       create the initial collision list
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter(kszj=40000,nsize=720000)
+        parameter(kszj=80000,nsize=750000)
         common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         common/sa9_h/kfmax,kfaco(100),numb(100),non9,disbe(100,100)
         common/sa20_h/t0,sig,dep,ddt,edipi,epin,ecsnn,ekn,ecspsn,ecspsm
@@ -396,11 +386,6 @@ c       create the initial collision list
         common/ctllist_h/nctl,noinel(600),nctl0,noel
         common/syspar_h/pio
         dimension lc(nsize,5),tc(nsize),tw(nsize)
-c	write(9,*)'in ctlcre_h, nsa=',nsa   ! sa
-c        write(9,100)(numb(i),i=1,10)   ! sa
-c        write(9,100)(numb(i),i=11,20)   ! sa
-c        write(9,100)(numb(i),i=21,30)   ! sa
-c        write(9,100)(numb(i),i=31,40)   ! sa
 100     format(10(1x,i5))
         m2=numb(2)   ! up to n (neutron)
         m4=numb(4)   ! up to nbar
@@ -414,6 +399,7 @@ c        write(9,100)(numb(i),i=31,40)   ! sa
         m34=numb(34)   ! up to Psi'
 c       m34=numb(kfmax-11)
 c       subtract 11, since do not consider the rescattering of x0c, etc
+
         nctl=1
 	do 500 l=1,nsa-1
         if(l.le.m19
@@ -437,18 +423,16 @@ c        sigma, lambda, delta,rho and psi
         goto 600
 700	iflag=0
         call rsfilt_h(l,l1,iflag)
-c	write(9,*)'l,l1,iflag=',l,l1,iflag   ! sa
         if(iflag.eq.0)goto 600
         tc(nctl)=0.0
         call tcolij_h(l,l1,time,nctl,lc,tc,tw)
-c	write(9,*)'l,l1,tc(nctl)=',l,l1,tc(nctl)   ! sa
 c170204	if(tc(nctl).gt.1.0e-7) nctl=nctl+1
 c170204
 	tci=tc(nctl)
 c110504
 c	if(tci.gt.1.0e-7)then
 	if(tci.eq.0.0)goto 600
-c	return from 'tcolij' unsuccessfully, goto 600
+c	from 'tcolij' unsuccessfully, goto 600
 	if(nctl.eq.1)then
 	nctl=nctl+1
 	goto 600
@@ -486,7 +470,7 @@ c	neve: total number of runs
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter(kszj=40000,nsize=720000)
+        parameter(kszj=80000,nsize=750000)
         common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         common/sa8_h/tau(kszj),ishp(kszj)
         common/sa9_h/kfmax,kfaco(100),numb(100),non9,disbe(100,100)
@@ -510,9 +494,9 @@ c	enddo
         iii=1
 10      if(iii.eq.1)goto 1000
 	call copl_h(time)
+
 c       find out the binary colli. with minimum collsion time
 1000    call find_h(icp,tcp,lc,tc,tw,1)
-c        write(9,*)'af find ijk,iii,nctl,icp,tcp=',ijk,iii,nctl,icp,tcp
 	if(icp.eq.0)goto 100
 c       icp=0 means the collision list is empty
 c141104
@@ -534,8 +518,6 @@ c141104
 	kfa=ksa(l,2)    ! 060603
         kfb=ksa(l1,2)   ! 060603
         time=tcp
-cm	write(9,*)'af find iii,l,l1,kfa,kfb,icp.time=',iii,l,l1,kfa,kfb,
-cm     c	 icp,tcp   ! sa
 c       record this collision time
 20      continue
 
@@ -553,16 +535,11 @@ c       istop=1 means all particles have get out of considered volume
         pj(i)=psa(l1,i)
         b(i)=(pi(i)+pj(i))/(pi(4)+pj(4))
         enddo
-c	write(9,*)'before lorentz b=',(b(i),i=1,3)   ! sa
-c	write(9,510)(pi(i),i=1,4)   ! sa
-c	write(9,510)(pj(i),i=1,4)   ! sa
 510     format(4(1x,f9.3))
+
+c       boost to CMS frame of colliding pair
         ilo=0
         call lorntz(ilo,b,pi,pj)
-c       boost to CMS frame of colliding pair
-c        write(9,*)'after lorentz l,l1=',l,l1   ! sa
-c        write(9,510)(pi(i),i=1,4)   ! sa
-c        write(9,510)(pj(i),i=1,4)   ! sa
         ss=pi(4)+pj(4)
 
         ww=rcsit
@@ -576,12 +553,11 @@ c       the cross section ratio of (ela.)/tot =1- rcsit
 c       two particles with four-momentum pi and pj in CMS frame and flavor
 c       ksa(l,2),ksa(l1,2) might go through inelastic reaction
 
-c	write(9,*)'be. coinel, iii,kfa,kfb,winel=',iii,kfa,kfb,winel! sa
         call coinel(l,l1,ss,b,pi,pj,icp,pii,pjj,lc,tc,tw,winel,ik3,ik4)
 c       if winel=0 the inelastic reaction has not really happened 
-c       if winel=1 inelastic collision happens, ik3 and ik4 are     
+c       if winel=1 inelastic collision happens, ik3 and ik4 are  
 c        flavors of the scattered particles, pii and pjj are four-momentum of 
-c        scattered particles in Lab frame, the two colliding particles are     
+c        scattered particles in Lab frame, the two colliding particles are 
 c        still with line numbers of l and l1 in the particle list
 
 640     if(winel.ne.0)then   !!!
@@ -589,19 +565,6 @@ c        still with line numbers of l and l1 in the particle list
 c       treat the inelastic collision 
         icp5=lc(icp,5)
         noinel(icp5)=noinel(icp5)+1
-cm	write(9,*)'af coinel, iii,l,l1,icp5,ik3,ik4,winel=',iii,l,l1,
-cm     c	 icp5,ik3,ik4,winel   ! sa
-c        write(9,510)(pii(i),i=1,4)   ! sa
-c        write(9,510)(pjj(i),i=1,4)   ! sa
-c       if(ijk.eq.12.or.ijk.eq.20)write(9,*)'iii,ic5=',iii,lc(icp,5) ! sa
-c       if(ijk.eq.12 .and. iii.eq.34)write(9,*)'w,rrlu=',winel,rrlu ! sa
-cm	call prt_sa1_h(nsa)   ! sa
-c	do i=1,nctl   ! sa
-c	lc1=lc(i,1)   ! sa
-c	lc2=lc(i,2)   ! sa
-c	write(9,*)'i,lc1,lc2,tc=',i,lc1,lc2,tc(i) ! sa
-c	enddo   ! sa
-c       write(9,*)'before updpli, ijk,iii=',ijk,iii   ! sa
 c       update particle list after inelastic collision
 c        and truncates collision list correspondingly 
         call updpli(l,l1,icp,ss,pii,pjj,lc,tc,tw,winel,time,icp5)
@@ -609,41 +572,22 @@ c        and truncates collision list correspondingly
         l1=lc(icp,2)
 c       l and l1 are now the line numbers of scattered particles in 
 c        particle list.
-c       write(9,*)'af updpli (inela) winel,l,l1,time=',winel,l,l1,time   ! sa
-cm	call prt_sa1_h(nsa)   ! sa
 
         else   !!!
 c       calculate four-momentum of scattered particles after elastic 
 c	 collistion (pi and pj in CMS frame)
         call coelas_h(l,l1,ss,pi,pj)
-c	write(9,*)'af. coelas l,l1=',l,l1   ! sa
-c        write(9,510)(pi(i),i=1,4)   ! sa
-c        write(9,510)(pj(i),i=1,4)   ! sa
+
 c       update particle list for elastic scattering, pi and pj have been
 c        boosted back to Lab fram 
         call updple_h(l,l1,b,pi,pj,time)
-c	write(9,*)'af updple winel,l,l1,time=',winel,l,l1,time   ! sa
-c        write(9,510)(pi(i),i=1,4)   ! sa
-c        write(9,510)(pj(i),i=1,4)   ! sa
-cm	call prt_sa1_h(nsa)   ! sa
-c	do i=1,nctl   ! sa
-c	lc1=lc(i,1)   ! sa
-c	lc2=lc(i,2)   ! sa 
-c	write(9,*)'i,lc1,lc2,tc=',i,lc1,lc2,tc(i) !sa
-c	enddo   ! sa
         noel=noel+1
 
         endif   !!!
 
-c       write(9,*)'before updatl, ijk,iii=',ijk,iii   ! sa
 c       update the collision list
         call updatl_h(l,l1,time,lc,tc,tw,winel,iii)
 301     continue
-c	write(9,*)'af updatl, l,l1,winel,time=',l,l1,winel,time ! sa
-c	call prt_sa1_h(nsa)   ! sa
-cm	do i1=1,nctl   ! sa
-cm	write(9,*)'i1,lci,lcj,t=',i1,lc(i1,1),lc(i1,2),tc(i1) ! sa
-cm	enddo   ! sa
 
 c       if(nctl.le.1)goto 300
 c        deltt=time-time0
@@ -683,13 +627,13 @@ c       if(ijk.eq.6)write(9,*)'iii=',iii
 
 
 
-ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine find_h(icp,tcp,lc,tc,tw,ico)
 c       find out the binary collision with minimum collision time
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter(nsize=720000)
+        parameter(nsize=750000)
         common/ctllist_h/nctl,noinel(600),nctl0,noel
         dimension lc(nsize,5),tc(nsize),tw(nsize)
         icp=0
@@ -714,7 +658,7 @@ c       classical Newton motion in Lab. system
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter (kszj=40000,nsize=720000)
+        parameter (kszj=80000,nsize=750000)
         common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         common/sa8_h/tau(kszj),ishp(kszj)
         common/sa19_h/coor(3)
@@ -1181,7 +1125,7 @@ c      	 600     n- + n to rho0 + omiga
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter(kszj=40000,nsize=720000)
+	parameter(kszj=80000,nsize=750000)
 	COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
 	common/sa1_h/n,non1,k(kszj,5),p(kszj,5),v(kszj,5)
 c	note the name of the arraies in 'sa1' in this subroutine
@@ -1202,7 +1146,7 @@ c	of prod()
 c	tw(i): the cross section ratio of (i-th inela.)/tot
 	if(abs(kl).eq.211 .or. abs(kl).eq.111 .or. abs(kl).eq.321 
      &   .or. abs(kl).eq.311.or. abs(kl).eq.213.or. abs(kl).eq.113
-     &	.or. kl.eq.443 .or. kl.eq.30443)then
+     &	.or. kl.eq.443 .or. kl.eq.100443)then
 	idpl=1   ! meson
 	else
 	idpl=3   ! baryon
@@ -1274,7 +1218,7 @@ c	if(jjj.eq.1)goto 300
 400	return
 	end
 
-C&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
 C&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 	subroutine cosin(am01,am1,eij,pi,pp,cctas)
 c	calculate cos(theta_s)
@@ -1314,14 +1258,16 @@ c050510	if(abs(cctas).gt.1)cctas=sign(1.,cctas)
 	return
 	end
 
+
+
 c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 	subroutine prod(l,l1,kl,kl1,ss,icp,lc,tc,tw)
 c	calculate particle production weight and fill up lc(i,3-5),tw(i).
-c	tw : the ratio of cross section of (special inela.)/tot
+c	tw : the ratio of cross section of (given inela.)/tot
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter(nsize=720000)
+	parameter(nsize=750000)
 	COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         COMMON/PYCIDAT2/KFMAXT,NONT2,PARAM(20),WEIGH(600)
 	common/sa10_h/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
@@ -1333,7 +1279,7 @@ c	tw : the ratio of cross section of (special inela.)/tot
   	dimension lc(nsize,5),tc(nsize),tw(nsize)
 	integer fact1,fact2
 	para13=param(1)*0.1*param(6)*0.8
-c	p- p annihilation cross section is assumed to be equal to 0.8*(
+c	p-p annihilation cross section is assumed to be equal to 0.8*(
 c	 total inelastic cross section)
 	ioo=0
 	ilo=1
@@ -1353,7 +1299,7 @@ c p-p ------------------------>
 	call ppdelta(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo)	
 	if(ioo.eq.0)goto 13
 	goto 10
-cp+n ----------------------->
+c p+n ----------------------->
 	elseif((kl.eq. 2212.and. kl1.eq.2112).or.
      &          (kl.eq. 2112.and. kl1.eq.2212))then    
 	call pndelta(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo)
@@ -7766,7 +7712,7 @@ c	J/Psi interacts with baryon or meson
         endif
 
 c	Psi' interacts with baryon or meson
-	if(kl.eq.30443 .and. kl1.eq.2112)then
+	if(kl.eq.100443 .and. kl1.eq.2112)then
 	if(iabsb.eq.0)goto 13
 	call jpsin(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,2)
 c	argument '2' here refers to the Psi' induced reaction 
@@ -7784,7 +7730,7 @@ c	reaction
         goto 10
         endif
 
-	if(kl.eq.30443 .and. kl1.eq.2212)then
+	if(kl.eq.100443 .and. kl1.eq.2212)then
 	if(iabsb.eq.0)goto 13
 	call jpsip(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,2)
 	if(ioo.eq.0)goto 13
@@ -7797,8 +7743,8 @@ c	reaction
         goto 10
         endif
 
-	if((kl.eq.30443 .and. kl1.eq.211)
-     &	   .or. (kl.eq.211 .and. kl1.eq.30443))then
+	if((kl.eq.100443 .and. kl1.eq.211)
+     &	   .or. (kl.eq.211 .and. kl1.eq.100443))then
 	if(iabsm.eq.0)goto 13
 	call jpsip1(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,2)
 	if(ioo.eq.0)goto 13
@@ -7811,8 +7757,8 @@ c	reaction
         goto 10
         endif
 
-	if((kl.eq.30443 .and. kl1.eq.111)
-     &	   .or. (kl.eq.111 .and. kl1.eq.30443))then
+	if((kl.eq.100443 .and. kl1.eq.111)
+     &	   .or. (kl.eq.111 .and. kl1.eq.100443))then
 	if(iabsm.eq.0)goto 13
 	call jpsip0(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,2)
 	if(ioo.eq.0)goto 13
@@ -7825,8 +7771,8 @@ c	reaction
         goto 10
         endif
 
-	if((kl.eq.30443 .and. kl1.eq.-211)
-     &	   .or. (kl.eq.-211 .and. kl1.eq.30443))then
+	if((kl.eq.100443 .and. kl1.eq.-211)
+     &	   .or. (kl.eq.-211 .and. kl1.eq.100443))then
 	if(iabsm.eq.0)goto 13
 	call jpsip2(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,2)
 	if(ioo.eq.0)goto 13
@@ -7839,8 +7785,8 @@ c	reaction
         goto 10
         endif
 
-	if((kl.eq.30443 .and. kl1.eq.213)
-     &	   .or. (kl.eq.213 .and. kl1.eq.30443))then
+	if((kl.eq.100443 .and. kl1.eq.213)
+     &	   .or. (kl.eq.213 .and. kl1.eq.100443))then
 	if(iabsm.eq.0)goto 13
 	call jpsir1(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,2)
 	if(ioo.eq.0)goto 13
@@ -7853,8 +7799,8 @@ c	reaction
         goto 10
         endif
 
-	if((kl.eq.30443 .and. kl1.eq.113)
-     &	   .or. (kl.eq.113 .and. kl1.eq.30443))then
+	if((kl.eq.100443 .and. kl1.eq.113)
+     &	   .or. (kl.eq.113 .and. kl1.eq.100443))then
 	if(iabsm.eq.0)goto 13
 	call jpsir0(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,2)
 	if(ioo.eq.0)goto 13
@@ -7867,8 +7813,8 @@ c	reaction
         goto 10
         endif
 
-	if((kl.eq.30443 .and. kl1.eq.-213)
-     &	   .or. (kl.eq.-213 .and. kl1.eq.30443))then
+	if((kl.eq.100443 .and. kl1.eq.-213)
+     &	   .or. (kl.eq.-213 .and. kl1.eq.100443))then
 	if(iabsm.eq.0)goto 13
 	call jpsir2(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,2)
 	if(ioo.eq.0)goto 13
@@ -7896,7 +7842,9 @@ c     	if(lc(icp,5).ge.593)write(9,*)'annih. occur'
 	endif
 	endif
 999	return
-	end	
+	end
+
+	
 
 c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 	subroutine spipi(lc3,lc4,ss,ilo)
@@ -7915,6 +7863,7 @@ c	a part of prod()
 c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
         subroutine srev(kl,kl1,lc3,lc4,ss,ilo,fac,xii1,xii2,xsi1,xsi2,
      &	xif1,xif2,xsf1,xsf2,pauli)
+c	a part of prob()
 c181002
 c       xii1,xii2: the isospin of of two particles in initial state
 c       xsi1,xsi2: the spin of two particles in initial state
@@ -7923,7 +7872,6 @@ c       xsf1,xsf2: the spin of two particles in final state
 c       paul1: =1 if two particles are different in final state
 c              =0.5 if identical two particles in final state
 c181002
-c	a part of prob()
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -7968,7 +7916,7 @@ c	 truncate collision list correspondingly
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter(kszj=40000,nsize=720000)
+	parameter(kszj=80000,nsize=750000)
 	COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         common/sa12/ppsa(5),nchan,nsjp,sjp,taup,taujp   ! 250208 yan
 	common/sa1_h/n,non1,k(kszj,5),p(kszj,5),v(kszj,5)
@@ -8102,7 +8050,7 @@ c       add photon
 	endif
 c	tau(jj)=t0*p(jj,4)/p(jj,5)
 	tau(jj)=time+t0*taup*p(jj,4)/p(jj,5)
-c	give  zero formation time to particles produced from
+c	give zero formation time to particles produced from
 c	 rescatttering 
 301	lc(icp,i)=jj
 cc	if(nnn.eq.1)goto 300
@@ -8173,8 +8121,8 @@ c	if(ik2.eq.22)write(9,*)'numb=',(numb(i1),i1=1,53)   ! sa 010706
 	do 700 i=1,2
 c011210
 	if(ll.eq.n)then   !
-        do i1=1,kfmax
-        if(kf.ne.kfaco(i1))goto 400
+	do i1=1,kfmax
+	if(kf.ne.kfaco(i1))goto 400
         do m=i1,kfmax
         numb(m)=numb(m)-1
         enddo
@@ -8184,8 +8132,8 @@ c011210
         if(numb(m).eq.numba)numb(m)=numb(m)-1
         enddo
         endif
-        goto 100
-400     enddo
+	goto 100
+400	enddo
 	endif   !
 c011210
 cc	do j=ll+1,n+n1
@@ -8241,7 +8189,7 @@ c	perform elastic scattering
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter (kszj=40000)
+	parameter (kszj=80000)
 	COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
 	common/sa1_h/n,non1,k(kszj,5),p(kszj,5),v(kszj,5)
 c       note the name of the arraies in 'sa1_h' in this subroutine
@@ -8254,7 +8202,7 @@ c100111	if(d.lt.1.e-10)return
 	a=min(10.3,1./(1.12*pt)/(1.12*pt))
 c100111	d6=d**6
 c100111	b=d6*a/(1.+d6)
-        b=a   ! 10011
+        b=a   ! 100111
 c100111	if(b.lt.1.e-20)then
 c100111	b=1.e-20
 c100111	endif
@@ -8273,7 +8221,7 @@ c100111	abt=1.
 c	elseif(b*t0.lt.-50.)then
 c	abt=0.
 c100111	else
-	abt=dexp(dmax1(-7.0D2,dble(b*t0)))
+	abt=dexp(dmax1(-7.0D2,dble(b*t0)))   ! mathematical skill 100111
 c       'dble': intrinsic function, to increase the precision from 'real 4'
 c        to 'real 8' 100111
 c100111	endif
@@ -8302,7 +8250,7 @@ c100111	endif
 
 c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 	subroutine rotate_h(cctas,sctas,cfis,sfis,pp3,pi,pj)
-c	perform the rotation for elastic scattering
+c	perform the rotation after elastic scattering
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -8329,11 +8277,11 @@ c	cta1=atan2(sqrt(pi(1)**2+pi(2)**2),pi(3))
 
 c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 	subroutine updple_h(ic,jc,b,pi,pj,time)
-c	update the particle list for elastic scattering 
+c	update the particle list after elastic scattering 
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter (kszj=40000)
+	parameter (kszj=80000)
 	common/sa1_h/n,non1,k(kszj,5),p(kszj,5),v(kszj,5)
 c       note the name of the arrays in 'sa2' in this subroutine
 	common/sa8_h/tau(kszj),ishp(kszj)
@@ -8357,7 +8305,7 @@ c	update the collision time list
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter(kszj=40000,nsize=720000)
+	parameter(kszj=80000,nsize=750000)
 c        common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
 	common/sa9_h/kfmax,kfaco(100),numb(100),non9,disbe(100,100)
         common/sa20_h/t0,sig,dep,ddt,edipi,epin,ecsnn,ekn,ecspsn,ecspsm
@@ -8499,16 +8447,16 @@ c141104
 
 C*******************************************************************
 	subroutine rsfilt_h(l,l1,iflag)
-c       play the role of first range filter and guarantee the collision list 
+c	play the role of first range filter and guarantee the collision list 
 c        is composed according to the entrance channels of considered 
 c        inelastic reactions
-c       subroutine intdis plays the role of second range filter
-c       collision pairs not interested can not filter through both of rsfilt 
+c	subroutine intdis plays the role of second range filter
+c	collision pairs not interested can not filter through both of rsfilt 
 c        and intdis
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter (kszj=40000)
+	parameter (kszj=80000)
         common/sa1_h/n,non1,k(kszj,5),p(kszj,5),v(kszj,5)
 	common/sa8_h/tau(kszj),ishp(kszj)
 	common/sa9_h/kfmax,kfaco(100),numb(100),non9,disbe(100,100)
@@ -8575,10 +8523,10 @@ c	constraints on the direct reactions
      &   .or.kl.eq.3312 .or.kl.eq.3322))goto 11
 
 c       constraints on the J/Psi (Psi') induced reactions
-	if((kl.eq.443 .or. kl.eq.30443) .and. (kl1.eq.2212 .or. kl1.eq.
+	if((kl.eq.443 .or. kl.eq.100443) .and. (kl1.eq.2212 .or. kl1.eq.
      &	 2112 .or. kl1.eq.211 .or. kl1.eq.111 .or. kl1.eq.-211 
      &	.or. kl1.eq.213 .or. kl1.eq.113 .or. kl1.eq.-213))goto 11 
-	if((kl1.eq.443 .or. kl1.eq.30443) .and. (kl.eq.2212 .or. kl.eq.
+	if((kl1.eq.443 .or. kl1.eq.100443) .and. (kl.eq.2212 .or. kl.eq.
      &	 2112 .or. kl.eq.211 .or. kl.eq.111 .or. kl.eq.-211 
      &	.or. kl.eq.213 .or. kl.eq.113 .or. kl.eq.-213))goto 11
  
@@ -8668,7 +8616,7 @@ c	calculate the collision time & fill up lc(i,1-2),tc(i).
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter(kszj=40000,nsize=720000)
+	parameter(kszj=80000,nsize=750000)
 	common/sa1_h/n,non1,k(kszj,5),p(kszj,5),v(kszj,5)
         common/sa8_h/tau(kszj),ishp(kszj)
 	common/sa10_h/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
@@ -8696,8 +8644,8 @@ c	write(9,*)'p1,psa1=',p(l1,i)
 	b(i)=(pi(i)+pj(i))/(pi(4)+pj(4))
 	enddo
 	ilo=0
+c	perform Lorentz transf. to CMS frame
 	call lorntz(ilo,b,pi,pj)
-c	perform Lorentz transf. to CMS frame 
 	bta=dsqrt(b(1)**2+b(2)**2+b(3)**2)
 c	if boost is too violent,put particles on mass shell by hand.
 	if(bta.gt.0.99999d+0)then
@@ -8801,7 +8749,7 @@ c	write(9,*)'v1,vsa1=',v(l1,i)
 	enddo
 cc	ri(4)=time
 cc	rj(4)=time
-c       Lorentz transf. to CMS frame
+c	Lorentz transf. to CMS frame 
 	call lorntz(ilo,b,ri,rj)
 	rb=0.
 	bb=0.
@@ -8921,7 +8869,7 @@ c031204
 10	return
 	end
 
-C&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
 C&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 	subroutine intdis_h(l,l1,ss,rsig)
 c	calculate the interaction distance between particles l 
@@ -8930,7 +8878,7 @@ c	it plays also the role of second range filter
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter (kszj=40000)
+	parameter (kszj=80000)
         common/sa1_h/n,non1,k(kszj,5),p(kszj,5),v(kszj,5)
         common/sa20_h/t0,sig,dep,ddt,edipi,epin,ecsnn,ekn,ecspsn,ecspsm
      c  ,rnt,rnp,ecsspn,ecsspm
@@ -8939,7 +8887,7 @@ c	it plays also the role of second range filter
 	kl1=k(l1,2)
 	if(abs(kl).eq.2212 .or. abs(kl).eq.2112)idpl=1
 
-	if(abs(kl).eq.443 .or. abs(kl).eq.30443)idpl=2
+	if(abs(kl).eq.443 .or. abs(kl).eq.100443)idpl=2
 
 	if(abs(kl).eq.211 .or. kl.eq.111)idpl=3
 	if(abs(kl).eq.321 .or. abs(kl).eq.311)idpl=4
@@ -8951,7 +8899,7 @@ c	it plays also the role of second range filter
 
 	if(abs(kl1).eq.2212 .or. abs(kl1).eq.2112)idpl1=1
 
-	if(abs(kl1).eq.443 .or. abs(kl1).eq.30443)idpl1=2   ! 98/03/24
+	if(abs(kl1).eq.443 .or. abs(kl1).eq.100443)idpl1=2   ! 98/03/24
 
 	if(abs(kl1).eq.211 .or. kl1.eq.111)idpl1=3
 	if(abs(kl1).eq.321 .or. abs(kl1).eq.311)idpl1=4
@@ -8966,19 +8914,19 @@ c	it plays also the role of second range filter
 
 	if(idpl.eq.2 .and. idpl1.eq.1)then
 	rsig=ecspsn
-	if(kl.eq.30443)rsig=ecsspn
+	if(kl.eq.100443)rsig=ecsspn
 	endif
 	if(idpl.eq.1 .and. idpl1.eq.2)then
 	rsig=ecspsn
-        if(kl1.eq.30443)rsig=ecsspn
+        if(kl1.eq.100443)rsig=ecsspn
         endif
 	if(idpl.eq.2 .and. idpl1.eq.3)then
 	rsig=ecspsm
-        if(kl.eq.30443)rsig=ecsspm
+        if(kl.eq.100443)rsig=ecsspm
         endif
 	if(idpl.eq.3 .and. idpl1.eq.2)then
 	rsig=ecspsm
-        if(kl1.eq.30443)rsig=ecsspm
+        if(kl1.eq.100443)rsig=ecsspm
         endif
 
 	if(idpl.eq.2 .and. idpl1.eq.6)then
@@ -8986,7 +8934,7 @@ c	it plays also the role of second range filter
 	if(kl1.eq.113)rsig=ecspsm*1.414
 c	at the case of rho0, cross section enlarges a factor 2 to 
 c	 consider the effect of omega
-	if(kl.eq.30443)then
+	if(kl.eq.100443)then
         rsig=ecsspm
         if(kl1.eq.113)rsig=ecsspm*1.414
 	endif
@@ -8994,7 +8942,7 @@ c	 consider the effect of omega
 	if(idpl.eq.6 .and. idpl1.eq.2)then
 	rsig=ecspsm
 	if(kl.eq.113)rsig=ecspsm*1.414
-        if(kl1.eq.30443)then
+        if(kl1.eq.100443)then
         rsig=ecsspm
         if(kl.eq.113)rsig=ecsspm*1.414
         endif
@@ -9268,7 +9216,7 @@ c	a part of 'prod' to deal with pp -> ...
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter(nsize=720000)
+	parameter(nsize=750000)
 c	calculate particle production weight and fill up lc(i,3-5),tw(i).
 c	tw : the ratio of cross section of (special inela.)/tot
 	COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
@@ -9321,7 +9269,7 @@ c	a part of 'prod' to deal with pn -> ...
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter(nsize=720000)
+	parameter(nsize=750000)
 c	calculate particle production weight and fill up lc(i,3-5),tw(i).
 c	tw : the ratio of cross section of (special inela.)/tot
 	COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
@@ -9374,7 +9322,7 @@ c	a part of 'prod' to deal with nn-> ...
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter(nsize=720000)
+	parameter(nsize=750000)
 c	calculate particle production weight and fill up lc(i,3-5),tw(i).
 c	tw : the ratio of cross section of (special inela.)/tot
 	COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
@@ -9428,7 +9376,7 @@ c	a part of 'prod' to deal with pion- + p -> ...
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter(nsize=720000)
+	parameter(nsize=750000)
 c	calculate particle production weight and fill up lc(i,3-5),tw(i).
 c	tw : the ratio of cross section of (special inela.)/tot
 	COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
@@ -9596,7 +9544,7 @@ c	a part of 'prod' to deat with pion- + n -> ...
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter(nsize=720000)
+	parameter(nsize=750000)
 c	calculate particle production weight and fill up lc(i,3-5),tw(i).
 c	tw : the ratio of cross section of (special inela.)/tot
 	COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
@@ -9685,7 +9633,7 @@ c	a part of 'prod' to deal with pion0 + n to ...
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter(nsize=720000)
+	parameter(nsize=750000)
 c	calculate particle production weight and fill up lc(i,3-5),tw(i).
 c	tw : the ratio of cross section of (special inela.)/tot
 	COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
@@ -9849,7 +9797,7 @@ c	a part of 'prod' to deal with pion+ + n to ...
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter(nsize=720000)
+	parameter(nsize=750000)
 c	calculate particle production weight and fill up lc(i,3-5),tw(i).
 c	tw : the ratio of cross section of (special inela.)/tot
 	COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
@@ -10010,7 +9958,7 @@ c	a part of 'prod' to deal with pion+ + p to ...
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter(nsize=720000)
+	parameter(nsize=750000)
 c	calculate particle production weight and fill up lc(i,3-5),tw(i).
 c	tw : the ratio of cross section of (special inela.)/tot
 	COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
@@ -10184,7 +10132,7 @@ c	a part of 'prod' to deal with pion0 + p to ...
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter(nsize=720000)
+	parameter(nsize=750000)
 c	calculate particle production weight and fill up lc(i,3-5),tw(i).
 c	tw : the ratio of cross section of (special inela.)/tot
 	COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
@@ -10342,7 +10290,7 @@ c	ii = 1 for J/Psi, ii = 2 for Psi'
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter(nsize=720000)
+        parameter(nsize=750000)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         COMMON/PYCIDAT2/KFMAXT,NONT2,PARAM(20),WEIGH(600)
         SAVE /PYCIDAT2/
@@ -10425,7 +10373,7 @@ c       a part of 'prod' to deal with J/Psi (Psi') + p to ...
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter(nsize=720000)
+        parameter(nsize=750000)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         COMMON/PYCIDAT2/KFMAXT,NONT2,PARAM(20),WEIGH(600)
         SAVE /PYCIDAT2/
@@ -10507,7 +10455,7 @@ c       a part of 'prod' to deal with J/Psi (Psi') + pion+ to ...
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter(nsize=720000)
+        parameter(nsize=750000)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         COMMON/PYCIDAT2/KFMAXT,NONT2,PARAM(20),WEIGH(600)
         SAVE /PYCIDAT2/
@@ -10535,7 +10483,7 @@ c       a part of 'prod' to deal with J/Psi (Psi') + pion0 to ...
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter(nsize=720000)
+        parameter(nsize=750000)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         COMMON/PYCIDAT2/KFMAXT,NONT2,PARAM(20),WEIGH(600)
         SAVE /PYCIDAT2/
@@ -10600,7 +10548,7 @@ c       a part of 'prod' to deal with J/Psi (Psi') + pion- to ...
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter(nsize=720000)
+        parameter(nsize=750000)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         COMMON/PYCIDAT2/KFMAXT,NONT2,PARAM(20),WEIGH(600)
         SAVE /PYCIDAT2/
@@ -10628,7 +10576,7 @@ c       a part of 'prod' to deal with J/Psi (Psi') + rho+ to ...
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter(nsize=720000)
+        parameter(nsize=750000)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         COMMON/PYCIDAT2/KFMAXT,NONT2,PARAM(20),WEIGH(600)
         SAVE /PYCIDAT2/
@@ -10656,7 +10604,7 @@ c       a part of 'prod' to deal with J/Psi (Psi') + rho0 to ...
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter(nsize=720000)
+        parameter(nsize=750000)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         COMMON/PYCIDAT2/KFMAXT,NONT2,PARAM(20),WEIGH(600)
         SAVE /PYCIDAT2/
@@ -10721,7 +10669,7 @@ c       a part of 'prod' to deal with J/Psi (Psi') + rho- to ...
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter(nsize=720000)
+        parameter(nsize=750000)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         COMMON/PYCIDAT2/KFMAXT,NONT2,PARAM(20),WEIGH(600)
         SAVE /PYCIDAT2/
@@ -10753,7 +10701,7 @@ c	iiii: number of event
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter(kszj=40000,nsize=720000)
+        parameter(kszj=80000,nsize=750000)
         common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         common/sa8_h/tau(kszj),ishp(kszj)
         common/sa14/ipyth(2000),idec(2000),iwide(2000)
@@ -10764,8 +10712,8 @@ c	iiii: number of event
 	dimension pp(5),rr(4)
 c       idec: stord the line number (in the particle list) of 
 c        particles after decay
-c       iwide: stord the line number (in the particle list) of decaying
-c        particles
+c	iwide: stord the line number (in the particle list) of decaying
+c	 particles
 c       the messages of decayed particles are
 c        stored in the varibles and arraies in 'sa17'
 c       pp, rr: momentum, position of decaying particle
@@ -10839,13 +10787,13 @@ c	if(nctl.eq.0)return
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	subroutine decpr(pp,rr,kf)
-c       give momentum and position to decayed particles              
-c       pp, rr: momentum, position of decaying particle
+c	give momentum and position to decayed particles  
+c	pp, rr: momentum, position of decaying particle	
 c	kf: flavour code of decaying particle
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-	parameter(kszj=40000)
+	parameter(kszj=80000)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
 	common/sa8_h/tau(kszj),ishp(kszj)
         common/sa14/ipyth(2000),idec(2000),iwide(2000)
@@ -10937,11 +10885,11 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	subroutine upddep(ij,lc,tc,tw,time,iii)
 c       update particle list after a particle decay and
 c        truncate collision list correspondingly.
-c	ij: line number (in particle list) of decaying particle
+c	ij: line number (in particle list 'sa1_h') of decaying particle
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter(kszj=40000,nsize=720000)
+        parameter(kszj=80000,nsize=750000)
         common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         common/sa8_h/tau(kszj),ishp(kszj)
 	common/sa9_h/kfmax,kfaco(100),numb(100),non9,disbe(100,100)
@@ -10958,7 +10906,7 @@ c        dimension peo(4)
         do m=1,2000
         idec(m)=0
         enddo
-c       put decayed particles into particle list
+c       put decayed particles (in 'sa17') into particle list 'sa1_h'
 c        and turncate collision list correspondingly.
 	ll=ij
 	kd=ksa(ll,2)
@@ -11109,7 +11057,7 @@ c	ij: oredr number (in particle list) of decaying particle
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        parameter(kszj=40000,nsize=720000)
+        parameter(kszj=80000,nsize=750000)
 c        common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
 	common/sa9_h/kfmax,kfaco(100),numb(100),non9,disbe(100,100)
         common/sa14/ipyth(2000),idec(2000),iwide(2000)
@@ -11117,7 +11065,7 @@ c        common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
 	common/sa24/adj1(40),nnstop,non24,zstop   ! 210803 181003 141104
         common/ctllist_h/nctl,noinel(600),nctl0,noel
         dimension lc(nsize,5),tc(nsize),tw(nsize)
-c       idec: store line number (in the particle list) of decayed particles
+c       idec: store line number (in the particle list) of decayed particles 
 	dddt=adj1(11)   ! 141104
 
         nctl=nctl+1
@@ -11223,4 +11171,64 @@ c141104
         enddo
         return
         end
-C@@@@@@@@@@@@@@@@@@@@@  END  @@@@@@@@@@@@@@@@@@@@@@@@
+
+
+
+c******************************************************************************
+	BLOCK DATA PYCIDATA
+      IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+      IMPLICIT INTEGER(I-N)
+      INTEGER PYK,PYCHGE,PYCOMP  
+	COMMON/PYCIDAT1/KFACOT(100),DISDET(100),ISINELT(600)
+	COMMON/PYCIDAT2/KFMAXT,NONCI2,PARAM(20),WEIGH(600)
+	common/sa13/kjp20,non13,vjp20,vjp21,vjp22,vjp23
+	SAVE /PYCIDAT1/,/PYCIDAT2/
+      	DATA KFACOT/2212,2112,-2212,-2112,211,-211,111,-321,-311,
+     &   3212,3112,3222,-3212,-3112,-3222,3122,-3122,311,
+     &   321,3312,-3312,3322,-3322,3334,-3334,1114,2114,2214,2224,
+     &	 213,-213,113,443,100443,553,100553,10441,20443,445,411,-411,
+     &   421,-421,4122,4112,4212,4222,223,323,313,413,-413,423,-423,
+     &   431,-431,511,-511,521,-521,531,-531,541,-541,
+     &   513,-513,523,-523,533,-533,543,-543,28*0/   ! 250420
+      	DATA DISDET/0.5,0.5,0.5,0.5,46*0.,0.5,0.5,0.5,0.5,46*0./
+      	DATA ISINELT/384*1,208*0,8*1/  ! with delta and rho
+      	DATA KFMAXT/52/
+      	DATA PARAM/40.,25.,21.,10.,2.0,0.85,1.0,0.02,0.1,4.0,0.16,0.04,
+     &        6.0,3.0,12.,6.,4*0/   ! 060813 	
+                  DATA WEIGH/600*1.0/
+	data kjp20,vjp20,vjp21,vjp22,vjp23/1,0.3,4.0,1.5,8.0/
+
+	END
+C******************************************************************
+C...........Main switches and parameters...........................
+C\item[KFACOT] flavor order of considered particles
+C  \item[DISDET] allowable minimum distance between two
+C  particles,=0.5 between two necleons,=0 otherwise
+C  \item[ISINELT] switch for i-th inelastic channel
+C  =0 closed,=1,opened
+C \item[KFMAXT](D=12) KFMAXT kinds of particles are involved in rescattering
+C PARAM(1)(D=40.0mb) totle cross-section of nucleon-nucleon 
+C PARAM(2)(D=25.0mb)  totle cross-section of pi-nucleon 
+C PARAM(3)(D=21.0mb) totle cross-section of K-nucleon 
+C PARAM(4)(D=10.0mb)  totle cross-section of pi-pi
+C PARAM(5)(D=2.0mb)  cross-section of pi+pi -->K K 
+C PARAM(6)(D=0.85) ratio of inelastic cross-section to totle cross-section
+C PARAM(7)(D=1.0fm) formation time at rest-frame of particle
+C PARAM(8)(D=0.02fm) time accuracy used in hadron cascade
+C PARAM(9)(D=0.1) accuracy of four-momentum conservation
+C PARAM(10)(D=4.0) size of effective rescattering region is product of 
+C  PARAM(10) and radius of target, origin is set on center of target nucleus
+C PARAM(11)(D=0.16fm^-3) nucleon density of nucleus
+C PARAM(12)(D=0.04 GeV^2/c^2) The <Pt^2> for the Gaussian distribution of 
+C	spectator, no used anymore
+C PARAM(13)(D=6.0mb) totle cross-section of J/Psi + n
+C PARAM(14)(D=3.0mb) totle cross-section of J/Psi + meson
+C PARAM(15)(D=12.0mb) totle cross-section of Psi' + n
+C PARAM(16)(D=6.0mb) totle cross-section of Psi' + meson
+c	kjp20 = 0 : energy dependent cross section
+c             = 1 : constant cross section 
+c	vjp20 : constant cross section of strangeness production
+c	vjp21 : cross section of pion + p to pion + delta
+c	vjp22 : cross section of pion + p to rho + p
+c	vjp23 : cross section of n + n to n + delta
+cccccccccccccccccccccccccccccccccc  end  ccccccccccccccccccccccccccc

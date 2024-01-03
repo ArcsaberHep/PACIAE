@@ -1,0 +1,303 @@
+10,1,1   !10000,1000,1          ! neve,nout,nosc                  
+208,82,208,82   ! 197,79,197,79, 1,1,1,1 nap,nzp,nat,nzt                 
+0.00001,0.01,0.00,14.96,10      ! ddt,dtt,bmin,bmax,nmax          
+1,1,1.2,200.,1                ! kjp21,ifram,para7,para10,kjp20  
+3.1416,1,1                    ! pio,ipden,itden                 
+20,5,2                        ! ispmax,isdmax,iflmax            
+211,-211,321,-321,3122,-3122,3312,-3312,3334,-3334    ! KF code of particles
+2212,-2212,2112,-2112,310,333,3212,-3212,3112,3222    ! KF code of particles
+0.35,0.5,0.35,.3,25          ! asd(i), i=1,5            
+-1.,1.             ! afl(j=1,i=1,1), afl(j=1,i=1,2) 
+0.,50.                 ! afl(j=1,i=2,1), afl(j=1,i=2,2)  
+-1.,1.                                    
+0.,50.                                        
+-1.,1.                                    
+0.,50.                                        
+-1.,1.
+0.,50.
+-1.,1.
+0.,50.
+-1.,1.
+0.,50.
+-1.,1.
+0.,50.
+-1.,1.
+0.,50.
+-1.,1.
+0.,50.
+-1.,1.
+0.,50.
+-1.,1.
+0.,50.
+-1.,1.
+0.,50.
+-1.,1.
+0.,50.
+-1.,1.
+0.,50.
+-1.,1.
+0.,50.
+-1.,1.
+0.,50.
+-1.,1.
+0.,50.
+-1.,1.
+0.,50.
+-1.,1.
+0.,50.
+-1.,1.
+0.,50.
+4.5,10.,2760   ! parp21,parp22,win             
+0.,.5,1,1,1   ! ttaup,taujp,iabsb,iabsm,nchan 
+7.2,4.,2,40.,20.,.00000,.1   ! para13,para14,psno,para15,para16,ajpsi,vneum  
+70.,70.,25,10.          ! para1_1,para1_2,para2,para4       
+0.5,.6,2.,.05,.35,20    ! tdh,cptl,cptu,cptl2,cptu2,itnum   
+1,7,0,2,3,2              ! mstu21,mstj1_1,mstj1_2,mstj2,mstj3,itorw
+1.,0.47,0.4000,1000,0,0.60,0.39,4,1.9,2.7         ! adj1(1)- adj1(10)  
+0.10,0,26,18,1.000,1,20.,0,0.03,1               ! adj1(11)- adj1(20) 
+0,4.1,0,0.15,0.4,0,800000.,1.0,0.26,5.0      ! adj1(21)- adj1(30) 
+0.1,0.3,0.40,0.575,1.0,0.0,100.0,3.0,2.00,4.0    ! adj1(31)- adj1(40) 
+4,2,2,0.000,0                       ! kjp22,kjp23,kjp24,parp78,mstptj 
+0.,0,0.1,0.05,1.,0.2,0.05      ! parecc,iparres,smadel,dparj4,cp0,cr0,seco   
+************* Annotation **********************
+neve,nout,nosc 
+neve: events number to be generated
+nout: output the event per nout events
+nosc: OSCAR stander output (car.out) 
+    
+nap,nzp,nat,nzt
+for pA, AA, etc.
+nap(nzp): nucleons (protons) number of projectile 
+nat(nzt): nucleons (protons) number of target  
+
+for eA, nu_eA, etc.
+e^-A: nap=1,nzp=-1,ipden=11,itden=1, 
+e^+A: nap=1,nzp=1,ipden=11,itden=1, 
+nu_eA: nap=1,nzp=-1,ipden=12,itden=1,
+nu_ebarA: nap=1,nzp=1,ipden=12,itden=1, 
+
+ddt,dtt,bmin,bmax,nmax
+ ddt: minimum distinguishble collision time interval used in partonic
+      initiation in parini_22b.f (parini_22c.f)
+ dtt: time accuracy (not used now)
+ bmin: minimum impact parameters, 
+ bmax: maximum impact parameters,
+ nmax: the number of intervals segmented in [bmin,bmax] when psno=1
+
+kjp21,ifram,para7,para10,kjp20
+ kjp21: =0, without hadron rescattering
+        =1, with hadron rescattering
+ ifram: choice collision system type
+        =0, fixed target
+        =1, collider
+ para7: proper formation time in rest-frame of particle
+ para10: largest allowed size of partonic (hadronic) rescattering
+         region which is product of para10 and target radius
+ kjp20: choice the cross sections in hadron rescattering (hadcas_22b.f,
+        hadcas_22c.f)
+        =1, constant cross sections 
+        =0, energy dependent cross sections
+ 
+pio,ipden,itden 
+ pio: pi=3.1416
+ ipden: =0, if projectile is proton (anti-proton)
+        =2, for e+e-
+        =11, if projectile is e- (e+)
+        =12, if projectile is nu_e (nu_ebar)
+        =13, if projectile is mu- (mu+)
+        =14, if projectile is nu_mu (nu_mubar)
+        =15, if projectile is tau- (tau+)
+        =16, if projectile is nu_tau (nu_taubar)
+ itden: =0, if target is proton (anti-proton)
+        =2, for e+e-
+      
+ispmax,isdmax,iflmax
+ ispmax: maximum # of different particle pieces to be considered    
+ isdmax: maximum # of different distributions to be considered
+ iflmax: maximum # of windows to be set, =0 means no window at all
+
+ispkf(i,i=1,ispmax):
+KF code: particle code used in PYTHIA and PACIAE, 
+         (see detail in reference: arXiv:hep-ph/0603175) 
+
+asd(i=1,isdmax): interval of the i-th distribution
+ for pp, pbarp etc.
+     i=1: rapidity distribution
+      =2: transverse monmentum distribution
+      =3: pesudorapidity distribution
+ for ep, nu_ep, etc. 
+     i=1: Q^2=-q^2 (fq2 in code) distribution
+      =2: W^2 (w21) distribution
+      =3: y (yyl) distribution
+      =4: p_h (pph) distribution   
+      =5: z (zl) distribution
+
+afl(j,i,1): lower-boundary of i-th window for j-th particle
+afl(j,i,2): upper-boundary  of i-th window for j-th particle
+ for pp, pbarp etc.
+     i=1, rapidity window
+      =2, transverse monmentum 
+      =3, pesudorapidity 
+ for ep, nu_ep, etc. 
+     i=1, Q^2=-q^2 window
+      =2, W^2 
+      =3, y 
+      =4, p_h (haron momentum)
+      =5: z 
+     
+parp21,parp22,win  
+ parp21: lowest CM energy running 'pythia' if nchan=6
+ parp22: lowest CM energy for running 'pythia' if nchan=3            
+ win= cms energy if ifram=1 (collider)
+   = incident momentum if ifram=0 (fixed target)
+
+ttaup,taujp,iabsb,iabsm,nchan
+ ttaup: proper formation time of particles generated in hadronic rescattering
+ taujp: formation time of J/Psi
+ iabsb: =0, without J/Psi (Psi') + baryon
+        =1, with J/Psi (Psi') + baryon
+ iabsm: =0, without J/Psi (Psi') + meson
+        =1, with J/Psi (Psi') + meson
+ nchan: to choose which subset of parton-parton subprocesses to include in
+        the generration
+        =0, inelastic (INEL)
+        =1, Non Single Difractive (NSD) 
+        =2, qqb --> gamma^*/Z^0, to generate Drell-Yan
+        =3, J/psi production
+        =4, heavy-flavor production
+        =5, direct photon
+        =6, soft only
+        =7, default PYTHIA 
+
+para13,para14,psno,para15,para16,ajpsi,vneum
+ para13: totle cross-section of J/Psi + n
+ para14: totle cross-section of J/Psi + meson 
+ psno: =0 fixed impact parameter 
+       =1 impact parameter is sampled by systematic sampling method
+       =2 randomly sampled impact parameter 
+ para15: totle cross-section of Psi' + n
+ para16: totle cross-section of Psi' + meson
+ ajpsi: not used now
+ vneum: relevant to average binary collision number, now it is recalculated
+        in program
+  
+para1_1,para1_2,para2,para4  
+ para1_1: nn total cross section used in parton initiation
+ para1_2: nn total cross section used in hadron cascade
+ para2: totle cross-section of pi-nucleon 
+ para4: totle cross-section of pi-pi
+
+tdh,cptl,cptu,cptl2,cptu2,itnum
+tdh: time step used in subroutine 'flow'
+ cptl: lower pt cut in 'flow' for particle 1
+ cptu: upper pt cut in 'flow' for particle 1
+ cptl2: lower pt cut in 'flow' for particle 2
+ cptu2: upper pt cut in 'flow' for particle 2
+ itnum: number of time steps used in 'flow'
+
+mstu21,mstj1_1,mstj1_2,mstj2,mstj3,itorw
+ mstu21: parameter mstu(21) in PYTHIA
+ mstj1_1: =0, no jet fragmentation set in "parini.f"
+ mstj1_2: =1, Lund string fragmentation set in "sfm.f"
+ mstj1_2: =2, independent fragmentation set in "sfm.f"
+ mstj2: parameter mstj(2) in PYTHIA
+ mstj3: parameter mstj(3) in PYTHIA
+ itorw: =1 executing pyevnt, =2 executing pyevnw
+
+adj1(i), i=1,40: switches and/or parameters
+    i=1: K factor in parton cascade
+      2: $\alpha_s$, effective coupling constant in parton rescattering
+      3: parameter \mu^2 (tcut in program), the regulation factor introduced in 
+         the parton-parton differential cross section   
+      4: parameter `idw', the number of intervals in the numerical integration 
+      5: =1: with nuclear shadowing,
+         =0: without nuclear shadowing
+      6: \alpha in the LUND string fragmentation function (parj(41) in PYTHIA)
+      7: $\beta$ in the LUND string fragmentation function (parj(42) in PYTHIA)
+      8: mstp(82) in PYTHIA 
+      9: parp(81) in PYTHIA
+      10: K factor (parp(31) in PYTHIA). 
+      11: time accuracy used in the hadron cascade
+      12: model for hadronization 
+          =0 string fragmentation,
+          =1 Monte Carlo coalescence model. 
+      13: dimension of meson table considered in coalescence model.
+      14: dimension of baryon table considered coalescence model.
+      15: string tension of qqbar simple string
+      16: number of loops in the deexcitation of energetic quark in the 
+          Monte Carlo coalescence model.
+      17: the threshold energy in the deexcitation of energetic quark in 
+          the Monte Carlo coalescence model.
+      18: with or without Pauli blocking in the parton cascade
+          =0, without Pauli blocking
+          =1, with Pauli blocking.
+      19: time accuracy used in the parton cascade 
+      20: the optional parton-parton cross section in the parton rescattering
+          =0, LO pQCD parton-parton cross section 
+          =1, keeping only leading divergent terms in the LO pQCD parton-parton 
+             cross section (B. Zhang)
+          =2, the same as 0 but flat scattering angle distribution is assumed
+          =3, the same as 1 but flat scattering angle distribution is assumed.
+      21: with or without phase space constraint in the Monte Carlo coalescence model
+         =0, without phase space constraint
+         =1, with phase space constraint
+      22: critical value (D=$) of the product of radii in position and momentum 
+          phase spaces 
+      23: optional fragmentation function in deexcitation of the energetic quark in 
+          the Monte Carlo coalescence model
+          =0, LUND string fragmentation function
+          =1, Field-Feynman parametrization function
+      24: the virtuality cut ('tl0' in program) in the time-like radiation in parton 
+          rescattering 
+      25: $\Lambda_{QCD}$ in PYTHIA 
+      26: number of random number thrown away
+      27: largest momentum allowed for produced particle
+      28: concerned to the largest position allowed for produced particle
+      29: width of two dimension Gaussian distribution for sampling $p_x$ and $p_y$ 
+          the produced quark pair in the deexcitation of energetic quark in the 
+          Monte Carlo coalescence model
+      30: maximum $p_T^2$ in above two dimension Gaussian distribution.
+      31: parj(1) in PYTHIA 
+      32: parj(2) in PYTHIA 
+      33: parj(3) in PYTHIA 
+      34: parj(21) in PYTHIA 
+      35: mstp(91) in PYTHIA, parton transverse momentum ($k_{\perp}$) distribution 
+          inside hadron
+          =1: Gaussian
+          =2: exponential
+      36: with or without phenomenological parton energy loss in parton rescattering
+          =0, without 
+          =1, with 
+      37: the coefficient in phenomenological parton energy loss
+      38: $p_T$ cut in phenomenological parton energy loss
+      39: width of Gaussian parton $k_{\perp}$ distribution in hadron if mstp(91)=1 
+          width of exponential $k_{\perp}$ distribution in hadron if mstp(91)=2
+      40: optional event stopping point 
+         =1, after parton initiation,
+         =2, after parton rescattering,
+         =4, after hadron rescattering 
+        
+kjp22,kjp23,kjp24,parp78,mstptj
+ kjp22: =1, variable single string tension and parj(1) etc.
+        =2, variable multiple string tension and parj(1) etc.
+        =3, variable (single+multiple) string tension and parj(1) etc.
+        =4, default string tension and parj(1) etc.
+ kjp23: optional model for the calculation of participant nucleon # (npart)
+        =1, geometric model
+        =2, Glauber model
+ kjp24: optional distribution in Glauber model
+        =1, sharp sphere
+        =2, Woods-Saxon
+ parp78: parameter controling amount of colour reconnection in final state
+ mstptj: input value of mstp(111) (mstj(1)) for pp, pA (AP), and AA  
+         (for e+e-)
+  
+parecc,iparres,smadel,dparj4,cp0,cr0,seco
+ parecc: proportional factor between initial spatial space eccentricity and final 
+         momentum space ellipticity 
+ iparres: =0 consider elastic parton-parton collisions only in parton rescattering
+          =1 otherwise
+ smadel: small perpurbation of ellipse from circle  
+ dparj4: default parj(4)
+ cp0,cr0: parameters in parameterization of multiple string effect
+ seco: parameter in popcorn mechanism for correction of parj(1)

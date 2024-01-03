@@ -1,6 +1,6 @@
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	subroutine sfm   
-c	perfome the hadronization by calling 'pyexec' (string fragmentation)
+	subroutine sfm
+c	perfome the hadronization by calling 'pyexec' 
 c	it was written by Ben-Hao Sa on 31/07/02
 c	its input messages are in 'pyjets'
 c	its internal wooking block is 'sa1_h' 
@@ -8,17 +8,20 @@ c	its output message is in 'pyjets' ('sa1_h' the same)
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-        parameter (kszj=40000,mplis=40000)
+        parameter (kszj=80000,mplis=80000)
       COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
       COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)   ! 161007
       COMMON/PYDAT3/MDCY(500,3),MDME(8000,2),BRAT(8000),KFDP(8000,5)
 	COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
 c      COMMON/PYSUBS/MSEL,NONSUB,MSUB(200),KFIN(2,-40:40),CKIN(200)
-c      COMMON/PYPARS/MSTP(200),PARP(200),MSTI(200),PARI(200)
+      COMMON/PYPARS/MSTP(200),PARP(200),MSTI(200),PARI(200)   ! 010418
         common/sa1/kjp21,non1,bp,iii,neve,nout,nosc
         common/sa25/mstj1_1,mstj1_2,para1_1,para1_2   ! 221203 240407
 c080104
         common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio
+        common/sa27/itime,kjp22,gtime,astr,akapa(6),parj1,parj2,parj3,
+     c   parj21,parj4,adiv,gpmax,nnc   ! 051108 070417 010518
+        common/sa34/itorw,iikk,cp0,cr0,kkii   ! 050920
         common/sbe/nbe,nonbe,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
         common/saf/naf,nonaf,kaf(kszj,5),paf(kszj,5),vaf(kszj,5)
         common/sbh/nbh,nonbh,kbh(kszj,5),pbh(kszj,5),vbh(kszj,5)
@@ -26,8 +29,8 @@ c080104
 	common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
 c	arraies in above statement are for hadronized and 
 c	 decayed particles used in hadronic cascade processes
+        common/sgam/ngam,nongam,kgam(kszj,5),pgam(kszj,5),vgam(kszj,5) ! 250209
 c141208
-        common/sa6_c/ithroq,ithrob,ithroc,non6_c,throe(4)   
         common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
      c  nap,nat,nzp,nzt,pio   
 c       ithroq : the total # of quarks thrown away
@@ -53,65 +56,17 @@ c	call pylist(1)
 	rn(i1,j1)=0.
 	enddo
 	enddo
-c141208
-        ithroq=0
-        ithrob=0
-        ithroc=0
-        do i=1,4
-        throe(i)=0.
-        enddo
-        if(itden.eq.1)then   
-        non6_c=mstu(31)
-c        write(9,*)'itden,non6_c=',itden,non6_c
-        endif   
-c141208
-c150417	mstj(1)=mstj1_2
-c	write(9,*)'in hadniz iii,mstu,mstj(1)-(3)=',iii,mstu(21),mstj(1),
-c     c	 mstj(2),mstj(3)   
-c150417	if(itden.ne.2)mstj(21)=0   ! 300713
-c       particle decay is inhibited
-c	produced hadron from calling 'pyexec' is arranged at the position   
-c	 of parent, decayed hadrons do not have proper position so 
-c	 we inhibite first the decay
+c151021
+        if(ipden.eq.2 .and. itden.eq.2)then
+        mstj(1)=1
+        else
+        mstp(111)=1
+        endif
+c151021 
 	call pyexec
-c141208
-        if(itden.eq.1)then
-        non6_c=123456
-c        write(9,*)'mstu31,non6_c=',mstu(31),non6_c
-        endif    
-c141208
-c300713 120214
-	if(ipden.ge.11)then
-	call pyedit(1)
-	else
-	call pyedit(2)
-	endif
-c300713 120214
-c	write(22,*)'in sfm be. decay' 
-c	call pylist(1)
-c	ich1=0.
-c	do i1=1,n
-c	kf=k(i1,2)
-c	ich1=ich1+pychge(kf)
-c	enddo
-c	write(mstu(11),*)'after, sum of charge=',ich1/3   !
-c080104
-c       'sbh' to 'pyjets'
-        if(nbh.ge.1)then
-        do l=1,nbh
-        l1=n+l
-        do m=1,5
-        k(l1,m)=kbh(l,m)
-        p(l1,m)=pbh(l,m)
-        v(l1,m)=vbh(l,m)
-        enddo
-        enddo
-        n=n+nbh
-	endif
-c	write(9,*)'be decay n=',n
-c	write(22,*)'be decay'
-c	call pylist(1)
-c080104
+        if(kkii.eq.2)return   ! 050920
+        if(ipden.lt.11)call pyedit(2)   ! 060813
+        if(ipden.ge.11)call pyedit(1)   ! 060813
 
 c	return   ! temporal
 
@@ -125,12 +80,9 @@ c	'pyjets' to 'sa1_h'
         enddo
 	enddo
 
-c	do i=1,nn
-c	write(9,102)(rn(i,j),j=1,4)   ! sa
-c	enddo
-c	arrange produced particles on the surface of sphere (radius rrp)
-c        and centred on parent position (produced particle 
-c	 is put on its parent position originally)
+c	arrange produced particles on the surface of sphere (with radius rrp
+c        and centred on parent position),produced particle 
+c	 is put on its parent position originally
 	ipp=1
 100	ip=0
 	r1=rn(ipp,1)	
@@ -141,8 +93,9 @@ c	 is put on its parent position originally)
 	rc(3)=r3
 	rn(ipp,4)=0.
 c	in corresponding with the time set in 'posi'
-c	find out the hadrons with common parent (rc)
-c	note: produced particles with same position are arranged continuously
+
+c	find out the hadrons with same parent (rc)
+c	note: produced particles with same position are arranged continuously 
 c        in pyjets
 	do j2=ipp+1,n
 	s1=rn(j2,1)	
@@ -169,27 +122,25 @@ c	transfer four position messages from 'sa1_h' to 'pyjets'
 c	write(9,*)'af position n=',n
 
 c       decay of unstable hadrons
-c150417	if(itden.ne.2)call decayh(rrp)   ! 300713
-c	call pyedit(1)
-c	write(22,*)'in sfm af. decay'
-c	call pylist(1)
+c070417	call decayh(rrp)
 	return
 	end
 
 
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	subroutine decayh(rrp)
+	subroutine decayho(rrp)
 c       decay of unstable hadrons
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-        parameter (kszj=40000,mplis=40000)
+        parameter (kszj=80000,mplis=80000)
       COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
       COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)   ! 161007
       COMMON/PYDAT3/MDCY(500,3),MDME(8000,2),BRAT(8000),KFDP(8000,5)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
+        common/sgam/ngam,nongam,kgam(kszj,5),pgam(kszj,5),vgam(kszj,5) ! 250209
         common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
      c  nap,nat,nzp,nzt,pio   ! 060813
         dimension rc(3)
@@ -213,13 +164,8 @@ c	decay of unstable hadron i1
 	call pydecy(i1)
 c	'pyjets' is filled up simultaneously 
 c	remove decaying hadron from 'pyjets'
-c300713 120214
-	if(ipden.ge.11)then
-	call pyedit(1)
-	else
-	call pyedit(2)
-	endif
-c300713 120214
+        if(ipden.lt.11)call pyedit(2)   ! 060813
+        if(ipden.ge.11)call pyedit(1)   ! 060813
 c	write(22,*)'i1=',i1
 c	call pylist(1)
 c	store the position of decaying hadron
@@ -234,11 +180,45 @@ c	 to nn
 c	write(9,*)'nn=',nn   ! sa 
 	nn=nn-1
 c	write(9,*)'nn=',nn   ! sa 
-	nn1=nn
+	nn1=nn   ! decayed particles are located above nn1, 250209
+c250209
+c       move "22" from 'pyjets' to 'sgam'
+        jb1=0
+700     do i3=nn1+jb1+1,n
+        kf=k(i3,2)
+        if(kf.ne.22)then
+        jb1=jb1+1
+        goto 800
+        endif
+        ngam=ngam+1
+        do i2=1,5
+        kgam(ngam,i2)=k(i3,i2)
+        pgam(ngam,i2)=p(i3,i2)
+        vgam(ngam,i2)=v(i3,i2)
+        enddo  
+        if(i3.eq.n)then      
+        n=n-1
+        goto 900
+        endif
+c       move particle list 'pyjets' one step downward from i3+1 to n
+        do j=i3+1,n
+        j1=j-1
+        do jj=1,5
+        k(j1,jj)=k(j,jj)
+        p(j1,jj)=p(j,jj)
+        v(j1,jj)=v(j,jj)
+        enddo
+        enddo
+        n=n-1
+        goto 700
+800     enddo
+900     continue
+c250209
+
 	nn=n
 c	write(9,*)'nn1,nn,n=',nn1,nn,n   ! sa
 
-c	fill produced hadrons (from decay) into 'sa1_h'
+c	fill produced hadrons (from decay, no gamma) into 'sa1_h'
 	do i=nn1+1,nn
 	do j=1,5
 	kn(i,j)=k(i,j)
@@ -259,7 +239,7 @@ c	write(9,*)'after decay and rearrangement,n,nn,nn1=',n,nn,nn1! sa
 c	do i=1,nn
 c	write(9,102)(rn(i,j),j=1,4)   ! sa
 c	enddo
-c       transfer four coordinate messages of decaied hadrons to 'pyjets'
+c       transfer four position messages of decaied hadrons to 'pyjets'
 	do i=nn1+1,nn
         do j=1,5
         v(i,j)=rn(i,j)
@@ -291,13 +271,170 @@ c	endif
 
 
 
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+	subroutine decayh(rrp)
+c       decay of unstable hadrons
+      IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+      IMPLICIT INTEGER(I-N)
+      INTEGER PYK,PYCHGE,PYCOMP
+        parameter (kszj=80000,mplis=80000)
+      COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
+      COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)   ! 161007
+      COMMON/PYDAT3/MDCY(500,3),MDME(8000,2),BRAT(8000),KFDP(8000,5)
+        COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
+        common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
+        common/sgam/ngam,nongam,kgam(kszj,5),pgam(kszj,5),vgam(kszj,5) ! 250209
+        common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
+     c  nap,nat,nzp,nzt,pio   ! 060813
+        dimension rc(3)
+
+c	find out unstable hadron 
+	jd=0
+c	jd: statistics of number of unstable hadrons adjudged
+	i1o=1   ! 080104
+	nn1=n   ! 131218
+200	continue
+	do 400 i1=i1o,nn1    ! 110604 141218
+	kf=k(i1,2)
+	md=mdcy(pycomp(kf),1)
+
+
+	if(md.eq.1)then   ! 1
+c	write(9,*)'i1,kf,md=',i1,kf,md
+	jd=jd+1
+
+c	decay of unstable hadron i1
+	call pydecy(i1)
+c	'pyjets' is filled up simultaneously 
+c141218	decayed particles are located above nn1
+
+c	store the position of decaying hadron
+	do i=1,3
+	rc(i)=rn(i1,i)
+	enddo
+c	write(9,*)'rc=',(rc(i),i=1,3)   ! sa
+
+c	update particle list
+
+c	remove decaying hadron from 'pyjets'
+        if(ipden.lt.11)call pyedit(2)   ! 060813
+        if(ipden.ge.11)call pyedit(1)   ! 060813
+c	write(22,*)'i1,kf=',i1,k(i1,2)
+c	call pylist(1)
+
+c       remove decaying hadron from 'sa1_h' as well
+c	 i. e. move the hadron list ('sa1_h') 1 step downward from i1+1 
+c	 to nn
+	call updah(nn,i1+1,1)
+c	write(9,*)'nn=',nn   ! sa 
+	nn=nn-1
+c	write(9,*)'nn=',nn   ! sa 
+	nn1o=nn1   ! 141218
+	nn1=nn   
+
+c       move "22" (decay gamma) from 'pyjets' to 'sgam'
+	jb1=0
+700	continue
+	do 800 i3=nn1+jb1+1,n
+        kf=k(i3,2)
+        if(kf.ne.22)then   !!
+	jb1=jb1+1
+        goto 800
+
+        elseif(kf.eq.22)then   !!
+        ngam=ngam+1
+        do i2=1,5
+        kgam(ngam,i2)=k(i3,i2)
+        pgam(ngam,i2)=p(i3,i2)
+        vgam(ngam,i2)=v(i3,i2)
+        enddo
+c	update particle list
+        if(i3.eq.n)then   !!!   
+        n=n-1
+        goto 900
+        elseif(i3.lt.n)then   !!!
+c       move particle list 'pyjets' one step downward from i3+1 to n
+        do j=i3+1,n
+        j1=j-1
+        do jj=1,5
+        k(j1,jj)=k(j,jj)
+        p(j1,jj)=p(j,jj)
+        v(j1,jj)=v(j,jj)
+        enddo
+        enddo
+        n=n-1
+        goto 700   ! 131218
+	else   !!!
+	endif   !!!
+
+	else   !!
+	endif   !!
+800     enddo
+900	continue
+
+	nn=n
+c	write(9,*)'nn1,nn,n=',nn1,nn,n   ! sa
+
+c	fill produced hadrons (from decay, no gamma) into 'sa1_h'
+	do i=nn1+1,nn
+	do j=1,5
+	kn(i,j)=k(i,j)
+	pn(i,j)=p(i,j)
+	rn(i,j)=v(i,j)
+	enddo
+        enddo
+
+c	write(9,*)'after decay, i1,kf,n,nn,nn1,jd=',i1,kf,n,nn,nn1,jd! sa
+c	do i=1,nn
+c	write(9,102)(rn(i,j),j=1,4)   ! sa
+c	enddo
+
+c	arrange decaied hadrons (from nn1+1 to nn) on the surface of
+c        sphere with radius rrp and centred on parent position
+	call posi(nn1,nn,rc,rrp)
+c	write(9,*)'after decay and rearrangement,n,nn,nn1=',n,nn,nn1! sa
+c	do i=1,nn
+c	write(9,102)(rn(i,j),j=1,4)   ! sa
+c	enddo
+
+c       transfer four position messages of decaied hadrons to 'pyjets'
+	do i=nn1+1,nn
+        do j=1,5
+        v(i,j)=rn(i,j)
+        enddo
+        enddo
+c	write(9,*)'after decay and rearrangement,v,n,nn,nn1=',n,nn,nn1! sa
+c	do i=1,n
+c	write(9,102)(v(i,j),j=1,4)   ! sa
+c	enddo
+c	write(mstu(11),*)'after decay'
+c	call pylist(1)
+
+	if(i1.eq.nn1o)goto 401 !141218, originally no this statement->dead loop 
+	i1o=i1   ! 131218 
+	goto 200   ! 131218
+	endif   ! 1
+
+
+400	enddo
+401	continue   ! 141218
+102     format(4(1x,f10.4))
+c	if(nout.eq.1 .or. iii.eq.1 .or. iii.eq.neve)then
+c	write(mstu(11),*)'after hadronization and decay'
+c	call prt_sa1_h(nn)
+c	endif
+        return
+        end
+
+
+
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	subroutine updah(j2,jc,i)
 c	move the hadron list i steps downward from jc till j2
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-      PARAMETER (KSZJ=40000)
+      PARAMETER (KSZJ=80000)
 	common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
 	do j=jc,j2
 	do jj=1,5
@@ -314,13 +451,13 @@ c	move the hadron list i steps downward from jc till j2
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	subroutine posi(nn1,nn2,rc,rrp)
 c	arrange produced particles (from nn1+1 to nn2) on the surface of 
-c	 sphere with radius rrp and centred of parent position
+c	 sphere with radius rrp and centred on parent position
 c	rc : the coordinate of center of the parent
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-        parameter (mplis=40000)
-        PARAMETER (KSZJ=40000)
+        parameter (mplis=80000)
+        PARAMETER (KSZJ=80000)
 	common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
 	dimension rc(3),rr(3,kszj)
 	iii=0
@@ -365,7 +502,7 @@ c	 radius xf,to particle i
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-	parameter (kszj=40000)
+	parameter (kszj=80000)
 	dimension rr(3,kszj)
         cita=2*pyr(1)-1.
         fi=2.*3.1416*pyr(1)
@@ -384,7 +521,7 @@ c       print particle list and the sum of four momentum and charge
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-        parameter (kszj=40000)
+        parameter (kszj=80000)
       COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
         common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
         dimension peo(4)
@@ -412,7 +549,7 @@ C...Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-        parameter (kszj=40000)
+        parameter (kszj=80000)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         do j=j1,j2
         do jj=1,5
@@ -424,4 +561,3 @@ C...Double precision and integer declarations.
 c        n=n-i
         return
         end
-

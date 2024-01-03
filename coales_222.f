@@ -1,20 +1,20 @@
-	subroutine coales(ijk,neve,nnout,nap,nat,nzp,nzt)
-c     A simple coalescence model writen by Sa Ben-Hao on 04/06/2004
+	subroutine coales(ijk,neve,nnout,nap,nat,nzp,nzt)   
+c       A simple coalescence model writen by Sa Ben-Hao on 04/06/2004
 c       Its input messages are in 'parlist'
 c       Its working block is 'parlist' ('pyjets' either in 'decayh')
-c	  Its output message is in 'pyjets' (in 'sa1_h' either)
+c	Its output message is in 'pyjets' (in 'sa1_h' either)
 c	ijk: the run number
 c	neve: total number of runs
-c     nnout: a internal printing per nnout runs
+c       nnout: a internal printing per nnout runs
 c	nap and nzp: atomic and charge number of projectile
-c     nat and nzt: atomic and charge number of target
+c       nat and nzt: atomic and charge number of target
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-	PARAMETER (KSZJ=40000)
-      parameter (mplis=40000)
+	PARAMETER (KSZJ=80000)
+      parameter (mplis=80000)
 	COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
-      COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
+        COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
 	COMMON/PYDAT3/MDCY(500,3),MDME(8000,2),BRAT(8000),KFDP(8000,5)
 	COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
 c	Those variables in above four statements are only used here and   
@@ -25,48 +25,50 @@ c	PYDAT1,PYDAT2,PYDAT3 and PYJETS are the subroutines in PYTHIA
 	common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
 	common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
 	common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
-      common/sa6_c/ithroq,ithrob,ich,non6_c,throe(4)
-	common/sa6_t/ithroq_t,ithrob_t,ich_t,non6_t,throe_t(4)
-      common/sa24/adj1(40),nnstop,non24,zstop
-      common/sbh/nbh,nonh,kbh(kszj,5),pbh(kszj,5),vbh(kszj,5)
+        common/sa6_c/ithroq,ithrob,ich,non6_c,throe(4)
+        common/sa24/adj1(40),nnstop,non24,zstop
+        common/sbh/nbh,nonh,kbh(kszj,5),pbh(kszj,5),vbh(kszj,5)
 	common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
      c  napp,natt,nzpp,nztt,pio
 	dimension rc(3),b(3),pstr(3),rstr(3),numb(3),jk(20)
-	dimension p0(4),pf(20,4),ppt(50,2),peo(5),ppp(20,5)
+	dimension p0(4),pf(20,4),ppt(50,2),peo(5)
 	dimension ppr(kszj,4),peoh(5),pnn(kszj,5),rr(3)
-	dimension spglu(4),ppglu(4) ! 080512, the sum of E-p of unsplitted gluon
+        dimension spglu(4) ! 080512, e (p) sum of unsplitted gluons
+
 	rrp=1.16
 	nn=0   ! nn: the particle number of this event.
-      do i1=1,kszj
-        do j1=1,5
+        do i1=1,kszj
+          do j1=1,5
           kn(i1,j1)=0.
           pn(i1,j1)=0.
           rn(i1,j1)=0.
 	  enddo
 	enddo
 
-	ithroq_t=0
-      ithrob_t=0
-      ich_t=0
-      do i=1,4
-        throe_t(i)=0.
-      enddo
-
 	nout=nnout
 	imc=adj1(13)
-      ibc=adj1(14)
+        ibc=adj1(14)
 	iphas=adj1(21)
 
-c     The probability of gluon spliting into u,d & s quark
-      adj132=adj1(32)
-      prosum=1.+1.+adj132
-      prod=1./prosum   ! 0.4286 originally
-      pros=adj132/prosum   ! 0.1428 originally
-      prods=prod+pros   ! 0.5714 originally
+c220122 remove junctions
+        jb=0
+2010    do i1=jb+1,iprl  ! i1 loop      
+        kf=idp(i1)
+        kfab=iabs(kf)
+        if(kfab.ne.88)then
+        jb=jb+1
+        goto 2020
+        endif
+c       move particle list 'parlist' one step downward since i1+1 to iprl
+        call updad(iprl,i1+1,1)
+        iprl=iprl-1
+        goto 2010
+2020    enddo   ! i1 loop        
+c220122        
 
 c	Conservation of net baryon.
 	netba=0
-	do i1=1,nbh
+	do i1=1,nbh ! note: 'sbh' is hadron list before hadronization 060119
 	  kf=kbh(i1,2)
 	  kfab=iabs(kf)
 	  if(kf.gt.0.and.(kf.gt.1000 .and. kf.lt.10000))netba=netba+1
@@ -85,112 +87,170 @@ c060813 120214
  	netba=nat-netba   ! lepton-A
 	endif
 c060813 120214
-	if(ijk.eq.1)then
-        napt=nap+nat
-        nzpt=nzp+nzt
-        sbaryi=float(napt)
-        schgei=3.*float(nzpt)
-	endif
+c060119 if(ijk.eq.1)then
+c       napt=nap+nat
+c       nzpt=nzp+nzt
+c       sbaryi=float(napt)
+c       schgei=3.*float(nzpt)
+c060119 endif
 
-c     Throw away t quark (antiquark) for the moment.
 888   continue
-      do i1=1,iprl ! iprl: current total number of partons in particle list
-        kf=idp(i1)
-        if(iabs(kf).eq.6)then
-          if(kf.eq.6)ithroq_t=ithroq_t+1
-          if(kf.eq.-6)ithrob_t=ithrob_t+1
-          ich_t=ich_t+pychge(kf)
-          do i2=1,4
-            throe_t(i2)=throe_t(i2)+pp(i2,i1)
-          enddo
-c         Move parton list one step downward since i1+1
-          call updad(iprl,i1+1,1)
-          iprl=iprl-1
-          goto 888
-        endif
-      enddo
 
-c     make the partons in order of g, qba and q.
-      iii=0
-      jjj=0
-      do ii=1,3
-c	1: refers to g, 2: qba, 3: q
-        kf=21
-        do j=iii+1,iprl
-          call ord_c(jjj,j,kf,ii)
-        enddo
-        iii=jjj
-        numb(ii)=jjj
+c220122
+c       write(22,*)'in coales n=',n
+        call pyedit(2) 
+c       call pylist(1)
+        write(9,*)'prt_parlist, iprl=',iprl
+        call prt_parlist(iprl,cc)
+        call prt_sbh(nbh,cc)
+c220122
+
+c       make the partons in order of g, qba and q.
+c	 1: refers to g, 2: qba, 3: q
+c180222 iii=0
+c       jjj=0
+c       do ii=1,3
+c       kf=21
+c       do j=iii+1,iprl
+c       call ord_c(jjj,j,kf,ii)
+c       enddo
+c       iii=jjj
+c       numb(ii)=jjj
 c       numb(1),(2) and (3): the order # of last g,qba & q
-      enddo
-      n1=numb(1)
-      n2=numb(2)
-      n3=numb(3)
+c       enddo
+c       n1=numb(1)
+c       n2=numb(2)
+c180222 n3=numb(3)
+        numb(2)=0
+        numb(3)=0
+c       move qba to the end 
+        jh=iprl
+        jl=0
+2030    continue
+        do j=jl+1,jh
+        kf=idp(j)
+        kfab=iabs(kf)
+        if(kfab.lt.7 .and. kf.lt.0)then   ! consider d,u,s,c,b,t only
+        iprl=iprl+1      
+        numb(2)=numb(2)+1  
+        do i4=1,3
+        rp(i4,iprl)=rp(i4,j)
+        pp(i4,iprl)=pp(i4,j)
+        vp(i4,iprl)=vp(i4,j)
+        enddo
+        rp(4,iprl)=rp(4,j)
+        pp(4,iprl)=pp(4,j)
+        taup(iprl)=taup(j)
+        rmp(iprl)=rmp(j)
+        idp(iprl)=kf
+c       move particle list 'parlist' one step downward since j+1 to iprl
+        call updad(iprl,j+1,1)
+        iprl=iprl-1
+        jh=jh-1
+        jl=j-1
+        goto 2030
+        endif
+        enddo
+c       write(9,*)'af. move qba,numb(2),iprl=',numb(2),iprl
+c       call prt_parlist(iprl,cc)
+c       call prt_sbh(nbh,cc)
 
-c     split forcibly gulon (after 'parcas') into qqba pair
-c	amu=pymass(2)
-c	amd=pymass(1)
-c	ams=pymass(3)
-	amd=0.0099D0  !041107
-	amu=0.0056D0 
-	ams=0.199D0
-	amuu=2*amu
-	amdd=2*amd
-	amss=2*ams
+c       move q to the end
+        jh=iprl-numb(2)
+        jl=0
+2040    continue        
+        do j=jl+1,jh
+        kf=idp(j)
+        kfab=iabs(kf)
+        if(kfab.lt.7 .and. kf.gt.0)then
+        iprl=iprl+1      
+        numb(3)=numb(3)+1  
+        do i4=1,3
+        rp(i4,iprl)=rp(i4,j)
+        pp(i4,iprl)=pp(i4,j)
+        vp(i4,iprl)=vp(i4,j)
+        enddo
+        rp(4,iprl)=rp(4,j)
+        pp(4,iprl)=pp(4,j)
+        taup(iprl)=taup(j)
+        rmp(iprl)=rmp(j)
+        idp(iprl)=idp(j)
+c       move particle list 'parlist' one step downward since j+1 to iprl
+        call updad(iprl,j+1,1)
+        iprl=iprl-1
+        jh=jh-1
+        jl=j-1
+        goto 2040
+        endif
+        enddo
+c       write(9,*)'af. move q,numb(3),iprl=',numb(3),iprl
+c       call prt_parlist(iprl,cc)
+c       call prt_sbh(nbh,cc)
+
+        numb(1)=iprl-numb(2)-numb(3)
+        numb(2)=numb(1)+numb(2)
+        numb(3)=iprl
+c       now numb(1),(2), and (3): the order # of last g,qba & q in 'parlis'
+        n1=numb(1)
+        n2=numb(2)
+        n3=numb(3)
+c220122        
+c       write(9,*)'af. order n1,n2,n3,iprl=',n1,n2,n3,iprl      
+c       call prt_parlist(iprl,cc)  
+c       call prt_sbh(nbh,cc)        
+c       print*,'af. ordering of g, qba, & q'
+c220122        
+
+c       split forcibly gulon (after 'parcas') into qqba pair
 	deles=0.
-	do i1=1,4  ! 080512
-	spglu(i1)=0.0
-	enddo  ! 080512
-
-100	continue
-	if(n1.le.0)goto 102
-	do ii=1,n1
-	  dele=0.
+        ismal=0   ! 220122
+        ilarg=0   ! 220122
+        amuu=pymass(2)*2   ! 220122
+        do i1=1,4  ! 080512
+        spglu(i1)=0.0
+        enddo  ! 080512
+        iii=0   ! 220122
+100     continue
+        do ii=1,n1   ! do loop 100122 
 	  eg=pp(4,ii)
-	  if(eg.lt.amuu)goto 200
-	  if(eg.ge.amuu .and. eg.lt.amdd)then
-	    kf=2   ! u
-		amq=amu
-	  endif
-	  if(eg.ge.amdd .and. eg.lt.amss)then
-		kf=2   ! u
-		amq=amu
-		if(pyr(1).gt.0.5)then  
-		  kf=1   ! d
-		  amq=amd
-		endif
-	  endif
-	  if(eg.gt.amss)then
-		rand=pyr(1)  ! pros: probability of s
-		kf=3   ! s    prods: probability of s and d 
-		amq=ams  
-		if(rand.gt.pros .and. rand.le.prods)then
-		  kf=1   ! d 
-		  amq=amd
-		endif
-		if(rand.gt.prods)then
-		  kf=2   ! u
-		  amq=amu
-		endif
-	  endif
+        if(eg.lt.amuu)then   ! 220122
+        ismal=ismal+1
+        goto 200
+        else
+        ilarg=ilarg+1
+        call break_f(eg,kf,amq)
+        endif   ! 220122
 	  do j=1,4
-		p0(j)=pp(j,ii)
+		p0(j)=pp(j,ii)   ! p0: four momenta of spliting q
 	  enddo
+        iii=iii+1   ! 220122
+        write(9,*)'iii,g->kf,amq,p0=',iii,kf,amq,(p0(j),j=1,4)          
+c080322 subtract 2*amq (amq: mass of splited quark) from gluon energy
+c        and reduce gluon three momentum correspondingly 
+        p04o=p0(4)
+        p0(4)=p04o-2.*amq
+        rati=p0(4)/p04o   ! times of g energy reduction
+c       if(rati .lt. 1.e-20)rati=1.e-20
+c       if(rati .gt. 1.e+20)rati=1.e+20
+        p0(1)=p0(1)*rati
+        p0(2)=p0(2)*rati
+        p0(3)=p0(3)*rati
+        write(9,*)'reduction=',rati,p0(1),p0(2),p0(3),p0(4)
+c080322
 
-c	Fill the q & qba splited from g into parton list
-c	arrange qba after n2
-c	Move parton list one step forward since n2+1 upto n3
-	  call updaf(n3,n2)
-	  n2=n2+1 
-	  n3=n3+1
-c	arrange q after n3
-	  n3=n3+1
+c	Fill the q & qba splited from g into parton list 'parlist'
+c	Move parton list ('parlist') one step forward since n2+1 upto n3
+	  call updaf(n3,n2)   
+	  n2=n2+1   ! n2 is reserved for splited qba 
+	  n3=n3+1   ! as n2 has added one
+c       arrange q after n3
+        n3=n3+1   ! n3 is reserved for splited q
 
-c	Splited qba takes the four coordinate of g, splited q is arranged around 
-c	 g within 0.5 fm randumly in each one of the three coordinates and 
-c	 has same 4-th coordinate as g.
+c	Splited qba takes the four coordinate of g, splited q is arranged 
+c        around g within 0.5 fm randumly in each one of the three coordinates 
+c        and has same 4-th coordinate as g.
 	  do i=1,4
-	    rp(i,n2)=rp(i,ii)
+	    rp(i,n2)=rp(i,ii)  
 	  enddo
 	  do i=1,3
 		rr(i)=pyr(1)*0.5
@@ -199,117 +259,99 @@ c	 has same 4-th coordinate as g.
 	  enddo
 	  rp(4,n3)=rp(4,ii)
 
-c	Give momentum to q & qba.
-	  do j1=1,20
-		do j2=1,5
-		  ppp(j1,j2)=0.
-		enddo
-	  enddo
- 
-	  decsuc=1
-        call decmom(p0,ppp,amq,amq,decsuc)
-        do j1=1,4
-          pnn(1,j1)=ppp(1,j1)
-          pnn(2,j1)=ppp(2,j1)
-        enddo
-        if(decsuc.eq.0)then   !
-          do i1=1,3
-		pii=pyr(1)*p0(i1)
-		pnn(1,i1)=pii
-		pnn(2,i1)=p0(i1)-pii
-	    enddo
-	    pn11=pnn(1,1)
-	    pn12=pnn(1,2)
-	    pn13=pnn(1,3)
-	    pnn(1,4)=sqrt(amq*amq+pn11*pn11+pn12*pn12+pn13*pn13)
-	    pn21=pnn(2,1)
-	    pn22=pnn(2,2)
-	    pn23=pnn(2,3)
-	    pnn(2,4)=sqrt(amq*amq+pn21*pn21+pn22*pn22+pn23*pn23)
-	    pnn(1,5)=amq
-	    pnn(2,5)=amq
-	  endif   ! 1
-
-c	'pnn' is a internal array 
-	  do j=1,4
-	    pp(j,n2)=pnn(1,j) ! n2 is the just generate qbar.
-	    pp(j,n3)=pnn(2,j) ! n3 is the just generate q.
-	  enddo
-	  dele=eg-pnn(1,4)-pnn(2,4)
+c	Give four momentum to q & qba.
+c       keep three momentum conservation 
+        ranx=pyr(1)
+        pp(1,n2)=ranx*p0(1)
+        pp(1,n3)=(1.-ranx)*p0(1)
+        rany=pyr(1)
+        pp(2,n2)=rany*p0(2)
+        pp(2,n3)=(1.-rany)*p0(2)
+        ranz=pyr(1)
+        pp(3,n2)=ranz*p0(3)
+        pp(3,n3)=(1.-ranz)*p0(3)
+        ppxn2=pp(1,n2)
+        ppxn3=pp(1,n3)
+        ppyn2=pp(2,n2)
+        ppyn3=pp(2,n3)
+        ppzn2=pp(3,n2)
+        ppzn3=pp(3,n3)
+c       energy of qba & q
+        pp4n2=amq*amq+ppxn2*ppxn2+ppyn2*ppyn2+ppzn2*ppzn2
+        pp4n3=amq*amq+ppxn3*ppxn3+ppyn3*ppyn3+ppzn3*ppzn3
+        if(pp4n2.lt.1.e-20)pp4n2=1.e-20
+        if(pp4n2.gt.1.e+20)pp4n2=1.e+20
+        if(pp4n3.lt.1.e-20)pp4n3=1.e-20
+        if(pp4n3.gt.1.e+20)pp4n3=1.e+20
+        pp(4,n2)=sqrt(pp4n2)
+        pp(4,n3)=sqrt(pp4n3)
+        
+          efinal=pp(4,n2)+pp(4,n3) 
+          dele=eg-efinal
 	  deles=deles+dele
+        write(9,*)'iii,ii,eg,efinal,dele=',iii,ii,eg,efinal,dele          
 
 c	Give other characters to q & qba.
 	  idp(n2)=-kf
 	  idp(n3)=kf
 	  rmp(n2)=amq
 	  rmp(n3)=amq
+c220122 write(9,*)'n1,ii,kf,amq=',n1,ii,kf,amq
 	  goto 400   ! 140604 100 originally
-200	  continue
 
-c	Treating the case of gluon can not splite into qqba.
-	  if(ii.eq.n1)goto 300
+200       continue
+c	Treat the gluon which can not splite into qqba
+        if(ii.eq.n1)then 
+        goto 300   ! throw away four momenta of that gluon
+        else
+c200222 Transfer four momentum of that gluon to next gluon 
+	do i1=1,4
+	pp(i1,ii+1)=pp(i1,ii+1)+pp(i1,ii)
+	enddo
+        goto 400
+        endif
+300     continue
+c       record the four momentum of last gluon, share it among q & qba later  
+          do i1=1,4
+          spglu(i1)=spglu(i1)+pp(i1,ii)
+          enddo   ! 080512        
 
-c	Transfer the four momentum of that gluon to anyone of other gluons 
-c	randomly.
-	  ran=pyr(1)
-	  iran=ran*(n1-ii)+1
-	  do i1=1,4
-	    pp(i1,iran)=pp(i1,iran)+pp(i1,ii)
-	  enddo
-	  goto 400
-300	  continue
-
-c	Transfer the four momentum of that gluon to anyone of qba randomly.
-c	  ran=pyr(1) ! 080512
-c	  iran=ran*(n2-n1)+1
-c        do i1=1,4
-c	    pp(i1,iran)=pp(i1,iran)+pp(i1,ii)
-c	  enddo ! 080512
-
-c	record the four momentum of that gluon, and evenly share that  
-c	 record with the quarks and antiquarks later. yan, ! 080512 sa
-	  do i1=1,4
-		spglu(i1)=spglu(i1)+pp(i1,ii)
-	  enddo   ! 080512
-400	  continue
-	  call updad(n3,ii+1,1)
-
+400	continue
+        write(9,*)'n1,iii,ii,ismal,ilarg=',n1,iii,ii,ismal,ilarg   ! 220122
 c	Move parton list one step downward since ii+1
+	  call updad(n3,ii+1,1)
 	  n1=n1-1
 	  n2=n2-1
 	  n3=n3-1
 
-c	Share the dele, abandon, yan, 080512 
-c	  if(n3.gt.0)then
-c		dele=dele/float(n3)
-c		do i1=1,n3
-c		  pp(4,i1)=pp(4,i1)+dele
-c	      if(dele.lt.0.)then
-c		  if(pp(4,i1).lt.0.)pp(4,i1)=pp(4,i1)-dele
-c		    pabs=abs(pp(3,i1))
-c		    if(pabs.ge.pp(4,i1))pp(4,i1)=pp(4,i1)-dele
-c		  endif
-c	    enddo
-c	  endif  080512 
+c       write(9,*)'af. first step in loop for ii,n1,n2,n3=',
+c       c   n1,n2,n3
+c       call prt_parlist(n3,cc)
+c       call prt_sbh(nbh,cc)
 
-	  goto 100
-	enddo	
-102	continue
+        goto 100
+        enddo   ! do loop 100122       
+102     continue
 
-c	share the dele, yan, 080512 
-c	write(99,*)'g n1,n3,dele,deles,e=',n1,n3,dele,deles
-c     c	(pp(4,i1),i1=1,n3)   ! sa
-	if(n3.gt.0)then
-	  do i1=1,3
-		ppglu(i1)=spglu(i1)/float(n3)
-	  enddo
-	  ppglu(4)=(ppglu(4)+deles)/float(n3)
-	  do i1=1,n3
-		do i2=1,4
-		  pp(i2,i1)=pp(i2,i1)+ppglu(i2)
-	    enddo
-	  enddo
-	endif ! 080512 
+c       share four momenta, thrown away above, among q & qba
+        write(9,*)'n3,spglu(i1),deles=',n3,(spglu(i1),i1=1,4),deles
+        if(n3.gt.0)then
+          do i1=1,3
+                spglu(i1)=spglu(i1)/float(n3)
+          enddo
+          spglu(4)=(spglu(4)+deles)/float(n3)
+          do i1=1,4
+          if(spglu(i1).lt.1.e-12)spglu(i1)=1.e-12
+          if(spglu(i1).gt.1.e+12)spglu(i1)=1.e+12
+          enddo
+        write(9,*)'spglu(i1)=',(spglu(i1),i1=1,4)
+          do i1=1,n3
+                do i2=1,4
+                  pp(i2,i1)=pp(i2,i1)+spglu(i2)
+            enddo
+          enddo
+        endif ! 080512
+
 101	format(4(1x,f10.4))
 600   format(20(1x,i3))
 c     Split forcibly gluon into qqba pair, finished.   ! 080512 sa
@@ -319,11 +361,19 @@ c     Split forcibly gluon into qqba pair, finished.   ! 080512 sa
 	adj12=adj1(12)
 	adj16=adj1(16)
 	adj17=adj1(17)
-	adj17=max(4.0,adj17) ! 070612, yan
-	if(adj12.eq.2)goto 900 
-c		write(9,*)'adj16=',adj16   ! 080512  
+c200222 adj17=max(4.0,adj17) ! 070612, yan
+c220122
+c       write(9,*)'af. spliting g n1,n2,n3,iprl=',n1,n2,n3,iprl
+c       call prt_parlist(iprl,cc)
+c       call prt_sbh(nbh,cc)
+c       print*,'af. spliting g n2,n3,iprl',n2,n3,iprl
+c220122
+c200222 if(adj12.eq.2)goto 900 
+c		write(9,*)'adj16=',adj16   ! 080512
+  
 c     Parton production according to Field-Feynman model
 	iprloo=1   ! 080512 sa
+        nloop=0   ! 200222
 700	do 800 i1=iprloo,iprl   ! 080512 sa   
         kf0=idp(i1)
 	ee=pp(4,i1)
@@ -332,19 +382,19 @@ c     Parton production according to Field-Feynman model
 c       iflav = 1 : if source parton is quark
 c             =-1 : if source parton is antiquark
 c     if(ee .gt. adj17) call ffm(i1,kf0,igen,iflav,n1,n2,n3) ! 080512
-	rand=pyr(1)  ! 080512
-c	rand=rlu(1)
-      if(ee.gt.adj17.and.rand.lt.adj16) then  ! 080512
-	  call ffm(i1,kf0,igen,iflav,n1,n2,n3) 
+      if(ee.gt.adj17.and.nloop.lt.adj16) then  ! 080512
+	  call ffm(i1,kf0,igen,iflav,n1,n2,n3)
+        nloop=nloop+1 
 	endif  ! 080512
-c       igen : times of energetic quark can excite qqbar pair from 
-c	 vacuum (in 'ffm'), which is controled by four momenta of energetic quark ! 080512   
+c       igen : repeat times of energetic quark can excite qqbar pair from 
+c        vacuum (in 'ffm'), that is controled by four momenta of energetic 
+c        quark ! 080512   
 
 800     continue
 	iprlo=iprl   ! 080512 sa
 	iprl=n3
 	igens=igens+1 
-c080512	igens: repeating times of considering deexcitation of energetic 
+c080512	igens: repeat times of considering deexcitation of energetic 
 c080512	 parton over parton list   
 c	if(igens.gt.adj16)goto 900  ! 080512
 	iadj16=int(adj16) ! 080512
@@ -358,24 +408,45 @@ c080512 sa	enddo
 900	continue
 c     Parton production according to Field-Feynman model, finished.
 
-	if(adj12.eq.2)goto 1000 ! no need in order of qba and q.  
-
+c       note: up to now, n2 (n3): # qba (q)
+c       print*,'af. ffm, n2,n3,iprl=',n2,n3,iprl
 c     Make the partons in order of qba and q
-      iii=0
-      jjj=0
-      do ii=2,3   
-c       1: refers to g, 2: qba, 3: q
-        kf=21
-        do j=iii+1,iprl
-          call ord_c(jjj,j,kf,ii)
+c       move q to the end
+        jh=iprl
+        jl=0
+        num3=0
+2050    continue
+        do j=jl+1,jh
+        kf=idp(j)
+        kfab=iabs(kf)
+        if(kfab.lt.7 .and. kf.gt.0)then
+        iprl=iprl+1
+        num3=num3+1   ! # of q moved
+        do i4=1,3
+        rp(i4,iprl)=rp(i4,j)
+        pp(i4,iprl)=pp(i4,j)
+        vp(i4,iprl)=vp(i4,j)
         enddo
-        iii=jjj
-        numb(ii)=jjj
-c     numb(1), (2) and (3): the order # of last g,qba & q
-      enddo
-c	n1=numb(1)
-      n2=numb(2)
-      n3=numb(3)
+        rp(4,iprl)=rp(4,j)
+        pp(4,iprl)=pp(4,j)
+        taup(iprl)=taup(j)
+        rmp(iprl)=rmp(j)
+        idp(iprl)=idp(j)
+c       move particle list 'parlist' one step downward since j+1 to iprl
+        call updad(iprl,j+1,1)
+        iprl=iprl-1
+        jh=jh-1
+        jl=j-1
+        goto 2050
+        endif
+        enddo
+
+      n2=iprl-num3
+      n3=iprl
+c       write(9,*)'af. ffm n2,n3,iprl=',n1,n2,n3,iprl
+c       call prt_parlist(iprl,cc)
+c       call prt_sbh(nbh,cc)
+c       print*,'af. ffm 2'
 
 1000	continue
       iqba=n2
@@ -388,10 +459,9 @@ c     Order the q according to energy from the maximal to minimal.
 
 c	Parton coalescence 
 	if(ijk.eq.1)call tabhb 
-c	Read the table of hadron (pseudoscalar 0- & vector 1- only) &
-c	primary baryon (spin 1/2 octet & 3/2 decuplet only)
-c     ijk is the event number, that means call the table of 
-c      hadron and baryon at first run only.
+c       ijk is the event number
+c       Read the table of hadron (meson: pseudoscalar-spin 0 & vector-spin 1 
+c        only, baryon: octet-spin 1/2 & decuplet-spin 3/2 only)
 
 	call coal(n3,iqba,ijk,rrp,iphas,netba)
 c	n3: total number of partons (qba and q) 
@@ -410,17 +480,17 @@ c	ich : total charge of the partons thrown away
 	ichth=ich   ! 092600
 
 c	Transfer the data form 'sbh' to 'sa1_h'.
-      if(nbh.ge.1)then
-        do l=1,nbh
-          l1=nn+l
-          do m=1,5
-		kn(l1,m)=kbh(l,m)
-		pn(l1,m)=pbh(l,m)
-		rn(l1,m)=vbh(l,m)
-          enddo
-        enddo
-        nn=nn+nbh
-      endif
+c010518	if(nbh.ge.1)then
+c	do l=1,nbh
+c	l1=nn+l
+c	do m=1,5
+c		kn(l1,m)=kbh(l,m)
+c		pn(l1,m)=pbh(l,m)
+c		rn(l1,m)=vbh(l,m)
+c	enddo
+c	enddo
+c	nn=nn+nbh
+c010518	endif
 
 c	Transfer the data form 'sa1_h' to 'pyjets'.
 	n=nn
@@ -433,53 +503,10 @@ c	Transfer the data form 'sa1_h' to 'pyjets'.
       enddo
 
 c     Decay of unstable hadrons
-	call decayh(rrp)
+        if(adj12.ne.0)call decayh(rrp)    ! 060119 
 
 	return
 	end
-
-
-
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	subroutine ord_c(ipi,j,kf,ii)
-c	Make order for particle j
-c	ipi: particle j should be ordered after ipi
-c	kf: a control variable
-c	ii: a control variable 
-C...Double precision and integer declarations.
-      IMPLICIT DOUBLE PRECISION(A-H, O-Z)
-      IMPLICIT INTEGER(I-N)
-      INTEGER PYK,PYCHGE,PYCOMP
-      parameter (mplis=40000)
-      common/parlist/rp(4,mplis),pp(4,mplis),
-     c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
-	dimension rr(4),p1(4)
-	ik=idp(j)
-      if(ii.eq.1 .and. ik.eq.kf)goto 100   ! g
-	if(ii.eq.2 .and. ik*kf.lt.0)goto 100   ! qba
-	if(ii.eq.3 .and. ik*kf.gt.0)goto 100   ! q
-	goto 200
-100	ipi=ipi+1
-	idpp=idp(ipi)
-	rmpp=rmp(ipi)
-	do jj=1,4
-	  p1(jj)=pp(jj,ipi)
-	  rr(jj)=rp(jj,ipi)
-	enddo
-	idp(ipi)=idp(j)
-	rmp(ipi)=rmp(j)
-	do jj=1,4
-	  pp(jj,ipi)=pp(jj,j)
-	  rp(jj,ipi)=rp(jj,j)
-	enddo
-	idp(j)=idpp
-	rmp(j)=rmpp
-	do jj=1,4
-	  pp(jj,j)=p1(jj)
-	  rp(jj,j)=rr(jj)
-	enddo
-200	return
-	end        
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
@@ -492,7 +519,7 @@ C...Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-      parameter (mplis=40000)
+      parameter (mplis=80000)
 	common/throqb/iprlth,nonth,rpth(4,mplis),ppth(4,mplis),
      c	 idpth(mplis),rmpth(mplis)   ! 110905
 	dimension rr(4),p1(4)
@@ -536,8 +563,8 @@ C...Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-	PARAMETER (KSZJ=40000)
-      parameter (mplis=40000)
+	PARAMETER (KSZJ=80000)
+      parameter (mplis=80000)
       dimension pei(kszj,4),peo(5)
 	do i=1,5
 	  peo(i)=0.
@@ -565,10 +592,10 @@ C...Double precision and integer declarations.
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	subroutine tabhb
-c	The table of primary hadron (pseudoscalar 0- & vector 1- only) &
-c	 primary baryon (spin 1/2 octet & 3/2 decuplet only).
+c	The table of primary hadron (meson: pseudoscalar-spin 0 & vector-spin 1
+c        only, baryon: octet-spin 1/2 & decuplet-spin 3/2 only)
 c	kqh,kfh,proh: the quark composition,the flavor code,the
-c	 probability of hadron
+c	 probability of meson
 c	kqb,kfb,prob: the quark composition,the flavor code,the
 c	 probability of baryon
 C...Double precision and integer declarations.
@@ -620,24 +647,27 @@ C...Double precision and integer declarations.
 
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	subroutine updaf(n2,n1)
-c     Move parton list one step forward since n1+1
-c	n2 : the last order # of parton list
-C...Double precision and integer declarations.
+	subroutine updaf(n2,n1)   ! 180222
+c       Move parton list 'parlist' one step forward since n1+1 to n2
+c       Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-	parameter (mplis=40000)
+	parameter (mplis=80000)
         common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
 	do j=n2,n1+1,-1
 	  jj=j+1
-	  idp(jj)=idp(j)
-	  rmp(jj)=rmp(j)
-	  do j1=1,4
+	  do j1=1,3
 	    pp(j1,jj)=pp(j1,j)
 	    rp(j1,jj)=rp(j1,j)
+	    vp(j1,jj)=vp(j1,j)
 	  enddo
+	    pp(4,jj)=pp(4,j)
+	    rp(4,jj)=rp(4,j)
+          taup(jj)=taup(j)
+	  idp(jj)=idp(j)
+	  rmp(jj)=rmp(j)
 	enddo
 
 	return
@@ -645,22 +675,26 @@ C...Double precision and integer declarations.
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	subroutine updad(j2,jc,i)
-c	Move the parton list i steps downward from jc till j2.
-C...Double precision and integer declarations.
+	subroutine updad(j2,jc,i)   ! 180222
+c	Move the parton list 'parlist' i steps downward since jc to j2.
+c       Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-      parameter (mplis=40000)
+      parameter (mplis=80000)
       common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
 	do j=jc,j2
-	  idp(j-i)=idp(j)
-	  rmp(j-i)=rmp(j)
-	  do jj=1,4
+	  do jj=1,3
 	    pp(jj,j-i)=pp(jj,j)
 	    rp(jj,j-i)=rp(jj,j)
+	    vp(jj,j-i)=vp(jj,j)
 	  enddo
+	    pp(4,j-i)=pp(4,j)
+	    rp(4,j-i)=rp(4,j)
+          taup(j-i)=taup(j)
+	  idp(j-i)=idp(j)
+	  rmp(j-i)=rmp(j)
 	enddo
 
 	return
@@ -674,7 +708,7 @@ C...Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-      parameter (mplis=40000)
+      parameter (mplis=80000)
       common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
 	dimension rr(4),p1(4)
@@ -733,7 +767,7 @@ C...Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-      PARAMETER (KSZJ=40000,mplis=40000)
+      PARAMETER (KSZJ=80000,mplis=80000)
       COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
       COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
       COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
@@ -834,6 +868,7 @@ c         probability of strange antibaryon
 	    	    ppth(i2,iprlth)=pp(i2,ii1)
 		    rpth(i2,iprlth)=rp(i2,ii1)
               enddo
+
 c     Move parton list one steps downward since ii1+1
               call updad(n1,ii1+1,1)   
               n1=n1-1
@@ -841,7 +876,6 @@ c     Move parton list one steps downward since ii1+1
               goto 300
             endif   
           endif   ! ii1 can not produce antibryon
-
         elseif(rand.gt.relpr .or. nqb.lt.3)then   !
           call mespro(n1,nqb,ii1,iphas,nme,imes,rrp,isu)
           if(isu.eq.1 .and. nme.eq.1)then   ! one hadron produced
@@ -864,6 +898,7 @@ c     Move parton list one steps downward since ii1+1
 		    ppth(i2,iprlth)=pp(i2,ii1)
 		    rpth(i2,iprlth)=rp(i2,ii1)
 		  enddo
+
 c     Move parton list one steps downward since ii1+1
 		  call updad(n1,ii1+1,1)   
 		  n1=n1-1
@@ -895,7 +930,6 @@ c     Move parton list nqb steps downward since nqb+1
 	call updad(n1,nqb+1,nqb)   
 	n1=n1-nqb
 	nqb=0
-
 100	continue
    
 600	format(20(1x,i3))
@@ -977,9 +1011,9 @@ c	cm : invariant mass of kf1 & kf2
 c	kfii : flavor code of the primary meson
 c	amasi : mass of the primary meson
 c	isucc = 1 : success
-c           = 0 : fail
+c             = 0 : fail
 c	iflav = 1 : kf1>0,do not need to permute kf1 & kf2
-c	     = -1 : kf1<0,need to permute kf1 & kf2
+c	      = -1 : kf1<0,need to permute kf1 & kf2
 C...Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
@@ -1081,9 +1115,9 @@ c	cm: invariant mass of kf0,kf1 & kf2
 c	kfii : flavor code of the primary baryon
 c	amasi : mass of the primary baryon
 c	isucc = 1 : success
-c     isucc = 0 : fail
+c       isucc = 0 : fail
 c	iflav = 1 : if composing parton is quark
-c           =-1 : if composing parton is antiquark
+c             =-1 : if composing parton is antiquark
 C...Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
@@ -1171,13 +1205,12 @@ C...Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-      PARAMETER (KSZJ=40000,mplis=40000)
+      PARAMETER (KSZJ=80000,mplis=80000)
       common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
       common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
       common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
       common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
-      common/sa6_c/ithroq,ithrob,ich,non6_c,throe(4)
       common/sa24/adj1(40),nnstop,non24,zstop
 	dimension rcp(3)
 	dpmax=adj1(27)
@@ -1286,7 +1319,7 @@ c     Share the surplus energy.
 	  endif
         if(iway.eq.2 .and. nba.eq.1)return
 	  if(iway.eq.0)goto 400   ! 121204
-c   iway=1: when the baryon number equal net baryon, return. Used in creat net baryon.
+c   iway=1: when the baryon number equal net baryon, return. Used in creat net baryon
 c   iway=2: it can return when there generate one baryon. 
 c   iway=0: check all the probability of parton constituent baryon, then return.
 406       continue   ! fail
@@ -1314,13 +1347,12 @@ C...Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-      PARAMETER (KSZJ=40000,mplis=40000)
+      PARAMETER (KSZJ=80000,mplis=80000)
       common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
       common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
       common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
       common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
-      common/sa6_c/ithroq,ithrob,ich,non6_c,throe(4)
       common/sa24/adj1(40),nnstop,non24,zstop
 	dimension rcp(3)
 	dpmax=adj1(27)
@@ -1471,19 +1503,20 @@ C...Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-      PARAMETER (KSZJ=40000,mplis=40000)
+      PARAMETER (KSZJ=80000,mplis=80000)
       common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
       common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
       common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
       common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
-      common/sa6_c/ithroq,ithrob,ich,non6_c,throe(4)
       common/sa24/adj1(40),nnstop,non24,zstop
       dimension rcp(3)
 	dpmax=adj1(27)
       drmax=adj1(28)
 	isu=1
 	nme=0
+
+c	write(9,*)'enter mespro'
 
 	if(n1.eq.nqb)goto 100   ! 300105, no quark, return
 	kf1=idp(i1)
@@ -1589,7 +1622,7 @@ C...Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-      PARAMETER (KSZJ=40000)
+      PARAMETER (KSZJ=80000)
         common/papr/t0,sig,dep,ddt,edipi,epin,ecsnn,ekn,ecspsn,ecspsm
      c  ,rnt,rnp,rao,rou0,vneu,vneum,ecsspn,ecsspm,ecsen   ! 140604 060813
         dimension pp(kszj,5),ps(4),ff(kszj),pxyz(3),arp(3)
@@ -1654,16 +1687,16 @@ c	kf0 : flavor code of source quark (or antiquark)
 c	igen : times of source quark can excite qqbar pair from
 c        vacuum, which is controled by four momenta  ! 080512 sa
 c	iflav = 1 : if source parton is quark (kf0>0)
-c           =-1 : if source parton is antiquark (kf0<0)
+c             =-1 : if source parton is antiquark (kf0<0)
 C...Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-      PARAMETER (KSZJ=40000)
+      PARAMETER (KSZJ=80000)
       COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
       COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
       COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
-      parameter (mplis=40000)
+      parameter (mplis=80000)
       common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
       common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
@@ -1674,15 +1707,8 @@ C...Double precision and integer declarations.
 
 	kapa=adj1(15)
 	adj17=adj1(17)
-	adj17=max(4.0,adj17) ! 070612, yan
+c220222 adj17=max(4.0,adj17) ! 070612, yan
 	adj23=adj1(23)
-
-c     The probability of gluon spliting into u,d & s
-      adj132=adj1(32)
-      prosum=1.+1.+adj132
-      prod=1./prosum   ! 0.4286 originally
-      pros=adj132/prosum   ! 0.1428 originally
-      prods=prod+pros   ! 0.5714 originally
 
 	do i1=1,3
 	  rc(i1)=rp(i1,ii)
@@ -1702,49 +1728,15 @@ c	w0=e0+p0(3) ! E+p_z
 
 	if(w0.lt.0.)return   ! stop generation
 
-c	qqba creation
+c	qqba creation from vacuum
 	igen=0
 100	continue
 
 	ie1=0
 c	sample the flavor for qqba 
-c	amd=pymass(1)   ! d
-c	amu=pymass(2)   ! u
-c	ams=pymass(3)   ! s
-	amd=0.0099D0    !041107
-	amu=0.0056D0 
-	ams=0.199D0
-
-	amdd=amd*2
-	amuu=amu*2
-	amss=ams*2
 	eg=e0
-      if(eg.lt.amuu)return   ! stop generation
-      if(eg.ge.amuu .and. eg.lt.amdd)then
-        kf=2   ! u
-        amasi=amuu
-      endif
-      if(eg.ge.amdd .and. eg.lt.amss)then
-        kf=2   ! u
-        amasi=amuu
-        if(pyr(1).gt.0.5)then
-          kf=1   ! d
-          amasi=amdd
-        endif
-      endif
-      if(eg.gt.amss)then
-        rand=pyr(1)
-        kf=3   ! s
-        amasi=amss
-        if(rand.gt.pros .and. rand.le.prods)then
-          kf=1   ! d
-          amasi=amdd
-	  endif
-        if(rand.gt.prods)then
-          kf=2   ! u
-          amasi=amuu
-        endif
-      endif
+        call break_f(eg,kf,amq)
+      amasi=amq    ! 220222
 	kf1=kf
 	kf2=-kf
 	if(iflav.eq.1)then
@@ -1922,6 +1914,7 @@ c101204	if(fm.le.fz)goto 100
 	return 
 	end
 
+
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	subroutine phas(i1,i2,i3,isucc,j)
 c	The phase space judgement.
@@ -1931,7 +1924,7 @@ C...Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-	parameter(mplis=40000)
+	parameter(mplis=80000)
       common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
       common/sa24/adj1(40),nnstop,non24,zstop
@@ -2023,6 +2016,113 @@ c	 proceed for baryon
 	return
 	end
 
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+        subroutine break_f(eg,kf,amq)
+c       sample flavor of quark and anti-quark in final state of 1->2 
+c        process in partonic level
+c       eg: energy of partical 1
+c       kf (amq): flavor code (mass) of quark
+      IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+      IMPLICIT INTEGER(I-N)
+      INTEGER PYK,PYCHGE,PYCOMP
+        amd=pymass(1)   ! constituent mass in GeV
+        amu=pymass(2)   ! amu=amd
+        ams=pymass(3)
+        amc=pymass(4)
+        amb=pymass(5)
+        amt=pymass(6)
+        amuu=2*amu
+        amdd=2*amd
+        amss=2*ams
+        amcc=2*amc  
+        ambb=2*amb
+        amtt=2*amt
+        aa=pyr(1)
+c	  if(eg.lt.amuu)goto 200   ! throw away amuu
+	  if(eg.ge.amdd .and. eg.lt.amss)then   ! d,u
+                if(aa.le.0.5)then
+		kf=2   ! u
+		amq=amu
+                elseif(aa.gt.0.5)then  
+		kf=1   ! d
+		amq=amd
+                else
+		endif
+	  endif
+
+	  if(eg.ge.amss .and. eg.lt.amcc)then   ! d,u,s
+		if(aa.le.0.3333)then
+		kf=3   ! s    
+		amq=ams  
+		elseif(aa.gt.0.3333 .and. aa.le.0.6666)then
+		kf=1   ! d 
+		amq=amd
+		else
+		kf=2   ! u
+		amq=amu
+		endif
+          endif
+
+        if(eg.ge.cmass .and. eg.lt.bmass)then ! d,u,s,c
+        if(aa.le.0.25)then
+        kf=1        
+        amq=amd
+        elseif(aa.gt.0.25 .and. aa.le.0.5)then
+        kf=2                                       
+        amq=amu
+        elseif(aa.gt.0.5 .and. aa.le.0.75)then
+        kf=3
+        amq=ams
+        else
+        kf=4
+        amq=amc  
+        endif
+        endif
+
+        if(eg.ge.bsmass .and. eg.lt.tmass)then ! d,u,s,c,b
+        if(aa.le.0.2)then
+        kf=1
+        amq=amd
+        elseif(aa.gt.0.2 .and. aa.le.0.4)then
+        kf=2
+        amq=amu
+        elseif(aa.gt.0.4 .and. aa.le.0.6)then
+        kf=3
+        amq=ams
+        elseif(aa.gt.0.6 .and. aa.le.0.8)then
+        kf=4
+        amq=amc
+        else
+        kf=5
+        amq=amb   
+        endif
+        endif
+
+        if(eg.ge.tmass)then ! d,u,s,c,b,t
+        if(aa.le.0.1666)then
+        kf=1
+        amq=amd
+        elseif(aa.gt.0.1666 .and. aa.le.0.3333)then
+        kf=2
+        amq=amu
+        elseif(aa.gt.0.3333 .and. aa.le.0.4998)then
+        kf=3
+        amq=ams
+        elseif(aa.gt.0.4998 .and. aa.le.0.6664)then
+        kf=4
+        amq=amc
+        elseif(aa.gt.0.6664 .and. aa.le.0.833)then
+        kf=5
+        amq=amb
+        else
+        kf=6
+        amq=amt
+        endif
+        endif
+200     continue
+        return
+        end
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
       subroutine tdgaus(v,pmax,np,pp)
 c.... 2-d Gaussian distribution with width v, i.e., e^(-p2/v)dp2, 0<p2<pmax
@@ -2063,3 +2163,41 @@ c220312 note: ps is not in the dimension list
 30    continue
       return
       end
+
+
+
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+        subroutine prt_parlist(nn,cc)
+c       print particle list 'parlist' and sum of its momentum and energy
+c       pei: two dimension array of input momentum and energy
+c       peo : one dimension array of output momentum and energy
+      IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+      IMPLICIT INTEGER(I-N)
+      INTEGER PYK,PYCHGE,PYCOMP
+        parameter (kszj=80000,mplis=80000)        
+        common/parlist/rp(4,mplis),pp(4,mplis),taup(mplis),
+     c   rmp(mplis),vp(3,mplis),iprl,idp(mplis)
+        dimension pei(kszj,5),peo(4)
+        do i1=1,nn
+        write(9,100)i1,idp(i1),(pp(j,i1),j=1,4)
+        enddo
+        do i1=1,nn
+        do j1=1,4
+        pei(i1,j1)=pp(j1,i1)
+        enddo
+        pei(i1,5)=rmp(i1)
+        enddo
+        call psum(pei,1,iprl,peo)
+        ich1=0.
+        do i1=1,nn
+        kf=idp(i1)
+        ich1=ich1+pychge(kf)
+        enddo
+        cc=ich1/3.
+        write(9,*)'parlist nn=',nn
+        write(9,*)'c & p sum=',cc,peo  
+100     format(I5,1x,I5,4(1x,e13.4))        
+        return
+        end
+
+
