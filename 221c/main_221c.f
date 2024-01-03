@@ -83,6 +83,7 @@ c	 hadron according to purpose
         common/sgam/ngam,nongam,kgam(kszj,5),pgam(kszj,5),vgam(kszj,5) ! 250209
         common/ssin/nsin,nonsin,ksin(kszj,5),psin(kszj,5),vsin(kszj,5),
      c   bsin(kszj)   ! 250209
+        common/schuds/schun,schudn,schudsn,sfra,cmes   !she042021
         dimension an(20,5,20),bn(20),san(20,5,20),sbn(20),
      c	 anf(20,5,20),bnf(20),sanf(20,5,20),sbnf(20)
 	dimension sao(20,5,20),sbo(20),saof(20,5,20),sbof(20)
@@ -338,7 +339,7 @@ c210803
         read(11,*)(adj1(i),i=21,30)
         read(11,*)(adj1(i),i=31,40)
 c210803
-        read(11,*)kjp22,kjp23,kjp24,parp78   ! 020708 020511 150612 yan 070417
+        read(11,*)kjp22,kjp23,kjp24,parp78,cmes  ! 020708 020511 150612 yan 070417 she042021
 	read(11,*)parecc,iparres,smadel   ! 220312 240412 300513
 	close(11)
 c	tdh and itnum: time step and number of time steps used in subroutine 'flow_t'
@@ -448,6 +449,12 @@ c
 c	parameters in Lund string fragmentation function  
 	parj(41)=adj1(6)   ! D=0.3
 	parj(42)=adj1(7)   ! D=0.58
+c
+c       fraction for charge separation    !she042021
+        schun=0.
+        schudn=0.
+        schudsn=0.
+        sfra=0.   
 
 	do i1=1,20
 	sbn(i1)=0.
@@ -1873,6 +1880,7 @@ c060813 statistics of processes generated
 900 	format(i5,8(1x,f9.3),1x,f5.3)
 c	timeb=dtime(ty)
 c	write(9,*)'time consuming =',timeb
+c        print*,"schun,schudn,schudsn,sfra",schun,schudn,schudsn,sfra !she042021
 	stop
 	end
 
