@@ -1414,7 +1414,8 @@ c administrate nucleus-nucleus collision or lepton+A collision !060813 120214
         common/sbe/nbe,nonbe,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
 	common/saf/naf,nonaf,kaf(kszj,5),paf(kszj,5),vaf(kszj,5)
 	common/sbh/nbh,nonbh,kbh(kszj,5),pbh(kszj,5),vbh(kszj,5) 
-       common/ctllist/nctl,noinel(600),nctl0,noel
+        common/ctllist/nctl,noinel(600),nctl0,noel
+        common/schuds/schun,schudn,schudsn,sfra,cmes   !she042021
         dimension lc(nsize,5),tc(nsize),tw(nsize)
 	dimension pi(4),pj(4),pii(4),pjj(4),peo(4),pint(4)	
 	dimension nni(10),ndi(10),npi(10)
@@ -2754,7 +2755,13 @@ c080104
 	idio=idi   ! 080104
         endif   ! 060617
 c060617
-        if(iikk.eq.1)then
+c       add CME charge separation for u d s,c   !she042021
+c        print*,"n=",n
+        if(cmes.eq.0)goto 902
+        if((nap.eq.nat).and.(nzp.eq.nzt).and.(cmes.eq.1))
+     c    call chargecme(win)
+
+902     if(iikk.eq.1)then
 c       'pyjets' to 'sbh'
         nbh=n
         do j1=1,n
@@ -2911,8 +2918,66 @@ c070417
 c070417
 	return
 	end
-	
 
+c************************************************************she042021
+        subroutine chargecme(win)
+c   the CME-induced charge initial charge separation by switching the 
+c   py values of a fraction of the downward(upward) moving(u,d,s,c)quarks 
+c   for symmetrical collision systems,i.e., Ru&Ru Zr&Zr at RHIC and LHC.
+c   Here in symmetrical systems, nap=nat,nzp=nzt, and the fraction and
+c   magnetic field function is A*bp-B*bp^3 type.  by shezl 2021
+
+      IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+      IMPLICIT INTEGER(I-N)
+      parameter(kszj=40000)
+      COMMON/PYJETS/N,NONJ,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
+      common/sa1/kjp21,non1,bp,iii,neve,nout,nosc
+      common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
+     c  nap,nat,nzp,nzt,pio
+      common/schuds/schun,schudn,schudsn,sfra,cmes
+      dimension numk(kszj)
+      real(kind=8) p2u,erhic,erela,rerzcp,ruzcp
+
+       erhic=200.                     ! RHIC energy 200 
+       erela=0.45+0.55*(win/erhic)  !RHIC energy as a base
+       rnzp=real(nzp)
+       rnap=real(nap)
+       rerz=rnzp/rnap
+       ruzcp=((96./42.)*rerz)**(0.667) !isobar Zr Ru(96,42)as a base
+
+       sfra=3.1*(2448.135*nap**(-1.667)*bp-160.810*nap**(-2.333)*bp**3.)
+     c         *erela*ruzcp*0.01
+
+c      print*,"erela,ruzcp,nap,nzp,bp,sfra",erela,ruzcp,nap,nzp,bp,sfra
+
+       do 140  i=1,n
+       if(abs(k(i,2)).eq.1.or.abs(k(i,2)).eq.2.or.abs(k(i,2)).eq.3
+     c  .or.(k(i,2)).eq.4)then
+        schun=schun+1
+        if(pyr(1).gt.0..and.pyr(1).le.sfra)then
+        numk(i)=0
+        schudn=schudn+1
+        do 150 ii=1,n
+         if(numk(ii).eq.1) cycle
+        do 160 jj=ii+1,n
+         if(numk(jj).eq.1) cycle
+          if((k(ii,2)+k(jj,2)).eq.0.and.(k(ii,2)*p(ii,2).lt.0).and.
+     c         (k(jj,2)*p(jj,2).lt.0))then
+
+             p2u=p(ii,2)
+             p(ii,2)=p(jj,2)
+             p(jj,2)=p2u
+             schudsn=schudsn+1
+             numk(ii)=1
+             numk(jj)=1
+             goto 160
+          endif
+160       enddo
+150       enddo
+          endif
+          endif
+140       enddo
+          end
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	subroutine lorntz(ilo,b,pi,pj)
