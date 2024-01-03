@@ -33,6 +33,7 @@ c	PYDAT1,PYDAT2,PYDAT3 and PYJETS refer to subroutines in PYTHIA
 	dimension rc(3),b(3),pstr(3),rstr(3),numb(3),jk(20)
 	dimension p0(4),pf(20,4),ppt(50,2),peo(5),ppp(20,5)
 	dimension ppr(kszj,4),peoh(5),pnn(kszj,5),rr(3)
+	dimension spglu(4),ppglu(4) ! 080512, the sum of E-p of unsplitted gluon
 
 	rrp=1.16
 	nn=0
@@ -125,6 +126,10 @@ c100	Split forcibly gulon (after 'parcas') into qqba pair
 	amdd=2*amd
 	amss=2*ams
 	deles=0.
+	do i1=1,4  ! 080512
+	spglu(i1)=0.0
+	enddo  ! 080512
+
 100	continue
 	if(n1.le.0)goto 102
 	do ii=1,n1
@@ -246,11 +251,17 @@ c	randomly.
 300	continue
 
 c	Transfer the four momentum of that gluon to anyone of qba randomly.
-	ran=pyr(1)
-	iran=ran*(n2-n1)+1
-        do i1=1,4
-	pp(i1,iran)=pp(i1,iran)+pp(i1,ii)
-	enddo
+c	ran=pyr(1)  ! 080512
+c	iran=ran*(n2-n1)+1
+c       do i1=1,4
+c	pp(i1,iran)=pp(i1,iran)+pp(i1,ii)
+c	enddo  ! 080512
+
+c	record the four momentum of that gluon, and evenly share that  
+c	 record with the quarks and antiquarks later. yan, ! 080512 sa
+	  do i1=1,4
+		spglu(i1)=spglu(i1)+pp(i1,ii)
+	  enddo   ! 080512
 400	continue
 	call updad(n3,ii+1,1)
 
@@ -259,53 +270,81 @@ c	Move parton list one step downward since ii+1
 	n2=n2-1
 	n3=n3-1
 
-c	Share the dele
-	if(n3.gt.0)then
-	dele=dele/float(n3)
-	do i1=1,n3
-	pp(4,i1)=pp(4,i1)+dele
-	if(dele.lt.0.)then
-	if(pp(4,i1).lt.0.)pp(4,i1)=pp(4,i1)-dele
-	pabs=abs(pp(3,i1))   ! 061107
-	if(pabs.ge.pp(4,i1))pp(4,i1)=pp(4,i1)-dele
-	endif
-	enddo
-	endif
+c	Share the dele, abandon, yan, 080512 
+c	if(n3.gt.0)then
+c	dele=dele/float(n3)
+c	do i1=1,n3
+c	pp(4,i1)=pp(4,i1)+dele
+c	if(dele.lt.0.)then
+c	if(pp(4,i1).lt.0.)pp(4,i1)=pp(4,i1)-dele
+c	pabs=abs(pp(3,i1))   ! 061107
+c	if(pabs.ge.pp(4,i1))pp(4,i1)=pp(4,i1)-dele
+c	endif
+c	enddo
+c	endif  080512 
 	goto 100
 	enddo	
 102	continue
 
+c	share the dele, yan, 080512 
+c	write(99,*)'g n1,n3,dele,deles,e=',n1,n3,dele,deles
+c     c	(pp(4,i1),i1=1,n3)   ! sa
+	if(n3.gt.0)then
+	  do i1=1,3
+		ppglu(i1)=spglu(i1)/float(n3)
+	  enddo
+	  ppglu(4)=(ppglu(4)+deles)/float(n3)
+	  do i1=1,n3
+		do i2=1,4
+		  pp(i2,i1)=pp(i2,i1)+ppglu(i2)
+	    enddo
+	  enddo
+	endif ! 080512 
 101	format(4(1x,f10.4))
 600   format(20(1x,i3))
-c     Split forcibly each gluon into qqba pair, finished.
+c     Split forcibly gluon into qqba pair, finished.   ! 080512 sa
 
 	iprl=n3
 	igens=0
 	adj12=adj1(12)
 	adj16=adj1(16)
 	adj17=adj1(17)
+	adj17=max(4.0,adj17) ! 070612, yan
 	if(adj12.eq.2)goto 900   
-	  
+c		write(9,*)'adj16=',adj16   ! 080512 	  
 c     Parton production according to Field-Feynman model
-700	do 800 i1=1,iprl
+	iprloo=1   ! 080512 sa
+700	do 800 i1=iprloo,iprl   ! 080512 sa   
         kf0=idp(i1)
 	ee=pp(4,i1)
         iflav=1
         if(kf0.lt.0)iflav=-1
 c       iflav = 1 : if source parton is quark
 c             =-1 : if source parton is antiquark
-
-        if(ee .gt. adj17) call ffm(i1,kf0,igen,iflav,n1,n2,n3)
-c       igen : the total # of generations
+c     if(ee .gt. adj17) call ffm(i1,kf0,igen,iflav,n1,n2,n3) ! 080512
+	rand=pyr(1)  ! 080512
+c	rand=rlu(1)
+      if(ee.gt.adj17.and.rand.lt.adj16) then  ! 080512
+	  call ffm(i1,kf0,igen,iflav,n1,n2,n3) 
+	endif  ! 080512
+c       igen : repeating times of source quark exciting qqbar pair from 
+c	 vacuum in 'ffm', which is controled by four momenta  ! 080512   
 
 800     continue
+	iprlo=iprl   ! 080512 sa
 	iprl=n3
-	igens=igens+1
-	if(igens.gt.adj16)goto 900
-	do i1=1,iprl
-	ee=pp(4,i1)
-	if(ee .gt. adj17)goto 700
-	enddo
+	igens=igens+1 
+c080512	igens: repeating times of considering deexcitation of energetic 
+c080512	 parton over parton list   
+c	if(igens.gt.adj16)goto 900  ! 080512
+	iadj16=int(adj16) ! 080512
+	if(igens.ge.iadj16)goto 900 ! 080512
+c080512 sa do i1=1,iprl
+c	ee=pp(4,i1)
+c	if(ee .gt. adj17)goto 700
+c080512 sa	enddo
+	iprloo=iprlo+1   ! 080512 sa
+	goto 700   ! 080512 sa
 900	continue
 	if(adj12.eq.2)goto 1000   
 c     Parton production according to Field-Feynman model, finished.
@@ -1277,7 +1316,6 @@ C...Double precision and integer declarations.
       common/sa6_c/ithroq,ithrob,ich,non6_c,throe(4)
       common/sa24/adj1(40),nnstop,non24,zstop
 	dimension rcp(3)
-
 	dpmax=adj1(27)
 	drmax=adj1(28)	
 	isu=1
@@ -1396,7 +1434,6 @@ c	Share the surplus energy.
 		enddo
 	  endif
 	endif
-
 c   iway=1: creat an antibaryon and return
 c   iway=2: creat an antibaryon and creat an baryon, then return
 	if(iway.eq.1 .and. nba.eq.1)return
@@ -1503,7 +1540,6 @@ c     Move parton list one step downward since i1+1
         call updad(n1,i1+1,1)
         nqb=nqb-1
         n1=n1-1
-
 	  if(n1+nn.gt.0)then
 	    dele=dele/float(n1+nn)
 	    if(n1.gt.0)then
@@ -1610,7 +1646,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccrcccccccccccccccc
 c	Quark (antiquark) generation according to Field-Feynman model
 c	ii : the order # of source quark (or antiquark)
 c	kf0 : flavor code of source quark (or antiquark)
-c	igen : the # of generations
+c	igen : repeating times of source quark exciting qqbar pair from
+c        vacuum, which is controled by four momenta  ! 080512 sa
 c	iflav = 1 : if source parton is quark (kf0>0)
 c           =-1 : if source parton is antiquark (kf0<0)
 C...Double precision and integer declarations.
@@ -1632,6 +1669,7 @@ C...Double precision and integer declarations.
 
 	kapa=adj1(15)
 	adj17=adj1(17)
+	adj17=max(4.0,adj17) ! 070612, yan
 	adj23=adj1(23)
 
 c     The probability of gluon spliting into u,d & s
@@ -1815,6 +1853,11 @@ c	e1c=0.5*(w1c+amt1c2/w1c)
 	enddo
 	if(e0.le.adj17)goto 106   ! stop generation
 	if(w0.lt.0.)goto 106   ! stop generation
+	rand=pyr(1)  ! 080512
+c	rand=rlu(1)
+	adj16=adj1(16)
+c	write(9,*)'adj16=',adj16
+	if(rand.gt.adj16)goto 106 ! 080512
 	w00=p0(4)+p0(3)
 
 	goto 100
@@ -1837,9 +1880,9 @@ c	rp(i3,ii)=rc(i3)
 	  enddo
 	  pnn(j1,5)=rmp(i1)
 	enddo
-	ii1=n3-n30   ! new generated parton from ii'th parton
+	ii1=n3-n30   ! new generated parton from ii-th parton
 
-c	Incluse remnant of ii'th parton
+c	Incluse remnant of ii-th parton
 	ii1=ii1+1   
 	do i2=1,4
 	  pnn(ii1,i2)=pp(i2,ii)
@@ -1986,6 +2029,7 @@ C...Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
+        common/sa33/smadel,ecce,parecc,iparres   ! 220312 240412
       dimension pp(50,2)
       do 30 i=1,np
         p2 = 0
@@ -2005,8 +2049,14 @@ C...Double precision and integer declarations.
         if(p2.LT.0.)goto 10
         ps=sqrt(p2)
         fi=2.*3.1415926*pyr(1)
-        pp(i,1)=ps*cos(fi)
-        pp(i,2)=ps*sin(fi)
+c220312 randomly sample [px,py] on circle of sphere with radius ps
+c220312	pp(i,1)=ps*cos(fi)
+c220312	pp(i,2)=ps*sin(fi)
+c220312 randomly sample [px,py] on circle of ellipsoid with half major axis
+c220312 of ps*(1+smadel) and half minor axis of ps*(1-smadel)
+        pp(i,1)=ps*cos(fi)*(1+smadel)   ! 220312
+        pp(i,2)=ps*sin(fi)*(1-smadel)   ! 220312
+c220312 note: ps is not in the dimension list
 30    continue
       return
       end

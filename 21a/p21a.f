@@ -57327,7 +57327,6 @@ C...Commonblocks.
       COMMON/PYDAT3/MDCY(500,3),MDME(8000,2),BRAT(8000),KFDP(8000,5)
       COMMON/PYINT1/MINT(400),VINT(400)
       COMMON/PYINT4/MWID(500),WIDS(500,5)
-        common/sa1/kjp21,non1,bp,iii,neve,nout,nosc   ! 141208
       SAVE /PYJETS/,/PYDAT1/,/PYDAT2/,/PYDAT3/,/PYINT1/,/PYINT4/
 C...Local array.
       DIMENSION PS(2,6),IJOIN(100)
@@ -57474,16 +57473,8 @@ C...Check that momentum, energy and charge were conserved.
      &PS(1,3))+ABS(PS(2,4)-PS(1,4)))/(1D0+ABS(PS(2,4))+ABS(PS(1,4)))
       IF(MCONS.EQ.1.AND.PDEV.GT.PARU(11)) CALL PYERRM(15,
      &'(PYEXEC:) four-momentum was not conserved')
-c141208      IF(MCONS.EQ.1.AND.ABS(PS(2,6)-PS(1,6)).GT.0.1D0) CALL PYERRM(15,
-c141208     &'(PYEXEC:) charge was not conserved')
-c141208
-      IF(MCONS.EQ.1.AND.ABS(PS(2,6)-PS(1,6)).GT.0.1D0)then 
-        CALL PYERRM(15,'(PYEXEC:) charge was not conserved')
-        write(mstu(11),*)'event # iii,ps1,ps2=',iii,ps(1,6),ps(2,6)   ! 111210 
-c       throw away this hh collisions
-        n=0
-        endif        
-c141208
+      IF(MCONS.EQ.1.AND.ABS(PS(2,6)-PS(1,6)).GT.0.1D0) CALL PYERRM(15,
+     &'(PYEXEC:) charge was not conserved')
  
       RETURN
       END
@@ -59054,7 +59045,7 @@ C...Boost copied system to CM frame (for better numerical precision).
       ENDIF
 
 c051108
-c       follow statements added by Sa to calculate effective string tension
+c       follow statements are added by Sa to calculate effective string tension
         if(kjp22.eq.0)then
         call strtension(ip,np)
 c        write(9,*)'af strtension in p64, ip,np,n=',ip,np,n
@@ -62831,6 +62822,7 @@ C...Double precision and integer declarations.
       INTEGER PYK,PYCHGE,PYCOMP
 C...Commonblocks.
       COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
+	common/sa33/smadel,ecce,parecc,iparres   ! 220312
       SAVE /PYDAT1/
  
 C...Generate p_T and azimuthal angle, gives p_x and p_y.
@@ -62840,9 +62832,16 @@ C...Generate p_T and azimuthal angle, gives p_x and p_y.
       IF(MSTJ(91).EQ.1) PT=PARJ(22)*PT
       IF(KFLA.EQ.0.AND.MSTJ(13).LE.0) PT=0D0
       PHI=PARU(2)*PYR(0)
-      PX=PT*COS(PHI)
-      PY=PT*SIN(PHI)
- 
+c220312 randomly sample [px,py] on circle of sphere with radius PT
+c220312	PX=PT*COS(PHI)
+c220312 PY=PT*SIN(PHI)
+c220312 randomly sample [px,py] on circle of ellipse with half major axis
+c220312 of PT*(1+smadel) and half minor axis of PT*(1-smadel)
+        PX=PT*COS(PHI)*(1+smadel)   ! 220312
+        PY=PT*SIN(PHI)*(1-smadel)   ! 220312
+        PT=SQRT(PX*PX+PY*PY)   ! 220312
+c220312 PT might deviate little bit from original Gaussian
+
       RETURN
       END
  
@@ -68275,20 +68274,13 @@ C...Format statements for output on unit MSTU(11) (by default 6).
  5400 FORMAT(///28X,'Event listing (no momenta)'//4X,'I  particle/jet',
      &     '  K(I,1)   K(I,2) K(I,3)     K(I,4)      K(I,5)',1X
      &     ,'   C tag  AC tag'/)
-csa5500 FORMAT(1X,I4,1X,A12,1X,I2,I8,1X,I4,5F9.3)
-csa5600 FORMAT(1X,I4,1X,A12,1X,I2,I8,1X,I4,5F9.2)
-csa5700 FORMAT(1X,I4,1X,A12,1X,I2,I8,1X,I4,5F9.1)
-csa5800 FORMAT(1X,I4,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I1,2I4),5F13.5)
-csa5900 FORMAT(1X,I4,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I1,2I4),1X,2I8)
-csa6000 FORMAT(1X,I4,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I9),5F13.5)
-csa6100 FORMAT(1X,I4,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I9),1X,2I8)
- 5500 FORMAT(I5,1X,A12,1X,I2,I8,1X,I4,5F9.3)
- 5600 FORMAT(I5,1X,A12,1X,I2,I8,1X,I4,5F9.2)
- 5700 FORMAT(I5,1X,A12,1X,I2,I8,1X,I4,5F9.1)
- 5800 FORMAT(I5,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I1,2I4),5F13.5)
- 5900 FORMAT(I5,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I1,2I4),1X,2I8)
- 6000 FORMAT(I5,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I9),5F13.5)
- 6100 FORMAT(I5,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I9),1X,2I8)
+ 5500 FORMAT(1X,I4,1X,A12,1X,I2,I8,1X,I4,5F9.3)
+ 5600 FORMAT(1X,I4,1X,A12,1X,I2,I8,1X,I4,5F9.2)
+ 5700 FORMAT(1X,I4,1X,A12,1X,I2,I8,1X,I4,5F9.1)
+ 5800 FORMAT(1X,I4,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I1,2I4),5F13.5)
+ 5900 FORMAT(1X,I4,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I1,2I4),1X,2I8)
+ 6000 FORMAT(1X,I4,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I9),5F13.5)
+ 6100 FORMAT(1X,I4,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I9),1X,2I8)
  6200 FORMAT(66X,5(1X,F12.3))
  6300 FORMAT(1X,78('='))
  6400 FORMAT(1X,130('='))
