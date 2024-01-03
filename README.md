@@ -79,8 +79,11 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 [GPL v2.0](LICENSE)
 
 ## Released programs
+
 The code now are hosted on https://github.com/ArcsaberHep/PACIAE and https://gitee.com/arcsaberhep/PACIAE.
-The released code are available on https://github.com/ArcsaberHep/PACIAE/releases.
+<br/>
+
+The released code are available on https://github.com/ArcsaberHep/PACIAE/releases and https://gitee.com/arcsaberhep/PACIAE/releases.
 
 ## Released papers
 
