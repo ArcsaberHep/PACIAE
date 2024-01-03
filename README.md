@@ -78,6 +78,9 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 
 [GPL v2.0](LICENSE)
 
+## Released programs
+The released code are available on https://github.com/ArcsaberHep/PACIAE/releases.
+
 ## Released papers
 
  - **Recent version:** An introduction to the parton and hadron cascade model PACIAE 3.0, [Phys. Rev. C 108, 064909](https://journals.aps.org/prc/abstract/10.1103/PhysRevC.108.064909) or [2309.05110 [hep-ph]](https://arxiv.org/abs/2309.05110)
@@ -115,7 +118,7 @@ Feel free to dive in! Any bug reports, comments and suggestions are welcome. Ple
 ## Update Notes:
 
 <!----------------------------------------------------------------------------->
-...(waiting for updating)
+### <font color=red> PACIAE 3.0 is now released! </font>
 
 <!----------------------------------------------------------------------------->
 ### <font color=red> 12/2023: </font> In version PACIAE 3.0
