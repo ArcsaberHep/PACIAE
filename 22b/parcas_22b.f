@@ -526,7 +526,7 @@ c       create the (initial) collision time list
         common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
         common/papr/t0,sig,dep,ddt,edipi,epin,ecsnn,ekn,ecspsn,ecspsm
-     c  ,rnt,rnp,rao,rou0,vneu,vneum,ecsspn,ecsspm   
+     c  ,rnt,rnp,rao,rou0,vneu,vneum,ecsspn,ecsspm,ecsen   ! 060813   
 	common/collist/lc(2,mclis),tc(2,mclis),icol
 	dddt=adj1(19)   ! 161104
 	icol=1
@@ -664,7 +664,7 @@ c150512  parton-parton scattering
         common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
         common/papr/t0,siig,dep,ddt,edipi,epin,ecsnn,ekn,ecspsn,ecspsm
-     c  ,rnt,rnp,rao,rou0,vneu,vneum,ecsspn,ecsspm
+     c  ,rnt,rnp,rao,rou0,vneu,vneum,ecsspn,ecsspm,ecsen   ! 060813
 	common/scatt/pi(4),pj(4),ic,jc,iprl0
 	common/collist/lc(2,mclis),tc(2,mclis),icol
 c-----------------------------------------------------------------------
@@ -784,7 +784,7 @@ c        scattering 7
         common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
         common/papr/t0,siig,dep,ddt,edipi,epin,ecsnn,ekn,ecspsn,ecspsm
-     c  ,rnt,rnp,rao,rou0,vneu,vneum,ecsspn,ecsspm
+     c  ,rnt,rnp,rao,rou0,vneu,vneum,ecsspn,ecsspm,ecsen   ! 060813
 	common/scatt/pi(4),pj(4),ic,jc,iprl0
 	common/collist/lc(2,mclis),tc(2,mclis),icol
 c-----------------------------------------------------------------------
@@ -835,7 +835,7 @@ c        scattering 7
         common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
         common/papr/t0,siig,dep,ddt,edipi,epin,ecsnn,ekn,ecspsn,ecspsm
-     c  ,rnt,rnp,rao,rou0,vneu,vneum,ecsspn,ecsspm
+     c  ,rnt,rnp,rao,rou0,vneu,vneum,ecsspn,ecsspm,ecsen   ! 060813
 	common/scatt/pi(4),pj(4),ic,jc,iprl0
 	common/collist/lc(2,mclis),tc(2,mclis),icol
 c-----------------------------------------------------------------------
@@ -2867,7 +2867,7 @@ c	differential cross section of q1*q1(-) -> q2*q2(-), process 4
 c210803
         common/sa24/adj1(40),nnstop,non24,zstop   ! 181003
 c240412
-	common/sa33/smadel,ecce,parecc,iparres   
+	common/sa33/smadel,ecce,secce,parecc,iparres   ! 131212  
 	if(iparres.eq.0)then   
         fs11_1=0.   ! 280809
         return   ! 280809
@@ -2941,7 +2941,7 @@ c	differential cross section of q*q(-) -> g*g, process 6
 c210803
         common/sa24/adj1(40),nnstop,non24,zstop   ! 181003
 c240412
-        common/sa33/smadel,ecce,parecc,iparres   
+	common/sa33/smadel,ecce,secce,parecc,iparres   ! 131212  
         if(iparres.eq.0)then
         fsqq=0.   ! 280809
         return   ! 280809
@@ -3016,7 +3016,7 @@ c	differential cross section of g*g ->q*q(-), process 7
 c210803
         common/sa24/adj1(40),nnstop,non24,zstop   ! 181003
 c240412
-        common/sa33/smadel,ecce,parecc,iparres 
+	common/sa33/smadel,ecce,secce,parecc,iparres   ! 131212 
 c	write(9,*)'iparres=',iparres  
         if(iparres.eq.0)then
         fsgg_1=0.   ! 280809
@@ -3365,7 +3365,7 @@ c       create the collision time list after energy loss
         common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
         common/papr/t0,sig,dep,ddt,edipi,epin,ecsnn,ekn,ecspsn,ecspsm
-     c  ,rnt,rnp,rao,rou0,vneu,vneum,ecsspn,ecsspm
+     c  ,rnt,rnp,rao,rou0,vneu,vneum,ecsspn,ecsspm,ecsen   ! 060813
         common/collist/lc(2,mclis),tc(2,mclis),icol
 	dddt=adj1(19)   ! 161104
 c	adj136=adj1(36)

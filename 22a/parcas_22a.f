@@ -172,6 +172,7 @@ c140705	write(9,*)'throe_p=',throe_p   ! sa
 c241104
 c201104
 c	step 1
+c	write(9,*)'in parcas step 1 iprl=',iprl
 c       create the parton-parton (initial) collision time list 
 	call ctlcre_par(iijk)   ! 290803 
 	if(iijk.eq.2)return   ! initial collis. list is empty 151203
@@ -530,6 +531,7 @@ c       create the (initial) collision time list
 	dddt=adj1(19)   ! 161104
 	icol=1
 	time=0.   ! 111599
+c	write(9,*)'in ctlcre_par iprl=',iprl
 c	every process (eg. parton casecade) starts from time equal to 0
 	dminf=100.   ! 111599
 	ijk=0   ! 010601
@@ -554,6 +556,7 @@ c080603
 	tc(2,icol)=0.0
 	kji=0   ! 240503
 	call coij_p(i,j,time,icol,dminf,iff,jf,kji)
+c	write(9,*)'i,j,kji=',i,j,kji
 	if(kji.eq.1)then
 	ijk=ijk+1   ! 010601
 	goto 200
@@ -580,10 +583,12 @@ c161104	if(ddt.ne.0.)dddt=ddt*300
 c080304   
 200	enddo
 100	enddo
+c	write(9,*)'af. loops ijk,icol=',ijk,icol
 	if(tcicol.eq.0.) icol=icol-1
 	if(icol.eq.0)then    
 c290803
 	iijk=2   ! 1 151203
+c	write(9,*)'in ctlcre_par be. return icol,iijk=',icol,iijk
 	return
 c290803
 c       at least one collision should occur, which has the smallest
@@ -971,7 +976,7 @@ c        (when ilo=0) or sample the t value as well (when ilo=1)
         sig=0.
         endif
 c160110
-c	write(9,*)'kf1,kf2,sig,eiej2=',kf1,kf2,sig,eiej2   ! sa
+c	write(9,*)'i,j,kf1,kf2,sig,eiej2,lmn=',i,j,kf1,kf2,sig,eiej2,lmn   ! sa
 	if(sig.le.0.)return   ! 120603 250803
 	if(ilo.eq.-2)then   ! 111999
 c	write(9,*)'return ctlcre because ilo=-2, i,j=',i,j   ! sa
@@ -1023,6 +1028,7 @@ c	write(9,*)'return ctlcre because bb too small, i,j',i,j    ! sa
         enddo
         sg=rtai
 	dmin=dsqrt(sg)
+c	write(9,*)'i,j,tcol,rsig1,dmin=',i,j,tcol,rsig1,dmin
 	if(dmin.lt.dminf)then
         dminf=dmin
 	iff=i
@@ -1042,6 +1048,7 @@ c       move along Newton trajectory in CMS
 	call lorntz(1,b,pxc,pyc)
 c       transform back to Lab.
 c241104
+c	write(9,*)'pxc(4),pyc(4)=',pxc(4),pyc(4)
 	if(pxc(4).le.10000.and.pyc(4).le.10000.)goto 100
 	return   
 c241104
@@ -1049,7 +1056,7 @@ c241104
 	lc(2,icp)=j
 	tc(1,icp)=pxc(4)
 	tc(2,icp)=pyc(4)
-c	write(9,*)'in coij,iff,jf=',iff,jf   ! sa
+c	write(9,*)'be. out of coij,iff,jf=',iff,jf   ! sa
 	return
 	end
 

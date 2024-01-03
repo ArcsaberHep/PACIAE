@@ -1,11 +1,11 @@
 	subroutine coales(ijk,neve,nnout,nap,nat,nzp,nzt,kfaa,kfbb)
-c     A simple coalescence model writen by Sa Ben-Hao on 04/06/04
+c     A simple coalescence model writen by Sa Ben-Hao on 04/06/2004
 c       Its input messages are in 'parlist'
 c       Its working block is 'parlist' ('pyjets' either in 'decayh')
-c	  Its output message is in 'pyjets' (the same in 'sa1_h')
+c	  Its output message is in 'pyjets' (in 'sa1_h' either)
 c	ijk: the run number
 c	neve: total number of runs
-c     nnout: make a internal printing per nnout runs
+c     nnout: a internal printing per nnout runs
 c	nap and nzp: atomic and charge number of projectile
 c     nat and nzt: atomic and charge number of target
 
@@ -20,7 +20,7 @@ c     nat and nzt: atomic and charge number of target
 	COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
 c	Those variables in above four statements are only used here and   
 c	in subroutine 'decayh','findb' and 'thephi'. 
-c	PYDAT1,PYDAT2,PYDAT3 and PYJETS refer to subroutines in PYTHIA
+c	PYDAT1,PYDAT2,PYDAT3 and PYJETS are the subroutines in PYTHIA
         common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
 	common/sa1_h/nn,non_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
@@ -100,11 +100,11 @@ c       Move parton list one step downward since i1+1
         endif
         enddo
 
-c     Make the partons in order of g,qba and q.
+c     make the partons in order of g, qba and q.
       iii=0
       jjj=0
         do ii=1,3
-c	1: refers g, 2: qba, 3: q
+c	1: refers to g, 2: qba, 3: q
         kf=21
         do j=iii+1,iprl
         call ord_c(jjj,j,kf,ii)
@@ -117,7 +117,7 @@ c       numb(1),(2) and (3): the order # of last g,qba & q
         n2=numb(2)
         n3=numb(3)
 
-c100	Split forcibly gulon (after 'parcas') into qqba pair
+c100	split forcibly gulon (after 'parcas') into qqba pair
 	amu=pymass(2)
 	amd=pymass(1)
 	ams=pymass(3)
@@ -168,17 +168,17 @@ c140604	if(n1.eq.0 .or. ii.gt.n1)goto 102
 	enddo
 
 c	Fill the q & qba splited from g into parton list
-c	qba arranges after n2
+c	arrange qba after n2
 c	Move parton list one step forward since n2+1 upto n3
 	call updaf(n3,n2)
 	n2=n2+1 
 	n3=n3+1
-c	q arranges after n3
+c	arrange q after n3
 	n3=n3+1
 
-c	Splited qba takes the four coordinate of g and q is arranged around 
+c	Splited qba takes the four coordinate of g, splited q is arranged around 
 c	 g within 0.5 fm randumly in each one of the three coordinates and 
-c	 has same fourth coordinate as g
+c	 has same 4-th coordinate as g
 	do i=1,4
 	rp(i,n2)=rp(i,ii)
 	enddo
@@ -189,7 +189,7 @@ c	 has same fourth coordinate as g
 	enddo
 	rp(4,n3)=rp(4,ii)
 
-c	Give momentum to q & qba from splitting g
+c	Give momentum to q & qba 
 	do j1=1,20
 	do j2=1,5
 	ppp(j1,j2)=0.
@@ -228,7 +228,7 @@ c	'pnn' is a internal array
 	dele=eg-pnn(1,4)-pnn(2,4)
 	deles=deles+dele
 
-c	Give other characters to q & qba from splitting g
+c	Give other characters to q & qba 
 	idp(n2)=-kf
 	idp(n3)=kf
 	rmp(n2)=amq
@@ -327,8 +327,8 @@ c	rand=rlu(1)
       if(ee.gt.adj17.and.rand.lt.adj16) then  ! 080512
 	  call ffm(i1,kf0,igen,iflav,n1,n2,n3) 
 	endif  ! 080512
-c       igen : repeating times of source quark exciting qqbar pair from 
-c	 vacuum in 'ffm', which is controled by four momenta  ! 080512   
+c       igen : times of energetic quark can excite qqbar pair from     
+c        vacuum (in 'ffm'), which is controled by four momenta of energetic quark ! 08051
 
 800     continue
 	iprlo=iprl   ! 080512 sa
@@ -355,7 +355,7 @@ c     Make the partons in order of qba and q
         iii=0
         jjj=0
         do ii=2,3   ! 1,3
-c       1: refers g, 2: qba, 3: q
+c       1: refers to g, 2: qba, 3: q
         kf=21
         do j=iii+1,iprl
         call ord_c(jjj,j,kf,ii)
@@ -371,10 +371,10 @@ c271004	n1=numb(1)
 1000	continue
         iqba=n2
 
-c     Order the qba due to energy from the maximal to minimal.
+c     Order the qba according to energy from the maximal to minimal.
 	call eord(n1+1,n2)
 
-c     Order the q due to energy from the maximal to minimal.
+c     Order the q according to energy from the maximal to minimal.
         call eord(n2+1,n3)
 
 c	Parton coalescence  
@@ -394,7 +394,7 @@ c	n3: total number of partons (qba and q)
 c	iqba: total # of qba (qba is ordered before q) 
 c	ithroq : the total # of quarks thrown away
 c	ithrob : the total # of antiquarks thrown away
-c	throe : total momentum and energy of the partons thrown away
+c	throe : total 4-momentum of the partons thrown away
 c	ich : total charge of the partons thrown away
  
 	ichth=ich   ! 092600
@@ -516,7 +516,7 @@ c	ii: a control variable
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	subroutine pes(pei,il,ih,peo)
-c	Calculate the summation of momentum and energy  
+c	sum up momentum and energy  
 c	pei : two dimension array of input momentum and energy
 c	il and ih : lower and higher limits of summation
 c	peo : one dimension array of output momentum,energy & sqrt(s)
@@ -696,7 +696,7 @@ c	Move the parton list i steps downward from jc till j2
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	subroutine eord(ni,nc)
-c	Order particle set (ni to nc) due to energy
+c	Order particle set (ni to nc) according to energy
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
@@ -973,8 +973,8 @@ c	kfii : flavor code of the primary meson
 c	amasi : mass of the primary meson
 c	isucc = 1 : success
 c           = 0 : fail
-c	iflav = 1 : kf1>0,do not need to permutate kf1 & kf2
-c	     = -1 : kf1<0,need to permutate kf1 & kf2
+c	iflav = 1 : kf1>0,do not need to permute kf1 & kf2
+c	     = -1 : kf1<0,need to permute kf1 & kf2
 C...Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
@@ -1295,7 +1295,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c   To compose an anti-baryon
 c     n1 : total # of partons (q & qba)
 c     nqb : total # of qba (qba is ordered before q)
-c	i1: antiquark wanted to compose to antibaryon   
+c	i1: antiquark wanted to compose an antibaryon   
 c     iphas=1: with phase space adjudgment
 c          =0: without phase space adjudgment
 c	ibarm: statistic number of anti-baryon
@@ -1340,7 +1340,7 @@ C...Double precision and integer declarations.
 	  if(cm.le.0.)goto 406   ! fail 071204
         cm=sqrt(cm)
 
-c     Find out the primary antibaryon from hadron table due to kf1,kf2 
+c     Find out the primary antibaryon from hadron table according to kf1,kf2 
 c	 & kf3
         call findb(-kf1,-kf2,-kf3,cm,kfii,amasi,isucc,-1)
 
@@ -1435,7 +1435,7 @@ c	Share the surplus energy.
 	  endif
 	endif
 c   iway=1: creat an antibaryon and return
-c   iway=2: creat an antibaryon and creat an baryon, then return
+c   iway=2: creat an antibaryon and a baryon, then return
 	if(iway.eq.1 .and. nba.eq.1)return
       if(iway.eq.2 .and. nba.eq.1)then
 c     An antibaryon generation must be followed immediately a baryon
@@ -1455,7 +1455,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c   Compose a meson
 c     n1 : total # of partons (q & qba)
 c     nqb : total # of qba (qba is ordered before q)
-c	i1: antiquark wanted to compose to meson
+c	i1: antiquark wanted to compose a meson
 c     iphas=1: with phase space adjudgment
 c          =0: without phase space adjudgment
 c	imes: statistic number of meson
@@ -1492,7 +1492,7 @@ C...Double precision and integer declarations.
 	  if(cm.le.0.)goto 102   ! fail 071204
         cm=sqrt(cm)
 
-c     Find out primary meson from hadronic table due to kf2 & kf1
+c     Find out primary meson from hadronic table according to kf2 & kf1
         call findm(kf2,kf1,cm,kfii,amasi,isucc,1)
 
         if(isucc.eq.0)goto 102   ! fail
@@ -1525,7 +1525,7 @@ c     Give proper variables to the primary meson
 	  pn(nn,4)=pnnn
 	  dele=sume-pnnn
 
-c	Produced hadron is arranged between contituent partons randomly
+c	Produced hadron is arranged among contituent partons randomly
 	  pyrx=pyr(1)
 	  pyry=pyr(1)
 	  rn(nn,1)=pyrx*rp(1,i1)+pyry*rp(1,i2)
@@ -1585,7 +1585,7 @@ C...Double precision and integer declarations.
       INTEGER PYK,PYCHGE,PYCOMP
       PARAMETER (KSZJ=40000)
         common/papr/t0,sig,dep,ddt,edipi,epin,ecsnn,ekn,ecspsn,ecspsm
-     c  ,rnt,rnp,rao,rou0,vneu,vneum,ecsspn,ecsspm   ! 140604
+     c  ,rnt,rnp,rao,rou0,vneu,vneum,ecsspn,ecsspm,ecsen   ! 140604 060813
         dimension pp(kszj,5),ps(4),ff(kszj),pxyz(3),arp(3)
 
         ps4=ps(4)
@@ -1646,7 +1646,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccrcccccccccccccccc
 c	Quark (antiquark) generation according to Field-Feynman model
 c	ii : the order # of source quark (or antiquark)
 c	kf0 : flavor code of source quark (or antiquark)
-c	igen : repeating times of source quark exciting qqbar pair from
+c	igen : times of source quark can excite qqbar pair from
 c        vacuum, which is controled by four momenta  ! 080512 sa
 c	iflav = 1 : if source parton is quark (kf0>0)
 c           =-1 : if source parton is antiquark (kf0<0)
@@ -1780,9 +1780,9 @@ c	Sample z from LUND or FF fragmentation function
 	ee1=sqrt(amt12+p1(3)*p1(3)) ! m^2=p^2+m0^2
 
 c	Fill the q & qba generated into parton list after n3.
-c     qbar and q generated are arranged around sourve parton within 0.5 fm 
+c     qbar and q generated are arranged around source parton within 0.5 fm 
 c     randumly in each one of the three coordinates and has same fourth 
-c     coordinate as sourve parton
+c     coordinate as source parton
 	do i=1,3
 	  rr(i)=pyr(1)*0.5
 	  rp(i,n3+1)=rc(i)+rr(i)
@@ -1791,8 +1791,8 @@ c     coordinate as sourve parton
 	  rp(i,n3+2)=rc(i)+rr(i)
         if(pyr(1).gt.0.5)rp(i,n3+2)=rc(i)-rr(i)
 	enddo
-	rp(4,n3+1)=rp(4,ii) ! ii is the # of sourse parton
-      rp(4,n3+2)=rp(4,ii) ! n+1 and n+2 is the new generated parton
+	rp(4,n3+1)=rp(4,ii) ! ii is the # of source parton
+      rp(4,n3+2)=rp(4,ii) ! n3+1 and n3+2 is the new generated parton
 
 c	Give momentum to q & qba generated (random three momentum method).
 	amq=0.5*amasi
@@ -1831,7 +1831,7 @@ c	Give proper variables to the remnant parton
 	  p1c(i3)=p0(i3)-p1(i3)   
 	enddo
 c     p0 is the original parton, p1 is the generated parton pair, 
-c     p1c is quantity of the original parion after generated parton pair.
+c     p1c is the original parion after generated parton pair.
 
 c	amt1c2=(w1c-2*p1c(3))*w1c
 	p1c1=p1c(1)
@@ -2029,7 +2029,7 @@ C...Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-        common/sa33/smadel,ecce,parecc,iparres   ! 220312 240412
+        common/sa33/smadel,ecce,secce,parecc,iparres   ! 220312 240412 131212
       dimension pp(50,2)
       do 30 i=1,np
         p2 = 0

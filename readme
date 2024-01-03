@@ -1,15 +1,72 @@
-Taking 21b.tar.gz as an example, the practise routine is as follows:
- 1) Decompress the file of 21b.tar.gz.
- 2) Compile and link the programs by commands:
-    gfortran -O -c paciae_21b.f
-    gfortran -O -c parini_21b.f
-    gfortran -O -c parcas_21b.f
-    gfortran -O -c sfm_21b.f
-    gfortran -O -c coales_21b.f
-    gfortran -O -c hadcas_21b.f
-    gfortran -O -c p21b.f
-    gfortran -O -o pcm_21b.e paciae_21b.o parini_21b.o parcas_21b.o sfm_21b.o 
-     coales_21b.o hadcas_21b.o p21b.o
- 3) Modify the input file of usu.dat according to your wish.
- 4) Run the program by command:
-    time ./pcm_21b.e
+The same as the PACIAE 2.0 (Comp. Phys. Comm. 183 (2012) 333) and PACIAE 2.1 
+(Comp. Phys. Comm. 184 (2013) 1476) models (packets), the PACIAE 2.2 model 
+(packge) also has three versions of PACIAE 2.2a, PACIAE 2.2b, and 
+PACIAE 2.2c .  
+
+The PACIAE 2.2a version is used to simulate the relativistic elementary 
+collision, such as pp (pbarp), e+e-, and lepton-nucleon DIS. PACIAE 2.2b and 
+PACIAE 2.2c are used to simulate the relativistic nuclear-nucleus collision 
+(p+A and A+B) as well as lepton-nucleus DIS. PACIAE 2.2b and PACIAE 2.2c are 
+similar in the physical contents but are different in the topological 
+structure. However we supply a single 'makefile', user can easily run 
+the prgram of PACIAE_22a, PACIAE_22b, and PACIAE_22c by a single command of 
+'make run_a', 'make run_b', and 'make run_c'), respectively. 
+
+In the PACIAE 2.2b version, the four stages of the partonic initiation, 
+partonic evolution (rescattering), hadronization, and the hadronic evolution 
+(rescattering) are performed for each hadron-hadron (hh) collision pairs 
+independently until all the hh collision pairs are collided. Oppositely, in 
+the PACIAE 2.2c version, the partonic initiation is first performed for all 
+the hh collision pairs. This full initial partonic state is proceeded to the 
+partonic evolution stage, then the hadronization stage, and at last the 
+hadronic evolution stage. We refer to the paper of Comp. Phys. Comm. 183 
+(2012) 333 for the details.
+
+User can freely download the PACIAE program packet of PACIAE22.tar.gz from 
+CPC library. After decompression, you get the files: 'readme', 'makefile', 
+all the fortran programs (main_22a.f, parcas_22a.f, sfm_22a.f, coales_22a.f
+, hadcas_22a.f p22a.f, main_22b.f parini_22b.f, parcas_22b.f, sfm_22b.f, 
+coales_22b.f, hadcas_22b.f p22b.f, main_22c.f parini_22c.f, parcas_22c.f, 
+sfm_22c.f, coales_22c.f, hadcas_22c.f p22c.f), paciae_22a required input 
+file of usux.dat, and paciae_22b (paciae_22c) required input file of 
+usu.dat. In usux.dat there is two parts and the first part is used for 
+lepton-nucleon DIS and second part for pp, pbarp, and e+e-. Similary, the 
+first part of usu.dat is for lepton-nucleus DIS and second part for p+A and
+A+B collisions.
+
+Reading carefuly the input file of usux.dat (usu.dat) is first required. 
+According to the studied reaction system you may proceed as follows:
+ 1. Moving the lines in usux.dat (usu.dat) properly (cf. 'Note' in input 
+    file for details).
+ 2. Setting the variables concerning to reaction system, such nap, nzp, nat,
+    nzt, ee(win), ipden, itden, etc. properly.
+ 3. Fitting the main model parameters of adj1(1), adj1(6), adj1(7), adj1(10), 
+    and ddt (in usu.dat only) to the experimental (rapidity) multiplicity 
+    data. The first testing values for those parameters may suggect:
+     1.0, 0.30, 0.58, 1.0 in usux.dat;
+     1.5, 0.30, 1.70, 1.5, 0.0003 in usu.dat for p+Au and Au+Au at RHIC 
+      energies;
+     2.0, 0.30, 1.00, 2.0, 0.00007 in usu.dat for p+Pb and Pb+Pb at LHC 
+      energies.
+    Here please note: the multiplicity increases with adj1(1) (adj1(6),  
+     adj1(10), ddt) increasing, but with adj1(7) decreases. 
+ 4. Fitting other model parameters according to physics investigated if 
+    necessary, such as fit adj1(31) - adj1(34) for the study of strange 
+    production. 
+ 5. Generating the event by command of 'make run_a', or 'make run_b' or 
+    'make run_c'.
+      
+The output files are:
+ 1. main.out is PYTHIA type output, where the last line is the sum of the 
+    charge number and four-moentum of particles generated in a event.
+ 2. rms0.out records values of input variables.
+ 3. rms.out is the main output author intersted.    
+
+We strogly suggest that user writes its own main program, either to record 
+every event with p(j,1) - p(j,4) (four-momentum of j-th particle, j=1,N, N 
+refers to the total number of particles generated) and v(j,1) - v(j,3) 
+(three-coordinate) in the common block of 'pyjets' for off-line analysis 
+later, or to do on-line analysis direct. Note three-coordinate here should be 
+boosted relative to the coordinate of center of mass of all the particles. 
+For lepton-nucleon and lepton-nucleus DIS the common block of 'sa21' is also 
+needed, becides 'pyjets'.

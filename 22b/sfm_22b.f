@@ -116,7 +116,8 @@ c       gtime: averaged # of gluons in a string in current event
 c       write(9,*)'af call luexec and kjp22,n=',n   !
         endif
 c051108
-	call pyedit(2) 
+        if(ipden.lt.11)call pyedit(2)   ! 060813
+        if(ipden.ge.11)call pyedit(1)   ! 060813
 c	call pylist(1)
 c	ich1=0.
 c	do i1=1,n
@@ -217,6 +218,8 @@ c       decay of unstable hadrons
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
         common/sgam/ngam,nongam,kgam(kszj,5),pgam(kszj,5),vgam(kszj,5) ! 240209
+        common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
+     c  nap,nat,nzp,nzt,pio   ! 060813
         dimension rc(3)
 c	particle decay before rescattering is set in paciae.f
 
@@ -238,7 +241,8 @@ c	decay of unstable hadron i1
 	call pydecy(i1)
 c	'pyjets' is filled up simultaneously 
 c	remove decaying hadron from 'pyjets'
-	call pyedit(2)
+        if(ipden.lt.11)call pyedit(2)   ! 060813
+        if(ipden.ge.11)call pyedit(1)   ! 060813
 c	write(22,*)'i1=',i1
 c	call pylist(1)
 c	store the position of decaying hadron

@@ -1,0 +1,577 @@
+1000,100,27.6    ! neve,nout,ee
+1,-1,1,1         ! nap,nzp,nat,nzt
+1,0,1,2,3,1        ! mstu21,mstj1_1,mstj1_2,mstj2,mstj3,mstp33
+0,20,5,5,7,0,11  ! ifram,ispmax,isdmax,iflmax,nchan,itden,ipden
+11,211,-211,111,321,-321,2212,-2212,2112,-2112     ! KF code of particles
+333,3122,-3122,3312,-3312,3334,-3334,3212,3112,3222 ! KF code of particles
+0.05,1.4,1.0,1.,3 ! asd(i,i=1,5) !following 100 lines are afl(j,i,1),afl(j,i,2) 
+1.,2500           ! afl(j=1 e-,i=1 Q^2,1), afl(j=1,i=1,2)
+10.,2500.         ! afl(j=1 e-,i=2 W^2,1), afl(j=1,i=2,2)
+0.1,0.85          ! afl(j=1 e-,i=3 y,1), afl(j=1,i=3,2)
+2.,15.            ! afl(j=1 e-,i=4 p_h,1), afl(j=1,i=4,2)
+0.2,0.8           ! afl(j=1 e-,i=5 z,1), afl(j=1,i=5,2)
+1.,2500           ! afl(j=2 pi+,i=1 Q^2,1), afl(j=2,i=1,2)
+10.,2500.         ! afl(j=2 pi+,i=2 W^2,1), afl(j=2,i=2,2)
+0.1,0.85          ! afl(j=2 pi+,i=3 y,1), afl(j=2,i=3,2)
+2.,15.            ! afl(j=2 pi+,i=4 p_h,1), afl(j=2,i=4,2)
+0.2,0.8           ! afl(j=2 pi+,i=5 z,1), afl(j=2,i=5,2)
+1.,2500           ! afl(j=3 pi-,i=1 Q^2,1), afl(j=3,i=1,2)
+10.,2500.         ! afl(j=3 pi-,i=2 W^2,1), afl(j=3,i=2,2)
+0.1,0.85          ! afl(j=3 pi-,i=3 y,1), afl(j=3,i=3,2)
+2.,15.            ! afl(j=3 pi-,i=4 p_h,1), afl(j=3,i=4,2)
+0.2,0.8           ! afl(j=3 pi-,i=5 z,1), afl(j=3,i=5,2)
+1.,2500           ! afl(j=4 pi0,i=1 Q^2,1), afl(j=4,i=1,2)
+10.,2500.         ! afl(j=4 pi0,i=2 W^2,1), afl(j=4,i=2,2)
+0.1,0.85          ! afl(j=4 pi0,i=3 y,1), afl(j=4,i=3,2)
+2.,15.            ! afl(j=4 pi0,i=4 p_h,1), afl(j=4,i=4,2)
+0.2,0.8           ! afl(j=4 pi0,i=5 z,1), afl(j=4,i=5,2)
+1.,2500           ! afl(j=5 K+,i=1 Q^2,1), afl(j=5,i=1,2) 
+10.,2500.         ! afl(j=5 K+,i=2 W^2,1), afl(j=5,i=2,2)  
+0.1,0.85          ! afl(j=5 K+,i=3 y,1), afl(j=5,i=3,2)  
+2.,15.            ! afl(j=5 K+,i=4 p_h,1), afl(j=5,i=4,2)  
+0.2,0.8           ! afl(j=5 K+,i=5 z,1), afl(j=5,i=5,2)
+1.,2500           ! afl(j=6 K-,i=1 Q^2,1), afl(j=6,i=1,2)
+10.,2500.         ! afl(j=6 K-,i=2 W^2,1), afl(j=6,i=2,2)
+0.1,0.85          ! afl(j=6 K-,i=3 y,1), afl(j=6,i=3,2)
+2.,15.            ! afl(j=6 K-,i=4 p_h,1), afl(j=6,i=4,2)
+0.2,0.8           ! afl(j=6 K-,i=5 z,1), afl(j=6,i=5,2)
+1.,2500           ! afl(j=7 p,i=1 Q^2,1), afl(j=7,i=1,2)
+10.,2500.         ! afl(j=7 p,i=2 W^2,1), afl(j=7,i=2,2)
+0.1,0.85          ! afl(j=7 p,i=3 y,1), afl(j=7,i=3,2)
+2.,15.            ! afl(j=7 p,i=4 p_h,1), afl(j=7,i=4,2)
+0.2,0.8           ! afl(j=7 p,i=5 z,1), afl(j=7,i=5,2)
+1.,2500           ! afl(j=8 p-,i=1 Q^2,1), afl(j=8,i=1,2)
+10.,2500.         ! afl(j=8 p-,i=2 W^2,1), afl(j=8,i=2,2)
+0.1,0.85          ! afl(j=8 p-,i=3 y,1), afl(j=8,i=3,2)
+2.,15.            ! afl(j=8 p-,i=4 p_h,1), afl(j=8,i=4,2)
+0.2,0.8           ! afl(j=8 p-,i=5 z,1), afl(j=8,i=5,2)
+1.,2500           ! afl(j=9 n,i=1 Q^2,1), afl(j=9,i=1,2)
+10.,2500.         ! afl(j=9 n,i=2 W^2,1), afl(j=9,i=2,2)
+0.1,0.85          ! afl(j=9 n,i=3 y,1), afl(j=9,i=3,2)
+2.,15.            ! afl(j=9 n,i=4 p_h,1), afl(j=9,i=4,2)
+0.2,0.8           ! afl(j=9 n,i=5 z,1), afl(j=9,i=5,2)
+1.,2500           ! afl(j=10 n-,i=1 Q^2,1), afl(j=10,i=1,2)
+10.,2500.         ! afl(j=10 n-,i=2 W^2,1), afl(j=10,i=2,2)
+0.1,0.85          ! afl(j=10 n-,i=3 y,1), afl(j=10,i=3,2)
+2.,15.            ! afl(j=10 n-,i=4 p_h,1), afl(j=10,i=4,2)
+0.2,0.8           ! afl(j=10 n-,i=5 z,1), afl(j=10,i=5,2)
+1.,2500           ! afl(j=11 phi,i=1 Q^2,1), afl(j=11,i=1,2)
+10.,2500.         ! afl(j=11 phi,i=2 W^2,1), afl(j=11,i=2,2)
+0.1,0.85          ! afl(j=11 phi,i=3 y,1), afl(j=11,i=3,2)
+2.,15.            ! afl(j=11 phi,i=4 p_h,1), afl(j=11,i=4,2)
+0.2,0.8           ! afl(j=11 phi,i=5 z,1), afl(j=11,i=5,2)
+1.,2500           ! afl(j=12 Lambda0,i=1 Q^2,1), afl(j=12,i=1,2)
+10.,2500.         ! afl(j=12 Lambda0,i=2 W^2,1), afl(j=12,i=2,2)
+0.1,0.85          ! afl(j=12 Lambda0,i=3 y,1), afl(j=12,i=3,2)
+2.,15.            ! afl(j=12 Lambda0,i=4 p_h,1), afl(j=12,i=4,2)
+0.2,0.8           ! afl(j=12 Lambda0,i=5 z,1), afl(j=12,i=5,2)
+1.,2500           ! afl(j=13 Lambda0-,i=1 Q^2,1), afl(j=13,i=1,2)
+10.,2500.         ! afl(j=13 Lambda0-,i=2 W^2,1), afl(j=13,i=2,2)
+0.1,0.85          ! afl(j=13 Lambda0-,i=3 y,1), afl(j=13,i=3,2)
+2.,15.            ! afl(j=13 Lambda0-,i=4 p_h,1), afl(j=13,i=4,2)
+0.2,0.8           ! afl(j=13 Lambda0-,i=5 z,1), afl(j=13,i=5,2)
+1.,2500           ! afl(j=14 Xi-,i=1 Q^2,1), afl(j=14,i=1,2)
+10.,2500.         ! afl(j=14 Xi-,i=2 W^2,1), afl(j=14,i=2,2)
+0.1,0.85          ! afl(j=14 Xi-,i=3 y,1), afl(j=14,i=3,2)
+2.,15.            ! afl(j=14 Xi-,i=4 p_h,1), afl(j=14,i=4,2)
+0.2,0.8           ! afl(j=14 Xi-,i=5 z,1), afl(j=14,i=5,2)
+1.,2500           ! afl(j=15 Xi+,i=1 Q^2,1), afl(j=15,i=1,2)
+10.,2500.         ! afl(j=15 Xi+,i=2 W^2,1), afl(j=15,i=2,2)
+0.1,0.85          ! afl(j=15 Xi+,i=3 y,1), afl(j=15,i=3,2)
+2.,15.            ! afl(j=15 Xi+,i=4 p_h,1), afl(j=15,i=4,2)
+0.2,0.8           ! afl(j=15 Xi+,i=5 z,1), afl(j=15,i=5,2)
+1.,2500           ! afl(j=16 Omega-,i=1 Q^2,1), afl(j=16,i=1,2)
+10.,2500.         ! afl(j=16 Omega-,i=2 W^2,1), afl(j=16,i=2,2)
+0.1,0.85          ! afl(j=16 Omega-,i=3 y,1), afl(j=16,i=3,2)
+2.,15.            ! afl(j=16 Omega-,i=4 p_h,1), afl(j=16,i=4,2)
+0.2,0.8           ! afl(j=16 Omega-,i=5 z,1), afl(j=16,i=5,2)
+1.,2500           ! afl(j=17 Omega+,i=1 Q^2,1), afl(j=17,i=1,2)
+10.,2500.         ! afl(j=17 Omega+,i=2 W^2,1), afl(j=17,i=2,2)
+0.1,0.85          ! afl(j=17 Omega+,i=3 y,1), afl(j=17,i=3,2)
+2.,15.            ! afl(j=17 Omega+,i=4 p_h,1), afl(j=17,i=4,2)
+0.2,0.8           ! afl(j=17 Omega+,i=5 z,1), afl(j=17,i=5,2)
+1.,2500           ! afl(j=18 Sigma0,i=1 Q^2,1), afl(j=18,i=1,2)
+10.,2500.         ! afl(j=18 Sigma0,i=2 W^2,1), afl(j=18,i=2,2)
+0.1,0.85          ! afl(j=18 Sigma0,i=3 y,1), afl(j=18,i=3,2)
+2.,15.            ! afl(j=18 Sigma0,i=4 p_h,1), afl(j=18,i=4,2)
+0.2,0.8           ! afl(j=18 Sigma0,i=5 z,1), afl(j=18,i=5,2)
+1.,2500           ! afl(j=19 Sigma-,i=1 Q^2,1), afl(j=19,i=1,2)
+10.,2500.         ! afl(j=19 Sigma-,i=2 W^2,1), afl(j=19,i=2,2)
+0.1,0.85          ! afl(j=19 Sigma-,i=3 y,1), afl(j=19,i=3,2)
+2.,15.            ! afl(j=19 Sigma-,i=4 p_h,1), afl(j=19,i=4,2)
+0.2,0.8           ! afl(j=19 Sigma-,i=5 z,1), afl(j=19,i=5,2)
+1.,2500           ! afl(j=20 Sigma+,i=1 Q^2,1), afl(j=20,i=1,2)
+10.,2500.         ! afl(j=20 Sigma+,i=2 W^2,1), afl(j=20,i=2,2)
+0.1,0.85          ! afl(j=20 Sigma+,i=3 y,1), afl(j=20,i=3,2)
+2.,15.            ! afl(j=20 Sigma+,i=4 p_h,1), afl(j=20,i=4,2)
+0.2,0.8           ! afl(j=20 Sigma+,i=5 z,1), afl(j=20,i=5,2)
+1.0, 0.47, 0.40,1000,   1,   0.30, 0.58, 1.0,  1.4, 1.0    ! adj1(1)- adj1(10)
+0.10,   0,   26,  18,1.00,      1, 2.00,   0, 0.03, 1	   ! adj1(11)- adj1(20)
+   0, 4.0,    0,0.15, 0.4,    100.0,800000., 1.0, 0.26, 2. ! adj1(21)- adj1(30) 
+0.10, 0.3,  0.4,0.36, 1.0,    0.0,100.0, 3.0, 0.44, 5.0    ! adj1(31)- adj1(40) 
+1.442,1,1,2,1       ! effk1,kjp20,kjp21,kjp22,lcub
+0.,.5,1,1           ! ttaup,taujp,iabsb,iabsm
+0.0,0               ! smadel,iparres
+
+?????????????????????????????????? Note ?????????????????????????????????
+Above input data are for the case of the incident particle (projectile) is
+lepton. For the case of the incident particle is nucleon (nucleus), move 
+the lines from 334 to 577 to the head of this file please.
+?????????????????????????????????????????????????????????????????????????
+ 
+******************************* Annotation *************************
+neve,nout,ee: 
+ neve: number of events to be generated
+ nout: write PYTHIA event output in main.out after each nout events
+ ee: cms energy if ifram=1 (collider)
+     incident momentum if ifram=0 (fixed target)
+----------------------------------------------
+nap,nzp,nat,nzt:
+ nap: atomic number of projectile, which is assumed to be 1 for the leptons
+ nzp: charge number of projectile, which is assumed to be 1 for neutron and 
+      neutrinons, to be -1 for anti-neutron and anti-neutrinos (as computor can 
+      not distinghush between 0 and -0). Of course, they should be 0 in the 
+      calculations concerned to the charge
+ nat: atomic number of target
+ nzt: charge number of target
+ For an example:      
+  nap=1,nzp=-1,nat=1,nzt=1 for e^-p (ipden=11) 
+  nap=1,nzp=1,nat=1,nzt=1 for e^+p (ipden=11)
+  nap=1,nzp=-1,nat=1,nzt=1 for mu^-p (ipden=13)
+  nap=1,nzp=1,nat=1,nzt=1 for mu^+p (ipden=13)
+  nap=1,nzp=-1,nat=1,nzt=1 for tau^-p (ipden=15)
+  nap=1,nzp=1,nat=1,nzt=1 for tau^+p (ipden=15)
+  nap=1,nzp=-1,nat=1,nzt=1 for nu_ep (ipden=12)
+  nap=1,nzp=1,nat=1,nzt=1 for nu_ebarp (ipden=12)
+  nap=1,nzp=-1,nat=1,nzt=1 for nu_mup (ipden=14)     
+  nap=1,nzp=1,nat=1,nzt=1 for nu_mubarp (ipden=14)                
+  nap=1,nzp=-1,nat=1,nzt=1 for nu_taup (ipden=16)
+  nap=1,nzp=1,nat=1,nzt=1 for nu_taubarp (ipden=16)
+------------------------------------------------
+mstu21,mstj1_1,mstj1_2,mstj2,mstj3,mstp33:
+ mstu21: (mstu(21) in PYTHIA) check on possible error during program execution 
+ mstj1_1 (mstj(1)): =0, no jet fragmentation at all (used in main_22a.f)
+ mstj1_2 (mstj(1)): =1, Lund string fragmentation (used in sfm_22a.f)
+ mstj2 (mstj(2)): gluon jet fragmentation scheme in IF (independent 
+                  fragmentation), if mstj1_2=2) 
+ mstj3 (mstj(3): energy, momentum, and flavor conservation options in 
+                 IF (if mstj1_2=2)
+ mstp33 (mstp(33)): inclusion of K factor in hard parton-parton 
+                    interactions 
+---------------------------------------------------------
+ifram,ispmax,isdmax,iflmax,nchan,itden,ipden:
+ ifram: flamework of the collision system
+        =0, fixed target
+        =1, collider
+ ispmax: maximum number of particles studied    
+ isdmax: maximum number of distributions studied
+ iflmax: maximum number of filters (windows) to be set (=0 means no filter 
+         at all)
+ nchan: to choose which subset of parton-parton subprocesses to include in 
+        the generration 
+        =0, inelastic (INEL)
+        =1, Non Single Difractive (NSD) 
+        =2, qqb (qqbar)--> gamma^*/Z^0, to generate Drell-Yan
+        =3: J/psi production
+        =4: heavy-flavor production
+        =5: direct photon
+        =6: soft only
+        =7: default PYTHIA 
+ itden:=0: target is nucleon (anti-nucleon)
+       =2, for e+e-
+ ipden:=0: projectile is nucleon (anti-nucleon)
+       =2: for e+e-
+       =11: projectile is e- (e+)
+       =12: projectile is nu_e (nu_ebar)
+       =13: projectile is mu- (mu+)
+       =14: projectile is nu_mu (nu_mubar)
+       =15: projectile is tau- (tau+)
+       =16: projectile is nu_tau (nu_taubar)
+---------------------------------------------------
+ispkf(i,i=1,ispmax): 
+ KF (flavor) code of i-th particle (cf. PYTHIA 6.4 manual of 
+    arXiv:hep-ph/0603175v2)
+-------------------------------------------------------- 
+asd(i,i=1,isdmax): interval of the i-th distribution
+    i=1: z (zl in program) distribution
+     =2: \nu (vnu) distribution
+     =3: Q^2 (fq2) distribution
+     =4: W^2 (w21) distribution   
+     =5: p_h (pph) distribution
+--------------------------------------------------------------
+fl(j,i,1): lower limit of i-th filter (window) for j-th particle (j refers
+            to the argument of array ispkf(j))
+afl(j,i,2): upper limit of i-th filter (window) for j-th particle
+      i=1: Q^2=-q^2 filter
+       =2: W^2 filter
+       =3: y filter
+       =4: p_h filter
+       =5: z filter
+----------------------------------------------------------------
+adj1(i,i=1,40): switches and/or parameters
+     i=
+       1: K factor for parton-parton interaction used in parcas_22a.f 
+       2: $\alpha_s$, effective coupling constant used in parcas_22a.f
+       3: parameter tcut, the lower limit of t variable in the integration 
+          of parton-parton differential cross section, used in parcas_22a.f  
+       4: parameter `idw', the number of intervals in the numerical 
+          integration, used in parcas_22a.f 
+       5: =1: with nuclear shadowing,
+          =0: without nuclear shadowing
+       6: $\alpha$ (parj(41) in PYTHIA) in the LUND string fragmentation 
+          function
+       7: $\beta$ (parj(42)) in the LUND string fragmentation function
+       8: (mstp(82)) structure of multiple interactions
+          =0: simple two-string model without any hard interactions 
+          =1: multiple interactions assuming the same probability in all 
+              events
+       9: (parp(81)) effective minimum transverse momentum for multiple 
+          interactions when mstp(82)=1
+       10: (parp(31)) K factor used in PYTHIA 
+       11: time accuracy used in hadcas_22a.f
+       12: model for hadronization
+           =0 string fragmentation,
+           =1 Monte Carlo coalescence model. 
+       13: dimension of meson table considered in coalescence model 
+           (coales_22a.f)
+       14: dimension of baryon table considered in coalescence model
+           (coales_22a.f)
+       15: string tension.
+       16: number of loops in the deexcitation of energetic quark in the 
+           coalescence model (coales_22a.f)
+       17: threshold energy in the deexcitation of energetic quark in 
+           coalescence model (coales_22a.f)
+       18: with (without) Pauli blocking in partonic evolution parcas_22a.f,
+           =0 without Pauli blocking
+           =1 with Pauli blocking.
+       19: time accuracy used in partonic evolution parcas_22a.f 
+       20: choose the version of parton-parton cross section in parcas_22a.f,
+           =0: complete LO pQCD parton-parton cross section 
+           =1: keep leading divergent terms only
+           =2: the same as '=0' one but with assumption of flat scattering 
+               angle distribution 
+           =3: the same as '=1' but with assumption of flat scattering angle 
+               distribution 
+       21: =0: without phase space constraint in coalescence model 
+               (coales_22a.f)
+           =1: with phase space constraint in coalescence model
+       22: critical value of the product of radii in position and momentum 
+           spaces in coalescence model
+       23: =0 LUND string fragmentation function is used in the deexcitation 
+              of the energetic quark in coalescence model 
+           =1 Field-Feynman fragmentation function is used in the deexcitation 
+              of the energetic quark in coalescence model
+       24: the virtuality cut (tl0 in program) in time-like radiation in 
+           the partonic evolution parcas_22a.f 
+       25: $\Lambda_{QCD}$ in time-like Sudakov factor in the partoic 
+           evolution parcas_22a.f 
+       26: number of random number thrown away. 
+       27: largest momentum allowed for particle
+       28: concerning to the largest position allowed for particle
+       29: width of two dimension Gaussian distribution sampling $p_x$
+           and $p_y$ of the produced quark pair in the deexcitation of 
+           energetic quark in coalescence model
+       30: maximum $p_T^2$ in above two dimension Gaussian distribution
+       31: (parj(1)) suppression of diquark-antidiquark pair production 
+           compared with quark-antiquark pair production
+       32: (parj(2)) suppression of s quark pair production compared with
+            u or d pair production
+       33: (parj(3)) extra suppression of s diquark production compared with 
+           normal suppression of s quarks
+       34: (parj(21)) width in Gaussian $p_x$ and $p_y$ transverse momentum 
+           distributions for primary hadrons
+       35: (mstp(91)) quark primordial $k_{\perp}$ distribution in hadron
+           =1 Gaussian distribution
+           =2: exponential distribution
+       36: =0 without phenomenological partonic energy loss in partonic 
+              evolution parcas_22a.f 
+           =1 with phenomenological partonic energy loss in partonic  
+              evolution parcas_22a.f
+       37: the coefficient in phenomenological partonic energy loss
+       38: $p_T$ cut in phenomenological partonic energy loss
+       39: width of Gaussian $k_{\perp}$ distribution in hadron if mstp(91)=1 
+           , width of exponential $k_{\perp}$ distribution in hadron if 
+           mstp(91)=2
+    
+       40: decide where the the event simulation is ended
+           =1 after partonic initiation
+           =2 after partonic rescattering
+           =3 hadronization followes partonic initiation and ended then
+           =4 reduce to pythia
+           =5 hadronization followes partonic scattering and ended then
+           =6 reduce to pythia but with hadronic rescattering
+--------------------------------------------------------------
+effk1,kjp20,kjp21,kjp22,lcub:
+ effk1: tuned effective string tension in string fragmentation
+ kjp20: choice of cross sections in hadronic rescattering hadcas_22a.f
+        =1 constant hadron-hadron (hh) cross sections 
+        =0 energy dependent hh cross sections
+ kjp21=0 without hadronic rescattering
+      =1 with hadronic rescattering
+ kjp22=0 constant string tension with calculation for effective string tension
+      =1 variable effective string tension calculated
+      =2 constant string tension without calculation for effective string 
+         tension
+ lcub: size of cubic used in energy density calculation  
+----------------------------------------------------------
+ttaup,taujp,iabsb,iabsm:
+ ttaup: proper formation time of particles generated in hadronic rescattering
+ taujp: formation time of particle (not used now)
+ iabsb: 
+        =0: without J/Psi (Psi') + baryon
+        =1: with J/Psi (Psi') + baryon
+ iabsm: 
+        =0: without J/Psi (Psi') + meson
+        =1: with J/Psi (Psi') + meson
+-------------------------------------------------------------------  
+smadel,iparres:
+ smadel: small perpurbation of ellipse from circle ($\delta_r)$
+ iparres: 
+        =0 consider elastic parton-parton collisions only in parton evolution 
+         parcas_22a.f
+        =1 consider all 9 parton-parton collision processes in parcas_22a.f
+**************************************************************************
+1000,100,200.    ! neve,nout,ee
+1,1,1,1         ! nap,nzp,nat,nzt
+1,0,1,2,3,1        ! mstu21,mstj1_1,mstj1_2,mstj2,mstj3,mstp33
+1,20,5,2,1,0,0  ! ifram,ispmax,isdmax,iflmax,nchan,itden,ipden
+211,321,333,3122,-3122,3312,-3312,3334,-3334,-211     ! KF code of particles
+-321,310,2212,-2212,2112,-2112,3212,-3212,3112,3222     ! KF code of particles
+0.2,0.3,0.2,1.,3 ! asd(i,i=1,5) ! following 40 lines are afl(j,i,1),afl(j,i,2)
+-0.5,0.5   ! afl(j=1 pi+,i=1 eta,1), afl(j=1,i=1,2)
+0.,10.     ! afl(j=1 pi+,i=2 p_T,1), afl(j=1,i=2,2)
+-0.5,0.5   ! afl(j=2 K+,i=1 eta,1), afl(j=1,i=1,2)
+0.,10.     ! afl(j=2 K+,i=2 p_T,1), afl(j=1,i=2,2)
+-0.5,0.5   ! afl(j=3 phi,i=1 eta,1), afl(j=3,i=1,2)
+0.,10.     ! afl(j=3 phi,i=2 p_T,1), afl(j=3,i=2,2)
+-0.5,0.5   ! afl(j=4 Lambda0,i=1 eta,1), afl(j=4,i=1,2)
+0.,10.     ! afl(j=4 Lambda0,i=2 p_T,1), afl(j=4,i=2,2)
+-0.5,0.5   ! afl(j=5 Lambda0-,i=1 eta,1), afl(j=5,i=1,2)
+0.,10.     ! afl(j=5 Lambda0-,i=2 p_T,1), afl(j=5,i=2,2)
+-0.5,0.5   ! afl(j=6 Xi-,i=1 eta,1), afl(j=6,i=1,2)
+0.,10.     ! afl(j=6 Xi-,i=2 p_T,1), afl(j=6,i=2,2)
+-0.5,0.5   ! afl(j=7 Xi+,i=1 eta,1), afl(j=7,i=1,2)
+0.,10.     ! afl(j=7 Xi+,i=2 p_T,1), afl(j=7,i=2,2)
+-0.5,0.5   ! afl(j=8 Omega-,i=1 eta,1), afl(j=8,i=1,2)
+0.,10.     ! afl(j=8 Omega-,i=2 p_T,1), afl(j=8,i=2,2)
+-0.5,0.5   ! afl(j=9 Omega+,i=1 eta,1), afl(j=9,i=1,2)
+0.,10.     ! afl(j=9 Omega+,i=2 p_T,1), afl(j=9,i=2,2)
+-0.5,0.5   ! afl(j=10 pi-,i=1 eta,1), afl(j=10,i=1,2)
+0.,10.     ! afl(j=10 pi-,i=2 p_T,1), afl(j=10,i=2,2)
+-0.5,0.5   ! afl(j=11 K-,i=1 eta,1), afl(j=11,i=1,2)
+0.,10.     ! afl(j=11 K-,i=2 p_T,1), afl(j=11,i=2,2)
+-0.5,0.5   ! afl(j=12 K^0_S,i=1 eta,1), afl(j=12,i=1,2)
+0.,10.     ! afl(j=12 K^0_S,i=2 p_T,1), afl(j=12,i=2,2)
+-0.5,0.5   ! afl(j=13 p,i=1 eta,1), afl(j=13,i=1,2)
+0.,10.     ! afl(j=13 p,i=2 p_T,1), afl(j=13,i=2,2)
+-0.5,0.5   ! afl(j=14 p-,i=1 eta,1), afl(j=14,i=1,2)
+0.,10.     ! afl(j=14 p-,i=2 p_T,1), afl(j=14,i=2,2)
+-0.5,0.5   ! afl(j=15 n,i=1 eta,1), afl(j=15,i=1,2)
+0.,10.     ! afl(j=15 n,i=2 p_T,1), afl(j=15,i=2,2)
+-0.5,0.5   ! afl(j=16 n-,i=1 eta,1), afl(j=16,i=1,2)
+0.,10.     ! afl(j=16 n-,i=2 p_T,1), afl(j=16,i=2,2)
+-0.5,0.5   ! afl(j=17 Sigma0,i=1 eta,1), afl(j=17,i=1,2)
+0.,10.     ! afl(j=17 Sigma0,i=2 p_T,1), afl(j=17,i=2,2)
+-0.5,0.5   ! afl(j=18 Sigma0-,i=1 eta,1), afl(j=18,i=1,2)
+0.,10.     ! afl(j=18 Sigma0-,i=2 p_T,1), afl(j=18,i=2,2)
+-0.5,0.5   ! afl(j=19 Sigma-,i=1 eta,1), afl(j=19,i=1,2)
+0.,10.     ! afl(j=19 Sigma-,i=2 p_T,1), afl(j=19,i=2,2)
+-0.5,0.5   ! afl(j=20 Sigma+,i=1 eta,1), afl(j=20,i=1,2)
+0.,10.     ! afl(j=20 Sigma+,i=2 p_T,1), afl(j=20,i=2,2)
+2.5, 0.47, 0.40,1000,   1,   0.30, 0.58, 1.0,  1.4, 2.5   ! adj1(1)- adj1(10)
+0.10,   0,   26,  18,1.00,      1, 2.00,   0, 0.03, 1   ! adj1(11)- adj1(20)
+   0, 4.0,    0,0.15, 0.4,    0.0,800000., 1.0, 0.26, 2.0  ! adj1(21)- adj1(30)
+0.10, 0.3,  0.4,0.36, 1.0,    0.0,100.0, 3.0, 0.44, 5.0   ! adj1(31)- adj1(40)
+1.442,1,1,2,1   ! effk1,kjp20,kjp21,kjp22,lcub
+0.,.5,1,1   ! ttaup,taujp,iabsb,iabsm
+0.1,0   ! smadel,iparres
+
+
+****************************** Annotation ************************
+neve,nout,ee:
+ neve: number of events to be generated
+ nout: write PYTHIA event output in main.out after each nout events
+ ee: cms energy if ifram=1 (collider)
+     incident momentum if ifram=0 (fixed target)
+----------------------------------------------
+nap,nzp,nat,nzt:
+ nap: atomic number of projectile
+ nzp: charge number of projectile, which is assumed to be 1 for neutron
+      and -1 for anti-neutron (as computer can not distinghush between 0 and 
+      -0). Of course, it should be 0 in all the calculations concerned to  
+      the charge
+ nat: atomic number of target
+ nzt: charge number of target
+------------------------------------------------
+mstu21,mstj1_1,mstj1_2,mstj2,mstj3,mstp33:
+ mstu21: (mstu(21) in PYTHIA) check on possible error during program execution
+ mstj1_1 (mstj(1) in PYTHIA): =0, no jet fragmentation at all (used in
+         main_22a.f)
+ mstj1_2 (mstj(1) in PYTHIA): =1, Lund string fragmentation (used in sfm_22a.f)
+ mstj2 (mstj(2) in PYTHIA): gluon jet fragmentation scheme in IF (independent
+                            fragmentation), if mstj1_2=2)
+ mstj3 (mstj(3)in PYTHIA): energy, momentum, and flavor conservation options in
+                           IF (if mstj1_2=2)
+ mstp33 (mstp(33) in PYTHIA): inclusion of K factor in hard parton-parton
+                              interactions
+---------------------------------------------------------
+ifram,ispmax,isdmax,iflmax,nchan,itden,ipden:
+ ifram: flamework of the collision system
+      =0, fixed target
+      =1, collider
+ ispmax: maximum number of particles studied
+ isdmax: maximum number of distributions studied
+ iflmax: maximum number of filters (windows) to be set (=0 means no filter
+         at all) 
+ nchan: to choose which subset of parton-parton subprocesses to include in
+        the generration 
+      =0, inelastic (INEL)
+      =1, Non Single Difractive (NSD)
+      =2, qqb (qqbar)--> gamma^*/Z^0, to generate Drell-Yan
+      =3: J/psi production
+      =4: heavy-flavor production
+      =5: direct photon
+      =6: soft only
+      =7: default PYTHIA
+ itden:=0: target is nucleon (anti-nucleon)
+ ipden:=0: projectile is nucleon (anti-nucleon)
+---------------------------------------------------------
+ispkf(i,i=1,ispmax):
+ KF (flavor) code of i-th particle (cf. PYTHIA 6.4 manual of arXiv:hep-ph/0603175v2)
+--------------------------------------------------------
+asd(i,i=1,isdmax): interval of the i-th distribution
+      i=1: y or eta distribution
+       =2: p_T distribution 
+       =3: eta distribution
+       =4: mass distribution
+       =5: multiplicity distribution
+--------------------------------------------------------------
+fl(j,i,1): lower limit of i-th filter (window) for j-th particle (j refers
+            to the argument of array ispkf(j)) 
+afl(j,i,2): upper limit of i-th filter (window) for j-th particle
+      i=1: y or eta filter
+       =2: p_T filter 
+----------------------------------------------------------------
+adj1(i,i=1,40): switches and/or parameters
+     i=
+       1: K factor for parton-parton interaction used in parcas_22a.f
+       2: $\alpha_s$, effective coupling constant used in parcas_22a.f
+       3: parameter tcut, the lower limit of t variable in the integration
+          of parton-parton differential cross section, used in parcas_22a.f
+       4: parameter `idw', the number of intervals in the numerical
+          integration, used in parcas_22a.f
+       5: =1: with nuclear shadowing,
+          =0: without nuclear shadowing
+       6: $\alpha$ (parj(41) in PYTHIA) in the LUND string fragmentation
+          function
+       7: $\beta$ (parj(42)) in the LUND string fragmentation function
+       8: (mstp(82)) structure of multiple interactions
+          =0: simple two-string model without any hard interactions
+          =1: multiple interactions assuming the same probability in all
+              events
+       9: (parp(81)) effective minimum transverse momentum for multiple
+          interactions when mstp(82)=1
+       10: (parp(31)) K factor used in PYTHIA
+       11: time accuracy used in hadcas_22a.f
+       12: model for hadronization
+           =0 string fragmentation,
+           =1 Monte Carlo coalescence model.
+       13: dimension of meson table considered in coalescence model 
+           (coales_22a.f)
+       14: dimension of baryon table considered in coalescence model
+           (coales_22a.f)
+       15: string tension.
+       16: number of loops in the deexcitation of energetic quark in the
+           coalescence model (coales_22a.f)
+       17: threshold energy in the deexcitation of energetic quark in
+           coalescence model (coales_22a.f)
+       18: with (without) Pauli blocking in partonic evolution parcas_22a.f,
+           =0 without Pauli blocking
+           =1 with Pauli blocking.
+       19: time accuracy used in partonic evolution parcas_22a.f
+       20: choose the version of parton-parton cross section in parcas_22a.f,
+           =0: complete LO pQCD parton-parton cross section
+           =1: keep leading divergent terms only
+           =2: the same as '=0' one but with assumption of flat scattering
+               angle distribution
+           =3: the same as '=1' but with assumption of flat scattering angle
+               distribution
+       21: =0: without phase space constraint in coalescence model 
+               (coales_22a.f)
+           =1: with phase space constraint in coalescence model
+       22: critical value of the product of radii in position and momentum
+           spaces in coalescence model
+       23: =0 LUND string fragmentation function is used in the deexcitation
+              of the energetic quark in coalescence model         
+           =1 Field-Feynman fragmentation function is used in the deexcitation
+              of the energetic quark in coalescence model
+       24: the virtuality cut (tl0 in program) in time-like radiation in    
+           the partonic evolution parcas_22a.f 
+       25: $\Lambda_{QCD}$ in time-like Sudakov factor in the partoic 
+           evolution parcas_22a.f
+       26: number of random number thrown away.
+       27: largest momentum allowed for particle
+       28: concerning to the largest position allowed for particle
+       29: width of two dimension Gaussian distribution sampling $p_x$
+           and $p_y$ of the produced quark pair in the deexcitation of
+           energetic quark in coalescence model
+       30: maximum $p_T^2$ in above two dimension Gaussian distribution
+       31: (parj(1)) suppression of diquark-antidiquark pair production
+           compared with quark-antiquark pair production
+       32: (parj(2)) suppression of s quark pair production compared with
+            u or d pair production
+       33: (parj(3)) extra suppression of s diquark production compared with
+           normal suppression of s quarks
+       34: (parj(21)) width in Gaussian $p_x$ and $p_y$ transverse momentum
+           distributions for primary hadrons
+       35: (mstp(91)) quark primordial $k_{\perp}$ distribution in hadron
+           =1 Gaussian distribution
+           =2: exponential distribution
+       36: =0 without phenomenological partonic energy loss in partonic
+              evolution parcas_22a.f
+           =1 with phenomenological partonic energy loss in partonic
+              evolution parcas_22a.f
+       37: the coefficient in phenomenological partonic energy loss
+       38: $p_T$ cut in phenomenological partonic energy loss
+       39: width of Gaussian $k_{\perp}$ distribution in hadron if mstp(91)=1
+           , width of exponential $k_{\perp}$ distribution in hadron if
+           mstp(91)=2
+
+       40: decide where the the event simulation is ended
+           =1 after partonic initiation,
+           =2 after partonic rescattering,
+           =3 hadronization followes partonic initiation and ended then
+           =4 reduce to pythia
+           =5 hadronization followes partonic scattering and ended then
+           =6 reduce to pythia but with hadronic rescattering
+--------------------------------------------------------------
+effk1,kjp20,kjp21,kjp22,lcub:
+ effk1: tuned effective string tension in string fragmentation
+ kjp20: choice of cross sections in hadronic rescattering hadcas_22a.f
+       =1 constant hadron-hadron (hh) cross sections 
+       =0 energy dependent hh cross sections
+ kjp21=0 without hadronic rescattering
+      =1 with hadronic rescattering
+ kjp22=0 constant string tension with calculation for effective string tension
+      =1 effective string tension calculated
+      =2 constant string tension without calculation for effective string 
+         tension
+ lcub: size of cubic used in energy density calculation
+----------------------------------------------------------
+ttaup,taujp,iabsb,iabsm:
+ ttaup: proper formation time of particles generated in hadronic rescattering
+ taujp: formation time of particle (not used now)
+ iabsb:
+      =0: without J/Psi (Psi') + baryon
+      =1: with J/Psi (Psi') + baryon
+ iabsm:
+      =0: without J/Psi (Psi') + meson
+      =1: with J/Psi (Psi') + meson
+-------------------------------------------------------------------
+smadel,iparres:
+ smadel: small perpurbation of ellipse from circle ($\delta_r)$
+ iparres:
+        =0 consider elastic parton-parton collisions only in parton evolution
+         parcas_22a.f
+        =1 consider all 9 parton-parton collision processes in parcas_22a.f
+**************************************************************************
