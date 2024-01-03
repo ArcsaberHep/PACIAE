@@ -3285,12 +3285,12 @@ C...Set nonvanishing production vertex (optional).
 C...Perform hadronization (if desired).
         IF(MSTP(111).GE.1) THEN
 c060617
-        iikk=0
+        iikk=0   
         do i1=1,n
         if(k(i1,2).eq.88)iikk=1
         enddo
-        if(iikk.eq.0)call remo
-c       move q,qbar,g,anti-diquark and diquark from pyjets to sbh
+	if(iikk.eq.0)call remo   
+c	move q,qbar,g,anti-diquark and diquark from pyjets to sbh
 c060617
           CALL PYEXEC
           IF(MSTU(24).NE.0) GOTO 100
@@ -3367,12 +3367,12 @@ C...Commonblocks.
       COMMON/PYINTM/KFIVAL(2,3),NMI(2),IMI(2,800,2),NVC(2,-6:6),
      &     XASSOC(2,-6:6,240),XPSVC(-6:6,-1:240),PVCTOT(2,-1:1),
      &     XMI(2,240),PT2MI(240),IMISEP(0:240)
-        common/sa34/iikk   ! 060617
+	common/sa34/iikk   ! 060617
       SAVE /PYJETS/,/PYCTAG/,/PYDAT1/,/PYDAT2/,/PYDAT3/,
      &     /PYPARS/,/PYINT1/,/PYINT2/,/PYINT4/,/PYINT5/,/PYINTM/
 C...Local arrays.
       DIMENSION VTX(4)
- 
+
 C...Stop if no subprocesses on.
       IF(MINT(121).EQ.1.AND.MSTI(53).EQ.1) THEN
         WRITE(MSTU(11),5100)
@@ -3704,13 +3704,13 @@ C...Set nonvanishing production vertex (optional).
 C...Perform hadronization (if desired).
         IF(MSTP(111).GE.1) THEN
 c060617
-        iikk=0
+	iikk=0
         do i1=1,n
         if(k(i1,2).eq.88)iikk=1
         enddo
-        if(iikk.eq.0)call remo
+	if(iikk.eq.0)call remo
 c       move q,qbar,g,anti-diquark and diquark from pyjets to sbh
-c060617
+c060617   
           CALL PYEXEC
           IF(MSTU(24).NE.0) GOTO 100
         ENDIF
@@ -59163,7 +59163,7 @@ C...Boost copied system to CM frame (for better numerical precision).
       ENDIF
 
 csa       ip: line number in 'pyjets' of first entry of current string
-csa       np: number of partons in current string
+csa       np: number of partons in current string 
 C...Search for very nearby partons that may be recombined.
       NTRYR=0
       NTRYWR=0

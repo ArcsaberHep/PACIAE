@@ -1,5 +1,5 @@
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	subroutine sfm   
+	subroutine sfm
 c	perfome the hadronization by calling 'pyexec' (string fragmentation)
 c	it was written by Ben-Hao Sa on 31/07/02
 c	its input messages are in 'pyjets'
@@ -19,6 +19,8 @@ c      COMMON/PYPARS/MSTP(200),PARP(200),MSTI(200),PARI(200)
         common/sa25/mstj1_1,mstj1_2,para1_1,para1_2   ! 221203 240407
 c080104
         common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio
+        common/sa27/itime,kjp22,gtime,astr,akapa(5),parj1,parj2,parj3,
+     c   parj21
         common/sbe/nbe,nonbe,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
         common/saf/naf,nonaf,kaf(kszj,5),paf(kszj,5),vaf(kszj,5)
         common/sbh/nbh,nonbh,kbh(kszj,5),pbh(kszj,5),vbh(kszj,5)
@@ -65,10 +67,10 @@ c141208
 c        write(9,*)'itden,non6_c=',itden,non6_c
         endif   
 c141208
-c150417	mstj(1)=mstj1_2
+c060417	mstj(1)=mstj1_2
 c	write(9,*)'in hadniz iii,mstu,mstj(1)-(3)=',iii,mstu(21),mstj(1),
 c     c	 mstj(2),mstj(3)   
-c150417	if(itden.ne.2)mstj(21)=0   ! 300713
+c060417	mstj(21)=0
 c       particle decay is inhibited
 c	produced hadron from calling 'pyexec' is arranged at the position   
 c	 of parent, decayed hadrons do not have proper position so 
@@ -80,14 +82,7 @@ c141208
 c        write(9,*)'mstu31,non6_c=',mstu(31),non6_c
         endif    
 c141208
-c300713 120214
-	if(ipden.ge.11)then
-	call pyedit(1)
-	else
-	call pyedit(2)
-	endif
-c300713 120214
-c	write(22,*)'in sfm be. decay' 
+	call pyedit(2) 
 c	call pylist(1)
 c	ich1=0.
 c	do i1=1,n
@@ -169,10 +164,7 @@ c	transfer four position messages from 'sa1_h' to 'pyjets'
 c	write(9,*)'af position n=',n
 
 c       decay of unstable hadrons
-c150417	if(itden.ne.2)call decayh(rrp)   ! 300713
-c	call pyedit(1)
-c	write(22,*)'in sfm af. decay'
-c	call pylist(1)
+c060417	call decayh(rrp)
 	return
 	end
 
@@ -190,8 +182,6 @@ c       decay of unstable hadrons
       COMMON/PYDAT3/MDCY(500,3),MDME(8000,2),BRAT(8000),KFDP(8000,5)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
-        common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
-     c  nap,nat,nzp,nzt,pio   ! 060813
         dimension rc(3)
 c	particle decay before rescattering is set in paciae.f
 
@@ -213,13 +203,7 @@ c	decay of unstable hadron i1
 	call pydecy(i1)
 c	'pyjets' is filled up simultaneously 
 c	remove decaying hadron from 'pyjets'
-c300713 120214
-	if(ipden.ge.11)then
-	call pyedit(1)
-	else
 	call pyedit(2)
-	endif
-c300713 120214
 c	write(22,*)'i1=',i1
 c	call pylist(1)
 c	store the position of decaying hadron

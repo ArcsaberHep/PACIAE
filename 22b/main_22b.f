@@ -55,8 +55,8 @@ c        hadron according to purpose
 	common/sa25/mstj1_1,mstj1_2,para1_1,para1_2   
         common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio
         common/sa27/itime,kjp22,gtime,astr,akapa(5),parj1,parj2,parj3,
-     c   parj21   ! 020708
-	common/sa29/effk1,lcub   ! 150612 yan
+     c   parj21,adiv,gpmax,nnc   ! 020708 070417   
+	common/sa29/parp78,lcub   ! 150612 yan 070417
 	common/sa30/vneump,vneumt   ! 191110
         common/sa31/rmax,bbb(200),TA1(200),TA2(200),TA1A2(200),
      c  part1(200),part2(200)   ! 020511
@@ -161,7 +161,6 @@ c           width of exponential k_{\perp} distribution in hadron if mstp(91)=2
 c       40: =1 event endded after parton initiation
 c           =2 event endded after parton rescattering
 c           =4 event endded after hadron rescattering
-c140414	    =5 event without parton rescattering (set mstj1_1=1 in usu.dat) 
 c210803
 c220312 smadel: small perpurbation of ellipse from circle
 c220312	parecc: a parameter converting initial spatial space eccentricity 
@@ -335,14 +334,14 @@ c	close(1)
 	read(11,*)para13,para14,psno,para15,para16,ajpsi,vneum
 	read(11,*)para1_1,para1_2,para2,para4   
 	read(11,*)tdh,cptl,cptu,cptl2,cptu2,itnum   ! 201208
-	read(11,*)mstu21,mstj1_1,mstj1_2,mstj2,mstj3
+	read(11,*)mstu21,mstp81,mstj1_2,mstj2,mstj3   ! 160617
 c210803
 	read(11,*)(adj1(i),i=1,10)
 	read(11,*)(adj1(i),i=11,20)
         read(11,*)(adj1(i),i=21,30)
         read(11,*)(adj1(i),i=31,40)
 c210803
-        read(11,*)kjp22,kjp23,kjp24,effk1   ! 020708 020511 150612 yan
+        read(11,*)kjp22,kjp23,kjp24,parp78   ! 020708 020511 150612 yan 070417
 	read(11,*)parecc,iparres,smadel   ! 220312 240412 300513
 	close(11)
 c	tdh and itnum: time step and number of time steps used in subroutine 'flow' 
@@ -379,8 +378,8 @@ c              = 1 with hadron rescattering
 c020708
 c       kjp22: = 0 constant string tension with calculation for string 
 c                  effective tension
-c       kjp22: = 1 variable effective string tension
-c       kjp22: = 2 original case (constant string tension)
+c       kjp22: = 1 constant string tension with calculation of akapa(1 - 5) ! 070417
+c       kjp22: = 2 constant string tension   ! 070417
 c020511 kjp23: = 1 npart calculated by geometric model
 c020511 kjp23: = 2 npart calculated by Glauber model
 c020511 kjp24: = 1 sharp sphere in Glauber model
@@ -401,7 +400,10 @@ c	totle cross-section of Psi' + n
 	param(16)=para16
 c	totle cross-section of Psi' + meson
         idw=adj1(4)   ! 020511
-c020511 # of segments in integration        
+c020511 # of segments in integration   
+c       mstp(81)=21   ! let PYEVNW do the whole job.
+        mstp(81)=mstp81   ! 160617
+c160617 mstp(81)=1 (default) executing pyevnt,=21 executing pyevnw     
 	mstp(82)=adj1(8)
 c        =0: soft (two-string) only; =1: both of soft and hard
         parp(81)=adj1(9)
@@ -432,6 +434,8 @@ c	 case of nchan=3
 c	inclusion of k factor in hard cross sections for parton-parton 
 c	 interactions (default=0)
 	parp(31)=adj1(10)   ! D=1.5
+c070417 contral the strength of colour reconnection
+        parp(78)=parp78   ! 070417
 c	mstj1_1: =0, no jet fragmentation at all used in parini.f
 c	mstj1_2: =1, Lund string fragmentation used in sfm.f
 c       no writing of header
@@ -457,6 +461,21 @@ c	parameters in Lund string fragmentation function
 	enddo
 	enddo
 	enddo
+c070417
+        if(kjp22.eq.0 .or. kjp22.eq.1)then
+        snnc=0.
+        sgtime=0.
+        sgtimeo=0.
+        sitime=0.
+        sastr=0.
+        sadiv=0.
+        sgpmax=0.
+        do i1=1,5
+        skapa(i1)=0.
+        skapao(i1)=0.
+        enddo
+        endif
+c070417
 c061103
 	pinel=0.   
 	pel=0.   
@@ -511,8 +530,8 @@ c        write(9,*)'csnn1,kjp24,idw1=',csnn1,kjp24,idw1
 c020511
 	write(9,*)'nap,nzp,nat,nzt,win=',nap,nzp,nat,nzt,win
 	write(9,*)'neve,nout,nosc=',neve,nout,nosc
-	write(9,*)'bmin,bmax,dtt,nmax,effk1=',bmin,bmax,dtt,nmax,effk1 
-c150612 yan 
+	write(9,*)'bmin,bmax,dtt,nmax,parp78=',bmin,bmax,dtt,nmax,
+     c	 parp78 c150612 yan 070417
 	write(9,*)'kjp21,ifram,para7,para10,kjp20,kjp22,kjp23,kjp24=',
      c   kjp21,ifram,para7,para10,kjp20,kjp22,kjp23,kjp24   ! 020511
 	write(9,*)ispmax,isdmax,iflmax
@@ -526,8 +545,8 @@ c150612 yan
      c	 para4   
 	write(9,*)'tdh,itnum,cptl=',tdh,itnum,cptl
 	write(9,*)'cptu,cptl2,cptu2=',cptu,cptl2,cptu2
-	write(9,*)'mstu21,mstj1_1,mstj1_2,mstj2,mstj3=',
-     c	 mstu21,mstj1_1,mstj1_2,mstj2,mstj3   
+	write(9,*)'mstu21,mstp81,mstj1_2,mstj2,mstj3=',
+     c	 mstu21,mstp81,mstj1_2,mstj2,mstj3   ! 160617  
 c210803
 	write(9,*)'adj1=',(adj1(i),i=1,10)
 	write(9,*)'adj1=',(adj1(i),i=11,20)
@@ -1161,6 +1180,21 @@ c	endif
 	enddo
 	enddo
 	enddo
+c070417
+        if(kjp22.eq.0 .or. kjp22.eq.1)then
+        snnc=snnc+nnc
+        sadiv=sadiv+adiv
+        sgpmax=sgpmax+gpmax
+        skapa(1)=skapa(1)+akapa(1)
+        skapa(2)=skapa(2)+akapa(2)
+        skapa(3)=skapa(3)+akapa(3)
+        skapa(4)=skapa(4)+akapa(4)
+        skapa(5)=skapa(5)+akapa(5)
+        sgtime=sgtime+gtime
+        sastr=sastr+astr
+        sitime=sitime+itime
+        endif
+c070417
 	pel=pel+npel   ! 061103   
 	pinel=pinel+npinel(592)   
 	sel=sel+noel
@@ -1220,6 +1254,20 @@ c010220
 	enddo
 	enddo
 	enddo
+c070417
+        if(kjp22.eq.0 .or. kjp22.eq.1)then
+        snnco=snnc/flaa
+        sastro=sastr/flaa
+        sgtimeo=sgtime/flaa
+c       sgtimeo: average number of gluons in a string over strings with gluon
+        do i1=1,5
+        skapao(i1)=skapa(i1)/flaa
+        enddo
+        sadivo=sadiv/flaa
+        sgpmaxo=sgpmax/flaa
+        sitimeo=sitime/flaa
+        endif
+c070417
 c061103
         peli=pel/flaa
         pineli=pinel/flaa
@@ -1278,6 +1326,22 @@ c200601
      c	 psno,averbo,psnopo,psnoto,psnono*csnn   ! 280113
 	if(ipden.ge.11.and.ipden.le.16)
      c   write(10,*)'event average number of lepton studied=',vnlep/flaa !260314
+c070417
+        if(kjp22.eq.0 .or. kjp22.eq.1)then
+        write(10,*)'kjp22=0, par1,par2,par3,par21=',
+     c   parj1,parj2,parj3,parj21
+        write(10,*)'keff2,par2,par21,par1,par3=',
+     c   (skapao(i1),i1=1,5)
+        write(10,*)'averaged # of gluon in a string,averaged # of'
+        write(10,*)' strings in an event (counted with KF=92) and'
+        write(10,*)'average # of NN collisions in an event=',sgtimeo,
+     c   sastro,snnco   ! 070417
+        write(10,*)'event averaged value of the factor related to # of'
+        write(10,*)'gluons and hardest gluon in a string,event averaged'
+        write(10,*)'transverse momentum of hardest gluon,event averaged'
+        write(10,*)'# strings=',sadivo,sgpmaxo,sitimeo
+        endif
+c070417
 	write(10,*)'multiplicity of negative particles=',dnmino
 	write(10,*)'multiplicity of negative particles=',dnminfo
 	write(10,*)'multiplicity of positive particles,partial=',dncha

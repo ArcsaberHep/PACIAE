@@ -1,27 +1,27 @@
-        program main_22c   ! 020708 241110 
+        program main_21c   ! 020708 241110 
 c	user main program of parton and hadron cascade model for relativistic 
 c	 pA, AA (eA) collision 
-c	composed of main_22c.f, parini_22c.f, parcas_22c.f, sfm_22c.f,  
-c	 coales_22c.f, hadcas_22c.f, and p22c.f
-c       main_22c.f: user main program and administrate the generation of 
+c	composed of main_21c.f, parini_21c.f, parcas_21c.f, sfm_21c.f,  
+c	 coales_21c.f, hadcas_21c.f, and p21c.f
+c       main_21c.f: user main program and administrate the generation of 
 c        an event
-c       parini_22c.f: generate a partonic initial state for a
+c       parini_21c.f: generate a partonic initial state for a
 c        pA, AA (eA) collision
-c       parcas_22c.f: perform parton rescattering, where only 2->2 processes
+c       parcas_21c.f: perform parton rescattering, where only 2->2 processes
 c        are considered and LO pQCD cross section or its regularized
 c        approximation is used
-c       sfm_22c.f: hadronization according to LUND string fragmentation model
-c       coales_22c.f: hadronization according to Monte Carlo coalescence model
-c       select sfm_22c.f or coales_22c.f by parameter adj1(12) 
-c       hadcas_22c.f: perform hadronic rescattering
-c       p22c.f: pythia 6.4 with a little bit of modifications
+c       sfm_21c.f: hadronization according to LUND string fragmentation model
+c       coales_21c.f: hadronization according to Monte Carlo coalescence model
+c       select sfm_21c.f or coales_21c.f by parameter adj1(12) 
+c       hadcas_21c.f: perform hadronic rescattering
+c       p21c.f: pythia 6.4 with a little bit of modifications
 c       read paciae_guide for the details
 c	note: the statistics made here is for either parton or   
 c	 hadron according to purpose
+	parameter (kszj=40000,mplis=40000,KSZ1=30)
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
-	parameter (kszj=40000,mplis=40000,KSZ1=30)
       COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
       COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
       COMMON/PYDAT3/MDCY(500,3),MDME(8000,2),BRAT(8000),KFDP(8000,5)
@@ -49,8 +49,6 @@ c	 hadron according to purpose
      &	 ,emin(10),eminf(10),eplu(10),epluf(10)   ! 033101
 	common/sa18/tdh,itnum,non18,cptl,cptu,cptl2,cptu2,snum(4,20),
      &	 v1(4,20),v2(4,20),v12(4,20),v22(4,20)
-	common/sa21/pincl(5),pscal(5),pinch(5),vnu,fq2,w2l,yyl,zl,xb,pph
-     c	 ,vnlep   ! 260314
 	common/sa23/kpar,knn,kpp,knp,kep   ! 200601 060813
 	common/sa24/adj1(40),nnstop,non24,zstop   ! 210803 181003
 	common/sa25/mstj1_1,mstj1_2,para1_1,para1_2   
@@ -81,8 +79,9 @@ c	 hadron according to purpose
         common/ctllist_p/nreac(9),nrel   ! 071103
 	common/ctllist_h/nctl,noinel(600),nctl0,noel
         common/sgam/ngam,nongam,kgam(kszj,5),pgam(kszj,5),vgam(kszj,5) ! 250209
-        common/ssin/nsin,nonsin,ksin(kszj,5),psin(kszj,5),vsin(kszj,5),
-     c   bsin(kszj)   ! 250209
+c190517	common/ssin/nsin,nonsin,ksin(kszj,5),psin(kszj,5),vsin(kszj,5),
+c190517	c   bsin(kszj)   ! 250209 190517
+	common/ssin/bsin(kszj)   ! 190517
         dimension an(20,5,20),bn(20),san(20,5,20),sbn(20),
      c	 anf(20,5,20),bnf(20),sanf(20,5,20),sbnf(20)
 	dimension sao(20,5,20),sbo(20),saof(20,5,20),sbof(20)
@@ -91,9 +90,8 @@ c	 hadron according to purpose
 	dimension bpp(20),kdiq(kszj,5),dgmas(kszj)
 	dimension acoll(20),acollp(20),acollt(20)
 	dimension sbp(20) 
-        dimension nreaco(9),pl(100,5)   ! 220110 260314
+        dimension nreaco(9)   ! 220110
         real nmin,nminf,ncha,nchaf   ! 020203
-c260314 pl(ii,5): four momentum and mass of ii-th lepton
 c	common block sa24: adjustable variables
 c	adj1(i), i=
 c	1: k factor used in parton cascade
@@ -163,9 +161,6 @@ c220312 parecc: a parameter converting initial spatial space eccentricity
 c220312	 to final momentum space
 c240412 iparres: =0 consider ela. parton-parton collisions only
 c240412 iparres: =1 otherwise
-c260314 pincl (pscal): four momentum and mass of incident (scatterd) lepon
-c       pinch: four momentum and mass of incident hadron
-c        vnu: \nu; fq2: Q^2=-q^2; w2l: W^2; yyl: y; zl: z; xb: x_B; pph: P_h
 
 c       para1_1: total cross section of nn, used in parton initiation
 c        for nuclus-nucleus collision, this is irrelevant
@@ -183,14 +178,7 @@ c	 than or equal to 'nmax'
 c	note: the dimension of 'bpp' must be < or = nmax
 c       ipden: =0,if projectile is proton
 c              =1, projectile is nucleus
-c060813 120214
-c	       =11, projectile is e- (e+)  
-c	       =12, projectile is nu_e (nu_ebar)  
-c	       =13, projectile is mu- (mu+)  
-c	       =14, projectile is nu_mu (nu_mubar)
-c	       =15, projectile is tau- (tau+)  
-c	       =16, projectile is nu_tau (nu_taubar)  
-c060813 120214
+c	       =2, projectile is e- (for eA)  ! 060605 060813
 c       itden: =0, if target is proton
 c              =1, target is nucleus
 c       suppm: the upper bound in sampling the radius of projectile nucleon
@@ -219,36 +207,18 @@ c        (san(l,i,j)) but is statistics of full phase space instead of partical
 c        phase space
 c	isdmax: maximum # of distributions wanted to calculate
 c	asd(i): interval segmented for i-th distribution  
-c260314 for NA,AN and AA collisions
 c	 i=1: for y
 c	 i=2: for pt
 c         .      . 
 c         .      .
 c         .      .
-c260314 for lepton-nucleus collision
-c        i=1 : z
-c        i=2 : \nu 
-c        i=3 : Q^2
-c         .        .
-c         .        .
-c         .        .
 c	iflmax: maximum # of filters,=0 means no filter at all
 c	afl(j,i,1): lower limit of i-th filter for the j-th particle
 c	afl(j,i,2): upper limit of i-th filter for the j-th particle
-c260314 for nucleon-nucleon collision
 c 	 i=1: y filter	
 c	 i=2: pt filter
 c         .        .
 c         .        . 
-c         .        .
-c260314 for lepton-nucleus collision
-c        i=1 : Q^2=-q^2 (name in program, fq2) filter
-c        i=2 : W^2 (w2l) filter
-c        i=3 : y (yyl) filter
-c        i=4 : P_h (pph) filter
-c        i=5 : z (zl) filter
-c         .        .
-c         .        .
 c         .        .
 c	ifram: = 0 for fixed target, = 1 for collider 
 c	cspipi (fm^2): total cross section of pion + pion
@@ -310,7 +280,6 @@ c	close(1)
 	open(11,file='usu.dat',status='unknown')
 	mstu(11)=22
 	open(22,file='main.out',status='unknown')
-c120214 in case of lepton as projectile: it is imaged that nap =1 
 	read(11,*)neve,nout,nosc   
 	read(11,*)nap,nzp,nat,nzt
 	read(11,*)ddt,dtt,bmin,bmax,nmax   ! 241108
@@ -355,11 +324,7 @@ c	nchan=7: pythia
 c	neve : # of events to be generate
 c	nap (nzp) : # of nucleons (protons) in projectile nucleus
 c	nat (nzt) : # of nucleons (protons) in target nucleus
-c060813 for e^-A: formally set nap=1,nzp=-1,ipden=11,itden=1, kf=11; 
-c       for e^+A: formally set nap=1,nzp=1,ipden=11,itden=1, kf=-11;
-c       for nu_eA: formally set nap=1,nzp=-1,ipden=12,itden=1, kf=12;
-c       for nu_ebarA: formally set nap=1,nzp=1,ipden=12,itden=1, kf=-12;        
-c060813 in hadronic initiation, for instance
+c       for eA: nap=1,nzp=-1,ipden=2,and itden=1   ! 060813
 c	t0 : average proper formation time at rest
 c	ddt : time accuracy
 c	dep : the accuracy in four momentum conservation
@@ -505,7 +470,7 @@ c200601
 	sknn=0.
 	skpp=0.
 	sknp=0.
-        skep=0. ! statistic of ep and en collisions with calling pythia 060813
+c190517	skep=0. ! statistic of ep and en collisions with calling pythia 060813
 c200601
 	sthroq=0.
 	sthrob=0.
@@ -516,24 +481,24 @@ c200601
 	adj12=adj1(12)
 	dpmax=adj1(27)   ! 281194
 	adj140=adj1(40)   ! 290505
+c       give values to some important variables
+        call sysini(win)
+	adj1(28)=para10*dmax1(rnt,rnp)
+	iii=0
+c020511
 	open(5,file='sxp.out',status='unknown')   ! sa 26/05/99
 	open(9,file='rms0.out',status='unknown')
 	open(34,file='oscar.out',status='unknown')
-c	give values to some important variables
-	call sysini(win)
-c020511
         csnn1=csnn*10   ! csnn in fm^2 csnn1 in mb
         idw1=idw/50   ! *100
 c        write(9,*)'csnn1,kjp24,idw1=',csnn1,kjp24,idw1
-        if(ipden.lt.2)call overlap(nap,nat,rnp,rnt,csnn1,kjp23,kjp24,
-     c	 rou0,idw1)   ! 060813 120214 changed from .ne. to .lt.
+        if(ipden.ne.2)call overlap(nap,nat,rnp,rnt,csnn1,kjp23,kjp24,
+     c	 rou0,idw1)   ! 060813
 c020511
-	adj1(28)=para10*dmax1(rnt,rnp)
-	iii=0
 	write(9,*)'win,nap,nzp,nat,nzt=',win,nap,nzp,nat,nzt
 	write(9,*)'neve,nout,nosc=',neve,nout,nosc
-	write(9,*)'dtt,bmin,bmax,nmax,parp78=',dtt,bmin,bmax,nmax,
-     c	 parp78   ! 150612 yan 070417
+	write(9,*)'dtt,bmin,bmax,nmax,parp78=',dtt,bmin,bmax,nmax,parp78
+c150612 yan 070417
 	write(9,*)'kjp21,ifram,para7,para10,kjp20,kjp22,kjp23,kjp24=',
      c   kjp21,ifram,para7,para10,kjp20,kjp22,kjp23,kjp24   ! 020511
 	write(9,*)ispmax,isdmax,iflmax
@@ -548,7 +513,7 @@ c020511
 	write(9,*)'tdh,cptl,itnum=',tdh,cptl,itnum
 	write(9,*)'cptu,cptl2,cptu2=',cptu,cptl2,cptu2
 	write(9,*)'mstu21,mstp81,mstj1_2,mstj2,mstj3=',
-     c	 mstu21,mstp81,mstj1_2,mstj2,mstj3   ! 160617   
+     c	 mstu21,mstp81,mstj1_2,mstj2,mstj3   ! 160617 
 c210803
 	write(9,*)'adj1=',(adj1(i),i=1,10)
 	write(9,*)'adj1=',(adj1(i),i=11,20)
@@ -557,7 +522,7 @@ c210803
 c210803
 c	write(9,*)'41-45=',parj(41),parj(42),parj(43),parj(44),
 c     c	 parj(45)
-	write(9,*)'parecc,iparres,smadel=',parecc,iparres,smadel  
+	write(9,*)'parecc,iparres,smadel=',parecc,iparres,smadel   
 c2203122 240412 300513
 	if(iflmax.ne.0)then
 	do kk=1,ispmax
@@ -596,7 +561,7 @@ c020511
 c       write(9,*)'bp,ibpp,part1,part2=',bp,ibpp,pir,tir
 c280113	endif
 c020511
-	if(ipden.lt.2.and.nap.eq.1)pir=1.   
+	if(nap.eq.1)pir=1.   
 	if(nat.eq.1)tir=1.   
 c060605
         vneump=pir   ! 111399
@@ -637,7 +602,7 @@ c020511
         tir=part2(ibpp)
 c280113        endif
 c020511
-	if(ipden.lt.2.and.nap.eq.1)pir=1.   ! 060813 120214
+	if(nap.eq.1)pir=1.
 	if(nat.eq.1)tir=1.
 c060605
 	stab=stab+bp   ! 280113
@@ -678,7 +643,7 @@ c020511
         tir=part2(ibpp)
 c280113	endif
 c020511
-	if(ipden.lt.2.and.nap.eq.1)pir=1.   ! 060813 120214
+	if(nap.eq.1)pir=1.
 	if(nat.eq.1)tir=1.
 c060605
 	aanbin=anbin   ! 280113
@@ -706,7 +671,6 @@ c	generate a event for nucleus-nucleou collision
 	thrr=pyr(1)
 	enddo
 	nncoll=0
-	vnlep=0.d0 ! statistics of the number of studied leptons 260314
 300	iii=iii+1
 c220110
         do i1=1,9
@@ -721,9 +685,9 @@ c250209
         kgam(i1,j1)=0
         pgam(i1,j1)=0.
         vgam(i1,j1)=0.
-        ksin(i1,j1)=0   
-        psin(i1,j1)=0.   
-        vsin(i1,j1)=0.   
+c190517	ksin(i1,j1)=0   
+c190517	psin(i1,j1)=0.   
+c190517	vsin(i1,j1)=0.   
         enddo
         bsin(i1)=0.   
         enddo
@@ -762,7 +726,7 @@ c020511
         tir=part2(ibpp)
 c280113        endif
 c020511
-        if(ipden.lt.2.and.nap.eq.1)pir=1.   ! 060813 120214
+        if(nap.eq.1)pir=1.
         if(nat.eq.1)tir=1.
         vneump=pir
         vneumt=tir
@@ -798,10 +762,10 @@ c	write(9,*)'after close(11)'   !
 	enddo
 c	forbiden decay of particle, if mdcy(...)=0
 c	mdcy(pycomp(111),1)=0
-        mdcy(pycomp(310),1)=0   ! k0_S
-        mdcy(pycomp(333),1)=0   ! phi
-        mdcy(pycomp(3122),1)=0   ! Lambda
-        mdcy(pycomp(-3122),1)=0
+c190517	mdcy(pycomp(310),1)=0   ! k0_S
+c190517	mdcy(pycomp(333),1)=0   ! phi
+c190517	mdcy(pycomp(3122),1)=0   ! Lambda
+c190517	mdcy(pycomp(-3122),1)=0
 c	mdcy(pycomp(443),1)=0   ! j/psi
 c	mdcy(pycomp(10441),1)=0
 c	mdcy(pycomp(20443),1)=0
@@ -818,16 +782,16 @@ c	mdcy(pycomp(30443),1)=0   ! j/psi
 
 c	mdcy(pycomp(3212),1)=0
 c	mdcy(pycomp(-3212),1)=0
-        mdcy(pycomp(3112),1)=0   ! Sigma-
+c190517	mdcy(pycomp(3112),1)=0   ! Sigma-
 c	mdcy(pycomp(-3112),1)=0
-        mdcy(pycomp(3222),1)=0   ! Sigma+
+c190517	mdcy(pycomp(3222),1)=0   ! Sigma+
 c	mdcy(pycomp(-3222),1)=0
-        mdcy(pycomp(3312),1)=0   ! Xi-
-        mdcy(pycomp(-3312),1)=0
+c190517	mdcy(pycomp(3312),1)=0   ! Xi-
+c190517	mdcy(pycomp(-3312),1)=0
 c	mdcy(pycomp(3322),1)=0
 c	mdcy(pycomp(-3322),1)=0
-        mdcy(pycomp(3334),1)=0   ! Omega-
-        mdcy(pycomp(-3334),1)=0
+c190517	mdcy(pycomp(3334),1)=0   ! Omega-
+c190517	mdcy(pycomp(-3334),1)=0
 c       mdcy(pycomp(1114),1)=0
 c       mdcy(pycomp(2114),1)=0
 c       mdcy(pycomp(2214),1)=0
@@ -878,22 +842,21 @@ c	parton initiation
 	ijk=0
         time_ini=0.d0   ! 081010 
 c	write(9,*)'before call parini iii=',iii   ! sa
-c060605	 for p+A, A+p, A+A, & lepton+A   ! 240513 060813 1400414
 	call parini(time_ini,parp21,parp22,win,psno,ijk) ! 081010 240513  
+c060605	 for p+A, A+p,e^-A and A+A   ! 240513 060813
         if(ijk.eq.1)goto 300   ! to avoide infinite loop in parcas 060813
-        if(ipden.lt.11)call pyedit(2)   ! 060813
-        if(ipden.ge.11)call pyedit(1)   ! 060813
+	call pyedit(2)
 c	no parton produced at all
 	if(n.le.0)then
 c	write(9,*)'neve,nncoll,n=',neve,nncoll,n   ! sa
 	nncoll=nncoll+1
-c060814	if(nncoll.gt.neve)then
-c	stop 8888
-c060814	endif
+	if(nncoll.gt.neve)then
+	write(9,*)'iii,nncoll=',iii,nncoll   ! sa
+c220517	stop 8888
+	endif
 	iii=iii-1
 	goto 300
 	endif
-c070417	if(adj140.eq.5)goto 30000   ! 140414 060814
 	if(adj140.eq.1)then   ! 290505 271205 
 c271205
         eevp=0.
@@ -929,7 +892,6 @@ c        if(iii.eq.3)call pylist(1)
         endif
 c271205  
 c	goto 889   ! temporal
-30000	continue   ! 140414
 c250209
         n44=0
         do j=1,nbh
@@ -942,7 +904,6 @@ c250209
 c       move "44" from 'sbh' to 'sgam'
         if(n44.gt.0)call remo_gam_sbh(44)
 c250209
-c070417	if(adj140.eq.5)goto 30001   ! 140414
 	if(n.lt.2)goto 889   ! 151302
 	if(itden.ne.1)goto 890   ! for e+e-,p+p,pbar_p, or p+pbar 080806 
 c	partonic cascade
@@ -1069,7 +1030,7 @@ c250209
         endif
         enddo
 c       write(9,*)'iiii,iii,n55=',iiii,iii,n55   ! sa
-c       move '55' from 'lujets' to 'sgam'
+c       move '55' from 'pyjets' to 'sgam'
         if(n55.gt.0)call remo_gam_par(55)
 c250209
 890	continue   ! 020512
@@ -1268,29 +1229,6 @@ c       move particle list 'pyjets' one step downward since i1+1
 222     continue
 c141208
 c161203
-c140414
-30001	continue
-c070417	if(adj140.eq.5)then
-c	'sbh' to 'pyjest'
-c	if(nbh.eq.0)goto 5001   
-c	do l=1,nbh
-c	do m=1,5
-c	k(l,m)=kbh(l,m)
-c	p(l,m)=pbh(l,m)
-c	v(l,m)=vbh(l,m)
-c	enddo
-c	enddo
-c	n=nbh
-c	do i=n+1,kszj   ! 261103
-c	do j=1,5
-c	k(i,j)=0
-c	p(i,j)=0.
-c	v(i,j)=0.
-c	enddo
-c	enddo
-c	5001    continue
-c070417	endif
-c140414
 	if(kjp21.eq.1)then   ! 1
         call filt
         do i=1,kfmax
@@ -1299,7 +1237,7 @@ c140414
         nbh1=n-nup
 c       nup is the number of particles kept in 'pyjets'
 c       nbh1 is the number of particles storing in 'sbh'
-c060813	lepton is not rescattering with hadrons
+c060813	e- is not rescattering with hadrons
         if(nbh1.eq.0)goto 7000
         do i=nup+1,n
         nbh=i-nup
@@ -1428,8 +1366,8 @@ c       move "66" from 'lujets' to 'sgam'
         if(n66.gt.0)call remo_gam(66)
 c250209
 c       perform particle, declared unstable in the 'mdcy' array, decay
-c130205	call pyexec
-	rrp=1.16   ! 130205
+c130205	call pyexec    
+	rrp=1.16   
 	call decayh(rrp)   ! 130205
 c181003
 888	continue
@@ -1448,8 +1386,7 @@ c181003
 	write(9,*)'rou0,rao,rnp,rnt=',rou0,rao,rnp,rnt
 	write(9,*)'csnn,cspin,cskn=',csnn,cspin,cskn
 	write(9,*)'cspipi,cspsn,cspsm=',cspipi,cspsn,cspsm
-	write(9,*)'ifram,rcsit,kfmax,ipden,itden=',
-     c	 ifram,rcsit,kfmax,ipden,itden   ! 060813
+	write(9,*)'ifram,rcsit,kfmax=',ifram,rcsit,kfmax
 	write(9,*)(kfaco(i),i=1,kfmax)
 	write(9,*)(disbe(i,i),i=1,kfmax)
 	write(9,*)(disbe(1,i),i=1,8)
@@ -1457,8 +1394,7 @@ c181003
 	write(9,600)isinel
 	endif
 c050603
-        if(ipden.lt.11)call pyedit(2)   ! 060813
-        if(ipden.ge.11)call pyedit(1)   ! 060813
+	call pyedit(2) 
 	if(nout.eq.1 .or. iii.eq.1 .or. mod(iii,nout).eq.0 .or. iii
      c	 .eq.neve)then   
 	write(mstu(11),*)'event=',iii
@@ -1508,8 +1444,6 @@ c281104
 	endif
 c281104
 3000	continue
-	if((itden.eq.0.and.ipden.eq.1).or.(itden.eq.1.and.ipden.eq.0)
-     c	 .or.(itden.eq.1.and.ipden.eq.1))then   ! 260314
 	c(1)=yy   
 	if(ifram.eq.1)c(1)=eta   
 	c(2)=ppt
@@ -1519,14 +1453,14 @@ c	.
 	kkk=1
 c033101
 c	statistics of negative multiplicity
-	if(adj140.ge.4. .and. plu6.lt.-0.9)then   ! for hadron 140414
+	if(adj140.eq.4. .and. plu6.lt.-0.9)then   ! for hadron
 	nminf=nminf-plu6
 	do i=1,iflmax
 	if(c(i).lt.afl(kkk,i,1) .or. c(i).gt.afl(kkk,i,2))goto 700
 	enddo
 	nmin=nmin-plu6	
 700	endif
-	if(adj140.lt.4. .and. plu6.lt.-0.2)then   ! for parton 140414
+	if(adj140.ne.4. .and. plu6.lt.-0.2)then   ! for parton
         nminf=nminf+1.   ! -plu6 230206
         do i=1,iflmax
         if(c(i).lt.afl(kkk,i,1) .or. c(i).gt.afl(kkk,i,2))goto 702
@@ -1538,7 +1472,7 @@ c       statistics of charged particles multiplicity
 c033101	statistics positive multiplicity
 c070802
 c       if(dabs(plu6).gt.0.9 .and. iabs(ik).ne.11)then
-        if(adj140.ge.4. .and. plu6.gt.0.9)then   ! for hadron 140414
+        if(adj140.eq.4. .and. plu6.gt.0.9)then   ! for hadron
 c070802
         nchaf=nchaf+plu6 
         do i=1,iflmax
@@ -1546,7 +1480,7 @@ c070802
         enddo
         ncha=ncha+plu6 
 701     endif
-	if(adj140.lt.4. .and. plu6.gt.0.2)then   ! for parton 140414
+	if(adj140.ne.4. .and. plu6.gt.0.2)then   ! for parton
 c070802
         nchaf=nchaf+1.   ! +plu6 230206
         do i=1,iflmax
@@ -1554,9 +1488,7 @@ c070802
         enddo
         ncha=ncha+1.   ! +plu6 230206
 703     endif
-	endif   ! 260314
-c260314	statistics of y, pt, ect. distributions (for NA,AN,and AA); z, \nu,
-c        ect. distributions (for lepton-nucleus)
+c	statistics of y, pt, ect. distributions
 	do 500 kk=1,ispmax
 	kf=ispkf(kk)
 	if(ik.ne.kf)goto 500
@@ -1580,15 +1512,7 @@ c	if(ifram.eq.1 .and. (p4.gt.eepd .and. p4.lt.eepu))then
         endif
 c       exclude the projectile and the target spectator nucleons
 c????????????????????????????????????????????????????????????????????
-840	continue   ! 260314
-c260314 case of nucleon or nucleus incidence
-        if((itden.eq.0.and.ipden.eq.1).or.(itden.eq.1.and.ipden.eq.0)
-     c   .or.(itden.eq.1.and.ipden.eq.1))
-     c	call stati_h(yy,ppt,eta,p5,ik,kk,w,bn,an,bnf,anf)   ! 010600
-c       case of lepton incidence
-	if(ipden.ge.11.and.ipden.le.16)
-     c   call stati_l(p1,p2,p3,p4,p5,ik,kk,w,bn,an,bnf,anf)
-c260314
+840	call stati(yy,ppt,eta,p5,ik,kk,w,bn,an,bnf,anf)   ! 010600
 	goto 901   ! sa 26/05/99 (originally  'goto 400')
 500	continue
 c?????? follow three statements are increaded on 26/05/99 by sa ******
@@ -1770,8 +1694,6 @@ c200601
 c200601
         if(psno.eq.2)write(10,*)'psno, ave. b,N_part and N_bin=',
      c   psno,averbo,psnopo,psnoto,psnono*csnn   ! 280113
-	if(ipden.ge.11.and.ipden.le.16)
-     c   write(10,*)'event average number of lepton studied=',vnlep/flaa !260314
 c070417
         if(kjp22.eq.0 .or. kjp22.eq.1)then
         write(10,*)'kjp22=0, par1,par2,par3,par21=',
@@ -1810,38 +1732,6 @@ csa****************************************************************
 	write(10,*)(saof(m1,m2,m3),m1=1,20)
 	enddo
 	enddo
-c260314
-	if(ipden.ge.11.and.ipden.le.16)then
-        do kk=1,10
-	sbn1=sbn(1)
-	sbn1=dmax1(sbn1,1.d-20)
-	sbnf1=sbnf(1)
-	sbnf1=dmax1(sbnf1,1.d-20)
-        if(kk.ne.1)sbo(kk)=sbn(kk)/sbn1
-	if(kk.ne.1)sbof(kk)=sbnf(kk)/sbnf1  
-        do i1=1,20
-        do i2=1,isdmax
-	san1=san(i1,i2,1)
-	san1=dmax1(san1,1.d-20)
-	sanf1=sanf(i1,i2,1)
-	sanf1=dmax1(sanf1,1.d-20)
-        if(kk.ne.1)sao(i1,i2,kk)=san(i1,i2,kk)/san1   
-	if(kk.ne.1)saof(i1,i2,kk)=sanf(i1,i2,kk)/sanf1   
-        enddo
-        enddo
-        enddo
-        write(10,*)'relative multiplicity,p=',(sbo(ll),ll=1,10)
-	write(10,*)'relative multiplicity,f=',(sbof(ll),ll=1,10)   
-        do m2=1,isdmax
-        write(10,*)'ID of relative distribution m2=',m2
-        do m3=1,10
-        write(10,*)'distribution belong to m3=',m3
-        write(10,*)(sao(m1,m2,m3),m1=1,20)  
-	write(10,*)(saof(m1,m2,m3),m1=1,20)   
-        enddo
-        enddo
-	endif
-c260314
 	write(10,*)'average frequency of the occurring of each inela.'
 	write(10,*)dineli
 
@@ -1861,9 +1751,6 @@ c           parameter
 	goto 300
 	endif
 	
-	write(9,*)'nncoll=',nncoll   ! sa 060814
-c060813 statistics of processes generated
-        call pystat(0)   ! 060813
 	close(2)
 	close(3)
 	close(5)
@@ -1877,8 +1764,8 @@ c	write(9,*)'time consuming =',timeb
 	end
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	subroutine stati_h(y,pt,eta,p5,ik,kk,ww,a,b,af,bf)   ! 260314
-c	on line statistics for NA,AN,and AA collisions   ! 260314
+	subroutine stati(y,pt,eta,p5,ik,kk,ww,a,b,af,bf)
+c	on line statistics
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
@@ -1989,87 +1876,6 @@ c010600
 
 
 
-c260314cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-       subroutine stati_l(p1,p2,p3,p4,p5,ik,kk,ww,a,b,af,bf)   
-c       on line statistics for lepto-nucleus collision
-      IMPLICIT DOUBLE PRECISION(A-H, O-Z)
-      IMPLICIT INTEGER(I-N)
-      INTEGER PYK,PYCHGE,PYCOMP
-	common/sa7/ispmax,isdmax,iflmax,ispkf(20),non7,asd(5),
-     c   afl(20,5,2)
-        common/sa10/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
-     &  iabsb,iabsm,non10,ajpsi,csspn,csspm,csen   ! 060813
-	common/sa21/pincl(5),pscal(5),pinch(5),vnu,fq2,w2l,yyl,zl,xb,pph
-     c	 ,vnlep
-	dimension a(20),b(20,5,20),af(20),bf(20,5,20),c(5),id(5)
-c        vnu: \nu; fq2: Q^2=-q^2; w2l: W^2; yyl: y; zl: z; xb: x_B; pph: P_h
-c	calculate kinematic variable relevant to the produced hadron
-	pph=p1*p1+p2*p2+p3*p3
-	pph=dmax1(pph,1.d-20)
-	pph=dsqrt(pph)
-	zln=pinch(4)*p4-pinch(1)*p1-pinch(2)*p2-pinch(3)*p3   ! numerator of z
-	zld=pinch(5)*vnu   ! denominator of z
-	zld=dmax1(zld,1.d-20)
-	zl=zln/zld
-c	write(9,*)'ik,kk,pph,zl=',ik,kk,pph,zl
-        do 10000 i=1,iflmax   ! iflmax: total number of kinematic constrants
-        goto (10,20,30,40,50) i
-10      c(i)=fq2   ! -q^2
-	goto 10000
-20      c(i)=w2l   ! W^2
-        goto 10000
-30      c(i)=yyl   ! y
-        goto 10000
-40      c(i)=pph   ! p_h
-	goto 10000
-50      c(i)=zl   ! z
-10000   continue
-c	write(9,*)'c(i)=',(c(i),i=1,5)
-c       calculate the abscissa one by one
-40000   do 20000 i=1,isdmax
-        goto (100,200,300,400,500) i
-c       z is located in which interval?
-100     id(i)=zl/asd(i)+1
-        goto 20000
-c       \nu is located in which interval?
-200     id(i)=vnu/asd(i)+1
-        goto 20000
-c       -q^2 is located in which interval?
-300     id(i)=fq2/asd(i)+1
-        goto 20000
-400     continue
-        goto 20000
-500     continue
-20000   continue
-c	write(9,*)'asd(i)=',(asd(i),i=1,5)
-c	write(9,*)'id(i)=',(id(i),i=1,3)
-c       make statistics of particle yield and desired distributions
-        af(kk)=af(kk)+ww
-        do i=1,isdmax
-        ii=id(i)
-        if(ii.lt.1 .or. ii.gt.20)goto 30000
-        if(i.eq.1)bf(ii,i,kk)=bf(ii,i,kk)+ww/asd(i)
-        if(i.eq.2)bf(ii,i,kk)=bf(ii,i,kk)+ww/asd(i)
-        if(i.eq.3)bf(ii,i,kk)=bf(ii,i,kk)+ww/asd(i)
-30000   enddo
-c       put kinematic constraints to be effective
-        do i=1,iflmax
-        if(c(i).lt.afl(kk,i,1) .or. c(i).gt.afl(kk,i,2))return
-        enddo
-c       make statistics of particle yield and desired distributions
-        a(kk)=a(kk)+ww
-        do i=1,isdmax
-        ii=id(i)
-	if(ii.lt.1 .or. ii.gt.20)goto 50000
-        if(i.eq.1)b(ii,i,kk)=b(ii,i,kk)+ww/asd(i)
-        if(i.eq.2)b(ii,i,kk)=b(ii,i,kk)+ww/asd(i)
-        if(i.eq.3)b(ii,i,kk)=b(ii,i,kk)+ww/asd(i)
-50000   enddo
-        return
-        end
-
-
-
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine oscar(iii)
 c       record history of spatial and momentum coordinates due to
@@ -2147,15 +1953,16 @@ c       move particle list 'pyjets' one step downward from i1+1 to n
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	subroutine remo_gam_par(ii)   ! 250209
-c	move particles with flavor code ii ('55') from 'lujets' to 'sgam'
+c	move particles with flavor code ii ('55') from 'pyjets' to 'sgam'
 	parameter (kszj=40000)
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)
       INTEGER PYK,PYCHGE,PYCOMP
 	COMMON/PYJETS/N,NONJ,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
 	common/sgam/ngam,nongam,kgam(kszj,5),pgam(kszj,5),vgam(kszj,5)
-	common/ssin/nsin,nonsin,ksin(kszj,5),psin(kszj,5),vsin(kszj,5),
-     c   bsin(kszj)   ! 140506
+c190517	common/ssin/nsin,nonsin,ksin(kszj,5),psin(kszj,5),vsin(kszj,5),
+c190517	c   bsin(kszj)   ! 140506
+	common/ssin/bsin(kszj)   ! 190517
 	jb=0
 201     do i1=jb+1,n
         kf=k(i1,2)
@@ -2195,7 +2002,7 @@ c       move particle list 'pyjets' one step downward from i1+1 to n
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	subroutine remo_gam(ii)   ! 250209
-c	move particles with flavor code ii ('66') from  'lujets' to 'sgam'
+c	move particles with flavor code ii ('66') from  'pyjets' to 'sgam'
 	parameter (kszj=40000)
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)

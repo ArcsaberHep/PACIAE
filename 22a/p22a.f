@@ -2995,6 +2995,7 @@ C...Commonblocks.
       COMMON/PYINT2/ISET(500),KFPR(500,2),COEF(500,20),ICOL(40,4,2)
       COMMON/PYINT4/MWID(500),WIDS(500,5)
       COMMON/PYINT5/NGENPD,NGEN(0:500,3),XSEC(0:500,3)
+        common/sa34/iikk   ! 060617
       SAVE /PYJETS/,/PYDAT1/,/PYDAT2/,/PYDAT3/,/PYPARS/,/PYINT1/,
      &/PYINT2/,/PYINT4/,/PYINT5/
 C...Local array.
@@ -3279,6 +3280,13 @@ C...Set nonvanishing production vertex (optional).
  
 C...Perform hadronization (if desired).
         IF(MSTP(111).GE.1) THEN
+c060617
+        iikk=0
+        do i1=1,n
+        if(k(i1,2).eq.88)iikk=1
+        enddo
+        if(iikk.eq.0)call remo
+c060617
           CALL PYEXEC
           IF(MSTU(24).NE.0) GOTO 100
         ENDIF
@@ -3354,6 +3362,7 @@ C...Commonblocks.
       COMMON/PYINTM/KFIVAL(2,3),NMI(2),IMI(2,800,2),NVC(2,-6:6),
      &     XASSOC(2,-6:6,240),XPSVC(-6:6,-1:240),PVCTOT(2,-1:1),
      &     XMI(2,240),PT2MI(240),IMISEP(0:240)
+        common/sa34/iikk   ! 060617
       SAVE /PYJETS/,/PYCTAG/,/PYDAT1/,/PYDAT2/,/PYDAT3/,
      &     /PYPARS/,/PYINT1/,/PYINT2/,/PYINT4/,/PYINT5/,/PYINTM/
 C...Local arrays.
@@ -3689,6 +3698,13 @@ C...Set nonvanishing production vertex (optional).
  
 C...Perform hadronization (if desired).
         IF(MSTP(111).GE.1) THEN
+c060617
+        iikk=0
+        do i1=1,n
+        if(k(i1,2).eq.88)iikk=1
+        enddo
+c060617
+        if(iikk.eq.0)call remo   ! 110517 060617
           CALL PYEXEC
           IF(MSTU(24).NE.0) GOTO 100
         ENDIF
@@ -58948,8 +58964,6 @@ C...Commonblocks.
       COMMON/PYJETS/N,NPAD,K(40000,5),P(40000,5),V(40000,5)
       COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
       COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
-        common/sa27/itime,kjp22,gtime,astr,akapa(5),parj1,parj2,parj3,
-     c   parj21   ! 051108
       SAVE /PYJETS/,/PYDAT1/,/PYDAT2/
 C...Local arrays. All MOPS variables ends with MO
       DIMENSION DPS(5),KFL(3),PMQ(3),PX(3),PY(3),GAM(3),IE(2),PR(2),
@@ -59044,19 +59058,8 @@ C...Boost copied system to CM frame (for better numerical precision).
   130   CONTINUE
       ENDIF
 
-c051108
-c       follow statements are added by Sa to calculate effective string tension
-        if(kjp22.eq.0)then
-        call strtension(ip,np)
-c        write(9,*)'af strtension in p64, ip,np,n=',ip,np,n
-        endif
-        if(kjp22.eq.1)then
-        call strtension1(ip,np)
-ch        write(9,*)'3 af strtension1 in p64, ip,np,n=',ip,np,n
-        endif
-c       ip: line number in 'pyjets' of first entry of current string
-c       np: number of partons in current string
-c051108 
+csa       ip: line number in 'pyjets' of first entry of current string
+csa       np: number of partons in current string
 C...Search for very nearby partons that may be recombined.
       NTRYR=0
       NTRYWR=0
@@ -60340,19 +60343,6 @@ C...Boost back particle system. Set production vertices.
  1240   CONTINUE
  1250 CONTINUE
 
-c051108
-        if(kjp22.eq.0 .or. kjp22.eq.1)then
-ch      write(9,*)'3 new parj=',parj(1),parj(2),parj(3),parj(21)
-        parj(1)=parj1
-        parj(2)=parj2
-        parj(3)=parj3
-        parj(21)=parj21
-ch      write(9,*)'3 out of pystrf in p64,n=',n
-ch      write(9,*)'3 old parj=',parj1,parj2,parj3,parj21
-ch      write(mstu(11),*)'3'
-ch      call pylist(1)
-        endif
-c051108 
       RETURN
       END
  

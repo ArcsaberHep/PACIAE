@@ -21,7 +21,7 @@ c      COMMON/PYPARS/MSTP(200),PARP(200),MSTI(200),PARI(200)
 c080104
         common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio
         common/sa27/itime,kjp22,gtime,astr,akapa(5),parj1,parj2,parj3,
-     c   parj21   ! 051108
+     c   parj21,div,gpmax,nnc   ! 051108 070417   
         common/sbe/nbe,nonbe,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
         common/saf/naf,nonaf,kaf(kszj,5),paf(kszj,5),vaf(kszj,5)
         common/sbh/nbh,nonbh,kbh(kszj,5),pbh(kszj,5),vbh(kszj,5)
@@ -51,71 +51,39 @@ c	call pylist(1)
 	rn(i1,j1)=0.
 	enddo
 	enddo
-c051108
-        if(kjp22.eq.0 .or. kjp22.eq.1)then
-        itime=0
-        gtime=0.
-        astr=0.
-        do i1=1,5
-        akapa(i1)=0.
-        enddo
-        endif
-c051108
-	mstj(1)=mstj1_2
+c070417	mstj(1)=mstj1_2
 c	write(9,*)'in hadniz iii,mstu,mstj(1)-(3)=',iii,mstu(21),mstj(1),
 c     c	 mstj(2),mstj(3)   
-	mstj(21)=0
+c070417	mstj(21)=0
 c       particle decay is inhibited
 c	produced hadron from calling 'pyexec' is arranged at the position   
 c	 of parent, decayed hadrons do not have proper position so 
 c	 we inhibite first the decay
 	call pyexec
 c141208
-        if(n.eq.0)then
+c070417	if(n.eq.0)then
 c       fragment that hh collision pair by pythia directly
-        call pyname(kfa,chaua)
-        call pyname(kfb,chaub)
+c	call pyname(kfa,chaua)
+c	call pyname(kfb,chaub)
 c       write(22,*)'cha,chb=',chaua,chaub
-        call  pyinit('cms',chaua,chaub,ss)
-        call pyevnt
-        nbh=0   ! 111210
-        ijk=1
+c	call  pyinit('cms',chaua,chaub,ss)
+c	call pyevnt
+c	nbh=0   ! 111210
+c	ijk=1
 c240209
-        n44=0
-        do j=1,n
-        kf=k(j,2)
-        if(kf.eq.22)then
-        k(j,2)=44   ! '44': prompt direct photon
-        n44=n44+1
-        endif
-        enddo
+c	n44=0
+c	do j=1,n
+c	kf=k(j,2)
+c	if(kf.eq.22)then
+c	k(j,2)=44   ! '44': prompt direct photon
+c	n44=n44+1
+c	endif
+c	enddo
 c       move "44" from 'pyjets' to 'sgam'
-        if(n44.gt.0)call remo_gam(44)
+c	if(n44.gt.0)call remo_gam(44)
 c240209
-        endif
+c070417	endif
 c141208
-c051108
-        if(kjp22.eq.0 .or. kjp22.eq.1)then
-        do i1=1,n
-        if(k(i1,2).eq.92)astr=astr+1.
-        enddo
-c       parj(1)=parj1
-c       parj(2)=parj2
-c       parj(3)=parj3
-c       parj(21)=parj21
-        atime=dfloat(itime)
-        if(atime.gt.0.)then
-        akapa(1)=akapa(1)/atime
-        akapa(2)=akapa(2)/atime
-        akapa(3)=akapa(3)/atime
-        akapa(4)=akapa(4)/atime
-        akapa(5)=akapa(5)/atime
-        gtime=gtime/atime
-c       gtime: averaged # of gluons in a string in current event
-        endif
-c       write(9,*)'af call luexec and kjp22,n=',n   !
-        endif
-c051108
         if(ipden.lt.11)call pyedit(2)   ! 060813
         if(ipden.ge.11)call pyedit(1)   ! 060813
 c	call pylist(1)
@@ -199,7 +167,7 @@ c	transfer four position messages from 'sa1_h' to 'pyjets'
 c	write(9,*)'af position n=',n
 
 c       decay of unstable hadrons
-	call decayh(rrp)
+c070417	call decayh(rrp)
 	return
 	end
 
@@ -459,112 +427,6 @@ c	write(mstu(11),*)peo,ich1/3   !
 	write(9,*)peo,ich1/3   !
         return
         end
-
-
-
-c051108ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	subroutine strtension(ip,np)
-c       calculate the effective string tension after tuning parj(1),(2),
-c        (3),(21) to the rapidity density etc. for each string  
-c       the string takes up items from n+1 to n+np in "pyjets" 
-      IMPLICIT DOUBLE PRECISION(A-H, O-Z)
-      IMPLICIT INTEGER(I-N)
-      INTEGER PYK,PYCHGE,PYCOMP
-      PARAMETER (KSZJ=40000,KSZ1=30)
-      COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
-      COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200) 
-        common/sa27/itime,kjp22,gtime,astr,akapa(5),parj1,parj2,parj3,
-     c   parj21   ! 051108
-        vfr24=3.5   ! parameter alpha
-        vfr25=0.8   ! \sqrt(s_0) in GeV
-        toteng=0.0
-        toten=0.0
-        totglukt=0.0
-        pmax=0.
-        ggg=0.
-c 	do i=n+1,n+np
-        do i=ip,ip+np-1
- 	toten=toten+p(i,4)   ! s, string total energy
- 	pp=dsqrt(p(i,1)**2+p(i,2)**2)
- 	if(k(i,2).eq.21.and.pp.gt.vfr25)then
-        toteng=toteng+dlog(pp/vfr25)   ! sum over gluons in a string
-        ggg=ggg+1.
-        endif	
- 	if(k(i,2).eq.21.and.pp.gt.pmax)pmax=pp   ! k_{Tmax}^2
- 	enddo
-        if(pmax.gt.vfr25)totglukt=totglukt+dlog(pmax/vfr25)   ! numerator	
- 	ss=dlog(toten/vfr25)+toteng   ! denominator
- 	effk2=(1.-totglukt/ss)**(-vfr24)
-c       string tension of the pure qqbar string, kapa0, is assumed to be 1 	
-	akapa(1)=akapa(1)+effk2
-	itime=itime+1
-        gtime=gtime+ggg
-	return
-	end
-
-
-
-c051108ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	subroutine strtension1(ip,np)
-c       calculate the effective string tension for each string and then
-c       calculate the new parj(1),parj(2) etc. in the current event.
-c       when this subroutine is called in pythia the string has been boosted
-c       to its own cms frame. the whole string takes up items from n+1 to n+np
-c       in pyjets
-      IMPLICIT DOUBLE PRECISION(A-H, O-Z)
-      IMPLICIT INTEGER(I-N)
-      INTEGER PYK,PYCHGE,PYCOMP
-      PARAMETER (KSZJ=40000,KSZ1=30)
-      COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
-      COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)         
-        common/sa27/itime,kjp22,gtime,astr,akapa(5),parj1,parj2,parj3,
-     c   parj21   ! 051108
-        common/sa29/effk1,lcub   ! 051108
-        vfr24=3.5   ! parameter alpha
-        vfr25=0.8   ! \sqrt(s_0) in GeV
-        toteng=0.0
-        toten=0.0
-        totglukt=0.0
-        pmax=0.
-        ggg=0.
-ch      write(9,*)'in strtension1 ip,np,n,effk1=',ip,np,n,effk1   !
-c        write(9,*)'in strtension1 ip,np,n,effk1=',ip,np,n,effk1   !
-c 	do i=n+1,n+np
-        do i=ip,ip+np-1
- 	toten=toten+p(i,4)   ! s, string total energy
- 	pp=dsqrt(p(i,1)**2+p(i,2)**2)
- 	if(k(i,2).eq.21.and.pp.gt.vfr25)then
-        toteng=toteng+dlog(pp/vfr25)   ! sum over gluons in a string
-        ggg=ggg+1.
-        endif	
- 	if(k(i,2).eq.21.and.pp.gt.pmax)pmax=pp   ! k_{Tmax}^2
-c       write(9,*)'i,toten,pp,toteng,ggg=',i,toten,pp,toteng,ggg   !
- 	enddo
-        if(pmax.gt.vfr25)totglukt=totglukt+dlog(pmax/vfr25)   ! numerator	
- 	ss=dlog(toten/vfr25)+toteng   ! denominator
-        div=totglukt/ss
- 	effk2=(1.-div)**(-vfr24)
-c       string tension of the pure qqbar string, kapa0, is assumed to be 1 	
-c       write(9,*)'pmax,nu.,de.,div.,vfr24,effk2=',pmax,totglukt,ss,div,
-c    c   vfr24,effk2   !
-	akapa(1)=akapa(1)+effk2
- 	parj(21)=parj21*((effk2/effk1)**(0.5))
- 	parj(1)=parj1**(effk1/effk2)
- 	parj(2)=parj2**(effk1/effk2)
- 	parj(3)=parj3**(effk1/effk2)
-	akapa(2)=akapa(2)+parj(2)
-	akapa(3)=akapa(3)+parj(21)
-	akapa(4)=akapa(4)+parj(1)
-	akapa(5)=akapa(5)+parj(3)
-	itime=itime+1
-        gtime=gtime+ggg
-ch       write(9,*)'2 old parj1,parj2,parj3,parj21=',parj1,parj2,parj3
-ch     c   ,parj21   !
-ch       write(9,*)'new=',parj(1),parj(2),parj(3),parj(21)   !
-c       write(9,*)'akapk=',akapa(1),akapa(2),akapa(3),akapa(4),akapa(5)   !
-ch       write(9,*)'2 out of strtension ip,np,n=',ip,np,n   !
-	return
-	end
 
 
 
