@@ -104,7 +104,7 @@ RUN="RAW"            # Additional option. Not required to be modified usually.
 #                                                                              #
 #                                           By An-Ke Lei at CCNU on 17/10/2022 #
 #                                                                              #
-#                                      Last updated by An-Ke Lei on 09/12/2023 #
+#                                      Last updated by An-Ke Lei on 21/12/2023 #
 ################################################################################
 ################################################################################
 ################################################################################
@@ -166,12 +166,38 @@ i_random=1  # (D=1) adj(26), random generator seed in PYTHIA:
             #         =1, seed from the real-time system clock (h-min-s-ms)
 
 #*******************************************************************************
+# Setups of the collision system.
+# The "ipden" and "itden" in PACIAE for different systems.
+# If others, please select them manually.
+i_proj=1    # (D=1) ipden:
+            #              =2,  for e+e-
+            #              =11, if projectile is e- (e+)
+            #              =12, if projectile is nu_e (nu_ebar)
+            #              =13, if projectile is mu- (mu+)
+            #              =14, if projectile is nu_mu (nu_mubar)
+            #              =15, if projectile is tau- (tau+)
+            #              =16, if projectile is nu_tau (nu_taubar)
+            #              =0,  if projectile is N (anti-N)
+            #              =1,  if A 
+            #              For N and A, it will be given antomatically.
+i_targ=2    # (D=2) itden: (only e-, N (anti-N) and A, no other type)
+            #            =2,  for e+e-
+            #            =0,  if N (anti-N)
+            #            =1,  if A
+            #            For N and A, it will be given antomatically.
+            # For ep, eA, nu_eA, etc.:
+            #   e-p      : nap=1, nzp=-1, ipden=11, itden=0;
+            #   e+p      : nap=1, nzp= 1, ipden=11, itden=0;
+            #   e-A      : nap=1, nzp=-1, ipden=11, itden=1;
+            #   e+A      : nap=1, nzp= 1, ipden=11, itden=1;
+            #   nu_eA    : nap=1, nzp=-1, ipden=12, itden=1;
+            #   nu_ebarA : nap=1, nzp= 1, ipden=12, itden=1.
 # Setups of the incident particles.
 na_proj=197 # nap, nucleon number of projectile
 nz_proj=79  # nzp, proton number of projectile
 na_targ=197 # nat, nucleon number of target
 nz_targ=79  # nzt, proton number of target
-            # For NN, NA (AN), and AB collisions
+            # For NN, NA (AN), and AB collisions:
             #   p+p   : 1,1,1,1;
             #   p+pbar: 1,1,1,-1; pbar+p: 1,-1,1,1
             #   p+n   : 1,1,1, 0; n+p   : 1, 0,1,1
@@ -182,6 +208,12 @@ nz_targ=79  # nzt, proton number of target
             #   Ag+Ag : 108,47,108,47; Cu+Cu: 63,29,63,29;
             #   Ru+Ru :  96,44, 96,44; Zr+Zr: 96,40,96,40;
             #   O + O :  16, 8, 16, 8; C + C: 12, 6,12 ,6.
+            # For e+e-, lp & (lbar + p) and lA & (lbar + A) collisions:
+            #   e+e-  : 1,1,1,-1;
+            #   l+p   : 1,1,1,1  wtih i_proj > 10;
+            #   lbar+p: 1,-1,1,1 wtih i_proj > 10;
+            #   l+A   : 1,1,A,Z  wtih i_proj > 10;
+            #   lbar+A: 1,-1,A,Z wtih i_proj > 10.
 
 #*******************************************************************************
 # Setups of the simulation.
@@ -403,8 +435,8 @@ rap_upp=1.4     # y/eta upper cut
 ((tot_eve=n_run*n_eve))
 
 # The "ipden" and "itden" in PACIAE for different systems.
-i_proj=1
-i_targ=1
+i_proj_o=${i_proj}
+i_targ_o=${i_targ}
 if [[ "${na_proj}" = "1" ]]; then      # For N.
     i_proj=0
 elif [[ "${na_proj}" > "1" ]]; then    # For A.
@@ -419,6 +451,25 @@ if [[ "${i_proj}" = "0" && "${i_targ}" = "0" ]]; then
     b_samp=0
 fi
 # If others, please select them manully.
+#Lei20231106B---------
+if [[ "${i_proj_o}" = "2" && "${i_targ_o}" = "2" ]]; then      # For e+e-.
+    i_proj=${i_proj_o}
+    i_targ=${i_targ_o}
+    na_proj=1
+    nz_proj=1
+    na_targ=1
+    nz_targ=-1
+    b_samp=0
+elif [ "${i_proj_o}" > "1" ]; then    # For lA.
+    i_proj=${i_proj_o}
+    # nz_proj=1
+    # nz_proj=-1
+    if [ "${i_targ}" = "0" ]; then    # For lp.
+        nz_targ=1
+        b_samp=0
+    fi
+fi
+#Lei20231106E---------
 # i_proj=1  # ipden =0,  if projectile is nucleon (anti-nucleon)
             #       =1,  if nucleus
             #       =2,  for e+e-
@@ -1369,22 +1420,26 @@ cd ./sim   # The simulation will be performed in sim folder.
 
 #*******************************************************************************
 # File name
-if [[ "${na_proj}" = "1" && "${nz_proj}" = "1" ]]; then
+if [ "${na_proj}" = "1" ]; then
     proj_name="p"
-elif [[ "${na_proj}" = "1" && "${nz_proj}" = "-1" ]]; then
-    proj_name="pbar"
-elif [[ "${na_proj}" = "1" && "${nz_proj}" = "0" ]]; then
-    proj_name="n"
+    if [ "${nz_proj}" = "-1" ]; then
+        proj_name="pbar"
+    elif [ "${nz_proj}" = "0" ]; then
+        proj_name="n"
+    fi
 elif [ "${na_proj}" = "12" ]; then
     proj_name="C${na_proj}"
 elif [ "${na_proj}" = "16" ]; then
     proj_name="O${na_proj}"
 elif [ "${na_proj}" = "63" ]; then
     proj_name="Cu${na_proj}"
-elif [[ "${na_proj}" = "96" && "${nz_proj}" = "44" ]]; then
-    proj_name="Ru${na_proj}"
-elif [[ "${na_proj}" = "96" && "${nz_proj}" = "40" ]]; then
-    proj_name="Zr${na_proj}"
+elif [ "${na_proj}" = "96" ]; then
+    proj_name="${na_proj}"
+    if [ "${nz_proj}" = "40" ]; then
+        proj_name="Zr${na_proj}"
+    elif [ "${nz_proj}" = "44" ]; then
+        proj_name="Ru${na_proj}"
+    fi
 elif [ "${na_proj}" = "108" ]; then
     proj_name="Ag${na_proj}"
 elif [ "${na_proj}" = "129" ]; then
@@ -1398,24 +1453,63 @@ elif [ "${na_proj}" = "238" ]; then
 else
     proj_name="${na_proj}"
 fi
+#Lei20231106B-- e+e-, lp and lA
+if [[ "${i_proj}" = "2" && "${i_targ}" = "2" ]]; then
+    proj_name=e+
+elif [[ "${i_proj}" = "11" ]]; then
+    proj_name=e+
+    if [ "${nz_proj}" = "-1" ]; then
+        proj_name=e-
+    fi
+elif [[ "${i_proj}" = "12" ]]; then
+    proj_name=nu_ebar
+    if [ "${nz_proj}" = "-1" ]; then
+        proj_name=nu_e
+    fi
+elif [[ "${i_proj}" = "13" ]]; then
+    proj_name=mu+
+    if [ "${nz_proj}" = "-1" ]; then
+        proj_name=mu-
+    fi
+elif [[ "${i_proj}" = "14"  ]]; then
+    proj_name=nu_mubar
+    if [ "${nz_proj}" = "-1" ]; then
+        proj_name=nu_mu
+    fi
+elif [[ "${i_proj}" = "15"  ]]; then
+    proj_name=tau+
+    if [ "${nz_proj}" = "-1" ]; then
+        proj_name=tau-
+    fi
+elif [[ "${i_proj}" = "16"  ]]; then
+    proj_name=nu_taubar
+    if [ "${nz_proj}" = "-1" ]; then
+        proj_name=nu_tau
+    fi
+fi
+#Lei20231106E--
 ##------------------------------------------------------------------------------
 # File name
-if [[ "${na_targ}" = "1" && "${nz_targ}" = "1" ]]; then
+if [ "${na_targ}" = "1" ]; then
     targ_name="p"
-elif [[ "${na_targ}" = "1" && "${nz_targ}" = "-1" ]]; then
-    targ_name="pbar"
-elif [[ "${na_targ}" = "1" && "${nz_targ}" = "0" ]]; then
-    targ_name="n"
+    if [ "${nz_targ}" = "-1" ]; then
+        targ_name="pbar"
+    elif [ "${nz_targ}" = "0" ]; then
+        targ_name="n"
+    fi
 elif [ "${na_targ}" = "12" ]; then
     targ_name="C${na_targ}"
 elif [ "${na_targ}" = "16" ]; then
     targ_name="O${na_targ}"
 elif [ "${na_targ}" = "63" ]; then
     targ_name="Cu${na_targ}"
-elif [[ "${na_targ}" = "96" && "${nz_targ}" = "44" ]]; then
-    targ_name="Ru${na_targ}"
-elif [[ "${na_targ}" = "96" && "${nz_targ}" = "40" ]]; then
-    targ_name="Zr${na_targ}"
+elif [ "${na_targ}" = "96" ]; then
+    targ_name="${na_targ}"
+    if [ "${nz_targ}" = "40" ]; then
+        targ_name="Zr${na_targ}"
+    elif [ "${nz_targ}" = "44" ]; then
+        targ_name="Ru${na_targ}"
+    fi
 elif [ "${na_targ}" = "108" ]; then
     targ_name="Ag${na_targ}"
 elif [ "${na_targ}" = "129" ]; then
@@ -1429,12 +1523,21 @@ elif [ "${na_targ}" = "238" ]; then
 else
     targ_name="${na_targ}"
 fi
+#Lei20231106B-- e+e-, lp and lA
+if [[ "${i_proj}" = "2" && "${i_targ}" = "2" ]]; then
+    targ_name="e-"
+elif [ "${i_proj}" > 1 ]; then
+    if [ "${na_targ}" = "1" ]; then
+        targ_name="p"
+    fi
+fi
+#Lei20231106E--
 ##------------------------------------------------------------------------------
 # File name
 if [ "${i_frame}" = "1" ]; then
     coll_name="COLL"
 elif [ "${i_frame}" = "0" ]; then
-    coll_name="FXT"
+    coll_name="FIXT"
 else
     coll_name="${i_frame}"
 fi
@@ -1450,7 +1553,7 @@ cd ./${proj_name}_${targ_name}_${coll_name}
 #*******************************************************************************
 # iStg: i_stage
 # iChl: i_channel
-# framework name
+# Framework name
 if [ "${i_sim_mode}" = "1" ]; then
     framework_name="A"
 elif [ "${i_sim_mode}" = "2" ]; then

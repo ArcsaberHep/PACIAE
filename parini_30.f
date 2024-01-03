@@ -2171,7 +2171,7 @@ c       give flavor code to inelastically scattered particles
         ksa(l1,2)=2212
         call adjudg_nn(l,l1,2214,2212,pi,pj,inorex)
 c260223 adjudge current two-body inelas. scattering to be really treated as 
-c       elas. (if inorex=1) or inelas. (if inorex=2) deu to threshol energy
+c       elas. (if inorex=1) or inelas. (if inorex=2) due to threshol energy
         if(inorex.eq.1)then
         call coelas_nn(l,l1,pi,pj,lc,tc,tw,time,b,nsa0)   ! 120323
 csa011223
@@ -2190,7 +2190,7 @@ c       a part of update particle list ('sa2' to 'pyjets') after inela.
 c        scattering in case of outgoing channel with \Delta particle
         else
         call padecy(l,l1)
-csa011223 
+csa011223
 c       a part of update particle list ('sa2' to 'pyjets') after inela. 
 c        scattering in case of outgoing channel without \Delta particle
         endif
@@ -4986,8 +4986,14 @@ c280722
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine coij(i,j,icp,lc,tc,tw,mtc,dminf,iif,jf)
-c       calculate collision time & fill up lc(i,1-2) as well as tc(i)
-c        for creating the initial collsion list 
+c       calculate collision time & fill up lc(J,1-2) as well as tc(J)
+c        for creating the particle initial collsion time list
+c        with particle linear trajectory assumption ! sa181223
+c       i (j): line # of colliding particle in 'sa2'
+c       i: prijectile particle moving toward z direction
+c       j: target particle moving toward -z direction
+c       mtc=1: calculation is success; =0: calculation is fail
+c       J: order # in collision time list
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -5005,43 +5011,55 @@ c        for creating the initial collsion list
      c   ,pi(4),pj(4),b(3)
         ki=ksa(i,2)
         kj=ksa(j,2)
-        pi(4)=psa(i,4)
+        pi(4)=psa(i,4)   ! energy of particle i
         if(pi(4).lt.1.e-20)pi(4)=1.e-20
-        pj(4)=psa(j,4)
+        pj(4)=psa(j,4)   ! energy of particle j
         if(pj(4).lt.1.e-20)pj(4)=1.e-20
-        deno6=pi(4)+pj(4)
+        deno6=pi(4)+pj(4)   ! total energy of ij-th colliding pair
         do k=1,3
-        pi(k)=psa(i,k)
-        pj(k)=psa(j,k)
-        b(k)=(pi(k)+pj(k))/deno6
+        pi(k)=psa(i,k)   ! three momentum of particle i
+        pj(k)=psa(j,k)   ! three momentum of particle j
+        b(k)=(pi(k)+pj(k))/deno6   ! velocity of i and j cms
         enddo
         ilo=0
-        call lorntz(ilo,b,pi,pj)
+        call lorntz(ilo,b,pi,pj)   ! boost to cms of i and j for momentum
         do l=1,3
-        px(l)=vsa(i,l)
-        py(l)=vsa(j,l)
+        px(l)=vsa(i,l)    ! three coordinate of particle i
+        py(l)=vsa(j,l)    ! three coordinate of particle j
         enddo
-        px(4)=0.
-        py(4)=0.
-        call lorntz(ilo,b,px,py)
+        px(4)=0.   ! time of particle i
+        py(4)=0.   ! time of particle j
+        call lorntz(ilo,b,px,py)   ! boost to cms of i and j for coordinate
+c       calculate instant relative distance between i and j
         rb=0.
         bb=0.
         rr=0.
         rtai=0.
         do k=1,3
-        vi(k)=pi(k)/pi(4)
-        vj(k)=pj(k)/pj(4)
+        vi(k)=pi(k)/pi(4)   ! three velocity of i
+        vj(k)=pj(k)/pj(4)   ! three velocity of j
         enddo
         do k=1,3
         dr(k)=px(k)-py(k)-(vi(k)*px(4)-vj(k)*py(4))
-        db(k)=vi(k)-vj(k)
+c       instant relative distance between i and j in k dimension (in above 
+c        equation i is target particle and j is projetile particle indeed, 
+c        but for calculation of relative distance, it does matter whether i 
+c        is target j is projectile or opposite
+        db(k)=vi(k)-vj(k)   ! relative velocity between i and j
         dv(k)=db(k)
         rb=rb+dr(k)*db(k)
+c       rb=(relative distance)*(relative velocity)=(relative distance)^2/t
         bb=db(k)**2+bb
-        rr=rr+dr(k)*dr(k)
+c       bb: square of relative velocity
+        rr=rr+dr(k)*dr(k)   ! (?)
+c       dr(k)*dr(k): (relative distance between i and j)^2 in k dimension (?)
         enddo
-        if(bb.le.1.e-10) return
+        if(bb.le.1.e-10) return   ! (bb.le.1.e-10) it is true
         tcol=0.-rb/bb
+c       rb/bb=(relative distance)^2/t/(relative velocity)^2
+c        =(relative distance)^2/t/((relative distance)^2/t^2)=t
+c       why tcol=-rb/bb ? it is because of i must be projectile particle
+c        and j must be target particle
 c        if(tcol-px(4) .le. ddt)return
 c        if(tcol-py(4) .le. ddt)return
 c       for collision to occur,time must one step ahead
@@ -5049,22 +5067,25 @@ csa     if(tcol.lt.1.0e-7)return
         do iik=1,3
         dr(iik)=px(iik)-py(iik)-(vi(iik)*
      &   px(4)-vj(iik)*py(4))+tcol*db(iik)
+csa     relative distance between i and j at current time
         rtai=rtai+dr(iik)*dr(iik)
         enddo
-        sg=rtai
+        sg=rtai   ! square of instant relative distance between i and j
 c       sg=rr+tcol*rb
 c       if(sg.lt.0)then
 c       write(*,*)'sg=',sg   !
 c       return
 c       endif
-        dmin=dsqrt(sg)
+        dmin=dsqrt(sg)   ! instant relative distance between i and j
         if(dmin.lt.dminf)then
         dminf=dmin
         iif=i
         jf=j
         endif
         if(ipden.lt.2 .and. dmin.gt.ecsnn)return   ! 060813 120214
+c       ecsnn: largest interaction distance of NN
         if(ipden.gt.2 .and. dmin.gt.ecsen)return   ! 060813 120214
+c       ecsen: largest interaction distance of eN
 c       distance between the two particles should be smaller than ecsnn (ecsen)
 c        060813
         do ik=1,3
@@ -5873,7 +5894,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc260223
 c       adjudge current hadron-hadron collision pair to be treated as 
 c        elas. or inelas. two-body scattering in A-framework ! sa011223
 c       l (l1): order number in 'sa2' of current hh collision pair
-c       kl (kl1): flavor code of scattered particle  
+c       kl (kl1): flavor code of scattered particle
 c       pi (pj): four momentum of scattering particle before scatering
 c       pi (pj): four momentum of scattered particle after scatering 
 c       inorex: endothermic or exothermic

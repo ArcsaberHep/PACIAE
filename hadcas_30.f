@@ -1095,6 +1095,11 @@ c       597. p- + p to rho0 + omiga
 c       598. p- + n to rho- + omiga
 c       599. n- + p to rho+ + omiga
 c       600. n- + n to rho0 + omiga
+
+c       the reaction processes above are copy from A. Baldini, etal; ``Total 
+c        cross sections for reaction of high energy particles"; Spring-Veslay 
+c        Berlin, 1988.   sa091223
+
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -8811,22 +8816,22 @@ c       it plays also the role of second range filter
         rsig=0.
         kl=k(l,2)
         kl1=k(l1,2)
-        if(abs(kl).eq.2212 .or. abs(kl).eq.2112)idpl=1
+        if(abs(kl).eq.2212 .or. abs(kl).eq.2112)idpl=1   ! N sa091223
 
-        if(abs(kl).eq.443 .or. abs(kl).eq.100443)idpl=2
+        if(abs(kl).eq.443 .or. abs(kl).eq.100443)idpl=2   ! J/psi & psi'
 
-        if(abs(kl).eq.211 .or. kl.eq.111)idpl=3
-        if(abs(kl).eq.321 .or. abs(kl).eq.311)idpl=4
+        if(abs(kl).eq.211 .or. kl.eq.111)idpl=3   ! pi
+        if(abs(kl).eq.321 .or. abs(kl).eq.311)idpl=4   ! K
         if(abs(kl).eq.3212 .or. abs(kl).eq.3112 .or. abs(kl).eq.3222
      c   .or. abs(kl).eq.3122 .or. abs(kl).eq.3312 .or. abs(kl).eq.
-     c   3322 .or. abs(kl).eq.3334)idpl=5
-        if(abs(kl).eq.213 .or. kl.eq.113)idpl=6
+     c   3322 .or. abs(kl).eq.3334)idpl=5   ! Sigma, Lambda, Xi, Omega
+        if(abs(kl).eq.213 .or. kl.eq.113)idpl=6   ! rho
         if(kl.eq.1114 .or. kl.eq.2114.or.kl.eq.2214 .or. kl.eq.2224)
-     &   idpl=7
+     &   idpl=7   ! Delta
 
         if(abs(kl1).eq.2212 .or. abs(kl1).eq.2112)idpl1=1
 
-        if(abs(kl1).eq.443 .or. abs(kl1).eq.100443)idpl1=2   ! 98/03/24
+        if(abs(kl1).eq.443 .or. abs(kl1).eq.100443)idpl1=2   ! 1998/03/24
 
         if(abs(kl1).eq.211 .or. kl1.eq.111)idpl1=3
         if(abs(kl1).eq.321 .or. abs(kl1).eq.311)idpl1=4
