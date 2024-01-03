@@ -9627,7 +9627,6 @@ C...Commonblocks.
       SAVE /PYPART/,/PYJETS/,/PYDAT1/,/PYDAT2/,/PYDAT3/,/PYSUBS/,
      &/PYPARS/,/PYINT1/,/PYINT2/,/PYINT3/,/PYINT4/,/PYINT5/,/PYSSMT/,
      &/PYTCSM/
-        common/sa33/smadel,ecce,parecc,iparres   ! 110412 240412
 C...Local arrays and saved variables
       DIMENSION WDTP(0:400),WDTE(0:400,0:5),PMQ(2),Z(2),CTHE(2),
      &PHI(2),KUPPO(100),VINTSV(41:66),ILAB(100)
@@ -12064,11 +12063,8 @@ C...Z0 + Z0 -> h0, W+ + W- -> h0: store Higgs and outgoing partons
           ENDIF
           PABS=SQRT(MAX(0D0,(0.5D0*SHPR*Z(JT))**2-P(I,5)**2))
           PTABS=PABS*SQRT(MAX(0D0,1D0-CTHE(JT)**2))
-c110412          P(I,1)=PTABS*COS(PHI(JT))
-c110412          P(I,2)=PTABS*SIN(PHI(JT))
-	P(I,1)=PTABS*COS(PHI(JT))*(1+smadel)   ! 110412
-	P(I,2)=PTABS*SIN(PHI(JT))*(1-smadel)   ! 110412
-	PTABS=SQRT(P(I,1)*P(I,1)+P(I,2)*P(I,2))   ! 110412
+          P(I,1)=PTABS*COS(PHI(JT))
+          P(I,2)=PTABS*SIN(PHI(JT))
           P(I,3)=PABS*CTHE(JT)*(-1)**(JT+1)
           P(I,4)=0.5D0*SHPR*Z(JT)
           IZW=MINT(83)+6+JT
@@ -17733,7 +17729,6 @@ C...Commonblocks.
       COMMON/PYINT7/SIGT(0:6,0:6,0:5)
       SAVE /PYJETS/,/PYDAT1/,/PYDAT2/,/PYSUBS/,/PYPARS/,/PYINT1/,
      &/PYINT2/,/PYINT3/,/PYINT5/,/PYINT7/
-	common/sa33/smadel,ecce,parecc,iparres   ! 110412 240412
 C...Local arrays and saved variables.
       DIMENSION NMUL(20),SIGM(20),KSTR(500,2),VINTSV(80)
       SAVE XT2,XT2FAC,XC2,XTS,IRBIN,RBIN,NMUL,SIGM,P83A,P83B,P83C,
@@ -18244,11 +18239,8 @@ C...Add first parton to event record.
         K(N+1,2)=21
         IF(RFLAV.GE.MAX(PARP(85),PARP(86))) K(N+1,2)=
      &  1+INT((2D0+PARJ(2))*PYR(0))
-c110412	P(N+1,1)=PT*COS(PHI)
-c110412	P(N+1,2)=PT*SIN(PHI)
-        P(N+1,1)=PT*COS(PHI)*(1+smadel)   ! 110412
-        P(N+1,2)=PT*SIN(PHI)*(1-smadel)   ! 110412
-	PT=SQRT(P(N+1,1)*P(N+1,1)+P(N+1,2)*P(N+1,2))   ! 110412
+        P(N+1,1)=PT*COS(PHI)
+        P(N+1,2)=PT*SIN(PHI)
         P(N+1,3)=0.25D0*VINT(1)*(VINT(41)*(1D0+CTH)-VINT(42)*(1D0-CTH))
         P(N+1,4)=0.25D0*VINT(1)*(VINT(41)*(1D0+CTH)+VINT(42)*(1D0-CTH))
         P(N+1,5)=0D0
@@ -18375,7 +18367,6 @@ C...Commonblocks.
       COMMON/PYPARS/MSTP(200),PARP(200),MSTI(200),PARI(200)
       COMMON/PYINT1/MINT(400),VINT(400)
       SAVE /PYJETS/,/PYDAT1/,/PYDAT2/,/PYPARS/,/PYINT1/
-	common/sa33/smadel,ecce,parecc,iparres   ! 110412 240412
 C...Local arrays.
       DIMENSION KFLCH(2),KFLSP(2),CHI(2),PMS(0:6),IS(2),ISN(2),ROBO(5),
      &PSYS(0:2,5),PMIN(0:2),QOLD(4),QNEW(4),DBE(3),PSUM(4)
@@ -18462,11 +18453,8 @@ C...exponential, or (for photon) predetermined or power law.
           ENDIF
           VINT(156+JT)=PT
           PHI=PARU(2)*PYR(0)
-c110412	  P(I,1)=PT*COS(PHI)
-c110412	  P(I,2)=PT*SIN(PHI)
-          P(I,1)=PT*COS(PHI)*(1+smadel)   ! 110412
-          P(I,2)=PT*SIN(PHI)*(1-smadel)   ! 110412
-	  PT=SQRT(P(I,1)*P(I,1)+P(I,2)*P(I,2))   ! 110412
+          P(I,1)=PT*COS(PHI)
+          P(I,2)=PT*SIN(PHI)
           PMS(JT)=P(I,5)**2+P(I,1)**2+P(I,2)**2
         ENDIF
   130 CONTINUE
@@ -57339,7 +57327,6 @@ C...Commonblocks.
       COMMON/PYDAT3/MDCY(500,3),MDME(8000,2),BRAT(8000),KFDP(8000,5)
       COMMON/PYINT1/MINT(400),VINT(400)
       COMMON/PYINT4/MWID(500),WIDS(500,5)
-        common/sa1/kjp21,non1,bp,iii,neve,nout,nosc   ! 141208
       SAVE /PYJETS/,/PYDAT1/,/PYDAT2/,/PYDAT3/,/PYINT1/,/PYINT4/
 C...Local array.
       DIMENSION PS(2,6),IJOIN(100)
@@ -57486,16 +57473,8 @@ C...Check that momentum, energy and charge were conserved.
      &PS(1,3))+ABS(PS(2,4)-PS(1,4)))/(1D0+ABS(PS(2,4))+ABS(PS(1,4)))
       IF(MCONS.EQ.1.AND.PDEV.GT.PARU(11)) CALL PYERRM(15,
      &'(PYEXEC:) four-momentum was not conserved')
-c141208      IF(MCONS.EQ.1.AND.ABS(PS(2,6)-PS(1,6)).GT.0.1D0) CALL PYERRM(15,
-c141208     &'(PYEXEC:) charge was not conserved')
-c141208
-      IF(MCONS.EQ.1.AND.ABS(PS(2,6)-PS(1,6)).GT.0.1D0)then 
-        CALL PYERRM(15,'(PYEXEC:) charge was not conserved')
-        write(mstu(11),*)'event # iii,ps1,ps2=',iii,ps(1,6),ps(2,6)   ! 111210 
-c       throw away this hh collisions
-        n=0
-        endif        
-c141208
+      IF(MCONS.EQ.1.AND.ABS(PS(2,6)-PS(1,6)).GT.0.1D0) CALL PYERRM(15,
+     &'(PYEXEC:) charge was not conserved')
  
       RETURN
       END
@@ -59066,7 +59045,7 @@ C...Boost copied system to CM frame (for better numerical precision).
       ENDIF
 
 c051108
-c       follow statements added by Sa to calculate effective string tension
+c       follow statements are added by Sa to calculate effective string tension
         if(kjp22.eq.0)then
         call strtension(ip,np)
 c        write(9,*)'af strtension in p64, ip,np,n=',ip,np,n
@@ -62843,7 +62822,6 @@ C...Double precision and integer declarations.
       INTEGER PYK,PYCHGE,PYCOMP
 C...Commonblocks.
       COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
-	common/sa33/smadel,ecce,parecc,iparres   ! 220312 240412
       SAVE /PYDAT1/
  
 C...Generate p_T and azimuthal angle, gives p_x and p_y.
@@ -62853,15 +62831,8 @@ C...Generate p_T and azimuthal angle, gives p_x and p_y.
       IF(MSTJ(91).EQ.1) PT=PARJ(22)*PT
       IF(KFLA.EQ.0.AND.MSTJ(13).LE.0) PT=0D0
       PHI=PARU(2)*PYR(0)
-c220312 randomly sample [px,py] on circle of sphere with radius PT
-c220312	PX=PT*COS(PHI)
-c220312	PY=PT*SIN(PHI)
-c220312 randomly sample [px,py] on circle of ellipsoid with half major axis 
-c220312 of PT*(1+smadel) and half minor axis of PT*(1-smadel)
-        PX=PT*COS(PHI)*(1+smadel)   ! 220312
-        PY=PT*SIN(PHI)*(1-smadel)   ! 220312
-        PT=SQRT(PX*PX+PY*PY)   ! 220312
-c220312 PT might deviate little bit from original Gaussian
+      PX=PT*COS(PHI)
+      PY=PT*SIN(PHI)
  
       RETURN
       END
@@ -63013,7 +62984,6 @@ C...Commonblocks.
       COMMON/PYPARS/MSTP(200),PARP(200),MSTI(200),PARI(200)
       COMMON/PYINT1/MINT(400),VINT(400)
       SAVE /PYPART/,/PYJETS/,/PYDAT1/,/PYDAT2/,/PYPARS/,/PYINT1/
-	common/sa33/smadel,ecce,parecc,iparres   ! 110412 240412
 C...Local arrays.
       DIMENSION PMTH(5,140),PS(5),PMA(100),PMSD(100),IEP(100),IPA(100),
      &KFLA(100),KFLD(100),KFL(100),ITRY(100),ISI(100),ISL(100),DP(100),
@@ -64311,11 +64281,8 @@ C...Already predetermined choice of phi angle or not
         ENDIF
  
 C...Construct momenta for ordinary branching in shower.
-c110412	P(N+1,1)=PT*COS(PHI)
-c110412	P(N+1,2)=PT*SIN(PHI)
-        P(N+1,1)=PT*COS(PHI)*(1+smadel)   ! 110412
-        P(N+1,2)=PT*SIN(PHI)*(1-smadel)   ! 110412
-	PT=SQRT(P(N+1,1)*P(N+1,1)+P(N+1,2)*P(N+1,2))   ! 110412
+        P(N+1,1)=PT*COS(PHI)
+        P(N+1,2)=PT*SIN(PHI)
         IF(K(IM,2).EQ.21.AND.IABS(K(N+1,2)).LE.10.AND.
      &  (MSTJ(44).EQ.3.OR.MSTJ(44).EQ.5)) THEN
           P(N+1,3)=0.5D0*(PZM*(V(IM,5)+V(N+1,5)-V(N+2,5))+
@@ -64575,7 +64542,6 @@ C...Commonblocks.
       COMMON/PYINT1/MINT(400),VINT(400)
       SAVE /PYPART/,/PYJETS/,/PYCTAG/,/PYDAT1/,/PYDAT2/,/PYPARS/,
      &/PYINT1/
-	common/sa33/smadel,ecce,parecc,iparres   ! 110412 240412
 C...Local arrays.
       DIMENSION IPOS(2*MAXNUR),IREC(2*MAXNUR),IFLG(2*MAXNUR),
      &ISCOL(2*MAXNUR),ISCHG(2*MAXNUR),PTSCA(2*MAXNUR),IMESAV(2*MAXNUR),
@@ -65407,11 +65373,8 @@ C...Specific kinematics reduction for g->qqbar with m_q > 0.
  
 C...Pick phi and construct kinematics of branching.
   400 PHIROT=PARU(2)*PYR(0)
-c110412	P(INEW,1)=PTCOR*COS(PHIROT)
-c110412	P(INEW,2)=PTCOR*SIN(PHIROT)
-      P(INEW,1)=PTCOR*COS(PHIROT)*(1+smadel)   ! 110412
-      P(INEW,2)=PTCOR*SIN(PHIROT)*(1-smadel)   ! 110412
-	PTCOR=SQRT(P(INEW,1)*P(INEW,1)+P(INEW,2)*P(INEW,2))   ! 110412
+      P(INEW,1)=PTCOR*COS(PHIROT)
+      P(INEW,2)=PTCOR*SIN(PHIROT)
       P(INEW,3)=PZN
       P(INEW,4)=SQRT(PTCOR**2+P(INEW,3)**2+P(INEW,5)**2)
       P(IGNEW,1)=-P(INEW,1)
@@ -68303,28 +68266,20 @@ C...Format statements for output on unit MSTU(11) (by default 6).
  5400 FORMAT(///28X,'Event listing (no momenta)'//4X,'I  particle/jet',
      &     '  K(I,1)   K(I,2) K(I,3)     K(I,4)      K(I,5)',1X
      &     ,'   C tag  AC tag'/)
-csa5500 FORMAT(1X,I4,1X,A12,1X,I2,I8,1X,I4,5F9.3)
-csa5600 FORMAT(1X,I4,1X,A12,1X,I2,I8,1X,I4,5F9.2)
-csa5700 FORMAT(1X,I4,1X,A12,1X,I2,I8,1X,I4,5F9.1)
-csa5800 FORMAT(1X,I4,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I1,2I4),5F13.5)
-csa5900 FORMAT(1X,I4,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I1,2I4),1X,2I8)
-csa6000 FORMAT(1X,I4,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I9),5F13.5)
-csa6100 FORMAT(1X,I4,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I9),1X,2I8)
- 5500 FORMAT(I5,1X,A12,1X,I2,I8,1X,I4,5F9.3)
- 5600 FORMAT(I5,1X,A12,1X,I2,I8,1X,I4,5F9.2)
- 5700 FORMAT(I5,1X,A12,1X,I2,I8,1X,I4,5F9.1)
- 5800 FORMAT(I5,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I1,2I4),5F13.5)
- 5900 FORMAT(I5,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I1,2I4),1X,2I8)
- 6000 FORMAT(I5,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I9),5F13.5)
- 6100 FORMAT(I5,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I9),1X,2I8)
+ 5500 FORMAT(1X,I4,1X,A12,1X,I2,I8,1X,I4,5F9.3)
+ 5600 FORMAT(1X,I4,1X,A12,1X,I2,I8,1X,I4,5F9.2)
+ 5700 FORMAT(1X,I4,1X,A12,1X,I2,I8,1X,I4,5F9.1)
+ 5800 FORMAT(1X,I4,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I1,2I4),5F13.5)
+ 5900 FORMAT(1X,I4,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I1,2I4),1X,2I8)
+ 6000 FORMAT(1X,I4,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I9),5F13.5)
+ 6100 FORMAT(1X,I4,2X,A16,1X,I3,1X,I9,1X,I4,2(3X,I9),1X,2I8)
  6200 FORMAT(66X,5(1X,F12.3))
  6300 FORMAT(1X,78('='))
  6400 FORMAT(1X,130('='))
  6500 FORMAT(1X,65('='))
  6600 FORMAT(19X,'sum:',F6.2,5X,5F9.3)
  6700 FORMAT(19X,'sum:',F6.2,5X,5F9.2)
-csa6800 FORMAT(19X,'sum:',F6.2,5X,5F9.1)
- 6800 FORMAT(19X,'sum:',F6.2,5X,2(1x,F6.1),3(1x,F9.1),1x)
+ 6800 FORMAT(19X,'sum:',F6.2,5X,5F9.1)
  6900 FORMAT(19X,'sum charge:',F6.2,3X,'sum momentum and inv. mass:',
      &5F13.5)
  7000 FORMAT(19X,'sum charge:',F6.2)

@@ -1,28 +1,29 @@
-	subroutine parcas(time_par,iii,iijk,win,nap,rnt,rnp,n00)! 120505 280809 
-c	deal with parton cascade (partonic rescattering)
-c	input messages are in 'parlist' ('pyjets' to 'parlist' in parini.f)  
+	subroutine parcas(time_par,jjj,iijk,win,nap,rnt,rnp,n00)! 120505 160110 
+c       deals with parton cascade (partonic rescattering)
+c	input messages are in 'parlist' ('pyjets' to 'parlist' in paciae.f)
 c	working block is 'parlist'
-c	output messages are in 'parlist' ('parlist' to 'pyjets' in pacini.f)   
-c	writen by Ben-Hao Sa 19/11/2002 ! 280809
-c280809 iiii: number of run
-c       iii: iii-th hadron-hadron collis. in a run
-c       n00: 'largest line number' in 'pyjets' in iii-th hadron-hadron collis.
-c        after 'break'. partons above n00 are all produced partons from 
-c280809  inelastic collis.
+c	output messages are in 'parlist' ('parlist' to 'pyjets' in parini.f)  
+c	writen by Ben-Hao Sa 19/11/2002 
+c160110 iiii: number of run
+c       jjj: jjj-th parton-parton interaction in a NN collision
+c       n00: 'largest line number' in 'pyjets' after call 'break'
+c160110  partons above n00 are all appearing after inelastic collision
 	parameter (mplis=40000,msca=2000)
+        parameter(kszj=40000)   ! 160110
 	IMPLICIT DOUBLE PRECISION(A-H, O-Z)
 	IMPLICIT INTEGER(I-N)
 	INTEGER PYK,PYCHGE,PYCOMP
+        COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)   ! 160110
 	COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)  ! 240503
 	common/sa1/kjp21,non1,bp,iiii,neve,nout,nosc
-	common/sa12/ppsa(5),nchan,non121,sjp,nsjp,non122,ttaup,taujp   ! 120505
+	common/sa12/ppsa(5),nchan,nsjp,sjp,ttaup,taujp   ! 120505
       common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
 c       iprl: current total number of partons in particle list
 c       rp  : space and time coordinates of particle
 c       pp  : momentum of particle
 c       tp  : current time of particle
-c       taup: formation time of particle
+c       taup: format time of particle
 c       idp : flavor of particle
 c       rmp : rest mass of particle
 c       ep  : total energy of particle
@@ -40,9 +41,9 @@ c       ic,jc: the order number of colliding particles
 c       iprl0: the iprl before current collision
 c	pi,pj: four momentum of colliding particles 
 	common/work7/reac(9),crose(9)
-        common/papr_p/core,xs,xu,xxt,sm,as,dta,xa,sl0,tl0,qa,
+      common/papr_p/core,xs,xu,xxt,sm,as,dta,xa,sl0,tl0,qa,
      c  ea,sqq,sqg,sgg,pa(3),pip(6,msca),mtime,kfk,nsca,kpip(msca)
-        common/sa24/adj1(40),nnstop,non24,zstop
+      common/sa24/adj1(40),nnstop,non24,zstop
 	common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104
 c       ithroq_p : total # of quarks thrown away
 c       ithrob_p : total # of antiquarks thrown away
@@ -57,6 +58,7 @@ c	write(9,*)'in parcas tl0=',tl0
 c	write(99,*)'yea55'
 	if(adj1(1).eq.0.)return   ! 290505
 c	write(99,*)'yea57'
+        time=time_par   ! 280910
 c241104
 	dpmax=adj1(27)
 	drmax=adj1(28)
@@ -64,7 +66,6 @@ c241104
 	adj112=adj1(12)
 	adj136=adj1(36)   ! 120505
 	adj137=adj1(37)   ! 120505
-        time=0.d0   ! 111010    
       call reset_eve
 c	if(iiii.eq.61)write(9,*)'after reset_eve'
 c	write(9,*)(reac(i),i=1,3)
@@ -74,19 +75,19 @@ c        write(9,*)(crose(i),i=1,3)
 c        write(9,*)(crose(i),i=4,6)
 c        write(9,*)(crose(i),i=7,9)   ! sa
 c201104
-c        ithroq_p=0
-c        ithrob_p=0
-c        ich_p=0
-c        do i=1,4
-c        throe_p(i)=0.
-c        enddo
+        ithroq_p=0
+        ithrob_p=0
+        ich_p=0
+        do i=1,4
+        throe_p(i)=0.
+        enddo
 	do i1=1,iprl
 	rp(4,i1)=0.
 	taup(i1)=0.
 	enddo
 c241104
 c	throw away parton if its modular of three momentum > dpmax or energy 
-c	 > dpmax or modular of coordinate > drmax
+c        > dpmax or modular of coordinate > drmax
 	i11=1   ! 0 Tan 050605
 c200	do 300 i1=i11+1,iprl   ! 1 050605 Tan
 200	do 300 i1=i11,iprl   ! 1 050605 Tan
@@ -181,14 +182,15 @@ c151203	return
 c151203	endif
 c290803
 	jjj=0   
-c280809 statistic of the number of loops in parton cascade within a hh event
+c	statistic of the number of loops in parton cascade within an event
 	icolo=icol   ! 120603
-24      jjj=jjj+1   ! 280809
+24      jjj=jjj+1   ! 160110   
+c160110 the loop over parton-parton collisions within an event
 c---------------------------------------------------------------------
 	if(jjj.gt.100*icolo)then
 	write(9,*)'infinite loop may have happened in'
         write(9,*)'parcas iiii,jjj,icolo=',iiii,jjj,icolo
-c270407	iiii=iiii-1
+	iiii=iiii-1
 	iijk=1
 	return
 	endif
@@ -198,16 +200,10 @@ c	step 2
 c       find out the binary collision (icp) with the minimum colli. time
 c       the collision time list is empty if icp=0
 	call find_par(icp,tcp)
+c       write(9,*)'af find iiii,jjj,icp,tcp=',iiii,jjj,icp,tcp
 	if(icp.eq.0)goto 25 ! colli. list, empty
 	ic=lc(1,icp)
 	jc=lc(2,icp)
-c260905
-        ichpbe=0
-        do i1=1,iprl
-        kf=idp(i1)
-        ichpbe=ichpbe+ichge(kf)
-        enddo
-c260905
 c131104
 	if(tcp.le.10000.)goto 27
 	do i1=icp+1,icol
@@ -220,7 +216,8 @@ c131104
 	jjj=jjj-1
 	goto 24
 27	continue
-c	write(9,*)'af find jjj,icol,icp,tcp=',jjj,icol,icp,tcp   ! sa   
+cm	write(9,*)'af find jjj,icol,iprl,icp,tcp,ic,jc=',
+cm     c	 jjj,icol,iprl,icp,tcp,ic,jc   ! sa   
 c	if(iiii.eq.1 .and.jjj.eq.1)then
 c	write(9,*)'icol,iprl,icp,tcp=',icol,iprl,icp,tcp   ! sa
 c	do i1=1,icol   ! sa
@@ -277,10 +274,9 @@ c        write(9,*)(crose(i),i=7,9)   ! sa
 c	write(9,503)((pp(m,ic)+pp(m,jc)),m=1,4),rmp(ic)   ! sa
 	kkk=0   ! 120603
 	iway=0   ! 120505
-	call collis(ic,jc,iii,kf3,kf4,tcp,jjj,kkk,iway,n00,icnew,jcnew
-     c   ,lmn,time)   
-c       120603 120505 280809
-cm	write(9,*)'af collis iiii,jjj=',iiii,jjj ! sa
+	call collis(ic,jc,kf3,kf4,tcp,jjj,kkk,iway,n00,icnew,jcnew   
+     c   ,lmn,time)   ! 120603 120505 160110
+c	write(9,*)'af collis iiii,jjj,time=',iiii,jjj,time ! sa
 c	write(9,*)'ic,jc,iprl,icol,kkk',ic,jc,iprl,icol,kkk ! sa
 c	write(9,503)((pp(m,ic)+pp(m,jc)),m=1,4),rmp(ic)   ! sa
 c	do i=1,iprl   ! sa
@@ -334,12 +330,11 @@ c	write(9,*)'     time=    ',time   ! sa
 c	step 5
 c	update collision list
 c	'old' method
-c280809 update collis. list for els. parton-paron interactions and 4 & 6
-c        inela. parton-parton collisions, for 7 the collis. time list is 
-c280809  updated in subroutine 'collis'
-c150512	if(lmn.ne.7)call update_ctl(tcp,iway)   ! 120505 280809
-c150512 update collis. list for both els. and inela. parton-paron interaction
-        call update_ctl(tcp,iway)   ! 150512
+c160110 update collis. list for els. parton-paron interaction
+c        for inela. parton-parton collision the collision time list is updated
+c160110  in subroutine 'collis'
+        if(lmn.ne.4 .or. lmn.ne.6 .or. lmn.ne.7)
+     c  call update_ctl(tcp,iway)   ! 120505 160110
 c120505
 c	'new' method
 c1	if(adj136.eq.0)call update_ctl(tcp,iway)   
@@ -378,9 +373,9 @@ c	goto 25   ! it is actived temporally
 26	continue   ! 120603
 	goto 24   ! the loop over collisions within an event
 25      continue
-	time_par=time_par+time   ! 110101 changed from '=time'
-c       here time: the time lasted in parton cascade for a hh collision
-c	write(9,*)'after parton cascade time_par=',time_par   ! sa
+	time_par=time
+c       time_par: is the time lasted in parton cascade hereafter
+c       write(9,*)'af parton cascade time=',time   ! sa
 c250803
 	do i=1,9
 	reaci=reac(i)
@@ -517,7 +512,7 @@ c        the value of cross section for 2->2 partonic processes
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	subroutine ctlcre_par(iijk)      
-c       create the (initial) collision time list
+c       create the (initial) collision (initial) 
 	parameter (mplis=40000,mclis=240000)
 	IMPLICIT DOUBLE PRECISION(A-H, O-Z)
 	IMPLICIT INTEGER(I-N)
@@ -652,10 +647,7 @@ c	write(9,*)'in find, icp,tcp=',icp,tcp   ! sa
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	subroutine update_ctl(time,iway)   ! 120505
-c280809 update the collision time list for ela. parton-parton scattering
-c280809  & 4 and 6 inels. parton-parton scattering
-c150512 update the collision time list for both ela. and inela.
-c150512  parton-parton scattering
+c160110 update the collision time list for ela. parton-parton scattering
 	parameter (mplis=40000,mclis=240000)
 	IMPLICIT DOUBLE PRECISION(A-H, O-Z)
 	IMPLICIT INTEGER(I-N)
@@ -672,7 +664,7 @@ c	write(9,*)'get in upda ic,jc,iprl,icol=',ic,jc,iprl,icol   ! sa
 	dddt=adj1(19)   ! 161104
 c       loop over old colliding pairs
 	j=0
-c       throw away the pairs with tc<= time or composed of 
+c       throw away the pairs whth tc<= time or composed of 
 c        ic and/or jc.
 	if(icol.eq.0)goto 370
 	do i=1,icol
@@ -773,7 +765,7 @@ c020603
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	subroutine update_ctlm(time,iway)   ! 120505 280809
+	subroutine update_ctlm(time,iway)   ! 120505 160110
 c       update the collision time list (a part) for inela. parton-parton 
 c        scattering 7
 	parameter (mplis=40000,mclis=240000)
@@ -824,7 +816,7 @@ c       throw away the pairs with tc-time<=ddt,ddt:time accuracy
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	subroutine update_ctln(time,iway)   ! 120505 280809 
+	subroutine update_ctln(time,iway)   ! 120505 160110 
 c       update the collision time list (a part) for inela. parton-parton 
 c        scattering 7
 	parameter (mplis=40000,mclis=240000)
@@ -840,8 +832,8 @@ c        scattering 7
 	common/collist/lc(2,mclis),tc(2,mclis),icol
 c-----------------------------------------------------------------------
         dddt=adj1(19)   ! 161104
-c       loop over ic (jc) and old 'parlist' (i.e. construct colli. pair    
-c        composed of partons one of which is ic (jc) and another one     
+c       loop over ic (jc) and old 'parlist' (i.e. construct colli. pair 
+c        composed of partons one of which is ic (jc) and another one 
 c        in old 'parlist')
         icol=icol+1
 	do 100 i=1,iprl0   ! 
@@ -961,18 +953,18 @@ c240503
 	ilo=0
 	kf1=idp(i)
 	kf2=idp(j)
-c280809
+c160110
         ikf1=iabs(kf1)
         ikf2=iabs(kf2)
         if((ikf1.le.6.or.ikf1.eq.21).and.(ikf2.le.6.or.ikf2.eq.21))then
 c       d,u,s,c,b,t quarks, their anti quarks, and gluon only
 c       calculate the total cross section and decide the type of reaction
 c        (when ilo=0) or sample the t value as well (when ilo=1)
-        call fsig(ilo,kf1,kf2,kf3,kf4,eiej2,sig,tsmp,lmn)
+	call fsig(ilo,kf1,kf2,kf3,kf4,eiej2,sig,tsmp,lmn)   ! 160110
         else
         sig=0.
         endif
-c280809
+c160110
 c	write(9,*)'kf1,kf2,sig,eiej2=',kf1,kf2,sig,eiej2   ! sa
 	if(sig.le.0.)return   ! 120603 250803
 	if(ilo.eq.-2)then   ! 111999
@@ -1119,17 +1111,16 @@ c etc.  According to Y. Pang's opinions, May,1994, CCAST.(05/24/95)
 	ilo=0
 	kf1=idp(i)
 	kf2=idp(j)
-c280809
+c160110
         ikf1=iabs(kf1)
         ikf2=iabs(kf2)
         if((ikf1.le.6.or.ikf1.eq.21).and.(ikf2.le.6.or.ikf2.eq.21))then
 c       d,u,s,c,b,t quarks, their anti quarks, and gluon only
-        call fsig(ilo,kf1,kf2,kf3,kf4,eiej2,sig,tsmp,lmn)
+	call fsig(ilo,kf1,kf2,kf3,kf4,eiej2,sig,tsmp,lmn)
         else
         sig=0.
         endif
-c280809
-c280809 call fsig(ilo,kf1,kf2,kf3,kf4,eiej2,sig,tsmp,lmn)   ! 250803
+c160110
 c	write(9,*)'kf1,kf2,sig,eiej2=',kf1,kf2,sig,eiej2
 cc	if(il.eq.2)return   ! put 'cc' by Sa on 24/06/96
 	if(ilo.eq.-2)return   ! added by Sa on 24/06/96
@@ -1648,7 +1639,7 @@ c230405
 	if(adj120.eq.2 .or. adj120.eq.3)then
 c	tsmp=-pyr(1)*xs
 	seta=pyr(1)*pio
-	tsmp=xs*(dcos(seta)-1)/2   ! 280407
+	tsmp=xs*(dcos(seta)-1)/2+tcut   ! 280407
 	return
 	endif   
 c230405
@@ -1663,37 +1654,37 @@ c	tsmp: the t vlue sampled.
 	
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	subroutine collis(ik1,ik2,iii,kf3,kf4,tcp,jjj,kkk,iway,n00,
-     c   icnew,jcnew,lmn,time)   ! 120505 280809
+	subroutine collis(ik1,ik2,kf3,kf4,tcp,jjj,kkk,iway,n00,
+     c   icnew,jcnew,lmn,time)   ! 120505 160110 
 c	perform parton-parton collision
 c	ik1,ik2: line number of the colliding pair in parton list 
 c	tcp: collision time
-c	jjj: jjj-th pass within a iii-th hh collision 280809
+c	jjj: jjj-th pass within a event
 c	if kkk=1 throw away current collision
 	parameter (mplis=40000,msca=2000)
-        parameter (kszj=40000)   ! 280809
+        parameter (kszj=40000)   ! 160110
 	IMPLICIT DOUBLE PRECISION(A-H, O-Z)
 	IMPLICIT INTEGER(I-N)
 	INTEGER PYK,PYCHGE,PYCOMP
-      COMMON/PYJETS/N,NONJ,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)   ! 280809
+      COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)   ! 160110
         common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)
         common/papr_p/core,xs,xu,xt,sm,as,dta,xa,sl0,tl0,qa,
      c  ea,sqq,sqg,sgg,pa(3),pip(6,msca),mtime,kfk,nsca,kpip(msca)
 	common/syspar_p/rsig1,pio,tcut
-        common/sbe/nbe,nonbe,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)   ! 280809
+        common/sbe/nbe,nonbe,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)   ! 160110
 	common/sa1/kjp21,non1,bp,iiii,neve,nout,nosc
-        common/sa12/ppsa(5),nchan,non121,sjp,nsjp,non122,ttaup,taujp   ! 180705
+        common/sa12/ppsa(5),nchan,nsjp,sjp,ttaup,taujp   ! 180705
         common/sa24/adj1(40),nnstop,non24,zstop
-        common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio   ! 280809
-        common/sa28/nstr,nstr00,nstra(kszj),nstrv(kszj)   ! 280809
+        common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio   ! 160110
+        common/sa28/nstr,nstr00,nstra(kszj),nstrv(kszj)   ! 160110
 	common/work7/reac(9),crose(9)    
 	common/ctllist_p/nreac(9),nrel
 	common/show/vip(mplis),xap(mplis)
-c280809 ifcom(i): line number (in 'sbe') of first component of i-th diquark
+c160110 ifcom(i): line number (in 'sbe') of first component of i-th diquark
 c	nreac(i): statistics of the # of successful i-th collision
 c	nrel: statistics of the # of collision blocked
-cc	nsca: number of particles after collision   
+cc	nsca: number of particles after collision  
 cc	pip(1-3,*)	: momentun of particle after collision
 cc	pip(4,*)	: energy of particle after collision
 cc	pip(5,*)	: virtuality of particle after collision
@@ -1775,20 +1766,21 @@ c120505
 c       calculate the total cross section and decide the type of reaction
 c        (when ilo=0) or sample the t value as well (when ilo=1)
 	ilo=1
-c280809
+c160110
         ikf1=iabs(kf1)
         ikf2=iabs(kf2)
         if((ikf1.le.6.or.ikf1.eq.21).and.(ikf2.le.6.or.ikf2.eq.21))then
 c       d,u,s,c,b,t quarks, their anti quarks, and gluon only
-	call fsig(ilo,kf1,kf2,kf3,kf4,eiej2,sig,tsmp,lmn)   
+	call fsig(ilo,kf1,kf2,kf3,kf4,eiej2,sig,tsmp,lmn)
 c       if(lmn.eq.7 .or. lmn.eq.6 .or. lmn.eq.4)
-c     c   write(9,*)'af fsig iiii,iii,jjj,lmn,kf1,kf2,kf3,kf4=',
-c     c   iiii,iii,jjj,lmn,kf1,kf2,kf3,kf4   ! 280809
+c     c   write(9,*)'af fsig iiii,jjj,lmn,kf1,kf2,kf3,kf4=',
+c     c   iiii,jjj,lmn,kf1,kf2,kf3,kf4   
         else
         sig=0.
         endif
-c280809
+c160110   
 c250803	lmn: order number of the process happened
+cm	write(9,*)'af fsig jjj,sig,tsmp,lmn=',jjj,sig,tsmp,lmn   ! sa
 c120603
 	if(sig.le.0.)then   
 	jjj=jjj-1   
@@ -1805,7 +1797,7 @@ c	am4=amass(kf4)
 	am3=0.   
 	am4=0.   
 c	in consistent with sm in "fsig"
-c	2->2 process,no matter what is the final state,is treated   
+c	2->2 process,no matter what is the final state,is treated in  
 c	 zero mass approximation from momentum point of view 
 	paa=dsqrt(pi(1)**2+pi(2)**2+pi(3)**2)
 c	write(9,*)'paa,xs,xt,xu=',paa,xs,xt,xu   ! sa
@@ -1905,13 +1897,11 @@ c	write(9,*)'after pauli'
 
 c	case of w/o time-like branching
 	if(adj12.eq.0 .or. adj12.eq.1)then   ! 1
-c060112 w/o time-like branching if hadronized by string fragmentation or 
-c060112  coalescence
         ichbe=ichge(kf1)+ichge(kf2)
         ichaf=ichge(kf3)+ichge(kf4)
         if(ichbe.ne.ichaf)then
-        write(9,*)'w/o time-like iiii,iii,jjj,lmn,kf1,kf2=',
-     c   iiii,iii,jjj,lmn,kf1,kf2  ! sa 280809
+        write(9,*)'w/o time-like iiii,iii,jjj,kf1,kf2=',
+     c   iiii,iii,jjj,kf1,kf2  ! sa 160110
         write(9,*)'nsca,kf3,kf4,ichbe,ichaf=',nsca,kf3,kf4,ichbe,ichaf! sa
         ppsa(5)=ppsa(5)-ichbe+ichaf   ! 180705 270407
         endif
@@ -2122,9 +2112,8 @@ c	do i=1,iprl   ! sa
 c	write(9,509)(pp(m,i),m=1,4),rmp(i)   ! sa
 c	enddo   ! sa
 c	endif
-1000	continue   ! 280809 changed from 'return' to 'continue'
-        return   ! 150512
-c280809
+1000	continue   ! 160110 changed from 'return' to 'continue'
+c160110
         if(adj12.eq.0 .and. lmn.eq.7)then
 c       in case of inelastic parton-parton collision (process 7,gg->q(qbar)) 
 c        we assume q(qbar) constructs a string: k(ik1,1)=2 and k(ik2,1)=1
@@ -2172,7 +2161,7 @@ c        ik1 and/or ik2, a part of 'update collision list'
 c       a gg string
 c       find the order number of above gg string
         call adjst(ik1,n00,ik1str,ik1sa,ik1sv)
-c       ik1str: oredr number of string to which ik1 belongs 
+c       ik1str: oredr number of string to which ik1 belongs
 c       ik1sa: line number of first component of above string
 c       ik1sv: line number of last component of above string
         call strsmo(ik2,ik1,ik1str,n00,icnew,jcnew)
@@ -2199,8 +2188,782 @@ c       another part of 'update collision list', i. e. find out collis. pairs
 c        composed of partons one of which is ic (jc) and another one 
 c        in 'parlist'
         endif
-c280809
-        return   ! 280809
+
+        if(adj12.eq.0 .and. (lmn.eq.4 .or. lmn.eq.6))then   ! 1   
+c       process 4: q1(q1bar)->q2(q2bar); process 6: q(qbar)->gg
+
+c        write(9,*)'iiii,iii,jjj,lmn,nbe,n00,ik12,kf1,kf2,kf3,kf4=',
+c     c   iiii,iii,jjj,lmn,nbe,n00,ik1,ik2,kf1,kf2,kf3,kf4
+
+c       treat scattered parton pair
+c       copy scattered partons g & g (q2 & q2bar) to the end of 'parlist' 
+c        ('pyjest') sequentially
+c       assume scattered parton pair is a string
+        if(lmn.eq.6)then
+        call coend(ik1)
+        icnew=iprl
+        call coend(ik2)
+        jcnew=iprl
+        k(iprl-1,1)=2
+        k(iprl,1)=1 
+        nstr=nstr+1
+        nstra(nstr)=iprl-1
+        nstrv(nstr)=iprl
+        endif
+        if(lmn.eq.4)then
+        if(idp(ik1).gt.0)then   ! q
+        k(ik1,1)=2
+        k(ik2,1)=1
+        call coend(ik1)
+        icnew=iprl
+        call coend(ik2)
+        jcnew=iprl
+        endif
+        if(idp(ik1).lt.0)then   ! qbar
+        k(ik1,1)=1
+        k(ik2,1)=2
+        call coend(ik2)
+        jcnew=iprl
+        call coend(ik1)
+        icnew=iprl
+        endif
+        nstr=nstr+1
+        nstra(nstr)=iprl-1
+        nstrv(nstr)=iprl
+        endif
+c       treat g & g (q2 & q2bar) as shower parton
+c        call coend(ik1)
+c        icnew=iprl
+c        call coend(ik2)
+c        jcnew=iprl
+c        k(iprl-1,1)=3
+c        k(iprl,1)=3 
+        call update_ctlm(time,0)
+c       throw away collis. pairs which have tc<= time or which compose of
+c        ik1 and/or ik2, a part of 'update collision list'
+
+c       treat scattering parton pair
+ 
+c       does ik1 is a component of diquark ?
+        call adjdi(ik1,n00,idi1,iway1)
+        ifcom1=0
+        npt1=0
+        if(iway1.eq.1)npt1=npt(idi1)   
+c       npt1: line # of partner of idi1-th diquark 
+        if(iway1.eq.2)ifcom1=ifcom(idi1)   
+c       ifcom1: line # of first component of idi1-th diquark
+c       does ik2 is a component of diquark ?
+        call adjdi(ik2,n00,idi2,iway2)
+        ifcom2=0
+        npt2=0
+        if(iway2.eq.1)npt2=npt(idi2)
+        if(iway2.eq.2)ifcom2=ifcom(idi2)
+c        write(9,*)'idi1,iway1,ifcom1,npt1=',idi1,iway1,ifcom1,npt1
+c        write(9,*)'idi2,iway2,ifcom2,npt2=',idi2,iway2,ifcom2,npt2
+c       throw away diquarks
+        if((idi1.ne.0 .and. idi2.ne.0) .and. idi1.eq.idi2)
+     c   call diqmov(idi1)
+        if((idi1.ne.0 .and. idi2.ne.0) .and. idi1.gt.idi2)then
+        call diqmov(idi1)
+        call diqmov(idi2)
+        endif
+        if((idi1.ne.0 .and. idi2.ne.0) .and. idi1.lt.idi2)then
+        call diqmov(idi2)
+        call diqmov(idi1)
+        endif
+        if(idi1.ne.0 .and. idi2.eq.0)call diqmov(idi1)
+        if(idi1.eq.0 .and. idi2.ne.0)call diqmov(idi2) 
+
+c       does ik1 is a component of string
+        call adjst(ik1,n00,ik1str,ik1sa,ik1sv)
+c       ik1str: oredr number of string to which ik1 belongs,equal 0 otherwise
+c       ik1sa: line number of first component of above string,equal 0 otherwise 
+c       ik1sv: line number of last component of above string,equal 0 otherwise
+        call adjst(ik2,n00,ik2str,ik2sa,ik2sv)
+c        write(9,*)'ik1str,ik1sa,ik1sv,ik2str,ik2sa,ik2sv=',
+c     c   ik1str,ik1sa,ik1sv,ik2str,ik2sa,ik2sv
+ 
+c       both of ik1 & ik2 not belong to string
+        if(ik1.gt.ik2 .and. (ik1str.eq.0 .and. ik2str.eq.0))then   !! 1
+        if(iway1.eq.0 .and. iway2.eq.0)then
+        call updd(ik1,n00,icnew,jcnew)
+        call updd(ik2,n00,icnew,jcnew)
+        goto 601
+        endif
+        if(iway1.eq.0 .and. iway2.eq.2)then
+c       note, there is no case of iway2.eq.1 (it should belong to string)
+        call updd(ik1,n00,icnew,jcnew)
+        call updd(ik2,n00,icnew,jcnew)
+        if(ifcom2.gt.0)then   ! avoiding the array out of it's range
+        do i1=1,nstr
+        i1a=nstra(i1)
+        i1v=nstrv(i1)
+        if(ifcom2.eq.i1a)then
+        call coend(i1a)
+        k(iprl,1)=1
+        call stramo(i1a,i1,n00,icnew,jcnew)
+        endif
+        if(ifcom2.eq.i1v)then
+c       note: first component of diquark may only be 'A' or 'V'
+        call coend(i1v)
+        k(iprl,1)=1
+        call strvmo(i1v,i1,n00,icnew,jcnew)
+        endif
+        enddo
+        endif
+        goto 601
+        endif
+c        if(iway1.eq.2 .and. iway2.eq.0)then
+c       ik1.gt.nbe .and. ik1.le.n00,ik2.gt.n00, not possible
+c        call updd(ik1,n00,icnew,jcnew,idi1,iway1)
+c        if(ifcom1.gt.0)then
+c        do i1=1,nstr
+c        i1a=nstra(i1)
+c        i1v=nstrv(i1)
+c        if(ifcom1.eq.i1a)then
+c        call coend(i1a)
+c        k(iprl,1)=3
+c        call stramo(i1a,i1,n00,icnew,jcnew)
+c        endif
+c        if(ifcom1.eq.i1v)then
+c        call coend(i1v)
+c        k(iprl,1)=3
+c        call strvmo(i1v,i1,n00,icnew,jcnew)
+c        endif
+c        enddo
+c        endif
+c        call updd(ik2,n00,icnew,jcnew)
+c        endif
+        if(iway1.eq.2 .and. iway2.eq.2)then
+        call updd(ik1,n00,icnew,jcnew)
+        call updd(ik2,n00,icnew,jcnew)
+        if(ifcom1.gt.0)then
+        do i1=1,nstr
+        i1a=nstra(i1)
+        i1v=nstrv(i1)
+        if(ifcom1.eq.i1a)then
+        call coend(i1a)
+        k(iprl,1)=1
+        call stramo(i1a,i1,n00,icnew,jcnew)
+        endif
+        if(ifcom1.eq.i1v)then
+        call coend(i1v)
+        k(iprl,1)=1
+        call strvmo(i1v,i1,n00,icnew,jcnew)
+        endif
+        enddo
+        endif
+        if(ifcom2.gt.0)then  
+        do i1=1,nstr
+        i1a=nstra(i1)
+        i1v=nstrv(i1)
+        if(ifcom2.eq.i1a)then
+        call coend(i1a)
+        k(iprl,1)=1
+        call stramo(i1a,i1,n00,icnew,jcnew)
+        endif
+        if(ifcom2.eq.i1v)then
+        call coend(i1v)
+        k(iprl,1)=1
+        call strvmo(i1v,i1,n00,icnew,jcnew)
+        endif
+        enddo
+        endif
+        goto 601
+        endif  
+        endif   !! 1
+        if(ik2.gt.ik1 .and. (ik1str.eq.0 .and. ik2str.eq.0))then   !! 1
+        if(iway1.eq.0 .and. iway2.eq.0)then
+        call updd(ik2,n00,icnew,jcnew)
+        call updd(ik1,n00,icnew,jcnew)
+        goto 601
+        endif
+c        if(iway1.eq.0 .and. iway2.eq.2)then
+c       ik1.gt.n00,ik2.gt.nbe .and. ik2.le.n00, not possible
+c        call updd(ik2,n00,icnew,jcnew)
+c        call updd(ik1,n00,icnew,jcnew)
+c        if(ifcom2.gt.0)then
+c        do i1=1,nstr
+c        i1a=nstra(i1)
+c        i1v=nstrv(i1)
+c        if(ifcom2.eq.i1a)then
+c        call coend(i1a)
+c        k(iprl,1)=3
+c        call stramo(i1a,i1,n00,icnew,jcnew)
+c        endif
+c        if(ifcom2.eq.i1v)then
+c        call coend(i1v)
+c        k(iprl,1)=3
+c        call strvmo(i1v,i1,n00,icnew,jcnew)
+c        endif
+c        enddo
+c        endif
+c        endif   
+        if(iway1.eq.2 .and. iway2.eq.0)then
+        call updd(ik2,n00,icnew,jcnew)
+        call updd(ik1,n00,icnew,jcnew)
+        if(ifcom1.gt.0)then
+        do i1=1,nstr
+        i1a=nstra(i1)
+        i1v=nstrv(i1)
+        if(ifcom1.eq.i1a)then
+        call coend(i1a)
+        k(iprl,1)=1
+        call stramo(i1a,i1,n00,icnew,jcnew)
+        endif
+        if(ifcom1.eq.i1v)then
+        call coend(i1v)
+        k(iprl,1)=1
+        call strvmo(i1v,i1,n00,icnew,jcnew)
+        endif
+        enddo
+        endif
+        goto 601
+        endif
+        if(iway1.eq.2 .and. iway2.eq.2)then
+        call updd(ik2,n00,icnew,jcnew)
+        call updd(ik1,n00,icnew,jcnew)
+        if(ifcom2.gt.0)then  
+        do i1=1,nstr
+        i1a=nstra(i1)
+        i1v=nstrv(i1)
+        if(ifcom2.eq.i1a)then
+        call coend(i1a)
+        k(iprl,1)=1
+        call stramo(i1a,i1,n00,icnew,jcnew)
+        endif
+        if(ifcom2.eq.i1v)then
+        call coend(i1v)
+        k(iprl,1)=1
+        call strvmo(i1v,i1,n00,icnew,jcnew)
+        endif
+        enddo
+        endif
+        if(ifcom1.gt.0)then
+        do i1=1,nstr
+        i1a=nstra(i1)
+        i1v=nstrv(i1)
+        if(ifcom1.eq.i1a)then
+        call coend(i1a)
+        k(iprl,1)=1
+        call stramo(i1a,i1,n00,icnew,jcnew)
+        endif
+        if(ifcom1.eq.i1v)then
+        call coend(i1v)
+        k(iprl,1)=1
+        call strvmo(i1v,i1,n00,icnew,jcnew)
+        endif
+        enddo
+        endif
+        goto 601
+        endif 
+        endif   !! 1
+
+c       both of ik1 & ik2 belong to a string 
+        if(ik1.gt.ik2 .and. 
+     c   (ik1str.ne.0 .and. ik2str.ne.0 .and. ik1str.eq.ik2str))then   !! 2.1
+        if(iway1.eq.0 .and. iway2.eq.0)then
+        call strsmo(ik2,ik1,ik1str,n00,icnew,jcnew)
+        goto 601
+        endif
+c        if(iway1.eq.0 .and. iway2.eq.1)then
+c       ik1.gt.n00,ik2.le.nbe,not possible
+c        if(npt2.gt.0)then
+c        call coend(npt2)
+c        k(iprl,1)=3
+c        call updd(npt2,n00,icnew,jcnew)
+c        endif
+c        call strsmo(ik2,ik1,ik2str,n00,icnew,jcnew)        
+c        endif
+c        if(iway1.eq.1 .and. iway2.eq.0)then
+c        if(npt1.gt.0)then
+c        call coend(npt1)
+c        k(iprl,1)=3
+c        call updd(npt1,n00,icnew,jcnew)
+c        endif
+c        call strsmo(ik2,ik1,ik1str,n00,icnew,jcnew)
+c        endif
+c        if(iway1.eq.1 .and. iway2.eq.0)then
+c       ik1.le.nbe,ik2.gt.n00,not possible
+c        endif
+        if(iway1.eq.1 .and. iway2.eq.1)then
+        if(npt1.gt.0)then
+        call coend(npt1)
+        k(iprl,1)=1
+        call updd(npt1,n00,icnew,jcnew)
+        endif
+        if(npt2.gt.0)then
+        call coend(npt2)
+        k(iprl,1)=1
+        call updd(npt2,n00,icnew,jcnew)
+        endif
+        call strsmo(ik2,ik1,ik1str,n00,icnew,jcnew)
+        goto 601
+        endif 
+        endif   !! 2.1 
+        if(ik2.gt.ik1 .and. 
+     c   (ik2str.ne.0 .and. ik1str.ne.0 .and. ik2str.eq.ik1str))then   !! 2.2
+        if(iway1.eq.0 .and. iway2.eq.0)then
+        call strsmo(ik1,ik2,ik1str,n00,icnew,jcnew)
+        goto 601
+        endif
+c        if(iway1.eq.0 .and. iway2.eq.1)then
+c       ik1.gt.n00,ik2.le.nbe,not possible
+c        if(npt2.gt.0)then
+c        call coend(npt2)
+c        k(iprl,1)=3
+c        call updd(npt2,n00,icnew,jcnew)
+c        endif
+c        call strsmo(ik1,ik2,ik2str,n00,icnew,jcnew)
+c        endif 
+c        if(iway1.eq.1 .and. iway2.eq.0)then
+c       ik1.le.nbe,ik2.gt.n00,not possible   
+c        if(npt1.gt.0)then
+c        call coend(npt1)
+c        k(iprl,1)=3
+c        call updd(npt1,n00,icnew,jcnew)
+c        endif
+c        call strsmo(ik1,ik2,ik1str,n00,icnew,jcnew)
+c        endif
+        if(iway1.eq.1 .and. iway2.eq.1)then
+        if(npt2.gt.0)then
+        call coend(npt2)
+        k(iprl,1)=1
+        call updd(npt2,n00,icnew,jcnew)
+        endif
+        if(npt1.gt.0)then
+        call coend(npt1)
+        k(iprl,1)=1
+        call updd(npt1,n00,icnew,jcnew)
+        endif
+        call strsmo(ik1,ik2,ik1str,n00,icnew,jcnew)
+        goto 601
+        endif
+        endif   !! 2.2
+
+c       ik1 & ik2 belong to two different strings
+        if(ik1.gt.ik2 .and. 
+     c   (ik1str.ne.0 .and. ik2str.ne.0 .and. ik1str.ne.ik2str))then   !! 3.1
+        if(iway1.eq.0 .and. iway2.eq.0)then
+        if(ik1.eq.ik1sa)call stramo(ik1sa,ik1str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sv)call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sa)call stramo(ik2sa,ik2str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sv)call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+        goto 601
+        endif    
+        if(iway1.eq.0 .and. iway2.eq.1)then 
+        if(npt2.gt.0 .and. ik1.gt.npt2)then
+        if(ik1.eq.ik1sa)call stramo(ik1sa,ik1str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sv)call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+        call coend(npt2)
+        k(iprl,1)=1
+        call updd(npt2,n00,icnew,jcnew)
+        endif
+        if(npt2.gt.0 .and. ik1.lt.npt2)then
+        call coend(npt2)
+        k(iprl,1)=1
+        call updd(npt2,n00,icnew,jcnew)
+        if(ik1.eq.ik1sa)call stramo(ik1sa,ik1str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sv)call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+        endif
+        if(ik2.eq.ik2sa)call stramo(ik2sa,ik2str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sv)call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+        goto 601
+        endif
+        if(iway1.eq.1 .and. iway2.eq.0)then
+c       ik1.le.nbe,ik2.lt.nbe  
+        if(npt1.gt.0)then
+        call coend(npt1)
+        k(iprl,1)=1
+        call updd(npt1,n00,icnew,jcnew)
+        endif
+        if(ik1.eq.ik1sa)call stramo(ik1sa,ik1str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sv)call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sa)call stramo(ik2sa,ik2str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sv)call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+        goto 601
+        endif   
+        if(iway1.eq.1 .and. iway2.eq.1)then
+        if(npt1.gt.0)then   
+        call coend(npt1)
+        k(iprl,1)=1
+        call updd(npt1,n00,icnew,jcnew)
+        endif   
+        if(npt2.gt.0)then
+        call coend(npt2)
+        k(iprl,1)=1
+        call updd(npt2,n00,icnew,jcnew)
+        endif
+        if(ik1.eq.ik1sa)call stramo(ik1sa,ik1str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sv)call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sa)call stramo(ik2sa,ik2str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sv)call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+        goto 601
+        endif
+        endif   !! 3.2
+        if(ik2.gt.ik1 .and.
+     c   (ik2str.ne.0 .and. ik1str.ne.0 .and. ik2str.ne.ik1str))then   !! 3.2  
+        if(iway1.eq.0 .and. iway2.eq.0)then
+        if(ik2.eq.ik2sa)call stramo(ik2sa,ik2str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sv)call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sa)call stramo(ik1sa,ik1str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sv)call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+        goto 601
+        endif
+        if(iway1.eq.0 .and. iway2.eq.1)then
+c       ik2.le.nbe,ik1.lt.nbe 
+        if(npt2.gt.0)then
+        call coend(npt2)
+        k(iprl,1)=1
+        call updd(npt2,n00,icnew,jcnew)
+        endif
+        if(ik2.eq.ik2sa)call stramo(ik2sa,ik2str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sv)call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sa)call stramo(ik1sa,ik1str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sv)call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+        goto 601
+        endif
+        if(iway1.eq.1 .and. iway2.eq.0)then
+        if(npt1.gt.0 .and. ik2.gt.npt1)then
+        if(ik2.eq.ik2sa)call stramo(ik2sa,ik2str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sv)call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+        call coend(npt1)
+        k(iprl,1)=1
+        call updd(npt1,n00,icnew,jcnew)
+        endif
+        if(npt1.gt.0 .and. ik2.lt.npt1)then
+        call coend(npt1)
+        k(iprl,1)=1
+        call updd(npt1,n00,icnew,jcnew)
+        if(ik2.eq.ik2sa)call stramo(ik2sa,ik2str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sv)call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+        endif
+        if(ik1.eq.ik1sa)call stramo(ik1sa,ik1str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sv)call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+        goto 601
+        endif
+        if(iway1.eq.1 .and. iway2.eq.1)then
+        if(npt2.gt.0)then   
+        call coend(npt2)
+        k(iprl,1)=1
+        call updd(npt2,n00,icnew,jcnew)
+        endif
+        if(npt1.gt.0)then
+        call coend(npt1)
+        k(iprl,1)=1
+        call updd(npt1,n00,icnew,jcnew)
+        endif
+        if(ik2.eq.ik2sa)call stramo(ik2sa,ik2str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sv)call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sa)call stramo(ik1sa,ik1str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sv)call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+        goto 601
+        endif
+        endif   ! 3.1
+
+c       only one between ik1 & ik2 belongs to string
+        if(ik1.gt.ik2 .and. (ik1str.ne.0 .and. ik2str.eq.0))then   !! 4.1
+        if(iway1.eq.0 .and. iway2.eq.0)then
+        if(ik1.eq.ik1sa)call stramo(ik1av,ik1str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sv)call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+        call updd(ik2,n00,icnew,jcnew)
+        goto 601
+        endif
+        if(iway1.eq.0 .and. iway2.eq.2)then
+c       ik2.gt.nbe .and. ik2.le.n00,ik1 must be .gt.n00
+        if(ik1.eq.ik1sa)call stramo(ik1av,ik1str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sv)call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+        call updd(ik2,n00,icnew,jcnew)
+        if(ifcom2.gt.0)then
+        call coend(ifcom2)
+        k(iprl,1)=1
+        do i1=1,nstr
+        jj=nstra(i1)
+        kk=nstrv(i1)
+        if(ifcom2.eq.jj)call stramo(jj,i1,n00,icnew,jcnew)
+        if(ifcom2.eq.kk)call strvmo(kk,i1,n00,icnew,jcnew)   
+        enddo
+        endif
+        goto 601
+        endif   
+c        if(iway1.eq.1 .and. iway2.eq.0)then
+c       ik1.le.nbe,ik2.gt.n00,not possible
+c        if(npt1.gt.0)then
+c        call coend(npt1)
+c        k(iprl,1)=3
+c        call updd(npt1,n00,icnew,jcnew)
+c        endif
+c        call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+c        call updd(ik2,n00,icnew,jcnew)
+c        goto 601
+c        endif        
+c        if(iway1.eq.1 .and. iway2.eq.2)then
+c       ik1.le.nbe,ik2.gt.nbe;not possible
+c        if(npt1.gt.0)then
+c        call coend(npt1)
+c        k(iprl,1)=3
+c        call updd(npt1,n00,icnew,jcnew)
+c        endif
+c        call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+c        call updd(ik2,n00,icnew,jcnew)
+c        if(ifcom2.gt.0)then
+c        call coend(ifcom2)
+c        k(iprl,1)=3
+c        do i1=1,nstr
+c        jj=nstra(i1)
+c        kk=nstrv(i1)
+c        if(ifcom2.eq.jj)call stramo(jj,i1,n00,icnew,jcnew)
+c        if(ifcom2.eq.kk)call strvmo(kk,i1,n00,icnew,jcnew)
+c        enddo
+c        endif
+c        goto 601
+c        endif
+        endif   !! 4.1  
+        if(ik1.gt.ik2 .and. (ik1str.eq.0 .and. ik2str.ne.0))then   !! 4.2
+        if(iway1.eq.0 .and. iway2.eq.0)then
+        call updd(ik1,n00,icnew,jcnew)
+        if(ik2.eq.ik2sa)call stramo(ik2sa,ik2str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sv)call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+        goto 601
+        endif
+        if(iway1.eq.0 .and. iway2.eq.1)then
+c       ik1.gt.n00,ik2.le.nbe
+        if(npt2.gt.0)then
+        call updd(ik1,n00,icnew,jcnew)
+        call coend(npt2)
+        k(iprl,1)=1
+        call updd(npt2,n00,icnew,jcnew)
+        endif
+        if(ik2.eq.ik2sa)call stramo(ik2sa,ik2str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sv)call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+        goto 601
+        endif 
+        if(iway1.eq.2 .and. iway2.eq.0)then
+c       ik1.gt.nbe,ik2 must be .le.nbe
+        call updd(ik1,n00,icnew,jcnew)
+        if(ifcom1.gt.0 .and. ifcom1.gt.ik2)then
+        call coend(ifcom1)
+        k(iprl,1)=1
+        do i1=1,nstr
+        jj=nstra(i1)
+        kk=nstrv(i1)
+        if(ifcom1.eq.jj)call stramo(jj,i1,n00,icnew,jcnew)
+        if(ifcom1.eq.kk)call strvmo(kk,i1,n00,icnew,jcnew)
+        enddo
+        if(ik2.eq.ik2sa)call stramo(ik2sa,ik2str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sv)call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+        endif
+        if(ifcom1.gt.0 .and. ifcom1.lt.ik2)then
+        if(ik2.eq.ik2sa)call stramo(ik2sa,ik2str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sv)call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+        call coend(ifcom1)
+        k(iprl,1)=1
+        do i1=1,nstr
+        jj=nstra(i1)
+        kk=nstrv(i1)
+        if(ifcom1.eq.jj)call stramo(jj,i1,n00,icnew,jcnew)
+        if(ifcom1.eq.kk)call strvmo(kk,i1,n00,icnew,jcnew)
+        enddo
+        endif
+        goto 601
+        endif
+        if(iway1.eq.2 .and. iway2.eq.1)then   
+c       ik1.gt.nbe,ik2.le.nbe
+        if(npt2.gt.0 .and. ik1.gt.npt2)then
+        call updd(ik1,n00,icnew,jcnew)
+        call coend(npt2)
+        k(iprl,1)=1
+        call updd(npt2,n00,icnew,jcnew)
+        endif
+        if(npt2.gt.0 .and. ik1.lt.npt2)then
+        call coend(npt2)
+        k(iprl,1)=1
+        call updd(npt2,n00,icnew,jcnew)
+        call updd(ik1,n00,icnew,jcnew)
+        endif
+        if(ifcom1.gt.0 .and. ifcom1.gt.ik2)then
+        call coend(ifcom1)
+        k(iprl,1)=1
+        do i1=1,nstr
+        jj=nstra(i1)
+        kk=nstrv(i1)
+        if(ifcom1.eq.jj)call stramo(jj,i1,n00,icnew,jcnew)
+        if(ifcom1.eq.kk)call strvmo(kk,i1,n00,icnew,jcnew)
+        enddo
+        if(ik2.eq.ik2sa)call stramo(ik2sa,ik2str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sv)call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+        endif
+        if(ifcom1.gt.0 .and. ifcom1.lt.ik2)then
+        if(ik2.eq.ik2sa)call stramo(ik2sa,ik2str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sv)call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+        call coend(ifcom1)
+        k(iprl,1)=1
+        do i1=1,nstr
+        jj=nstra(i1)
+        kk=nstrv(i1)
+        if(ifcom1.eq.jj)call stramo(jj,i1,n00,icnew,jcnew)
+        if(ifcom1.eq.kk)call strvmo(kk,i1,n00,icnew,jcnew)
+        enddo
+        endif
+        goto 601
+        endif
+        endif   !! 4.2 
+        if(ik2.gt.ik1 .and. (ik1str.ne.0 .and. ik2str.eq.0))then   !! 4.3
+        if(iway1.eq.0 .and. iway2.eq.0)then
+        call updd(ik2,n00,icnew,jcnew)
+        if(ik1.eq.ik1sa)call stramo(ik1sa,ik1str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sv)call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+        goto 601
+        endif
+        if(iway1.eq.0 .and. iway2.eq.2)then
+c       ik2.gt.nbe .and. ik2.le.n00, ik1 must be .le.nbe
+        call updd(ik2,n00,icnew,jcnew)
+        if(ifcom2.gt.0 .and. ifcom2.gt.ik1)then
+        call coend(ifcom2)
+        k(iprl,1)=1
+        do i1=1,nstr
+        jj=nstra(i1)
+        kk=nstrv(i1)
+        if(ifcom2.eq.jj)call stramo(jj,i1,n00,icnew,jcnew)
+        if(ifcom2.eq.kk)call strvmo(kk,i1,n00,icnew,jcnew)
+        enddo
+        if(ik1.eq.ik1sa)call stramo(ik1sa,ik1str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sv)call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+        endif
+        if(ifcom2.gt.0 .and. ifcom2.lt.ik1)then
+        if(ik1.eq.ik1sa)call stramo(ik1sa,ik1str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sv)call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+        call coend(ifcom2)
+        k(iprl,1)=1
+        do i1=1,nstr
+        jj=nstra(i1)
+        kk=nstrv(i1)
+        if(ifcom2.eq.jj)call stramo(jj,i1,n00,icnew,jcnew)
+        if(ifcom2.eq.kk)call strvmo(kk,i1,n00,icnew,jcnew)
+        enddo
+        endif
+        goto 601
+        endif
+        if(iway1.eq.1 .and. iway2.eq.0)then
+c       ik1.le.nbe,ik2.gt.n00
+        call updd(ik2,n00,icnew,jcnew)
+        if(npt1.gt.0)then
+        call coend(npt1)
+        k(iprl,1)=1
+        call updd(npt1,n00,icnew,jcnew)
+        endif
+        if(ik1.eq.ik1sa)call stramo(ik1sa,ik1str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sv)call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+        goto 601
+        endif        
+        if(iway1.eq.1 .and. iway2.eq.2)then
+c       ik1.le.nbe,ik2.gt.nbe
+        if(npt1.gt.0 .and. npt1.lt.ik2)then  
+        call updd(ik2,n00,icnew,jcnew)
+        call coend(npt1)
+        k(iprl,1)=1
+        call updd(npt1,n00,icnew,jcnew)
+        endif
+        if(npt1.gt.0 .and. npt1.gt.ik2)then
+        call coend(npt1)
+        k(iprl,1)=1
+        call updd(npt1,n00,icnew,jcnew)
+        call updd(ik2,n00,icnew,jcnew)
+        endif
+        if(ifcom2.gt.0 .and. ifcom2.gt.ik1)then
+        call coend(ifcom2)
+        k(iprl,1)=1
+        do i1=1,nstr
+        jj=nstra(i1)
+        kk=nstrv(i1)
+        if(ifcom2.eq.jj)call stramo(jj,i1,n00,icnew,jcnew)
+        if(ifcom2.eq.kk)call strvmo(kk,i1,n00,icnew,jcnew)
+        enddo
+        if(ik1.eq.ik1sa)call stramo(ik1sa,ik1str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sv)call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+        endif
+        if(ifcom2.gt.0 .and. ifcom2.lt.ik1)then
+        if(ik1.eq.ik1sa)call stramo(ik1sa,ik1str,n00,icnew,jcnew)
+        if(ik1.eq.ik1sv)call strvmo(ik1sv,ik1str,n00,icnew,jcnew)
+        call coend(ifcom2)
+        k(iprl,1)=1
+        do i1=1,nstr
+        jj=nstra(i1)
+        kk=nstrv(i1)
+        if(ifcom2.eq.jj)call stramo(jj,i1,n00,icnew,jcnew)
+        if(ifcom2.eq.kk)call strvmo(kk,i1,n00,icnew,jcnew)
+        enddo
+        endif
+        goto 601
+        endif
+        endif   !! 4.3
+        if(ik2.gt.ik1 .and. (ik2str.ne.0 .and. ik1str.eq.0))then   !! 4.4
+        if(iway1.eq.0 .and. iway2.eq.0)then
+        if(ik2.eq.ik2sa)call stramo(ik2sa,ik2str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sv)call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+        call updd(ik1,n00,icnew,jcnew)
+        goto 601
+        endif
+c        if(iway1.eq.0 .and. iway2.eq.1)then
+c       ik2.le.nbe,ik1.gt.n00,not possible
+c        if(npt2.gt.0)then
+c        call coend(npt2)
+c        k(iprl,1)=3
+c        call updd(npt2,n00,icnew,jcnew)
+c        endif
+c        call strvmo(ik2sv,ik2str,n00,icnew,jcnew)        
+c        call updd(ik1,n00,icnew,jcnew)
+c        goto 601
+c        endif
+        if(iway1.eq.2 .and. iway2.eq.0)then
+c       ik1.gt.nbe,ik2 must be .gt.n00
+        if(ik2.eq.ik2sa)call stramo(ik2sa,ik2str,n00,icnew,jcnew)
+        if(ik2.eq.ik2sv)call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+        call updd(ik1,n00,icnew,jcnew)
+        if(ifcom1.gt.0)then
+        call coend(ifcom1)
+        k(iprl,1)=1
+        do i1=1,nstr
+        jj=nstra(i1)
+        kk=nstrv(i1)
+        if(ifcom1.eq.jj)call stramo(jj,i1,n00,icnew,jcnew)
+        if(ifcom1.eq.kk)call strvmo(kk,i1,n00,icnew,jcnew)
+        enddo
+        endif
+        goto 601
+        endif
+c        if(iway1.eq.2 .and. iway2.eq.1)then 
+c       ik2.le.nbe,ik1.gt.nbe;not possible
+c        if(npt2.gt.0)then
+c        call coend(npt2)
+c        k(iprl,1)=3
+c        call updd(npt2,n00,icnew,jcnew)
+c        endif
+c        call strvmo(ik2sv,ik2str,n00,icnew,jcnew)
+c        call updd(ik1,n00,icnew,jcnew)
+c        if(ifcom1.gt.0)then
+c        call coend(ifcom1)
+c        k(iprl,1)=3
+c        do i1=1,nstr
+c        jj=nstra(i1)
+c        kk=nstrv(i1)
+c        if(ifcom1.eq.jj)call stramo(jj,i1,n00,icnew,jcnew,0,0)
+c        if(ifcom1.eq.kk)call strvmo(kk,i1,n00,icnew,jcnew,0,0)
+c        enddo
+c        endif
+c        goto 601
+c        endif
+        endif   !! 4.4
+
+601     ic=icnew
+        jc=jcnew
+        call update_ctln(time,0)
+c       another part of 'update collision list', i. e. find out collis. pairs 
+c        composed of partons one of which is ic (jc) and another one 
+c        in 'parlist'
+        endif   ! 1
+c160110
+        return   ! 160110
 	end
 
 
@@ -2866,13 +3629,8 @@ c	differential cross section of q1*q1(-) -> q2*q2(-), process 4
         common/syspar_p/rsig1,pio,tcut
 c210803
         common/sa24/adj1(40),nnstop,non24,zstop   ! 181003
-c240412
-	common/sa33/smadel,ecce,parecc,iparres   
-	if(iparres.eq.0)then   
-        fs11_1=0.   ! 280809
-        return   ! 280809
-	endif
-c240412
+        fs11_1=0.   ! 160110
+        return   ! 160110
         adj11=adj1(1)
 	adj20=adj1(20)  
 c210803
@@ -2940,13 +3698,8 @@ c	differential cross section of q*q(-) -> g*g, process 6
         common/syspar_p/rsig1,pio,tcut
 c210803
         common/sa24/adj1(40),nnstop,non24,zstop   ! 181003
-c240412
-        common/sa33/smadel,ecce,parecc,iparres   
-        if(iparres.eq.0)then
-        fsqq=0.   ! 280809
-        return   ! 280809
-	endif
-c240412
+        fsqq=0.   ! 160110
+        return   ! 160110
         adj11=adj1(1)
 	adj20=adj1(20)  
 c210803
@@ -3015,14 +3768,8 @@ c	differential cross section of g*g ->q*q(-), process 7
         common/syspar_p/rsig1,pio,tcut
 c210803
         common/sa24/adj1(40),nnstop,non24,zstop   ! 181003
-c240412
-        common/sa33/smadel,ecce,parecc,iparres 
-c	write(9,*)'iparres=',iparres  
-        if(iparres.eq.0)then
-        fsgg_1=0.   ! 280809
-        return   ! 280809
-	endif
-c240412
+        fsgg_1=0.   ! 160110
+        return   ! 160110
         adj11=adj1(1)
 	adj20=adj1(20)  
 c210803
@@ -3296,7 +4043,7 @@ c	dell: energy loss per unit distance
 	IMPLICIT INTEGER(I-N)
 	INTEGER PYK,PYCHGE,PYCOMP
 	parameter (mplis=40000,msca=2000)
-	common/sa12/ppsa(5),nchan,non121,sjp,nsjp,non122,ttaup,taujp
+	common/sa12/ppsa(5),nchan,nsjp,sjp,ttaup,taujp
 	common/sa24/adj1(40),nnstop,non24,zstop
 	common/parlist/rp(4,mplis),pp(4,mplis),
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis)   
@@ -3514,7 +4261,7 @@ c	deltp(3): three momentum losed
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        subroutine coend(ii)   ! 280809
+        subroutine coend(ii)   ! 160110
 c       copy parton ii to the end of 'parlist' (to the position of iprl+1)
 c       copy parton ii to the end of 'pyjets' either
         parameter (mplis=40000,kszj=40000)
@@ -3524,7 +4271,7 @@ c       copy parton ii to the end of 'pyjets' either
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)   
         common/parlist/rp(4,mplis),pp(4,mplis), 
      c  taup(mplis),rmp(mplis),vp(3,mplis),iprl,idp(mplis) 
-        common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio   ! 280809   
+        common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio   
         iprl=iprl+1
         do i1=1,3
         rp(i1,iprl)=rp(i1,ii)
@@ -3554,7 +4301,7 @@ c        enddo
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        subroutine updd(ii,n00,icnew,jcnew)   ! 280809
+        subroutine updd(ii,n00,icnew,jcnew)   ! 160110
 c       move 'parlist' one step downward from ii+1 to iprl 
 c        move 'pyjets' one step downward from ii+1 to n
 c        move 'sbe' one step downward from ii+1 to nbe if ii.le.nbe
@@ -3657,7 +4404,7 @@ c       update the values of lc(1-2,m) if which is .ge. ii
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        subroutine stramo(ii,iistr,n00,icnew,jcnew)   ! 280809
+        subroutine stramo(ii,iistr,n00,icnew,jcnew)   ! 160110
 c       if ii is 'A' of iistr-th string, copy other components of this string 
 c        to the end of 'parlist' and then throw away all components of string 
 c        (i. e. update particle lists: 'pyjets','sbe','parlist', collis. list, 
@@ -3704,7 +4451,7 @@ c       throw away all components
  
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        subroutine strvmo(ii,iistr,n00,icnew,jcnew)   ! 280809
+        subroutine strvmo(ii,iistr,n00,icnew,jcnew)   ! 160110
 c       if ii is 'V' of iistr-th string, copy other components of this string 
 c        to the end of 'parlist' and then throw away all components of string 
 c        (i. e. update particle lists: 'pyjets','sbe','parlist', collis. list, 
@@ -3751,7 +4498,7 @@ c       throw away all components
  
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        subroutine strsmo(ik1,ik2,iistr,n00,icnew,jcnew)   ! 280809 
+        subroutine strsmo(ik1,ik2,iistr,n00,icnew,jcnew)   ! 160110 
 c       if ik1 is 'A' and ik2 is 'V' of a string, copy other components of this 
 c        string to the end of 'parlist', throw away all components of 
 c        string (i. e. update particle lists: 'pyjets','sbe','parlist', 
@@ -3762,7 +4509,7 @@ c        inelastic collis.
 c       iway1=0 if ik1 is not first component or it's partner of diquark
 c       iway1=1 if ik1 is first component of a diquark
 c       iway1=2 if ik1 is partner of a diquark
-c       iistr: order number of string to which ii belongs 
+c       iistr: order number of string to which ii belongs
         parameter (mplis=40000,kszj=40000)
 	IMPLICIT DOUBLE PRECISION(A-H, O-Z)
 	IMPLICIT INTEGER(I-N)
@@ -3802,7 +4549,7 @@ c       throw away all components
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        subroutine adjdi(ii,n00,idi1,idway)   ! 280809
+        subroutine adjdi(ii,n00,idi1,idway)   ! 160110
 c       does ii is component of a diquark
 c       idway=0: if ii is not first component or it's partner of a diquark
 c       idway=1: if ii is first component of a diquark 
@@ -3846,7 +4593,7 @@ c       ii is partner of idi1-th diquark
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        subroutine diqmov(idi1)   ! 280809
+        subroutine diqmov(idi1)   ! 160110
 c       remove diquark idi1    
         parameter (kszj=40000)
 	IMPLICIT DOUBLE PRECISION(A-H, O-Z)
@@ -3874,7 +4621,7 @@ c       remove diquark idi1
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        subroutine adjst(ik1,n00,ik1str,ik1sa,ik1sv)   ! 280809
+        subroutine adjst(ik1,n00,ik1str,ik1sa,ik1sv)   ! 160110
 c       does ik1 is component of a string
         parameter(kszj=40000)
 	IMPLICIT DOUBLE PRECISION(A-H, O-Z)

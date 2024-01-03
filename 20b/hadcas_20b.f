@@ -1,11 +1,11 @@
 	subroutine hadcas(ijk,neve,nout,time_had,ijkk)
 c       deal with the hadronic rescattering composed by Ben-Hao Sa, 20/09/2000
-c	input message is in 'sa1_h', which plays wooking block as well
-c	output message is in 'sa1_h'
+c       input message is in 'sa1_h', which plays wooking block as well
+c       output message is in 'sa1_h'
 c       ijk: the event number
 c       neve: total number of events
 c       nout: a internal write out per nout events
-c060112 if ijkk=1 give up current event (avoiding infinite loops)
+c       if ijkk=1 give current event (avoiding infinite loops)
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -24,17 +24,17 @@ c060112 if ijkk=1 give up current event (avoiding infinite loops)
 	common/sa24/adj1(40),nnstop,non24,zstop   ! 231104
         common/sa25/mstj1_1,mstj1_2,para1_1,para1_2   ! 221203 250204
         common/pycidat2/kfmaxt,nont2,param(20),weigh(600)   ! 250204
-c       ifram = 0 for fixed target, = 1 for collider 
+c       ifram = 0 for fixed target, = 1 for collider
 c       cspipi (fm^2): total cross section of pion + pion
-c       cspin (fm^2): total cross section of pion + nucleon 
-c       cskn (fm^2): total cross section of kaon + nucleon 
-c       csnn (fm^2): total cross section of n + n 
+c       cspin (fm^2): total cross section of pion + nucleon
+c       cskn (fm^2): total cross section of kaon + nucleon
+c       csnn (fm^2): total cross section of n + n
 c       cspsn: total cross section of J/Psi (Psi') + n
 c       cspsm: total cross section of J/Psi (Psi') + meson
 c       rcsit: ratio of inelastic to total cross section
-c       kfmax: the maximum # of particles with different flavor code 
+c       kfmax: the maximum # of particles with different flavor code
 c       kfaco(i): flavor code of i-th particle among kfmax
-c       numb(i): # of particles up to the last one with flavor of kfaco(i) 
+c       numb(i): # of particles up to the last one with flavor of kfaco(i)
 c       disbe(i,j): allowable minimum approaching distance between particles
 c                   kfaco(i) & kfaco(j)
 c       sig (fm^2): cross section of pion + pion to kaon + kaon
@@ -50,7 +50,7 @@ c       0.5 is hard core distance between two nucleons
 c       0. is hard core distance between pion and nucleon
 c!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 c       tau(i) : formation time of particle i.
-c	ishp(i)=1 if i-th particle inside the simulated volume
+c       ishp(i)=1 if i-th particle inside the simulated volume
 c              =0 if i-th particle outside the simulated volume
 c       isinel(i) = 0 without i-th inelastic process
 c                 = 1 with i-th inelastic process
@@ -69,7 +69,7 @@ c       noinel(i): statistics of the occurring of i-th inelastic process
 c       noel: statistics of the occurring of elastic process
         dimension lc(nsize,5),tc(nsize),tw(nsize)
         dimension peo(4)
-	time=time_had   ! recovered on 280910
+	time=0.   ! recovered on 280910 121110
 	param(1)=para1_2   ! 250204
 c	write(9,*)'para1_2=',param(1)   ! 250204
 	pio=3.1416
@@ -151,18 +151,18 @@ c       change K0S, K0L to K0, K0ba
         enddo
 
 c	write(9,*)'before filt ijk=',ijk   ! sa
-c	call prt_sa1_h(nsa) ! sa 
+c	call prt_sa1_h(nsa) ! sa
 c       filter out particles wanted to study and make in order of proton, 
-c        neutron, ...
+c        neutron, ... 
         call filt_h
 c	write(9,*)'after filt'   ! sa
 c	call prt_sa1_h(nsa) ! sa
-c280910	time=0. 
+c280910	time=0.
 c       calculate position of center of mass of the system. distance of a 
 c        particle from this cms is used to check whether it is freezes out 
-c        or not
+c        or not 
         call copl_h(time)
-c	initial particle list is compsed of the arraies in common block 
+c       initial particle list is compsed of the arraies in common block 
 c        'sa1_h', 'tau' and 'ishp' in 'sa8_h', and 'numb' in 'sa9_h'
 c       creat the initial collision list, note: be sure that the initial
 c        collision list must not be empty
@@ -185,7 +185,7 @@ c	call prt_sa1_h(nsa) ! sa
 c	do iop=1,nctl   ! sa
 c	write(9,*)iop,lc(iop,1),lc(iop,2),tc(iop)   ! sa
 c	enddo   ! sa 
-	time_had=time
+	time_had=time_had+time   ! 121110
 c	write(9,*)'af scat, time_had,time=',time_had,time   ! sa
 c       change K0,K0ba to K0L and K0S
         do j=1,nsa
@@ -205,7 +205,7 @@ c       call prt_sa1_h(nsa) ! sa
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine sysini_h
-c       give the initial values to the quantities needed in hardon rescattering
+c       give the initial values to the quantities needed in hadron rescattering
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -352,7 +352,7 @@ ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine copl_h(tt)
 c       calculate position of center of mass of the non-freeze-out system 
 c       distance of a particle from this cms is used to checke whether
-c        it freezes out or not 
+c        it freezes out or not
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -448,7 +448,7 @@ c170204
 c110504
 c	if(tci.gt.1.0e-7)then
 	if(tci.eq.0.0)goto 600
-c	from 'tcolij' unsuccessfully, goto 600
+c	return from 'tcolij' unsuccessfully, goto 600
 	if(nctl.eq.1)then
 	nctl=nctl+1
 	goto 600
@@ -579,9 +579,9 @@ c       ksa(l,2),ksa(l1,2) might go through inelastic reaction
 c	write(9,*)'be. coinel, iii,kfa,kfb,winel=',iii,kfa,kfb,winel! sa
         call coinel(l,l1,ss,b,pi,pj,icp,pii,pjj,lc,tc,tw,winel,ik3,ik4)
 c       if winel=0 the inelastic reaction has not really happened 
-c       if winel=1 inelastic collision happens, ik3 and ik4 are  
+c       if winel=1 inelastic collision happens, ik3 and ik4 are     
 c        flavors of the scattered particles, pii and pjj are four-momentum of 
-c        scattered particles in Lab frame, the two colliding particles are 
+c        scattered particles in Lab frame, the two colliding particles are     
 c        still with line numbers of l and l1 in the particle list
 
 640     if(winel.ne.0)then   !!!
@@ -683,7 +683,7 @@ c       if(ijk.eq.6)write(9,*)'iii=',iii
 
 
 
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine find_h(icp,tcp,lc,tc,tw,ico)
 c       find out the binary collision with minimum collision time
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
@@ -8102,7 +8102,7 @@ c       add photon
 	endif
 c	tau(jj)=t0*p(jj,4)/p(jj,5)
 	tau(jj)=time+t0*taup*p(jj,4)/p(jj,5)
-c	give zero formation time to particles produced from
+c	give  zero formation time to particles produced from
 c	 rescatttering 
 301	lc(icp,i)=jj
 cc	if(nnn.eq.1)goto 300
@@ -8173,8 +8173,8 @@ c	if(ik2.eq.22)write(9,*)'numb=',(numb(i1),i1=1,53)   ! sa 010706
 	do 700 i=1,2
 c011210
 	if(ll.eq.n)then   !
-	do i1=1,kfmax
-	if(kf.ne.kfaco(i1))goto 400
+        do i1=1,kfmax
+        if(kf.ne.kfaco(i1))goto 400
         do m=i1,kfmax
         numb(m)=numb(m)-1
         enddo
@@ -8184,8 +8184,8 @@ c011210
         if(numb(m).eq.numba)numb(m)=numb(m)-1
         enddo
         endif
-	goto 100
-400	enddo
+        goto 100
+400     enddo
 	endif   !
 c011210
 cc	do j=ll+1,n+n1
@@ -8254,7 +8254,7 @@ c100111	if(d.lt.1.e-10)return
 	a=min(10.3,1./(1.12*pt)/(1.12*pt))
 c100111	d6=d**6
 c100111	b=d6*a/(1.+d6)
-        b=a   ! 100111
+        b=a   ! 10011
 c100111	if(b.lt.1.e-20)then
 c100111	b=1.e-20
 c100111	endif
@@ -8273,7 +8273,7 @@ c100111	abt=1.
 c	elseif(b*t0.lt.-50.)then
 c	abt=0.
 c100111	else
-	abt=dexp(dmax1(-7.0D2,dble(b*t0)))   ! mathematical skill 100111
+	abt=dexp(dmax1(-7.0D2,dble(b*t0)))
 c       'dble': intrinsic function, to increase the precision from 'real 4'
 c        to 'real 8' 100111
 c100111	endif
@@ -8499,11 +8499,11 @@ c141104
 
 C*******************************************************************
 	subroutine rsfilt_h(l,l1,iflag)
-c	play the role of first range filter and guarantee the collision list 
+c       play the role of first range filter and guarantee the collision list 
 c        is composed according to the entrance channels of considered 
 c        inelastic reactions
-c	subroutine intdis plays the role of second range filter
-c	collision pairs not interested can not filter through both of rsfilt 
+c       subroutine intdis plays the role of second range filter
+c       collision pairs not interested can not filter through both of rsfilt 
 c        and intdis
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
@@ -8696,8 +8696,8 @@ c	write(9,*)'p1,psa1=',p(l1,i)
 	b(i)=(pi(i)+pj(i))/(pi(4)+pj(4))
 	enddo
 	ilo=0
-c	perform Lorentz transf. to CMS frame
 	call lorntz(ilo,b,pi,pj)
+c	perform Lorentz transf. to CMS frame 
 	bta=dsqrt(b(1)**2+b(2)**2+b(3)**2)
 c	if boost is too violent,put particles on mass shell by hand.
 	if(bta.gt.0.99999d+0)then
@@ -8801,7 +8801,7 @@ c	write(9,*)'v1,vsa1=',v(l1,i)
 	enddo
 cc	ri(4)=time
 cc	rj(4)=time
-c	Lorentz transf. to CMS frame 
+c       Lorentz transf. to CMS frame
 	call lorntz(ilo,b,ri,rj)
 	rb=0.
 	bb=0.
@@ -10764,8 +10764,8 @@ c	iiii: number of event
 	dimension pp(5),rr(4)
 c       idec: stord the line number (in the particle list) of 
 c        particles after decay
-c	iwide: stord the line number (in the particle list) of decaying
-c	 particles
+c       iwide: stord the line number (in the particle list) of decaying
+c        particles
 c       the messages of decayed particles are
 c        stored in the varibles and arraies in 'sa17'
 c       pp, rr: momentum, position of decaying particle
@@ -10839,8 +10839,8 @@ c	if(nctl.eq.0)return
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 	subroutine decpr(pp,rr,kf)
-c	give momentum and position to decayed particles  
-c	pp, rr: momentum, position of decaying particle	
+c       give momentum and position to decayed particles              
+c       pp, rr: momentum, position of decaying particle
 c	kf: flavour code of decaying particle
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
@@ -11117,7 +11117,7 @@ c        common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
 	common/sa24/adj1(40),nnstop,non24,zstop   ! 210803 181003 141104
         common/ctllist_h/nctl,noinel(600),nctl0,noel
         dimension lc(nsize,5),tc(nsize),tw(nsize)
-c       idec: store line number (in the particle list) of decayed particles 
+c       idec: store line number (in the particle list) of decayed particles
 	dddt=adj1(11)   ! 141104
 
         nctl=nctl+1

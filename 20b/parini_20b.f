@@ -81,9 +81,8 @@ c	noel: statistics of the blocked nn colli. #
 	common/sa15/nps,npsi,pps(5000,5),ppsi(5000,5)
 	common/sa23/kpar,knn,kpp,knp   ! 200601
 	common/sa30/vneump,vneumt
-        common/sa33/smadel,ecce,parecc,iparres   ! 270312 240412
 c	vneump (vneumt): # of participant nucleons of projectile (target) 
-c	 calculated geometrically
+c	 calculated geometrically 
 
 	dimension peo(4),pi(4),pj(4),xi(4),xj(4)
 	dimension inoin(kszj)
@@ -152,14 +151,6 @@ c                   55: photon from parton-parton scattering
 c                       qg->q(gamma) and q(-q)->g(gamma)
 c                   66: hardonic direct photon
 c240209                 pi+pi->rho+(gamma) and pi+rho->pi+(gamma)
-c270312	initiation of x,y,x^2,y^2 and sump (statistics of the number of 
-c270312	 nucleons in overlap region)
-	sumx=0.
-	sumy=0.
-	sumx2=0.
-        sumy2=0.
-	sump=0.
-c270312
 
 c	initiate the nucleus-nucleus collision system
 
@@ -209,7 +200,7 @@ c	if(iii.eq.10)write(9,*)'nap,vneump,ratps=',nap,vneump,ratps
 	if(rann.lt.ratps)then
 c       sample position of projectile nucleon in overlap region of colliding 
 c	 nuclei
-	call arrove(i1,1,sumx,sumy,sumx2,sumy2,sump)   ! 270312
+	call arrove(i1,1)
 	else
 c	sample position of projectile nucleon according to Woods-Saxon
 c	 distribution
@@ -259,7 +250,7 @@ c	distribute target nucleons
 	rann=pyr(1)
 	if(rann.lt.ratps)then
 c       sample position of target nucleon in overlap region of colliding nuclei
-	call arrove(i2,0,sumx,sumy,sumx2,sumy2,sump)   ! 270312
+	call arrove(i2,0)
 	else
 c	sample position of target nucleon according to Woods-Saxon
 c	 distribution
@@ -316,25 +307,6 @@ c	distribute target nucleons
         enddo        
         endif   !!
 c230311
-c270312
-	if(sump.ne.0.)then
-	asumx=sumx/sump
-	sigmx2=sumx2/sump-asumx*asumx
-	asumy=sumy/sump
-        sigmy2=sumy2/sump-asumy*asumy
-c	reaction plane eccentricity of participant nucleons
-	ecce=(sigmy2-sigmx2)/(sigmy2+sigmx2)
-c	assuming ecce=geometric eccentricity of ellipsoid (\sqrt{(1-b^2/a^2)}) 
-c	 with half major axis b=pt*(1+smadel) and half minor axis 
-c	 a==pt*(1-smadel), the resulted smadel=-ecce*ecce/4 (if neglecting 
-c	 the samll term of ecce*ecce*(-2*smadel+smadel*smadel)
-	smadel=parecc*ecce*ecce/4.
-c	here a sign change is introduced because of asymmetry of initial 
-c	 spatial space is oppsed to the final momentum space 
-c	write(9,*)'vneump,vneumt,sump,ecce,smadel=',
-c     c	 vneump,vneumt,sump,ecce,smadel
-	endif	
-c270312
 c191110
 	r0pt=r0p+r0t
         if(itden.ne.0)then   ! A+B or p+A, 230311
@@ -1102,7 +1074,6 @@ c	administrate a nucleus-nucleus collision
         common/sa25/mstj1_1,mstj1_2,para1_1,para1_2   
         common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio   ! 280809
         common/sa28/nstr,nstr00,nstra(kszj),nstrv(kszj)   ! 280809
-	common/sa33/smadel,ecce,parecc,iparres   ! 240412
         common/sbe/nbe,nonbe,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
 	common/saf/naf,nonaf,kaf(kszj,5),paf(kszj,5),vaf(kszj,5)
 	common/sbh/nbh,nonbh,kbh(kszj,5),pbh(kszj,5),vbh(kszj,5) 
@@ -1156,7 +1127,6 @@ c       nstr: statitics of number of strings in a hh collis.
 c       nstr00: number of strings after call remo
 c       nstra(i): line number of first component of i-th string
 c280809 nstrv(i): line number of last component of i-th string
-c	write(9,*)'in scat iparres=',iparres   ! 240412
 	adj112=adj1(12)   ! 300705
 	adj140=adj1(40)   ! 200905
         time=time_neu   ! 111010 121110
@@ -1727,9 +1697,6 @@ c050805	nbeo=nbe   ! 190204
 	endif   ! 1
 cs	write(9,*)'af. sbe n,nbh,nbe=',n,nbh,nbe   ! sa
 c	goto 200
-c	write(22,*)'af. sbe iii,nbe=',iii,nbe   ! 240412
-c	call pylist(1)   ! 240412
-c	call prt_sbe(nbe)   ! 240412
 c080104
 c       break up diquark and give four momentum and four position
 c        to the broken quarks (working in 'pyjets')
@@ -1864,8 +1831,8 @@ c       parton cascade process is assumed to be start at time 0.
         enddo
 c201203
 c	goto 890
-c	write(22,*)'be. call parcas n,iprl=',n,iprl   ! 240412
-c	call prt_pyj(n)   ! 240412 
+cs	write(9,*)'af. pyjets to parlist n,iprl=',n,iprl   ! sa
+cs	call prt_pyj(n)   ! sa 050805 
 	iijk=0   ! 151203
 c280809
         do i1=1,9
@@ -1904,8 +1871,6 @@ c	p(i,j)=0.
 c	v(i,j)=0.
 c	enddo
 c	enddo
-c	write(22,*)'af. call parcas n,iprl=',n,iprl   ! 240412
-c	call prt_pyj(n)   ! 240412
 c101210
 c       if(iii.eq.141)then   
 c       write(9,*)'af parcas'
@@ -1932,8 +1897,7 @@ c121110
 
 c280809 if(adj112.ne.0)goto 889   ! coalescence
         if(adj112.ne.0.or.(adj112.eq.0.and.(nreac(4).gt.nreaco(4).or.
-     c   nreac(6).gt.nreaco(6).or.nreac(7).gt.nreaco(7))))goto 889   
-c	 coalescence ! 280809 150512
+     c   nreac(6).gt.nreaco(6))))goto 889   ! coalescence 280809 
 c	recover parton configuration in 'sbe' 
 c280809
         if(idi.gt.0)then
@@ -2037,25 +2001,17 @@ c	write(9,*)'n,dele=',n,dele
         if(pabs.ge.p(j3,4))p(j3,4)=p(j3,4)-del
         endif
         enddo
-c	write(22,*)'af. recover 2 iii,n=',iii,n   !240412
-c	call pylist(1)   ! 240412
-c	call prt_pyj(n)   ! 240412   
+cs	write(22,*)'af share jb,n=',jb,n
+cs	call prt_pyj(n)
 cs	call prt_sbh(nbh)
 
-        if(iparres.eq.0 .or. (iparres.eq.1.and.(nreaco(4).eq.nreac(4))
-     c   .and.(nreaco(6).eq.nreac(6)).and.(nreaco(7).eq.nreac(7))))
-     c   then   !    ela. parton-parton collisions only 240412
-	do i1=1,n
-	do j1=1,5
-	pbe(i1,j1)=p(i1,j1)
-	enddo
-	enddo
-c	'sbe' to 'PYJETS'
-	call tran_sbe 
-	endif   ! 240412
-c	write(22,*)'af. call tran_sbe iii,n=',iii,n   !240412
-c	call pylist(1)   ! 240412
-c	call prt_pyj(n)   ! 240412
+c280809	do i1=1,n
+c	do j1=1,5
+c	pbe(i1,j1)=p(i1,j1)
+c	enddo
+c	enddo
+c       'sbe' to 'PYJETS'
+c280809 call tran_sbe 
 
 c	write(9,*)'idii,idij,jb,nbe,n,j=',idii,idij,jb,nbe,n,j
 c010305	if(nout.eq.1 .or. iii.eq.1 .or. iii.eq.neve)then
@@ -2078,7 +2034,7 @@ c141208	if(adj112.eq.0)call sfm   ! string fragmentation 110604
         ijjk=0
 c280809 if(adj112.eq.0)then   ! 240209
         if(adj112.eq.0.and.nreaco(4).eq.nreac(4).and.nreaco(6)
-     c   .eq.nreac(6).and.nreaco(7).eq.nreac(7))then   ! 280809 150512
+     c   .eq.nreac(6))then   ! 280809
         call sfm(iii,ijjk,ss,kfa,kfb)   ! string fragmentation
 c101210
 c       chcd=0.
@@ -2096,7 +2052,7 @@ c101210
 c141208
 c280809	if(adj112.ne.0)then
         if(adj112.ne.0.or.(adj112.eq.0.and.(nreac(4).gt.nreaco(4).or.
-     c   nreac(6).gt.nreaco(6).or.nreac(7).gt.nreaco(7))))then ! 280809 150512
+     c   nreac(6).gt.nreaco(6))))then   ! 280809
 	call coales(iiii,neve,nout,nap,nat,nzp,nzt,kfa,kfb)   ! coalescence
 	endif
 887	format(20(1x,i3))
@@ -2302,7 +2258,7 @@ c       update the collision list
 	call updatl(l,l1,time,lc,tc,tw,winel,iii,kjp21) ! 010530
 c221110
 300	iii=iii+1
-c	if(iii.eq.8)return   ! temporal 240412
+c       if(iii.eq.2)stop   ! temporal
 	if(iii.gt.100*(nctl0))then
         write(9,*)'infinite loop may have happened in'
         write(9,*)'subroutine scat iiii=',iiii
@@ -2485,7 +2441,7 @@ c	write(*,*)'v=',v(i,m),k(i,2),time
 
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-	subroutine arrove(ii,jj,sumx,sumy,sumx2,sumy2,sump)   ! 191110 270312
+	subroutine arrove(ii,jj)   ! 191110
 c	arrange randomly particle ii in overlap region of colliding nuclei 
 c	jj=0 and 1 for target and projectile, respectively  
 	PARAMETER (kszj=40000,KSZ1=30)
@@ -2521,13 +2477,6 @@ c	(x-b,y,z) is in the sphere of projectile ?
         c17(ii,1)=x
         c17(ii,2)=y
         c17(ii,3)=z
-c270312
-	sumx=sumx+x
-	sumy=sumy+y
-        sumx2=sumx2+x*x
-        sumy2=sumy2+y*y
-	sump=sump+1.
-c270312
 	endif
 	if(jj.eq.1)then   ! ii in projectile
 	x=x*r0p
@@ -2540,13 +2489,6 @@ c	(x+b,y,z) is in the sphere of target ?
 	c17(ii,1)=x
         c17(ii,2)=y
         c17(ii,3)=z
-c270312
-        sumx=sumx+x
-        sumy=sumy+y
-        sumx2=sumx2+x*x
-        sumy2=sumy2+y*y
-	sump=sump+1.
-c270312
 	endif
 55	return
 	end

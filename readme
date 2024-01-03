@@ -1,15 +1,112 @@
-Taking 21b.tar.gz as an example, the practise routine is as follows:
- 1) Decompress the file of 21b.tar.gz.
- 2) Compile and link the programs by commands:
-    gfortran -O -c paciae_21b.f
-    gfortran -O -c parini_21b.f
-    gfortran -O -c parcas_21b.f
-    gfortran -O -c sfm_21b.f
-    gfortran -O -c coales_21b.f
-    gfortran -O -c hadcas_21b.f
-    gfortran -O -c p21b.f
-    gfortran -O -o pcm_21b.e paciae_21b.o parini_21b.o parcas_21b.o sfm_21b.o 
-     coales_21b.o hadcas_21b.o p21b.o
- 3) Modify the input file of usu.dat according to your wish.
- 4) Run the program by command:
-    time ./pcm_21b.e
+
+PACIAE 2.0 USERS' GUIDE
+
+PACIAE 2.0 has three versions: PACIAE 2.0a (its program packets are compressed to 20a.tar.gz)
+describing the relativistic elementary collisions (pp, \bar{p}p, or e+e-) and PACIAE 2.0b (20b.tar.gz) as well
+as PACIAE 2.0c (20c.tar.gz) describing the relativistic nucleus-nucleus (A+B, including p+A) collisions.
+
+1. Selection of the processes
+A switch variable (nchan) is introduced as follows:
+. nchan=0: Inelastic (INEL),
+. nchan=1: Non Single Diffractive (NSD),
+. nchan=2: q\bar q\rightarrow \gamma^*/Z^0 used to generate Drell-Yan process,
+. nchan=3: J/\psi production,
+. nchan=4: heavy-flavor production,
+. nchan=5: direct photon.
+. nchan=6: soft processes only,
+. nchan=7: default PYTHIA.
+
+2. Run PACIAE
+. Compile each of the FORTRAN program packets in 20a.tar.gz or 20b.tar. gz or 20c.tar.gz and link
+them together forming an executable file. e.g.
+       gfortran -o pcm_20a.exe  *.f
+. Set the parameters in input file of usux.dat for PACIAE 2.0a or usu.dat for PACIAE 2.0b and
+PACIAE 2.0c properly.
+. Run the executable file.e.g.
+    ./pcm_20a.exe < usux.dat
+
+3. Parameters
+The parameters introduced in PACIAE 2.0, except those in PYTHIA 6.4, can be found in the read
+statements in user program of paciae 20a.f (paciae 20b.f, paciae 20c.f). Meaning of parameter can be
+found in the program packets via searching its name. Those parameters not described in the program
+packets and the array adj1(40) are explained as follows:
+
+¡E nout: internal output per ¡¥nout¡¦ events.
+¡E psno=1: systematic sampling method for impact parameter in A+B collisions,
+   psno=2: randomly sampling method for impact parameter.
+
+To run an event with a given impact parameter, set ¡¥bmin¡¦=¡¦bmax¡¦ in usu.dat.
+¡E adj1(i), i=
+1: K factor in parton cascade.
+2: \alpha_s, effective coupling constant in the parton rescattering (cascade).
+3: parameter ¡¥tcut¡¦ (.tcut) introduced in the integration of parton-parton differential 
+   cross section in the subroutine ¡¥fsig¡¦ in parcas 20a.f (parcas 20b.f, parcas 20c.f).
+4: parameter ¡¥idw¡¦, the number of intervals in the numerical integration
+   in parcas 20a.f (parcas 20b.f, parcas 20c.f).
+5: =1 with nuclear shadowing,
+   =0 without nuclear shadowing.
+6: parameter £\ (parj(41) in PYTHIA 6.4) in the LUND string fragmentation function.
+7: parameter £] (parj(42) in PYTHIA 6.4) in the LUND string fragmentation function.
+8: mstp(82) in PYTHIA 6.4
+   =1, with hard interactions,
+   =0: without hard interactions (simple two-string model, soft only).
+9: parp(81) in PYTHIA 6.4 (default=1.4 GeV/c), effective minimum transverse momentum for
+   multiple interactions when mstp(82)=1.
+10: K factor (parp(31) in PYTHIA 6.4).
+11: time accuracy used in the hadron cascade (hadcas 20a.f, hadcas 20b.f, and hadcas 20c.f).
+12: model for hadronization
+   =0 string fragmentation,
+   =1 Monte Carlo coalescence model.
+13: dimension of meson table considered.
+14: dimension of baryon table considered.
+15: string tension.
+16: number of loops in the deexcitation of energetic quark in the Monte Carlo coalescence model.
+17: the threshold energy in the deexcitation of energetic quark in the Monte Carlo coalescence model.
+18: =0 without Pauli blocking in the parton cascade,
+    =1 with Pauli blocking.
+19: time accuracy used in the parton cascade (parcas 20a.f, parcas 20b.f, and parcas 20c.f).
+20: =0 using LO pQCD parton-parton cross section in the parton rescattering (cascade),
+    =1 using keeping only leading divergent terms in the LO pQCD parton-parton cross section,
+    =2 the same as 0 but flat scattering angle distribution is assumed,
+    =3 the same as 1 but flat scattering angle distribution is assumed.
+21: =0 without phase space constraint in the Monte Carlo coalescence model,
+    =1 with phase space constraint.
+22: critical value of the product of radii in the position and momentum phase spaces (4 is assumed).
+23: =0 LUND string fragmentation function is used in the subroutine for deexcitation of the
+    energetic quark in the Monte Carlo coalescence model,
+    =1 Field-Feynman parametrization function is used.
+24: the virtuality cut (¡¦tl0¡¦) in the time-like radiation in the parton rescattering (cascade).
+25: QCD in the parton cascade.
+26: number of random number thrown away.
+27: largest momentum allowed for particle.
+28: concerned to the largest position allowed for particle, see program for the detail.
+29: width of two dimension Gaussian distribution sampling px and py of the produced quark
+    pair in the deexcitation of energetic quark in the Monte Carlo coalescence model.
+30: maximum p2
+    T in above two dimension Gaussian distribution.
+31: parj(1) in PYTHIA 6.4.
+32: parj(2) in PYTHIA 6.4.
+33: parj(3) in PYTHIA 6.4.
+34: parj(21) in PYTHIA 6.4.
+35: mstp(91) in PYTHIA 6.4, parton transverse momentum (k¡æ) distribution inside hadron;
+    =1, Gaussian;
+22
+    =2, exponential
+36: =0 without phenomenological parton energy loss in the parton rescattering (cascade),
+    =1 with phenomenological parton energy loss.
+37: the coefficient in phenomenological parton energy loss.
+38: pT cut in phenomenological parton energy loss.
+39: width of Gaussian k¡æ distribution in hadron if mstp(91)=1,
+    width of exponential k¡æ distribution in hadron if mstp(91)=2.
+40: decide where the run stopped:
+    =1, after parton initiation;
+    =2, after parton rescattering;
+    =4, after hadron rescattering.
+    
+4. Output files
+¡E rms0.out is an output for the input parameters.
+¡E rms.out is the main output file.
+¡E main.out is the PYTHIA standard output.
+¡E oscar.out is the OSCAR standard output if nosc=2 or 3.
+¡E 
+Encourage user to write his/her own output file and user program.
