@@ -1,20 +1,17 @@
-Up to now PACIAE model has three versions of PACIAE2.0, PACIAE2.1, 
-PACIAE2.2, and PACIAE2.2.1. In each version there has three series: 
-the series "a" describing the relativistic elementary collisions (pp, e+e-, etc.), 
-"b" and "c" series describing the relativistic nucleus-nucleus
-(A+B, p+A, etc.) collisions. Specially pointed, PACIAE2.2.1 "b" and "c" series 
-can describe the relativistic nucleus-nucleus of A+A collisions with 
-the chiral magnetic effect(CME).
+Up to now PACIAE model has three versions of PACIAE2.0, PACIAE2.1,
+and PACIAE2.2. In each version there has three series: the series ``a" 
+describing the relativistic elementary collisions (pp, e+e-, etc.), 
+``b" and ``c"  series describing the relativistic nucleus-nucleus
+(A+B, p+A, etc.) collisions. 
 
 The practice routine for running PACIAE model is as follows 
-(PACIAE221b as an example):
- 1) Decompress the file of 221b.tar.gz.
+(PACIAE2.1b as an example):
+ 1) Decompress the file of 21b.tar.gz.
  2) Compile and link the programs by commands:
-    gfortran -O -c main_221b.f, parini_221b.f, parcas_221b.f, sfm_221b.f,
-    coales_221b.f, hadcas_221b.f, p221b.f
-    gfortran -O -o pcm_221b.e main_221b.o parini_221b.o parcas_221b.o sfm_221b.o 
-     coales_221b.o hadcas_221b.o p221b.o
- 3) Modify the input file of usu.dat(this version includes usu_Au.dat or usu_Pb.dat) 
-    according to your wish.
+    gfortran -O -c main_21b.f, parini_21b.f, parcas_21b.f, sfm_21b.f,
+    coales_21b.f, hadcas_21b.f, p21b.f
+    gfortran -O -o pcm_21b.e main_21b.o parini_21b.o parcas_21b.o sfm_21b.o 
+     coales_21b.o hadcas_21b.o p21b.o
+ 3) Modify the input file of usu.dat according to your wish.
  4) Run the program by command:
-    time ./pcm_221b.e
+    time ./pcm_21b.e
