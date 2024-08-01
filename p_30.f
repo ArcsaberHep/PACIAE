@@ -7,10 +7,10 @@ C*   4. /PYCTAG/ 4000 -> 80000;                                     **
 C*   5. local /PYCBLS/ in PYMIHK and PYMIHG, 4000 -> 80000;         **
 C*   6. local MCN, ICR, MSCR, IOPT, RLOPTC in PYFSCR, 4000 -> 80000;**
 C*   7. printing FORMAT in PYLIST;                                  **
-C*   8. About iikk, kkii, smadel and shanul stemming from PACIAE.   **
+C*   8. About iikk, kkii, smadel and shanul stemming from PACIAE;   **
 C*   9. N_CALL_PYTUNE and M13 in PYTUNE.                            **
 c*                                                    By Ben-Hao Sa **
-c*                          Last updated by An-Ke Lei on 14/11/2023 **
+c*                          Last updated by An-Ke Lei on 11/03/2024 **
 C*********************************************************************
 
 C*********************************************************************
@@ -377,7 +377,7 @@ C...Commonblocks.
  
 C...PYDAT1, containing status codes and most parameters.
       DATA MSTU/
-     &   0,    0,    0, 80000, 10000,  500, 8000,    0,    0,    2,   !FIXME(Lei20230214): MSTU(5) should be greater than MSTU(4).
+     &   0,    0,    0, 80000, 10000,  500, 8000,    0,    0,    2,   !#FIXME(Lei20230214): MSTU(5) should be greater than MSTU(4).
      1   6,    0,    1,    0,    0,    1,    0,    0,    0,    0,
      2   2,   10,    0,    0,    1,   10,    0,    0,    0,    0,
      3   0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -671,13 +671,13 @@ C...UED
      &3*22,15,12,2*7,7*0,6*1,26,30,
      &81*0,
 C...UED
-     &6*2,6*3,9*1,24,1,18,6,25*0/                                 
+     &6*2,6*3,9*1,24,1,18,6,25*0/                                       
       DATA (MDME(I,1),I=   1,8000)/6*1,-1,7*1,-1,7*1,-1,7*1,-1,7*1,-1,  
      &7*1,-1,1,7*-1,8*1,2*-1,8*1,2*-1,73*1,-1,2*1,-1,5*1,0,2*-1,6*1,0,  
      &2*-1,3*1,-1,6*1,2*-1,6*1,2*-1,3*1,-1,3*1,-1,3*1,5*-1,3*1,-1,6*1,  
-     &2*-1,3*1,-1,5*1,62*1,6*1,2*-1,6*1,8*-1,3*1,-1,3*1,-1,3*1,5*-1,   
-     &3*1,4*-1,6*1,2*-1,3*1,-1,12*1,62*1,6*1,2*-1,3*1,-1,9*1,62*1,    
-     &3*1,-1,3*1,-1,1,18*1,4*1,2*-1,2*1,-1,1249*1,2*-1,377*1,2*-1,     
+     &2*-1,3*1,-1,5*1,62*1,6*1,2*-1,6*1,8*-1,3*1,-1,3*1,-1,3*1,5*-1,    
+     &3*1,4*-1,6*1,2*-1,3*1,-1,12*1,62*1,6*1,2*-1,3*1,-1,9*1,62*1,      
+     &3*1,-1,3*1,-1,1,18*1,4*1,2*-1,2*1,-1,1249*1,2*-1,377*1,2*-1,      
      &1921*1,2*-1,6*1,2*-1,133*1,2*-1,6*1,2*-1,10*1,-1,3*1,-1,3*1,5*-1, 
      &3*1,-1,16*1,2*-1,6*1,2*-1,16*1,2*-1,6*1,2*-1,13*1,-1,3*1,-1,3*1,  
      &5*-1,3*1,-1,
@@ -1164,10 +1164,10 @@ C....UED
      &1,2,3,4,5,6,1,2,3,4,5,6,21,1,2,3,4,5,6,21,1,2,3,4,5,6,21,1,2,3,4, 
      &5,6,1,2,3,4,5,6,1,2,3,4,5,6,21,3100111,3200111,21,22,23,-24,21,   
      &22,23,24,22,23,-24,23,24,1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,18, 
-     &21,22,23,24,9*11,9*-11,11,-11,11,-11,9*13,9*-13,13,-13,13,-13,
-     &9*15/     
-      DATA (KFDP(I,1),I=4157,8000)/9*-15,15,-15,15,-15,1,2,3,4,5,6,11,
-     &12,9900012,13,14,9900014,15,16,9900016,3*-1,3*-3,3*-5,-11,-13,-15,   
+     &21,22,23,24,9*11,9*-11,11,-11,11,-11,9*13,9*-13,13,-13,13,-13,    
+     &9*15/
+      DATA (KFDP(I,1),I=4157,8000)/9*-15,15,-15,15,-15,1,2,3,4,5,6,11,  
+     &12,9900012,13,14,9900014,15,16,9900016,3*-1,3*-3,3*-5,-11,-13,-15,
      &3*-11,2*-13,-15,24,3*-11,2*-13,-15,9900024,3*443,3*553,2*24,      
      &2*3000211,2*22,2*23,22,23,1,2,3,4,5,6,7,8,11,12,13,14,15,16,17,   
      &18,2*24,3*3000211,2*24,4*-1,4*-3,4*-5,4*-7,-11,-13,-15,-17,22,23, 
@@ -1178,15 +1178,15 @@ C....UED
      &649*0,
 C...UED
      &5100023,5100022,5100023,5100022,5100023,5100022,
-     &5100023,5100022,5100023,5100022,5100023,5100022, 
+     &5100023,5100022,5100023,5100022,5100023,5100022,
      &5100023,-5100024,5100022,5100023,5100024,5100022,
      &5100023,-5100024,5100022,5100023,5100024,5100022,
-     &5100023,-5100024,5100022,5100023,5100024,5100022, 
+     &5100023,-5100024,5100022,5100023,5100024,5100022,
      &9*5100022, 
      &6100001,6100002,6100003,6100004,6100005,6100006,
      &5100001,5100002,5100003,5100004,5100005,5100006,
      &-6100001,-6100002,-6100003,-6100004,-6100005,-6100006,
-     &-5100001,-5100002,-5100003,-5100004,-5100005,-5100006, 
+     &-5100001,-5100002,-5100003,-5100004,-5100005,-5100006,
      &39, 
      &6100011,6100013,6100015,
      &5100011,5100013,5100015,
@@ -1409,16 +1409,16 @@ C...UED
      &-17,-18,24,3000211,24,3000111,3000221,3000211,3000213,3000113,    
      &3000223,3000213,2,4,6,8,2,4,6,8,2,4,6,8,2,4,6,8,12,14,16,18,      
      &649*0,
-C...UED     
-     &1,1,2,2,3,3,4,4,5,5,6,6, 
+C...UED
+     &1,1,2,2,3,3,4,4,5,5,6,6,
      &1,2,1,2,1,2,3,4,3,4,3,4,5,6,5,6,5,6,
-     &11,13,15,12,11,14,13,16,15, 
+     &11,13,15,12,11,14,13,16,15,
      &-1,-2,-3,-4,-5,-6,-1,-2,-3,-4,-5,-6,
-     &1,2,3,4,5,6,1,2,3,4,5,6, 
-     &22, 
+     &1,2,3,4,5,6,1,2,3,4,5,6,
+     &22,
      &-11,-13,-15,-11,-13,-15,-12,-14,-16,
      &11,13,15,11,13,15,12,14,16,
-     &12,14,16,-11,-13,-15, 
+     &12,14,16,-11,-13,-15,
      &2912*0/
       DATA (KFDP(I,3),I=   1,1021)/81*0,14,6*0,2*16,2*0,6*111,310,130,  
      &2*0,3*111,310,130,321,113,211,223,221,2*113,2*211,2*223,2*221,    
@@ -1578,12 +1578,12 @@ C...PYDAT4, with particle names (character strings).
      &'n_diffr0','p_diffr+','cc~[3S18]','cc~[1S08]','cc~[3P08]',        
      &'bb~[3S18]','bb~[1S08]','bb~[3P08]','a_tc0','a_tc+',
      &81*' ',
-C...UED    
+C...UED
      &'d*_S','u*_S','s*_S','c*_S','b*_S','t*_S',
      &'d*_D','u*_D','s*_D','c*_D','b*_D','t*_D',
      &'e*_S-','mu*_S-','tau*_S-',
      &'nu*_eD','e*_D-','nu*_muD','mu*_D-','nu*_tauD','tau*_D-',
-     &'g*','gamma*','Z*0','W*+',25*' '/               
+     &'g*','gamma*','Z*0','W*+',25*' '/
       DATA (CHAF(I,2),I=   1, 205)/'dbar','ubar','sbar','cbar','bbar',  
      &'tbar','b''bar','t''bar',2*' ','e+','nu_ebar','mu+','nu_mubar',   
      &'tau+','nu_taubar','tau''+','nu''_taubar',5*' ','W-',9*' ',       
@@ -1627,7 +1627,7 @@ C...UED
       DATA (CHAF(I,2),I= 326, 500)/'~nu_muRbar','~tau_2+',              
      &'~nu_tauRbar',' ','pi_tc-',3*' ','rho_tc-',8*' ','d*bar','u*bar', 
      &'e*bar+','nu*_ebar0',5*' ','W_R-','H_L--','H_R--',' ',            
-     &'pi_diffr-',3*' ','n_diffrbar0','p_diffrbar-',7*' ','a_tc-',     
+     &'pi_diffr-',3*' ','n_diffrbar0','p_diffrbar-',7*' ','a_tc-',      
      &81*' ',
 C...UED
      &'d*_Sbar','u*_Sbar','s*_Sbar','c*_Sbar','b*_Sbar','t*_Sbar',
@@ -1636,7 +1636,7 @@ C...UED
      &'nu*_eDbar','e*_Dbar+',
      &'nu*_muDbar','mu*_Dbar+',
      &'nu*_tauDbar','tau*_Dbar+',
-     &'g*','gamma*','Z*0','W*-',25*' '/            
+     &'g*','gamma*','Z*0','W*-',25*' '/
  
 C...PYDATR, with initial values for the random number generator.
       DATA MRPY/19780503,0,0,97,33,0/
@@ -7500,7 +7500,7 @@ C...Find resonances (explicit or implicit in cross-section).
      &       CKMX.LT.PMAS(KCR2,1)-20D0*PMAS(KCR2,2)) THEN
               KFR2=0
             ELSE
-              TAUR2=PMAS(KCR2,1)**2/VINT(2)            
+              TAUR2=PMAS(KCR2,1)**2/VINT(2)
               GAMR2=PMAS(KCR2,1)*PMAS(KCR2,2)/VINT(2)
               MINT(72)=2
               MINT(74)=KFR2
@@ -7510,7 +7510,7 @@ C...Find resonances (explicit or implicit in cross-section).
           ELSEIF(ITECH.EQ.0) THEN
             ALPRHT=2.16D0*(3D0/DBLE(ITCM(1)))
             ITECH=1
-            KFR1=KTECHN+113              
+            KFR1=KTECHN+113
             KCR1=PYCOMP(KFR1)
             KFR2=KTECHN+223
             KCR2=PYCOMP(KFR2)
@@ -7544,7 +7544,7 @@ C...Order the resonances
                 SHN0=PMAS(KCR3,1)**2
               ENDIF
               AEM=PYALEM(SHN0)
-              FAR=SQRT(AEM/ALPRHT)              
+              FAR=SQRT(AEM/ALPRHT)
               SHN=SHN0*(1D0-FAR)
               CALL PYTECM(SHN,S1,WIDO,1)
               RES=SHN-S1
@@ -62188,7 +62188,7 @@ C...1) Shorthand notation
       
 C141123 Lei
       N_CALL_PYTUNE = N_CALL_PYTUNE + 1
-      if( N_CALL_PYTUNE.gt.1 ) M13 = 0   ! Output information noly once for PACIAE.
+      if( N_CALL_PYTUNE.gt.1 ) M13 = 0   ! Prints information noly once for PACIAE.
 C141123 Lei
       
 C...  2) Hello World
@@ -62459,7 +62459,7 @@ C...CR:
         PARP(77) = 0.0
         PARP(80) = 0.1
         IF (ITUNE.EQ.331) THEN
-          PARP(78) = 0.224          
+          PARP(78) = 0.224
         ELSEIF (ITUNE.EQ.340) THEN
 C...AMBT1
           PARP(77) = 1.016D0
@@ -63319,7 +63319,7 @@ C... hadF2 (softer frag function, larger n.p. pT)
 C... MSTW08LO
             MSTP(52) = 2
             MSTP(51) = 21000
-            PARP(82) = 2.9D0 
+            PARP(82) = 2.9D0
 C...Uses a large LambdaQCD MSbar value (close to CMW one)
 C...(Nominally, MSTW 2008 alphaS(mZ) = 0.139)
             PARP(1) = 0.26D0
@@ -63346,7 +63346,7 @@ C...  slightly faster energy scaling of pT0 cutoff (slower mult growth)
             PARP(90)=0.245
           ELSEIF (ITUNE.EQ.381) THEN
 C...  ueHi: lower pT0 value, slower pT0 scaling
-            PARP(82)=2.46D0   
+            PARP(82)=2.46D0
             PARP(90)=0.23
           ELSEIF (ITUNE.EQ.382) THEN
 C...  ueLo: higher pT0 value, faster pT0 scaling
@@ -63355,55 +63355,55 @@ C...  ueLo: higher pT0 value, faster pT0 scaling
           ELSEIF (ITUNE.EQ.383) THEN
 C...  IBK: same as Perugia 2012, but with Innsbruck ee fragm parameters 
 C...  Different Lambdas
-            MSTP(3)  =  1
-C...  Lund+Bowler scheme for HQ fragment. 
+            MSTP(3)  = 1
+C...  Lund+Bowler scheme for HQ fragment.
             MSTJ(11) = 5
-C...  old baryon model     
+C...  old baryon model
             MSTJ(12) = 2
 C...  2=PYSHOW  12=PYPTFS for gluon and photon emiss.
             MSTJ(41) = 12
 C...  Lambda_LLA  
-            PARJ(81) = 0.261  
-C...  p_tmin cutoff (set by hand)             
-            PARJ(82) = 0.90    
+            PARJ(81) = 0.261
+C...  p_tmin cutoff (set by hand)
+            PARJ(82) = 0.90
 C...  sigma_pt
-            PARJ(21) = 0.329   
+            PARJ(21) = 0.329
 C...  A of LSFF
-            PARJ(41) = 0.425   
+            PARJ(41) = 0.425
 C...  B of LSFF
-            PARJ(42) = 1.65    
+            PARJ(42) = 1.65
 C...  r_c
-            PARJ(46) = 1.42    
+            PARJ(46) = 1.42
 C...  r_b
-            PARJ(47) = 0.975   
+            PARJ(47) = 0.975
 C...  reset popcorn parameters 
             PARJ( 6) = 0.5
             PARJ( 7) = 0.5
 C...  V_u,d
-            PARJ(11) = 0.549   
+            PARJ(11) = 0.549
 C...  V_s
-            PARJ(12) = 0.450   
+            PARJ(12) = 0.450
 C...  V_c,b
-            PARJ(13) = 0.500   
+            PARJ(13) = 0.500
 C...  L=1 mesons rates
-            PARJ(17) = 0.20    
-            PARJ(14) = 0.12   
-            PARJ(15) = 0.04   
-            PARJ(16) = 0.12   
+            PARJ(17) = 0.20
+            PARJ(14) = 0.12
+            PARJ(15) = 0.04
+            PARJ(16) = 0.12
 C...  eta suppr.
             PARJ(25) = 1.000
 C...  eta-prime suppr.
-            PARJ(26) = 0.245   
+            PARJ(26) = 0.245
 C...  s/u
-            PARJ( 2) = 0.268   
+            PARJ( 2) = 0.268
 C...  qq/q
-            PARJ( 1) = 0.128   
+            PARJ( 1) = 0.128
 C...  su/du
-            PARJ( 3) = 0.772   
+            PARJ( 3) = 0.772
 C...  (qq)_1
-            PARJ( 4) = 0.05    
-C...  end-point baryon suppress.           
-            PARJ(19) = 0.402   
+            PARJ( 4) = 0.05
+C...  end-point baryon suppress.
+            PARJ(19) = 0.402
 C...  reset a(Baryon)-a(Meson) parameter to default value
             PARJ(45) = 0.50
           ENDIF 
@@ -63717,78 +63717,78 @@ C...390-395
         ENDIF
 
 C...  1) Set the IBK ee fragmentation parameters (March 2012)
-C...  Lund+Bowler scheme for HQ fragment. 
+C...  Lund+Bowler scheme for HQ fragment.
         MSTJ(11) = 5
-C...  old baryon model     
+C...  old baryon model
         MSTJ(12) = 2
 C...  2=PYSHOW  12=PYPTFS for gluon and photon emiss.
         MSTJ(41) = 12
 C...  Lambda_LLA  
-        PARJ(81) = 0.261  
-C...  p_tmin cutoff (set by hand)             
-        PARJ(82) = 0.90    
+        PARJ(81) = 0.261
+C...  p_tmin cutoff (set by hand)
+        PARJ(82) = 0.90
 C...  sigma_pt
-        PARJ(21) = 0.329   
+        PARJ(21) = 0.329
 C...  A of LSFF
-        PARJ(41) = 0.425   
+        PARJ(41) = 0.425
 C...  B of LSFF
-        PARJ(42) = 1.65    
+        PARJ(42) = 1.65
 C...  r_c
-        PARJ(46) = 1.42    
+        PARJ(46) = 1.42
 C...  r_b
-        PARJ(47) = 0.975   
+        PARJ(47) = 0.975
 C...  V_u,d
-        PARJ(11) = 0.549   
+        PARJ(11) = 0.549
 C...  V_s
-        PARJ(12) = 0.450   
+        PARJ(12) = 0.450
 C...  V_c,b
-        PARJ(13) = 0.500   
+        PARJ(13) = 0.500
 C...  L=1 mesons rates
-        PARJ(17) = 0.20    
-        PARJ(14) = 0.12   
-        PARJ(15) = 0.04   
-        PARJ(16) = 0.12   
+        PARJ(17) = 0.20
+        PARJ(14) = 0.12
+        PARJ(15) = 0.04
+        PARJ(16) = 0.12
 C...  eta suppr.
         PARJ(25) = 1.000
 C...  eta-prime suppr.
-        PARJ(26) = 0.245   
+        PARJ(26) = 0.245
 C...  s/u
-        PARJ( 2) = 0.268   
+        PARJ( 2) = 0.268
 C...  qq/q
-        PARJ( 1) = 0.128   
+        PARJ( 1) = 0.128
 C...  su/du
-        PARJ( 3) = 0.772   
+        PARJ( 3) = 0.772
 C...  (qq)_1
-        PARJ( 4) = 0.05    
-C...  end-point baryon suppress.           
-        PARJ(19) = 0.402   
+        PARJ( 4) = 0.05
+C...  end-point baryon suppress.
+        PARJ(19) = 0.402
 C...  reset a(Baryon)-a(Meson) parameter to default value
         PARJ(45) = 0.50
 
-C...  2) Set the global IBK pp tune parameters        
-C...  Different Lambda_QCD    
+C...  2) Set the global IBK pp tune parameters
+C...  Different Lambda_QCD
         MSTP(  3) = 1
 C...  N_flavors = 5
         MSTU(112) = 5
-C...  MPI & BR master switch   
+C...  MPI & BR master switch
         MSTP( 81) = 21
-C...  alpha_s(Q**2) choice in ISR  (def=2)                  
+C...  alpha_s(Q**2) choice in ISR  (def=2)
         MSTP( 64) = 2
 C...  ISR regularisation (def=1)
         MSTP( 70) = 2
 C...  ptmax scale for rad betw ISR partons (def=1)
         MSTP( 72) = 2
-C...  MPI structure: matter overlap (def=4) 
+C...  MPI structure: matter overlap (def=4)
         MSTP( 82) = 5
-C...  collapse of junction configur. (def=1) 
+C...  collapse of junction configur. (def=1)
         MSTP( 88) = 0
-C...  CR: annealing model (def=1) 
+C...  CR: annealing model (def=1)
         MSTP( 95) = 6 
 C...  Lam_QCD for ISR 
         PARP( 61) = 0.190
-C...  K-factor in alpha_s for ISR (def=1.) 
+C...  K-factor in alpha_s for ISR (def=1.)
         PARP( 64) = 1.0
-C...  max.virt. scale factor for ISR  (def=4.)                  
+C...  max.virt. scale factor for ISR  (def=4.)
         PARP( 67) = 1.0
 C...  max.virt. scale factor for FSR (def=4.) 
         PARP( 71) = 1.0
@@ -63796,24 +63796,24 @@ C...  CR suppression for fast moving strings (def=0.)
         PARP( 77) = 0.90
 C...  PT0 reference Ecm (def=1800 GeV)
         PARP( 89) = 7000.0
-C...  beam remnant x enhancement  (def=2.)              
+C...  beam remnant x enhancement  (def=2.)
         PARP( 79) = 1.50
-C...  beam remnant breakup suppression (def=0.1)        
+C...  beam remnant breakup suppression (def=0.1)
         PARP( 80) = 0.06
-C...  intrinsic kT width (def=2.0) 
+C...  intrinsic kT width (def=2.0)
         PARP( 91) = 2.0
-C...  intrinsic kT cutoff(def=5.0) 
+C...  intrinsic kT cutoff(def=5.0)
         PARP( 93) = 10.0
 
 C...  3) Set the tune-specific IBK pp tune parameters
         IF (ITUNE.EQ.390) THEN
-C...  CTEQ5L          
-          MSTP(51)=7  
+C...  CTEQ5L
+          MSTP(51)=7
           MSTP(52)=1
           PARP(82)=2.942
           PARP(90)=0.2450
           PARP(83)=1.817
-          PARP(78)=0.433 
+          PARP(78)=0.433
           PARP( 1)=0.163
           PARU(112)=0.163
           PARP(72)=0.531
@@ -63824,9 +63824,9 @@ C...  CTEQ6LL
           PARP(82)=2.625
           PARP(90)=0.2178
           PARP(83)=1.863
-          PARP(78)=0.461 
+          PARP(78)=0.461
           PARP( 1)=0.141
-          PARU(112)=0.141 
+          PARU(112)=0.141
           PARP(72)=0.475
         ELSEIF (ITUNE.EQ.392) THEN
 C...  MSTW08LO
@@ -63835,10 +63835,10 @@ C...  MSTW08LO
           PARP(82)=2.889
           PARP(90)=0.2832
           PARP(83)=1.785
-          PARP(78)=0.478 
+          PARP(78)=0.478
           PARP( 1)=0.199
           PARU(112)=0.199
-          PARP(72)=0.657            
+          PARP(72)=0.657
         ELSEIF (ITUNE.EQ.393) THEN
 C...  CTEQ66 NLO
           MSTP(51)=10550
@@ -63846,9 +63846,9 @@ C...  CTEQ66 NLO
           PARP(82)=2.172
           PARP(90)=0.1818
           PARP(83)=1.939
-          PARP(78)=0.513 
+          PARP(78)=0.513
           PARP( 1)=0.173
-          PARU(112)=0.173 
+          PARU(112)=0.173
           PARP(72)=0.456
         ELSEIF (ITUNE.EQ.394) THEN
 C...  CT10 NLO
@@ -63857,10 +63857,10 @@ C...  CT10 NLO
           PARP(82)=2.090
           PARP(90)=0.1687
           PARP(83)=1.939
-          PARP(78)=0.517 
-          PARP( 1)=0.177 
+          PARP(78)=0.517
+          PARP( 1)=0.177
           PARU(112)=0.177
-          PARP(72)=0.463 
+          PARP(72)=0.463
         ELSEIF (ITUNE.EQ.395) THEN
 C...  MSTW08NLO
           MSTP(51)=21100
@@ -63868,10 +63868,10 @@ C...  MSTW08NLO
           PARP(82)=1.773
           PARP(90)=0.1780
           PARP(83)=1.882
-          PARP(78)=0.590 
-          PARP( 1)=0.161 
+          PARP(78)=0.590
+          PARP( 1)=0.161
           PARU(112)=0.161
-          PARP(72)=0.367 
+          PARP(72)=0.367
         ELSEIF (ITUNE.EQ.396) THEN
 C...  MRST07LO* 
           MSTP(51)=20650
@@ -63879,9 +63879,9 @@ C...  MRST07LO*
           PARP(82)=2.619
           PARP(90)=0.2286
           PARP(83)=1.812
-          PARP(78)=0.471 
-          PARP( 1)=0.082 
-          PARU(112)=0.082 
+          PARP(78)=0.471
+          PARP( 1)=0.082
+          PARU(112)=0.082
           PARP(72)=0.500
         ELSEIF (ITUNE.EQ.397) THEN
 C...  MRSTMCal (LO**)
@@ -63890,9 +63890,9 @@ C...  MRSTMCal (LO**)
           PARP(82)=2.802
           PARP(90)=0.2220
           PARP(83)=1.821
-          PARP(78)=0.441 
+          PARP(78)=0.441
           PARP( 1)=0.080
-          PARU(112)=0.080 
+          PARU(112)=0.080
           PARP(72)=0.519
         ELSEIF (ITUNE.EQ.398) THEN
 C...CT09MC2 
@@ -63901,9 +63901,9 @@ C...CT09MC2
           PARP(82)=2.355
           PARP(90)=0.2062
           PARP(83)=1.893
-          PARP(78)=0.509 
-          PARP( 1)=0.058 
-          PARU(112)=0.058 
+          PARP(78)=0.509
+          PARP( 1)=0.058
+          PARU(112)=0.058
           PARP(72)=0.401
         ENDIF
 
@@ -63975,7 +63975,7 @@ C...Output
           IF (MSTP(82).GE.2) THEN
             WRITE(M11,5050) 87, PARP(87), CHPARP(87)
             IF (PARP(87).GE.0D0) 
-     &           WRITE(M11,5050) 88, PARP(88), CHPARP(88)            
+     &           WRITE(M11,5050) 88, PARP(88), CHPARP(88)
           ENDIF
           WRITE(M11,5040) 88, MSTP(88), CHMSTP(88)
           WRITE(M11,5040) 89, MSTP(89), CHMSTP(89)
@@ -71043,7 +71043,7 @@ C...g -> ~g + ~g (eikonal approximation).
           ENDIF
 
 C...Revert to eikonal approximation for gluon in final state.
-          IF(KFLA1.EQ.21.OR.KFLA2.EQ.21) ICLASS=1   !FIXME(Lei20230630): bug or not?
+          IF(KFLA1.EQ.21.OR.KFLA2.EQ.21) ICLASS=1   !#FIXME(Lei20230630): bug or not?
 !Lei20230630 IF(KFLA(1).EQ.21.OR.KFLA(2).EQ.21) ICLASS=1
 
           M3JC=5*ICLASS+ICOMBI

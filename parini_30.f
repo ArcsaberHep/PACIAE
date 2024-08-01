@@ -16,8 +16,8 @@ csa011223  B-frameworks)
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000)
-        PARAMETER(NSIZE=280000)
+        PARAMETER (KSZJ=80000)
+        PARAMETER (NSIZE=280000)
         COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         COMMON/PYDAT3/MDCY(500,3),MDME(8000,2),BRAT(8000),KFDP(8000,5)
@@ -73,14 +73,8 @@ c       tp(i) : time of i-th nucleon counted since collision of two nuclei
 c       p17(i,1-4) : four momentum of i-th nucleon
 c       ishp(i)=1 if i-th particle inside the simulated volume
 c              =0 if i-th particle outside the simulated volume
-c       cspsn : total cross section of J/Psi (Psi') + n
-c       cspsm : total cross section of J/Psi (Psi') + meson
-c       iabsb = 0 : without J/Psi (Psi') + baryon
-c             = 1 : with J/Psi (Psi') + baryon
-c       iabsm = 0 : without J/Psi (Psi') + meson
-c             = 1 : with J/Psi (Psi') + meson
 c       ecsen: largest collision distance between lepton and p ! 060813
-c060813 120214 note: incident lepton collides with nucleon in nucleus once 
+c120214 note: incident lepton collides with nucleon in nucleus once 
 c        only, because of very low total x-section. that collision is the one with 
 c        lowest minimum approaching distance.
 c       sig (fm^2): cross section of pion + pion to kaon + kaon
@@ -95,8 +89,8 @@ c       rou0 : normal nucleon density.
 c       rao : enlarged factor for the radius of simulated volume.
 c       nap and nzp (nat and nzt) are the mass and charge numbers of 
 c        projectile (target) nucleus
-c       r0p=rnp     : the standard radius of projectile
-c       r0t=rnt     : the standard radius of target
+c       r0p=rnp : the standard radius of projectile
+c       r0t=rnt : the standard radius of target
 c       nctl: number of collision pairs in current collision list
 c       nctl0: number of collision pairs in initial collision list
 c180121 nctlm: maxmimum number of collision pairs
@@ -210,7 +204,7 @@ c       distribute target nucleons by Woods-Saxon   ! 060921
         elseif(napt.eq.56)then
         alpt=0.49
         elseif(napt.eq.64)then
-        alpt=0.49     
+        alpt=0.49
         elseif(napt.eq.108)then
         alpt=0.495
         elseif(napt.eq.184)then
@@ -248,7 +242,7 @@ c191110
         do i=1,nap
 c050322 c17(i,1)=c17(i,1)+bp
         c17(i,1)=c17(i,1)+0.5*bp ! 050322 move x-component of origin to 0.5*bp
-c1512222
+c151222
 c       Calculates eccentricity correctly for both adj(30)=0 and 1.   ! 151222 Lei
         x = c17(i,1)
         y = c17(i,2)
@@ -318,7 +312,7 @@ c180921 ineumt=int(vneumt)   ! 100821
         elseif(napt.eq.56)then
         alpt=0.49
         elseif(napt.eq.64)then
-        alpt=0.49     
+        alpt=0.49
         elseif(napt.eq.108)then
         alpt=0.495
         elseif(napt.eq.184)then
@@ -368,7 +362,7 @@ c180921 ineump=int(vneump)
         elseif(napt.eq.56)then
         alpt=0.49
         elseif(napt.eq.64)then
-        alpt=0.49     
+        alpt=0.49
         elseif(napt.eq.108)then
         alpt=0.495
         elseif(napt.eq.184)then
@@ -409,7 +403,7 @@ c       p+p or lepton+p   ! 070417
 c230311
         r0pt=r0p+r0t   ! 191110
 c270312
-        if(sump.ne.0.)then   !!!
+        if(sump.gt.0.)then   !!! 280224 .ne.0 -> .gt.0.
         asumx=sumx/sump
         sigmx2=sumx2/sump-asumx*asumx
         asumy=sumy/sump
@@ -423,18 +417,22 @@ c131212
 c       participant eccentricity of participant nucleons
         if(argu.gt.0. .and. sigmsu.gt.0.)
      c   ecce=sqrt(argu)/sigmsu !131212
-c       calculate \epsilon{2}=\sqrt(<\epsilon_{part}^2>)
-cc      ecce=ecce*ecce
-c       note, \epsilon{2} should be \sqrt(aecceo), aecceo is a output
-c        in paciae_21c.f
 c       calculate transverse overlap area
         argu1=sigmx2*sigmy2-sigmxy*sigmxy
         if(argu1.gt.0.)secce=3.1416*sqrt(argu1) ! overlop area 250113
 c131212
-c       assuming ecce=geometric eccentricity of ellipsoid (\sqrt{(1-b^2/a^2)})
-c        with half major axis b=pt*(1+smadel) and half minor axis
-c        a=pt*(1-smadel), the resulted smadel=-ecce*ecce/4 (if neglecting
-c        the samll term of ecce*ecce*(-2*smadel+smadel*smadel)
+
+c---------------------   Transverse-Momentum Deformation   ---------------------
+c       assuming ecce = geometric eccentricity of ellipsoid 
+c           sqrt( 1-b^2/a^2 )
+c        with half major axis 
+c           b = pt * ( 1 + smadel )
+c        and half minor axis
+c           a = pt * ( 1 - smadel ),
+c        the resulted 
+c           smadel = -ecce*ecce/4,
+c        neglecting the samll term of 
+c           ecce*ecce*( -2*smadel + smadel*smadel ).
         ecc2=ecce*ecce   ! 250113
         smadel_a=parecc*ecc2/4. ! approximated deformation parameter 250113
 c250113
@@ -448,6 +446,8 @@ c250113
 c250113
 c       here a sign change is introduced because of asymmetry of initial
 c        spatial space is oppsed to the final momentum space
+c---------------------   Transverse-Momentum Deformation   ---------------------
+
         endif   !!!
 c270312
 c021018 note: psno=0 (bp=0) for pp,lp and lA
@@ -605,6 +605,7 @@ c        the rest are target nuctrons in 'pyjets' after nuclear initiation above
         k(i,1)=1
         k(i,2)=2112
         p(i,5)=pmas(pycomp(2112),1)
+c160224 Lei For NN, NA(AN) and AA.
         if( (i.le.abs(nzp).and.ipden.lt.2).or.(i.gt.nap .and. i.le.nap+
      c      nzt) )then   ! 060813 120214
         k(i,2)=2212
@@ -615,7 +616,6 @@ c061123 Lei For l+N & lbar + N
         K(i,2) = SIGN( ipden, -nzp )
         P(i,5) = PMAS( PYCOMP(ipden), 1 )
 c061123 Lei
-        else
         endif
         do j=1,3
         p(i,j)=p17(i,j)
@@ -648,7 +648,7 @@ c       Lorentz contract
         bzp=bzp3/bzp4
         bzt=bzt3/bzt4
         gamp=1.d0/dsqrt(dmax1(1.d-20,(1.0d0-bzp*bzp)))
-c060813 120214 no Lowrantz contraction for incident lepton
+c060813 120214 no Lorentz contraction for incident lepton
         if(ipden.ge.2)gamp=1.   ! 060813 120214
         gamt=1.d0/dsqrt(dmax1(1.d-20,(1.0d0-bzt*bzt)))
 c       try no lorentz contract for target
@@ -753,6 +753,9 @@ c180520 if(adj1(40).ne.5)call tran_saf   ! 140414
 c220110 n00: 'largest line number' in 'pyjets'
 c220110 partons above n00 appear after inelastic collision
 c       'sa2' to 'sbh'
+c190224 'sbh' stores spectators, hadrons & leptons from the diffractive & the 
+c        special sub-processes, e.g. NRQCD onia, or hadron beam remnants, or 
+c        B-framework.
         nbh=0
         if(nsa.ge.1)then
         nbh=nsa
@@ -795,6 +798,12 @@ c       give the initial values to quantities needed in calculation
         common/sa10/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
      &   iabsb,iabsm,non10,ajpsi,csspn,csspm,csen   ! 060813
         common/sa25/i_inel_proc,i_time_shower,para1_1,para1_2   ! 221203 250204
+c       cspsn : total cross section of J/psi (psi') + N
+c       cspsm : total cross section of J/psi (psi') + meson
+c       iabsb = 0 : without J/psi (psi') + baryon
+c             = 1 : with J/Psi (psi') + baryon
+c       iabsm = 0 : without J/psi (psi') + meson
+c             = 1 : with J/psi (psi') + meson
 
         anat=nat
         anap=nap
@@ -1150,15 +1159,19 @@ c       sampling in a sphere with radius xf
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine filt
 c       filter out particles wanted to study and make
-c       in order of proton,neutron,pba,nba,pi+,pi-,pi0,K-,K0-,Sigma0,
-c        Sigma-,Sigma+,Sigma0ba,Sigma-ba,Sigma+ba,Lamda0,Lamdaba0,K0,K+,
-c        Cascade-,Cascade-ba,Cascade0,Cascade0ba,Omega-,Omega+,Delta-,
-c        Delta0,Delta+,Delta++,rho+,rho-,rho0,J/psi,psi',Upsilon,
-c        Upsilon',x0c,x1c,x2c,D+,D+ba,D0,D0ba,Lamdac+,Sigmac0,Sigmac+,
-c        Sigmac++,omega,K*+,K*0,D*+,D*+ba,D*0,D*0ba,Ds+,Ds+ba,B0,B0ba,
-c        B+,B+ba,Bs0,Bs0ba,Bc+,Bc+ba,B*0,B*0ba,B*+,B*+ba,Bs*0,Bs*0ba,
-c        Bc*+,Bc*+ba   ! 250420
-c        (72 kinds of particle altogether)   ! 250420
+c       in order of 
+c               1            2          3          4            5             6             7             8         9           10
+c    0     proton,     neutron,     pbar-,      nbar,         pi+,          pi-,          pi0,           K-,    Kbar0,      Sigma0,
+c    1     Sigma-,      Sigma+, Sigmabar0, Sigmabar+,   Sigmabar-,      Lambda0,   Lambdabar0,           K0,       K+,         Xi-,
+c    2     Xibar+,         Xi0,    Xibar0,    Omega-,   Omegabar+,       Delta-,       Delta0,       Delta+,  Delta++,        rho+,
+c    3       rho-,        rho0,     J/psi,      psi',   Deltabar+,    Deltabar0,    Deltabar-,   Deltabar--,       D+,          D-,
+c    4         D0,       Dbar0,       D*+,       D*-,         D*0,       D*bar0,    Lambda_c+, Lambda_cbar-,     D_s+,        D_s-,
+c    5      D*_s+,       D*_s-,       K*+,       K*-,         K*0,       K*bar0,      Upsilon,     Upsilon',   chi_0c,      chi_1c,
+c    6     chi_2c,    Sigma_c0,  Sigma_c+, Sigma_c++, Sigma_cbar0,  Sigma_cbar+, Sigma_cbar++,        omega,       B0,       B0bar,
+c    7         B+,          B-,      B_s0,   B_sbar0,        B_c+,         B_c-,          B*0,       B*bar0,      B*+,         B*-,
+c    8      B*_s0,    B*_sbar0,     B*_c+,     B*_c-,   Lambda_b0, Lambda_bbar0,     Sigma_b0,  Sigma_bbar0, Sigma_b-, Sigma_bbar+,
+c    9   Sigma_b+, Sigma_bbar-,        8*0      ! 250420 112323 Lei
+c        (92 kinds of particle altogether)   ! 250420 112323 Lei
 c060813 120214 in case of lepton+A, one images lepton as a initial 
 c        projectile proton
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
@@ -1193,7 +1206,7 @@ c       ipi: j-th particle should order after ipi
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000)
+        PARAMETER (KSZJ=80000)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         dimension pp(5),vv(5),kk(5)
         ik=k(j,2)
@@ -1421,7 +1434,7 @@ c       It is equivalent to implementing a nucleus-nucleus collision
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
-        PARAMETER(NSIZE=280000)
+        PARAMETER (NSIZE=280000)
         COMMON/PYDAT3/MDCY(500,3),MDME(8000,2),BRAT(8000),KFDP(8000,5)
         COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
         COMMON/PYSUBS/MSEL,MSUB(500),KFIN(2,-40:40),NON,CKIN(200)
@@ -1465,6 +1478,7 @@ c       It is equivalent to implementing a nucleus-nucleus collision
         common/sbh/nbh,nonbh,kbh(kszj,5),pbh(kszj,5),vbh(kszj,5)
         common/ctllist/nctl,noinel(600),nctl0,nctlm   ! 180121 230121
         common/sppb/nppb,non3,kppb(1000,5),pppb(1000,5),vppb(1000,5) ! 281121
+        common/coal1/bmrat,i_mm  ! 080324 yan 120324
         dimension lc(nsize,5),tc(nsize),tw(nsize)
         dimension pi(4),pj(4),pii(4),pjj(4),peo(4),pint(4)
         dimension nni(10),ndi(10),npi(10)
@@ -1476,6 +1490,13 @@ c       arraies in 'sbh' are used to store hadron after calling 'PYTHIA'
 c       numbs(i) is given in 'filt', updated with transport processes, and 
 c        numbs(i)->numb(i) in the initiation of nucleus-nucleus collisin only
 c        numb(i) is updated with transport processes
+c080324 bmrat: ratio of baryon to meson in coalescenc model  ! yan
+c120324 i_mm: only the hadrons below numb(i_mm) (cf. 'filt' in parini.f)
+c        join in updating the hh collision time list (cf. parini.f).
+c        Originally i_mm=2, i.e. only p (proton) and n (neutron) join in 
+c        updating the collision time list in parton initialization; 
+c        if i_mm=6, p, n, pbar, nbar, pi+ and pi- will join in updating
+c        the collision time list in parton initialization.
 c!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 c       0. is the hard distance between two pions
 c       0.5 is the hard distance between two nucleons
@@ -1531,6 +1552,7 @@ c100821
         m2=numb(2)
         m3=numb(3)
         m4=numb(4)
+        m6=numb(6)   ! 120324
         m7=numb(7)
 c100821
         nctl0=nctl
@@ -1620,19 +1642,26 @@ c300623 updated numb(i)   ! 300623 Lei
         m2=numb(2)
         m3=numb(3)
         m4=numb(4)
+        m6=numb(6)   ! 120324
         m7=numb(7)
 c300623
 
         if(iMode.eq.2.or.iMode.eq.3)then !! if 110123, high energy frameworks 260223
-c060805 if((l.le.m4 .and. l1.le.m4) .and. ss.ge.parp21)then   ! if 1
-c241110 if(((l.le.m2 .and. l1.le.m2).or.(kfa.eq.2212.and.kfb.eq.-2212)
-c241110     c   .or.(kfb.eq.2212.and.kfa.eq.-2212)) .and. ss.ge.parp21)
-c241110     c   then   ! if 1
-        if((ipden.lt.2.and.(l.le.m2 .and. l1.le.m2) .and. ss.ge.parp21)
-     c   .or.(ipden.gt.2.and.(((kfaab.ge.11.and.kfaab.le.16).and.l1.le.
-     c   m2).or.(l.le.m2.and.(kfbab.ge.11.and.kfbab.le.16))).and.ss.ge.
-     c   parp21))then   ! if 1 011210 060813 120214
-c060813 m7 to m2
+
+c190224 Lei
+c120324
+        if( ( i_mm.eq.2 .AND. ipden.lt.2 .AND.(l.le.m2 .AND. l1.le.m2) )
+     &      .OR.
+     &      ( i_mm.eq.6 .AND. ipden.lt.2 .AND.(l.le.m6 .AND. l1.le.m6) )
+     &      .OR.
+     &      ( ipden.gt.2 .AND.
+     &          ( (kfaab.ge.11 .AND. kfaab.le.16 .AND.l1.le.m2) .OR.
+     &            (kfbab.ge.11 .AND. kfbab.le.16 .AND.l .le.m2) ) )
+     &      .AND.
+     &      ss.ge.parp2 )then   ! if 1 011210 060813 120214 140324 Lei
+c120324
+c190224 Lei
+
 c171022 Now long-written statements are replaced as calling the subroutine xevent.
 c171022 The statements are rewritten for better readability of code.
 c       Executes collision event.
@@ -1737,11 +1766,11 @@ c       592-th scattering process is referred to calling 'PYTHIA'
         if(mstptj.eq.1)goto 997   ! for B-framework 230722 sa011223
 
 c260314 statistics of number of leptons studied, identify scattered lepton, 
-c        and fill up pscal(5) 
+c        and fill up pscal(5)
         if(ipden.ge.11.and.ipden.le.16)then   !
 c       identify the studied leptons
         kfl=ipden
-        if(nzp.gt.0.)kfl=-ipden
+        if(nzp.gt.0)kfl=-ipden
         nlep=0
         do j=1,n
         ikl=k(j,2)
@@ -1758,6 +1787,8 @@ c       find the scattered lepton (with largest energy among studied leptons)
         if(nlep.gt.1)then   !!
         vnlep=vnlep+nlep
         elep=1.d0
+        jj=0   ! 280224 Lei
+        pscal=0D0   ! 280224 Lei
         do j1=1,nlep
         plj14=pl(j1,4)
         if(plj14.ge.elep)then
@@ -1765,9 +1796,11 @@ c       find the scattered lepton (with largest energy among studied leptons)
         jj=j1
         endif
         enddo
+        if(jj.gt.0)then   ! 280224 Lei
         do j2=1,5
         pscal(j2)=pl(jj,j2)
         enddo
+        end if   ! 280224 Lei
         elseif(nlep.eq.1)then   !!
         vnlep=vnlep+nlep
         do j2=1,5
@@ -1848,7 +1881,7 @@ c       move "66" from 'pyjets' to 'sgam'
 c       removes hadrons from 'pyjets' to 'sbh' and truncate 'pyjets'
 c        correspondingly
         call remo   ! 010418,161021 removed from after 'recons' to before
-        if(ipden.lt.11)call pyedit(2)
+        if(ipden.lt.11)call pyedit(1)
         if(ipden.ge.11)call pyedit(1)
 
 c161021 reconstruct nucleon (anti-nucleon) in order to increase leading 
@@ -1902,7 +1935,7 @@ c080104
 c       break up diquark and give four momentum and four position
 c        to the broken quarks (working in 'pyjets')
         call break
-        if(ipden.lt.11)call pyedit(2)
+        if(ipden.lt.11)call pyedit(1)
         if(ipden.ge.11)call pyedit(1)
 c030620
 c       find number of strings and line number of first and last components
@@ -2004,7 +2037,7 @@ c080104
 c140414
 
 c       add CME charge separation for u d s,c   ! 042021 She
-        icme=adj1(23)   ! 221022
+        icme=INT(adj1(23))   ! 221022
         if(icme.eq.0)goto 902
         if((nap.eq.nat).and.(nzp.eq.nzt).and.(icme.eq.1))
      c   call chargecme(win)
@@ -2014,7 +2047,7 @@ c       add CME charge separation for u d s,c   ! 042021 She
 
 c230722 if(adj140.eq.5)then
         if(mstptj.eq.1)then   ! 230722
-c       if(ipden.lt.11)call pyedit(2)
+c       if(ipden.lt.11)call pyedit(1)
 c       if(ipden.ge.11)call pyedit(1)
 
 c040423 Lei Move to here. The NN collision is successful then removes gamma.
@@ -2040,8 +2073,8 @@ c       'pyjets' to 'sbh'
         enddo
         enddo
 5001    continue
-        nbh=n   !Lei20231010 Moved to here.
-c       n=0
+        nbh=n   ! 101023 Lei Moved to here.
+        n=0   ! 190224 Lei Use "n=0" to avoid possible errors later.
         endif   ! 230722 sa011223
 c140414
 c281121 update hadron list 'sa2' after calling PYTHIA ('sbh' to 'sa2'), 
@@ -2854,7 +2887,7 @@ c       For hadrons generated from diffractive events and remnants.
                 P(2,i) = psa(i_b,i)
             end do
             N = 2
-            name_frame = "5MOM"   ! "CMS" -> "5MOM"
+            name_frame = "3MOM"   ! "CMS" -> "3MOM"
             goto 100
         endif
 c1200923 Lei
@@ -2898,10 +2931,7 @@ c270923 Lei
             do i=1,4,1
                 ps0(i) = psa(i_a,i) + psa(i_b,i)
             end do
-        ps0(5) = SQRT( ( psa(i_a,4) + psa(i_b,4) )**2 -
-     &                 ( psa(i_a,1) + psa(i_b,1) )**2 -
-     &                 ( psa(i_a,2) + psa(i_b,2) )**2 -
-     &                 ( psa(i_a,3) + psa(i_b,3) )**2)
+            ps0(5) = SQRT(ps0(4)**2 -ps0(1)**2 -ps0(2)**2-ps0(3)**2)
             ps0(6) = ( PYCHGE( kf_a ) + PYCHGE( kf_b ) ) / 3D0
         end if
 c270923 Lei
@@ -2943,7 +2973,7 @@ c300623 Lei
 200     continue   ! 270923 Lei
 
 c       Removes unnecessary entries in PYJETS.
-        if( ipden.lt.11 ) call PYEDIT(2)
+        if( ipden.lt.11 ) call PYEDIT(1)
         if( ipden.ge.11 ) call PYEDIT(1)
 
 c       Records the numbers of the participant nucleons (kpar), 
@@ -2975,7 +3005,7 @@ c        magnetic field function is A*bp-B*bp^3 type.  by shezl 2021
 c       She and Lei For CME.
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
-        PARAMETER(KSZJ=80000)
+        PARAMETER (KSZJ=80000)
         COMMON/PYJETS/N,NONJ,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         common/sa1/kjp21,non1,bp,iii,neve,nout,nosc
         common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
@@ -3284,7 +3314,7 @@ c       'sppb' (reconstructed hadrons) to 'sbh'
         if(((ipden.eq.0 .and. itden.eq.1) .or. (ipden.eq.1 .and.
      c   itden.eq.0)) .and. (nppb.ge.1 .and. mstptj.eq.0))then   ! 290123
         do i1=1,nppb
-        n=n+1
+        n=n+1   ! 190224 Note the n, k, p & v here belong to "sbh".
         do i2=1,5
         k(n,i2)=kppb(i1,i2)
         p(n,i2)=pppb(i1,i2)
@@ -3297,7 +3327,7 @@ c       'sbh' to 'sa2' (i.e. produced hadrons-> hadron list 'sa2'), 101221
         ll=l
         ll1=l1
         if(n.eq.0)goto 200   ! 241110
-        do 500 i=1,n
+        do 500 i=1,n   ! 190224 Note the n, k, p & v here belong to "sbh".
         kf=k(i,2)
         do 600 j=1,kfmax
         if(kf.ne.kfaco(j))goto 600
@@ -3795,6 +3825,8 @@ c        nucleus-nucleus collision
         common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
         common/sbh/nbh,nonbh,kbh(kszj,5),pbh(kszj,5),vbh(kszj,5)
+        common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
+     c   nap,nat,nzp,nzt,pio   ! 280224 Lei
         common/sppb/nppb,non3,kppb(1000,5),pppb(1000,5),vppb(1000,5) ! 281121
         dimension ps(4),rs(4),pp(20,5),isuc(1000)! 230407
         dimension pk(5),vk(5),rr(3),kk(5)
@@ -4156,7 +4188,7 @@ c        decmom)
 c       as mass of gluon from 'pyjets' may be negative it may be better
 c        (from energy conservation point of view) not using 'decmom' but
 c        random three momentum method if square root s less than 0.1
-        if(decsuc.eq.0)then   ! c1
+        if(INT(decsuc).eq.0)then   ! c1 280224 Lei INT
         do i4=1,3  
         pi=pyr(1)*ps(i4)
         pp(2,i4)=ps(i4)-pi
@@ -4288,7 +4320,7 @@ c        at last
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000)
+        PARAMETER (KSZJ=80000)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
         COMMON/PYSUBS/MSEL,MSUB(500),KFIN(2,-40:40),NON,CKIN(200)
@@ -4411,7 +4443,7 @@ c       moves hadron (lepton) and junction from 'pyjets' to 'sbh'   060813
         kfab=iabs(kf)
 c060223
 
-        if(adj12.eq.0)then   ! keep junction in 'pyjets' for sfm
+        if(INT(adj12).eq.0)then   ! keep junction in 'pyjets' for sfm
         if(kfab.le.8 .or. kfab.eq.2101 .or. kfab.eq.3101
      c   .or. kfab.eq.3201 .or. kfab.eq.1103 .or. kfab.eq.2103
      c   .or. kfab.eq.2203 .or. kfab.eq.3103 .or. kfab.eq.3203
@@ -4422,7 +4454,7 @@ c060223
         goto 204
         endif   !
 
-        if(adj12.ne.0)then   !! 300623 Lei -> .ne.0
+        if(INT(adj12).ne.0)then   !! 300623 Lei -> .ne.0
 c100223 remove junction from 'pyjets' to 'sbh' for coal
         if(kfab.le.8 .or. kfab.eq.2101 .or. kfab.eq.3101
      c   .or. kfab.eq.3201 .or. kfab.eq.1103 .or. kfab.eq.2103
@@ -4551,12 +4583,12 @@ c       kf1,kf2: flavor codes of broken quarks
         am1=pymass(kf1)
         am2=pymass(kf2)
 c300623 Lei
+        if( P(ii,5).le.1D-15 )then   ! If zero mass diquark from PYTHIA.
+            am1 = 0D0
+            am2 = 0D0
+        end if
         pp(1,5)=am1
         pp(2,5)=am2
-        if( P(ii,5).le.1D-15 )then   ! If zero mass diquark from PYTHIA.
-            pp(1,5) = 0D0
-            pp(2,5) = 0D0
-        end if
 c300623 Lei
 c       pp : four momenta & mass of broken quarks, local variable 
         do i1=1,4
@@ -4598,7 +4630,7 @@ c260503
 c       Decay method.
         decsuc=1
         call decmom(ps,pp,am1,am2,decsuc)
-        if(decsuc.eq.0)goto 401   ! return to random three momentum method
+        if(INT(decsuc).eq.0)goto 401   ! return to random three momentum method ! 280224 Lei INT
 300     continue
 c       adjust four momentum conservation by iteration,no more than
 c        4000 iterations
@@ -4617,6 +4649,7 @@ c260503
         throe_p(i2) = throe_p(i2) + ( ps(i2) - p(ii,i2) - p(n+1,i2) )
         enddo
 
+
         return
         end
 
@@ -4631,7 +4664,7 @@ c       am1 (am2): mass of decayed particle   ! 090922
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000)
+        PARAMETER (KSZJ=80000)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         dimension pi(4),pj(4),ps(4),pp(20,5),bb(3)
 c260223 calculate the E and |p| of decayed particle in rest frame of 
@@ -4867,7 +4900,7 @@ c        calculated with respect to this origin.
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000)
+        PARAMETER (KSZJ=80000)
         COMMON/SA2/N,NON2,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         common/sa4/tau(kszj),tlco(kszj,4)
@@ -4902,7 +4935,7 @@ c       create initial collision list
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000,NSIZE=280000)   ! 280722
+        PARAMETER (KSZJ=80000,NSIZE=280000)   ! 280722
         COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
         common/sa5/kfmax,kfaco(100),numb(100),numbs(100),non10,
      c   disbe(100,100)
@@ -4998,7 +5031,7 @@ c       J: order # in collision time list
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
-        PARAMETER(NSIZE=280000)
+        PARAMETER (NSIZE=280000)
         common/wz/c17(500,3),ishp(kszj),tp(500),coor(3),p17(500,4)
         common/papr/t0,sig,dep,ddt,edipi,epin,ecsnn,ekn,ecspsn,ecspsm
      c   ,rnt,rnp,rao,rou0,vneu,vneum,ecsspn,ecsspm,ecsen   ! 060813
@@ -5126,7 +5159,7 @@ c       find out the binary collision with minimum collision time
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000,NSIZE=280000)
+        PARAMETER (KSZJ=80000,NSIZE=280000)
         common/ctllist/nctl,noinel(600),nctl0,nctlm   ! 180121 230121
         dimension lc(nsize,5),tc(nsize),tw(nsize)
         icp=0
@@ -5152,7 +5185,7 @@ c       update collision list after calling 'PYTHIA' successfully
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
-        PARAMETER(NSIZE=280000)
+        PARAMETER (NSIZE=280000)
         common/sa1/kjp21,non1,bp,iiii,neve,nout,nosc
         common/sa2/nsa,nonsa,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         common/sa5/kfmax,kfaco(100),numb(100),numbs(100),non5,
@@ -5167,6 +5200,7 @@ c010530        common/sa19/kji   ! 16/09/99
      c   ,rnt,rnp,rao,rou0,vneu,vneum,ecsspn,ecsspm,ecsen   ! 060813
         common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
      c   nap,nat,nzp,nzt,pio
+        common/coal1/bmrat,i_mm  ! 080324 yan 120324
         dimension lc(nsize,5),tc(nsize),tw(nsize)
 c       ipyth: store line number of produced hardon in hadron list 'sa2', 101221
 c       loop over old colliding pairs
@@ -5201,6 +5235,7 @@ c010223
 
         m2=numb(2)   ! 060813
         m4=numb(4)
+        m6=numb(6)   ! 120324
         m7=numb(7)   ! 241110
 c       m9=numb(9)
 c       m17=numb(17)
@@ -5209,8 +5244,6 @@ c       m25=numb(25)
 c       m29=numb(29)
 c       m32=numb(32)
 c       m34=numb(34)
-c        m34=numb(kfmax-11)
-c       subtract 11, since we do not consider the rescattering of x0c, etc
 c101221 note: # of produced hadrons equal to zero (n=0) after call 'PYTHIA'
 c        in case of w/o reconstruction leading proton
 c101221 proceed for case of with reconstruction leading nucleon
@@ -5220,14 +5253,25 @@ c       loop over produced hadrons in 'sbh'   ! 101221
         do j11=1,n
         j1=ipyth(j11)
         kfjab=iabs(ksa(j1,2))   ! 060813 120214
-        if(kfjab.ne.2212.and.kfjab.ne.2112.and.kfjab.ne.11.and.kfjab
-     c   .ne.12.and.kfjab.ne.13.and.kfjab.ne.14.and.kfjab.ne.15
-     c   .and.kfjab.ne.16)goto 300   ! 241110 m7 to m2 060813 120214
+c120324
+        if( ( i_mm .eq. 2 .and.
+     &      ( kfjab.ne.2212 .and. kfjab.ne.2112 .and.
+     &        kfjab.ne.11   .and. kfjab.ne.12   .and. kfjab.ne.13 .and.
+     &        kfjab.ne.14   .and. kfjab.ne.15   .and. kfjab.ne.16) )
+     &      .OR.
+     &      ( i_mm.eq.6.and.
+     &      ( kfjab.ne.2212 .and. kfjab.ne.2112 .and. kfjab.ne.211 .and.
+     &        kfjab.ne.11   .and. kfjab.ne.12   .and. kfjab.ne.13  .and.
+     &        kfjab.ne.14   .and. kfjab.ne.15   .and. kfjab.ne.16) )
+     &    ) goto 300   ! 241110 m7 to m2 060813 120214
+c120324
 c060813 consider only the reinteraction among nucleons & nucleon with lepton
+c120324 nucleon with pion, and among pions.
+
 c060813 loop over particle list ('sa2')
 c       mm=m34
 c060813 mm=m7      ! 241110
-        mm=m2   ! 130913 m7 to m2
+        mm=numb(i_mm)   ! 130913 m7 to m2 120324
 c060813 120214 consider only the reinteraction of j11 with nucleons
         do i=1,mm
 
@@ -5248,7 +5292,6 @@ c010600
         call rsfilt(j1,i1,iflag,iMode)   ! 250423
         if(iflag.eq.0)goto 100
         tc(nctl)=0.0
-c011204 call tcolij(i1,j1,time,nctl,lc,tc,tw,iMode)   ! 250423
         call tcolij(j1,i1,time,nctl,lc,tc,tw,iMode)   ! 250423
         if(tc(nctl).gt.1.0e-7) nctl=nctl+1
 100     continue
@@ -5321,7 +5364,7 @@ c       calculate collision time & fill up lc(i,1-2) as well as tc(i)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
-        PARAMETER(NSIZE=280000)
+        PARAMETER (NSIZE=280000)
         COMMON/PYPARS/MSTP(200),PARP(200),MSTI(200),PARI(200)
         common/sa1/kjp21,non1,bp,iii,neve,nout,nosc
         common/sa10/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
@@ -5526,6 +5569,8 @@ c250423 ss: square root s_NN
         kl1=k(l1,2)
         klab=iabs(kl)   ! 060813 120214
         kl1ab=iabs(kl1)   ! 060813 120214
+        idpl = 0   ! 290224 Lei
+        idpl1 = 0   ! 290224 Lei
 
         if(iMode.eq.2.or.iMode.eq.3)then      ! 250423
         if(klab.eq.2212 .or. klab.eq.2112)idpl=1   ! N
@@ -5567,7 +5612,7 @@ c       update collision time list after elastic scattering
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
-        PARAMETER(NSIZE=280000)
+        PARAMETER (NSIZE=280000)
         COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
         common/sa2/nsa,non2,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         common/sa5/kfmax,kfaco(100),numb(100),numbs(100),non5,
@@ -5578,6 +5623,7 @@ c       update collision time list after elastic scattering
      c   ,rnt,rnp,rao,rou0,vneu,vneum,ecsspn,ecsspm,ecsen   ! 060813
         common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
      c   nap,nat,nzp,nzt,pio
+        common/coal1/bmrat,i_mm  ! 080324 yan 120324
         dimension lc(nsize,5),tc(nsize),tw(nsize)
 
 c       loop over old colliding pairs
@@ -5613,18 +5659,29 @@ c       loop over particle list
 
         m2=numb(2)   ! 130913
         m4=numb(4)
+        m6=numb(6)   ! 120324
         m7=numb(7)   ! 241110
         j1=ic
         do ik=1,2
 
 c010530
         kfab=iabs(ksa(j1,2))   ! 060813 120214
-        if(kfab.ne.2212.and.kfab.ne.2112.and.kfab.ne.11.and.kfab
-     c   .ne.12.and.kfab.ne.13.and.kfab.ne.14.and.kfab.ne.15
-     c   .and.kfab.ne.16)goto 300   ! 241110 m7 to m2 060813 120214
+c120324
+        if( ( i_mm .eq. 2 .and.
+     &      ( kfjab.ne.2212 .and. kfjab.ne.2112 .and.
+     &        kfjab.ne.11   .and. kfjab.ne.12   .and. kfjab.ne.13 .and.
+     &        kfjab.ne.14   .and. kfjab.ne.15   .and. kfjab.ne.16) )
+     &      .OR.
+     &      ( i_mm.eq.6.and.
+     &      ( kfjab.ne.2212 .and. kfjab.ne.2112 .and. kfjab.ne.211 .and.
+     &        kfjab.ne.11   .and. kfjab.ne.12   .and. kfjab.ne.13 .and.
+     &        kfjab.ne.14   .and. kfjab.ne.15   .and. kfjab.ne.16) )
+     &    ) goto 300   ! 241110 m7 to m2 060813 120214
+c120324
 c130913 consider only the reinteraction among nucleons & nucleon with lepton 
+c120324 nucleon with pion, and among pions.
 c        060813 120214
-        mm=m2   ! 241110 060813 m7 to m2
+        mm=numb(i_mm)   ! 130913 m7 to m2 120324
         do i=1,mm
         if(j1.eq.ic .and. i.eq.jc)goto 600
         if(j1.eq.jc .and. i.eq.ic)goto 600
@@ -5661,7 +5718,7 @@ c        in 'pyjets'
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000)
+        PARAMETER (KSZJ=80000)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         common/saf/nsa,nonsa,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         dimension rkk(kszj,4),pkk(kszj,4),rr(4),pp(4),b(3)
@@ -5858,7 +5915,7 @@ c       move ii-th particle (lepton) in pyjets to first position 060813 120214
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000)
+        PARAMETER (KSZJ=80000)
         COMMON/PYJETS/N,NONJ,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         common/sa5/kfmax,kfaco(100),numb(100),numbs(100),non5,
      c   disbe(100,100)
@@ -5901,7 +5958,7 @@ c       inorex: endothermic or exothermic
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000)
+        PARAMETER (KSZJ=80000)
         common/sa2/nsa,non2,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         dimension pi(4),pj(4)
         am3=pymass(kl)   ! mass of one scattered particle
@@ -5929,7 +5986,7 @@ c       pi (pj): four momentum of scattered particle after scatering
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000,nsize=280000)
+        PARAMETER (KSZJ=80000,nsize=280000)
         common/sa2/nsa,non2,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
      c   nap,nat,nzp,nzt,pio
@@ -5950,8 +6007,8 @@ c        to Lab or cms frame of nucleus-nucleus collision system
 c       update collision list after ela. scattering
 c       jorn=0 (3): scattered particles not join (join) reconstruction 
 c        of hh collision pair
-c       note: CME is not considered in ela. scattering channel of low 
-c        energy (a) loop
+c       note: CME is not considered in the scattering channels of low 
+c        energy A-framework.
 
         return
         end
@@ -5974,7 +6031,7 @@ c       inorex: endothermic or exothermic
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000,NSIZE=280000)
+        PARAMETER (KSZJ=80000,NSIZE=280000)
         common/sa2/nsa,non2,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         dimension pi(4),pj(4)
         am3=pymass(kl)   ! mass of one scattered particle
@@ -6090,7 +6147,7 @@ C...Double precision and integer declarations.
         mdcy(pycomp(kf),1)=1
 
         call pydecy(1)
-        call pyedit(2)
+        call pyedit(1)
 
         v(1,1)=r(1)
         v(1,2)=r(2)
@@ -6134,7 +6191,7 @@ C...Double precision and integer declarations.
         mdcy(pycomp(kf),1)=1
 
         call pydecy(1)
-        call pyedit(2)
+        call pyedit(1)
 
 
         return
@@ -6257,7 +6314,7 @@ c       nsa0: nsa before two-body scattering
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
-        PARAMETER(NSIZE=280000)
+        PARAMETER (NSIZE=280000)
         COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
         common/sa2/nsa,non2,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         common/sa5/kfmax,kfaco(100),numb(100),numbs(100),non5,

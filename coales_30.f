@@ -1,4 +1,4 @@
-        subroutine coales(ijk,neve,nnout,nap,nat,nzp,nzt,i_coal)   ! 250823 Lei Added i_coal.
+        subroutine coales(ijk,neve,nnout,nap,nat,nzp,nzt,i_coal)
 c       A phenomenological coalescence model writen by Sa Ben-Hao on 04/06/2004
 c       Its input messages are in 'pyjets'   ! 220822
 c       Its storing array is 'pyjets'
@@ -8,7 +8,9 @@ c       neve: total number of runs
 c       nnout: a internal printing per nnout runs
 c       nap and nzp: atomic and charge number of projectile
 c       nat and nzt: atomic and charge number of target
-c       i_coal: with or without gluon splitting and deexcitation.    ! 250823 Lei
+c       250823 Lei added 'i_coal'
+c221123 i_coal=1 or 0: do the real coalescence or not ( only gluon 
+c                      splitting and quark deexcitation ).
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -36,18 +38,16 @@ c       PYDAT1,PYDAT2,PYDAT3 and PYJETS are the subroutines in PYTHIA
         dimension numb(3)
 
 
-        if( i_coal.eq.0 ) goto 888  ! 250823 Lei
+c       Do gluon splitting and energetic quark deexcitation only, without 
+c        the real coalescence (i_coal=0).
+        if( i_coal.eq.0 ) goto 888   ! 250823 Lei
 
 
 c-------------------------------------------------------------------------------
 c-------------------------   Variables initialization   ------------------------
         rrp = 1.16
         nn  = 0
-        if( ijk.eq.1 )then   ! 300623 Lei
-            kn = 0
-            pn = 0D0
-            rn = 0D0
-        endif   ! 300623 Lei
+        nth = 0
         nout  = nnout
         imc   = INT(adj1(13))
         ibc   = INT(adj1(14))
@@ -58,61 +58,25 @@ c-------------------------------------------------------------------------------
 
 c-------------------------------------------------------------------------------
 c----------------------------   Junctions removing   ---------------------------
-        if( INT(adj1(40)).eq.3 )then   ! 070223
 c220822     Remove junctions.
-            jb = 0
-2010        do i1=jb+1,N,1  ! i1 loop
-                kf   = K(i1,2)
-                kfab = ABS(kf)
-                if(kfab.ne.88)then
-                    jb = jb + 1
-                    goto 2020
-                endif
-                call updad_pyj(N,i1+1,1)   ! 090922 'updad_pyj' in sfm_30.f
-                N = N - 1
-                goto 2010
-2020        enddo   ! i1 loop
-        endif   ! 070223
+        jb = 0
+2010    do i1=jb+1,N,1  ! i1 loop
+            kf   = K(i1,2)
+            kfab = ABS(kf)
+            if(kfab.ne.88)then
+                jb = jb + 1
+                goto 2020
+            endif
+            call updad_pyj(N,i1+1,1)   ! 090922 'updad_pyj' in sfm_30.f
+            N = N - 1
+            goto 2010
+2020    enddo   ! i1 loop
 c----------------------------   Junctions removing   ---------------------------
 c-------------------------------------------------------------------------------
 
 
-!TODO(Lei20230825): The baryon number conservation process is unnecessary in fact.
-c       It will be satisfied automatically according to the number of q and qbar.
-c-------------------------------------------------------------------------------
-c------------------------   Net baryon number counting   -----------------------
-c       Conservation of net baryon.
-        netba = 0   ! 300623 Lei
-        do i1=1,nbh,1 ! note: 'sbh' is hadron list before hadronization 060119
-            kf   = kbh(i1,2)
-            kfab = ABS(kf)
-            if(kf.gt.0.and.(kf.gt.1000 .and. kf.lt.10000)) netba=netba+1
-        if(kf.lt.0.and.(kfab.gt.1000 .and. kfab.lt.10000)) netba=netba-1
-        enddo
-c060813 120214
-        if( nap.gt.1 .and. nat.gt.1 )then
-            netba = nap + nat - netba   ! AA
-        elseif( nap.eq.1.and.nat.gt.1.and.ipden.eq.0 )then
-            netba = nzp + nat - netba   ! p-A (pbar-A)
-        elseif( nap.gt.1.and.nat.eq.1 )then
-            netba = nap + nzt - netba   ! A-p (A-pbar)
-        elseif( nap.eq.1.and.nat.eq.1 )then
-            netba = nzp + nzt - netba   ! pp (p-pbar,pbar-p)
-        else
-            netba = nat - netba   ! lepton-A
-        endif
-c060813 120214
-c060119 if(ijk.eq.1)then
-c       napt=nap+nat
-c       nzpt=nzp+nzt
-c       sbaryi=float(napt)
-c       schgei=3.*float(nzpt)
-c060119 endif
-c------------------------   Net baryon number counting   -----------------------
-c-------------------------------------------------------------------------------
-
-
-c300623 g-splitting and q-deexcitation before "parcas".   ! 300623
+c300623 g-splitting and q-deexcitation have been done before "parcas".   ! 300623
+c       So jumps out them when do the real coalescence (i_coal=1).
 888     if( INT(adj1(12)).eq.2 .AND. i_coal.eq.1 ) goto 1000   ! 250823 Lei
 
 
@@ -137,7 +101,8 @@ c-------------------------------------------------------------------------------
 
 
 c250823 Debug mode.   ! 250823 Lei
-        if( INT(adj1(12)).eq.3 ) goto 1000   ! 310723 Lei w/ g-splitting and w/o deexc.
+c       Do g-splitting only, without q-deexcitation.
+        if( INT(adj1(12)).eq.3 ) goto 1000
 
 
 c-------------------------------------------------------------------------------
@@ -186,48 +151,30 @@ c---------------------------   Quark deexcitation   ----------------------------
 c-------------------------------------------------------------------------------
 
 
-1000    if( i_coal.eq.0 ) return  ! 300623 Lei For adj12 = 2
+c       Just do the g-splitting and quark deexcitation, without real coalescence
+1000    if( i_coal.eq.0 ) return   ! 300623 Lei For adj12 = 2
 
 
 c-------------------------------------------------------------------------------
 c-----------------------------   Parton sorting   ------------------------------
-        numb = 0   ! 220822
-c       numb(1),(2), and (3): the order number of last g, qbar & q in 'pyjets'
-c220822 1: refers to g (no gluon at all now), 2: qbar, 3: q
-
-c       Sort the partons in order of qbar and q,   ! 220822
-c        i.e. move q to the end.   ! 220822
-        jh = N
-        jl = 0
-2030    continue
-        do j=jl+1,jh,1
-            kf   = K(j,2)
-            kfab = ABS(kf)
-            if( kfab.lt.7 .and. kf.gt.0 )then   ! q, consider d, u, s, c, b, t
-                N = N + 1
-                numb(3) = numb(3) + 1
-                do i4=1,5,1   ! 300623 Lei Lei 4 -> 5
-                    K(N,i4) = K(j,i4)
-                    P(N,i4) = P(j,i4)
-                    V(N,i4) = V(j,i4)
-                enddo
-                call updad_pyj(N,j+1,1)
-                N  = N  - 1
-                jh = jh - 1
-                jl = j  - 1
-                goto 2030
-            endif
-        enddo
-        numb(1) = 0
-        numb(2) = N - numb(3)
-        numb(3) = N
-        n1 = numb(1)
-        n2 = numb(2)
-        n3 = N
-c       Order the qbar according to energy from the maximal to minimal.
-c300623 call eord(n1+1,n2)   ! 300623 Lei
-c       Order the q according to energy from the maximal to minimal.
-c300623 call eord(n2+1,n3)   ! 300623 Lei
+c130324 Lei
+c       Sorts the q & qbar according to selected quantity and order.
+c       Sorts out PYJETS randomly.
+        call PASORT( 1, N, "pyjets", "null", "random" )   ! Lower case only. In coales.f.
+c       Slower hadrons formed first. Assumption from Shandong model (QCM), 
+c        which sorts quarks (antiquarks) according to rapidity from the 
+c        minimal to maximal.
+        ! call PASORT( 1, N, "pyjets", "|eta|", "min_to_max" )
+c       Usage examples:
+c       (Note: the CHARACTERs are accepted with the lower case only.)
+        ! call PASORT( 5, N, "pyjets", "null",  "random" )
+        ! call PASORT( 1, N, "pyjets", "e",     "max_to_min" )
+        ! call PASORT( 1, N, "pyjets", "e",     "min_to_max" )
+        ! call PASORT( 1, N, "pyjets", "eta",   "min_to_max" )
+        ! call PASORT( 1, N, "pyjets", "|eta|", "min_to_max" )
+        ! call PASORT( 1, N, "sbh",    "|eta|", "min_to_max" )
+c       More details please refer to "subroutine PASORT" in coales.f.
+c130324 Lei
 c-----------------------------   Parton sorting   ------------------------------
 c-------------------------------------------------------------------------------
 
@@ -239,23 +186,18 @@ c        only, baryon: octet-spin 1/2 & decuplet-spin 3/2 only).
         if( ijk.eq.1 ) call tabhb
 c       ijk is the event number.
 
-c       Normal cpalescence process.
-        iqba = n2
-        call coal(n3,iqba,ijk,rrp,iphas,netba)
-c       n3: total number of partons (qbar and q)
-c       iqba: total number of qbar (qbar is ordered before q)
+c       Normal coalescence process.
+        call hadpro(rrp,iphas)
 c       ithroq : the total number of quarks thrown away
 c       ithrob : the total number of anti-quarks thrown away
 c       throe : total 4-momentum of the partons thrown away
 c       ich : total charge of the partons thrown away
 
-c070223 Re-coalesce failed parton after last 'call coal'.
+c070223 Re-coalesce failed parton after last 'call hadpro'.
 c       Try coalescence without phase-space constraint agian for those partons 
-c        failed in normal coalescence process with constraint originally.
-        iqba = ithrob   ! Not active originally.
-        n3   = ithroq + ithrob   ! Not active originally.
-        if( iphas.ne.0 .and. n3.ge.2 )then   ! 070223
-            call coal(n3,iqba,ijk,rrp,0,0)   ! 110905
+c        failed in the normal coalescence process.
+        if( iphas.ne.0 .AND. nth.ge.2 )then
+            call hadpro(rrp,0)
         endif
 
 c150922 ichth=ich   ! 092600
@@ -501,7 +443,7 @@ C...Double precision and integer declarations.
         do 100 i1=ni,nc
           ii=i1
           if(i1.eq.nc)goto 100
-c280822   j=ii
+          j=ii   ! 280224 Lei
           alar=P(ii,4)
           do 200 i2=i1+1,nc
 c280822 communication between i1 and i2 of which the energy is lagest
@@ -540,16 +482,11 @@ c280822 now, j: order number of particle with largest energy
 
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        subroutine coal(n1,nqb,ijk,rrp,iphas,netba)
+        subroutine hadpro(rrp,iphas)   ! 080324
 c       Parton coalescence (hadronization)
-c       n1 : total number of partons (q & qbar only)
-c       nqb : total number of qbar (qbar is ordered before q)
-c       ijk : the run number
 c       iphas: = 1, complete phase space constraint  ! 300623 Lei
 c              = 2, position constraint only
 c              = 3, momentum constraint only
-c       netba: number of baryons to be first generated keeping
-c              baryon conservation 
 c       ithroq : total number of quarks thrown away
 c       ithrob : total number of anti-quarks thrown away
 c       throe : total four momentum of the partons thrown away   ! 090922
@@ -569,6 +506,7 @@ C...Double precision and integer declarations.
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         common/sa37/nth,npadth,kth(kszj,5),pth(kszj,5),vth(kszj,5)   ! 150922
+        common/coal1/bmrat   ! ratio of baryon to meson
         dimension pc(4),rc(3),iar(3),rcp(3)
         dimension psu(3),peo(5),pnn(kszj,5)
         dimension numb(3)   ! 110905
@@ -581,13 +519,20 @@ c300623 Moved from 'coales' to here.   ! 300623 Lei
         ithrob = 0
         ich    = 0
         throe  = 0D0
-c       Arrays for partons thrown away.
-        nth = 0
-        if( ijk.eq.1 )then   ! 300623 Lei
-            kth = 0
-            pth = 0D0
-            vth = 0D0
-        endif   ! 300623 Lei
+c110324 Lei
+c       Appends the last failed quarks to list, i.e. PYJETS + sa37.
+        if( nth.gt.0 )then
+            do i=1,nth,1
+                N = N + 1
+                do j=1,5,1
+                    K(N,j) = kth(i,j)
+                    P(N,j) = pth(i,j)
+                    V(N,j) = vth(i,j)
+                end do
+            end do
+            nth = 0
+        end if
+c110324 Lei
 c-------------------------   Variables initialization   ------------------------
 c-------------------------------------------------------------------------------
 
@@ -597,289 +542,276 @@ c-------------------------------   Coalescence   -------------------------------
         ibarp = 0   ! Numer of baryon generated. (baryon plus)
         ibarm = 0   ! Number of anti-baryon generated. (baryon minus)
         imes  = 0   ! Number of meson generated.
+        nme   = 0   ! 110324 Lei
+        nba   = 0   ! 110324 Lei
 
-!TODO(Lei20230825): The baryon number conservation process is unnecessary in fact.
-c       It will be satisfied automatically according to the number of q and qbar.
-c----------------------   Baryon conservation treatment   ----------------------
-c       Generate first 'netba' baryons (if 'netba'>0) or -'netba' anti-baryons 
-c        (if 'netba'<0) to keep baryon conservation.
-        if( netba.gt.0 ) call barpro(n1,nqb,iphas,nba,ibarp,netba,rrp,1)
-        if( netba.lt.0 )then
-302       continue
-          do ii1=1,nqb
-            call an_barpro(n1,nqb,ii1,iphas,nba,ibarm,netba,rrp,isu,1)
-            if( isu.eq.1 .and. ibarm.lt.-netba ) goto 303
-            if( isu.eq.1 .and. ibarm.eq.-netba ) goto 304
-            if( isu.eq.0 ) stop 6666
-          enddo
-303       goto 302
-304       continue
-        endif
-c----------------------   Baryon conservation treatment   ----------------------
+        i_fail_iteration = 0   ! 110324 Lei
+        i_normal_coal = 0   ! 110324 Lei
 
-c----------------------------   Normal coalescence   ---------------------------
-c       Compose first the anti-quark, one by one, into hadron. 150922
-c       An anti-quark can be a component of anti-baryon or meson.
-        jj = 0
-300     continue   ! Start the first and next coalescence. Cycle beginning.
-        jj = jj + 1
+390     continue
 
-c       No qbar. Try to compose baryons.
-        if( nqb.eq.0 ) goto 100
-c       No q and number of qbar is lees than 3. One cannot compose 
-c        mesons or anti-baryons. Throw away qbar.
-        if( nqb.lt.3 .and. n1.eq.nqb ) goto 301
+c110324 Lei
+c       Re-coalesces the failed q & qbar. No more than 50 times.
+        if( i_normal_coal.eq.1 ) i_fail_iteration = i_fail_iteration + 1   ! 110324 Lei
+c110324 Lei
 
-c       Select an anti-quark from list randomly.
-        if( nqb.eq.1 ) ii1 = 1
-        if( nqb.gt.1 ) ii1 = INT( nqb*PYR(1) + 1 )
+        do 400 i1=1,N-2   ! 110324 Lei N -> N-2
+        kf1=K(i1,2)
+        do 500 i2=i1+1,N-1
+            kf2=K(i2,2)
 
-        kf = K(ii1,2)
-c       Probability of anti-baryon/meson.
-        relpr = adj1(31)
-        relpr = relpr/(1.+relpr)
-c       Extra suppression of strange anti-baryon/meson.
-        if(kf.eq.-3)then
-            relpr = adj1(31)*adj1(33)
-            relpr = relpr/(1.+relpr)
-        endif
+c-----------------------------   Meson Producing   -----------------------------
+c       Tries to produce a meason.
+        if( (kf1.gt.0.and.kf2.lt.0) .or. (kf1.lt.0.and.kf2.gt.0) )then ! if 1
 
-        rand = PYR(1)
-c       Compose an anti-baryon.
-        if( rand.le.relpr .and. nqb.ge.3 )then   !
-          call an_barpro(n1,nqb,ii1,iphas,nba,ibarm,netba,rrp,isu,2)
-          if( isu.eq.1 .and. nba.eq.1 )then   ! One anti-baryon produced.
-            goto 300
-          endif
+            sume  = P(i1,4) + P(i2,4)
+            sump1 = P(i1,1) + P(i2,1)
+            sump2 = P(i1,2) + P(i2,2)
+            sump3 = P(i1,3) + P(i2,3)
+            cm = sume*sume - sump1*sump1 - sump2*sump2 - sump3*sump3
+            if( cm.gt.1D20 ) cm = 1D20
+            if( cm.le.0D0  ) goto 500   ! (meson) fail
+            cm = SQRT(cm)
+c110324 Lei
+            KF_in_1 = kf1
+            KF_in_2 = kf2
+c           Exchanges KFSs of qbar and q to ensure the first one is q.
+            if( kf1.lt.0 )then
+                KF_in_1 = kf2
+                KF_in_2 = kf1
+            end if
+            call findm( KF_in_1, KF_in_2, cm, kfii, amasi, isucc, 1 )
+c110324 Lei
+            if(isucc.eq.0) goto 500
 
-c       Fail to compose ii1 into an anti-baryon. Try to compose a meson.
-          if( isu.eq.0 )then   !!
-            call mespro(n1,nqb,ii1,iphas,nme,imes,rrp,isu)
-            if( isu.eq.1 .and. nme.eq.1 )then   ! One meson produced.
-              goto 300
+c           Phase space adjudgment.
+            if( iphas.ne.0 )then 
+            call phas(i1,i2,0,isucc,2,iphas)
+            if( isucc.eq.0 ) goto 500   ! fail
             endif
-c       Fail to compose ii1 into a meson, either. Throw away the qbar.
-            if( isu.eq.0 )then   !!!
-              nth = nth + 1
-              ithrob = ithrob + 1
-              kk  = K(ii1,2)
-              ich = ich + PYCHGE(kk)
-              kth(nth,2) = kk
-              vth(nth,5) = V(ii1,5)   ! 250823 Lei
-              pth(nth,5) = P(ii1,5)
-              do i2=1,4
-                throe(i2)   = throe(i2) + P(ii1,i2)
-                pth(nth,i2) = P(ii1,i2)
-                vth(nth,i2) = V(ii1,i2)
-              enddo
-c       Move parton list one step downward from ii1+1 to n1.
-              call updad_pyj(n1,ii1+1,1)
-              N   = N   - 1   ! 300623 Lei
-              n1  = n1  - 1
-              nqb = nqb - 1
-              goto 300
-            endif   !!!
-          endif   !! Fail to compose ii1 into an anti-baryon.
 
-c       Compose a meson.
-        elseif( rand.gt.relpr .or. nqb.lt.3 )then   !
-          call mespro(n1,nqb,ii1,iphas,nme,imes,rrp,isu)
-          if( isu.eq.1 .and. nme.eq.1 )then   ! One meson produced.
-            goto 300
-          endif
+c           Proceed for success
+            imes = imes + 1
+            nme  = nme  + 1
 
-c       Fail to compose ii1 into a meson. Try to compose an anti-baryon.
-          if( isu.eq.0 )then   !!
-            call an_barpro(n1,nqb,ii1,iphas,nba,ibarm,netba,rrp,isu,2)
-            if( isu.eq.1 .and. nba.eq.1 )then   ! One anti-baryon produced.
-              goto 300
-            endif
-c       Fail to compose ii1 into an anti-baryon, either. Throw away the qbar.
-            if( isu.eq.0 )then !!!
-              nth = nth+1
-              ithrob = ithrob + 1
-              kk  = K(ii1,2)
-              ich = ich + PYCHGE(kk)
-              kth(nth,2) = kk
-              vth(nth,5) = V(ii1,5)   ! 250823 Lei
-              pth(nth,5) = P(ii1,5)
-              do i2=1,4
-                throe(i2)   = throe(i2) + P(ii1,i2)
-                pth(nth,i2) = P(ii1,i2)
-                vth(nth,i2) = V(ii1,i2)
-              enddo
-c       Move parton list one step downward from ii1+1 to n1.
-              call updad_pyj(n1,ii1+1,1)
-              N   = N   - 1   ! 300623 Lei
-              n1  = n1  - 1
-              nqb = nqb - 1
-              goto 300
-            endif   !!!
-          endif   !!
+c       Give proper variables to the primary meson.
+            nnol = nn
+            nn   = nn+1
+            kn(nn,1) = 1
+            kn(nn,2) = kfii
+            kn(nn,3) = 0
+            kn(nn,4) = 0
+            kn(nn,5) = 0
+            pn(nn,5) = amasi
+            pn(nn,1) = sump1
+            pn(nn,2) = sump2
+            pn(nn,3) = sump3
+            pnnm  = sump1*sump1 + sump2*sump2 + sump3*sump3
+            pnnmm = amasi*amasi + pnnm
+            if( pnnmm.gt.1D20 ) pnnmm = 1D20
+            if( pnnmm.le.0D0  ) pnnmm = 1D-20
+            pnnn = SQRT(pnnmm)
+            pn(nn,4)   = pnnn
+            ! dele     = sume - pnnn
+            throe_p(4) = throe_p(4) + sume-pnnn   ! 300623 Lei
 
-        endif  !
-c----------------------------   Normal coalescence   ---------------------------
+c       Produced hadron is set in between contituent partons randomly.
+            pyrx = PYR(1)
+            pyry = PYR(1)
+            rn(nn,1) = pyrx*V(i1,1) + pyry*V(i2,1)
+            rn(nn,2) = pyrx*V(i1,2) + pyry*V(i2,2)
+            rn(nn,3) = pyrx*V(i1,3) + pyry*V(i2,3)
 
+c       Move parton list ('pyjets') one step downward since i2+1.
+            call updad_pyj(N,i2+1,1)   ! this subroutine is in 'sfm_30.f'
+            N = N - 1
+
+c       Move parton list ('pyjets') one step downward since i1+1.
+            call updad_pyj(N,i1+1,1)
+            N = N - 1
+c300623 Lei
+c       Share the surplus 4-momentum in throe_p.
+            ! call share_p_PYJETS
+            call share_p_PYJETS_sa1h
+c300623 Lei
+            goto 390   ! to construct three cycle again
+        endif
+c-----------------------------   Meson Producing   -----------------------------
+
+c----------------------------   Baryon Producing   -----------------------------
+c       Tries to produce a baryon.
+            if(kf1.gt.0.and.kf2.gt.0)then   !
+                rand=pyr(1)
+                if(rand.gt.bmrat) goto 500  ! bmrat: ratio of baryon to meson
+                do 600 i3=i2+1,N  ! 110324 Lei N-2 -> N
+                kf3=K(i3,2)
+                if(kf3.lt.0) goto 600
+                sume  = P(i1,4) + P(i2,4) + P(i3,4)
+                sump1 = P(i1,1) + P(i2,1) + P(i3,1)
+                sump2 = P(i1,2) + P(i2,2) + P(i3,2)
+                sump3 = P(i1,3) + P(i2,3) + P(i3,3)
+                cm = sume*sume - sump1*sump1 - sump2*sump2 - sump3*sump3
+                if( cm.gt.1D20 ) cm = 1D20
+                if( cm.le.0D0  ) goto 600   ! (baryon) fail
+                cm = SQRT(cm)
+
+c       Find out the baryon from hadron table.
+                call findb(kf1,kf2,kf3,cm,kfii,amasi,isucc,1)
+                if(isucc.eq.0) goto 600
+
+c       Proceed for success.
+                ibarp = ibarp + 1
+                nba   = nba   + 1
+
+c       Give proper variables to the baryon.
+                nnol  = nn
+                nn    = nn+1
+                kn(nn,1) = 1
+                kn(nn,2) = kfii
+                kn(nn,3) = 0
+                kn(nn,4) = 0
+                kn(nn,5) = 0
+                pn(nn,5) = amasi
+                pn(nn,1) = sump1
+                pn(nn,2) = sump2
+                pn(nn,3) = sump3
+                pnnm  = sump1*sump1 + sump2*sump2 + sump3*sump3
+                pnnmm = amasi*amasi + pnnm
+                if( pnnmm.gt.1D20 ) pnnmm = 1D20
+                if( pnnmm.le.0D0  ) pnnmm = 1D-20
+                pnnn = SQRT(pnnmm)
+                pn(nn,4)   = pnnn
+                ! dele     = sume - pnnn
+                throe_p(4) = throe_p(4) + sume-pnnn   ! 300623 Lei
+
+c       Produced hadron is arranged among constituent partons randomly.
+                pyrx = PYR(1)
+                pyry = PYR(1)
+                pyrz = PYR(1)
+                rn(nn,1) = pyrx*V(i1,1) + pyry*V(i2,1) + pyrz*V(i3,1)
+                rn(nn,2) = pyrx*V(i1,2) + pyry*V(i2,2) + pyrz*V(i3,2)
+                rn(nn,3) = pyrx*V(i1,3) + pyry*V(i2,3) + pyrz*V(i3,3)
+
+c       Move parton list one step downward from i3+1 to n1.
+                call updad_pyj(N,i3+1,1)
+                N = N - 1
+
+c       Move parton list one step downward from i2+1 to n1.
+                call updad_pyj(N,i2+1,1)
+                N  = N  - 1
+
+c       Move parton list one step downward from i1+1 to n1.
+                call updad_pyj(N,i1+1,1)
+                N = N - 1
+c300623 Lei
+c       Share the surplus 4-momentum in throe_p.
+                ! call share_p_PYJETS
+                call share_p_PYJETS_sa1h
+c300623 Lei
+                goto 390   ! to construct three cycle again
+c110324 600             enddo   ! 110324 Lei
+600             continue   ! 110324 Lei
+            endif   !
+c----------------------------   Baryon Producing   -----------------------------
+
+c--------------------------   Anti-Baryon Producing   --------------------------
+c       Tries to produce an anti-baryon.
+        if(kf1.lt.0.and.kf2.lt.0)then   !!
+            rand=pyr(1)
+            if(rand.gt.bmrat) goto 500
+            do 700 i3=i2+1,N   ! 110324 Lei N02 -> N
+            kf3=K(i3,2)
+            if(kf3.gt.0) goto 700
+            sume  = P(i1,4) + P(i2,4) + P(i3,4)
+            sump1 = P(i1,1) + P(i2,1) + P(i3,1)
+            sump2 = P(i1,2) + P(i2,2) + P(i3,2)
+            sump3 = P(i1,3) + P(i2,3) + P(i3,3)
+            cm = sume*sume - sump1*sump1 - sump2*sump2 - sump3*sump3
+            if( cm.gt.1D20 ) cm = 1D20
+            if( cm.le.0D0  ) goto 700  ! fail
+            cm = SQRT(cm)
+
+c       Find out the anti-baryon from hadron table.
+            call findb(-kf1,-kf2,-kf3,cm,kfii,amasi,isucc,-1)
+            if(isucc.eq.0) goto 700   ! 110324 Lei
+
+            ibarm = ibarm + 1
+            nba = nba + 1
+
+c       Give proper variables to the anti-baryon.
+            nnol = nn
+            nn   = nn + 1
+            kn(nn,1) = 1
+            kn(nn,2) = kfii
+            kn(nn,3) = 0
+            kn(nn,4) = 0
+            kn(nn,5) = 0
+            pn(nn,5) = amasi
+            pn(nn,1) = sump1
+            pn(nn,2) = sump2
+            pn(nn,3) = sump3
+            pnnm  = sump1*sump1 + sump2*sump2 + sump3*sump3
+            pnnmm = amasi*amasi + pnnm
+            if( pnnmm.gt.1D20 ) pnnmm = 1D20
+            if( pnnmm.le.0D0  ) pnnmm = 1D-20
+            pnnn = SQRT(pnnmm)
+            pn(nn,4)   = pnnn
+            ! dele     = sume - pnnn
+            throe_p(4) = throe_p(4) + sume-pnnn   ! 300623 Lei
+
+c       Produced hadron is arranged among contituent partons randomly.
+            pyrx = PYR(1)
+            pyry = PYR(1)
+            pyrz = PYR(1)
+            rn(nn,1) = pyrx*V(i1,1) + pyry*V(i2,1) + pyrz*V(i3,1)
+            rn(nn,2) = pyrx*V(i1,2) + pyry*V(i2,2) + pyrz*V(i3,2)
+            rn(nn,3) = pyrx*V(i1,3) + pyry*V(i2,3) + pyrz*V(i3,3)
+
+c       Move parton list one step downward from i3+1 to n1.
+            call updad_pyj(N,i3+1,1)
+            N = N - 1
+c       Move parton list one step downward from i2+1 to n1.
+            call updad_pyj(N,i2+1,1)
+            N = N - 1
+c       Move parton list one step downward from i1+1 to n1.
+            call updad_pyj(N,i1+1,1)
+            N = N - 1
+c300623 Lei
+c       Share the surplus 4-momentum in throe_p.
+            ! call share_p_PYJETS
+            call share_p_PYJETS_sa1h
+c300623 Lei
+            goto 390   ! to construct three cycle again
+c110324 700         enddo   ! 110324 Lei
+700         continue   ! 110324 Lei
+        endif  !!
+c--------------------------   Anti-Baryon Producing   --------------------------
+
+c110324 Lei
+c       Do not use " do xxx --- xxx enddo ". This syntax was too old and
+c        has be deprecated in the modern Fortran.
+c       Use " do xxx --- xxx continue" or " do --- enddo " directly.
+c110324 500     enddo
+c110324 400     enddo
+500     continue
+400     continue
+c       Re-coalesces the failed q & qbar. No more than 50 times.
+        if( N.ge.2 ) i_normal_coal = 1
+        if( N.ge.2 .AND. i_fail_iteration.lt.50 )then
+        ! if( i_normal_coal.eq.1 .AND. i_fail_iteration.lt.10 )then
+            goto 390
+        end if
+c110324 Lei
 c-------------------------------   Coalescence   -------------------------------
 c-------------------------------------------------------------------------------
 
 
 c-------------------------------------------------------------------------------
-c-------------------------   Failed quarks treatment   -------------------------
-c       Throw away those qbar remained.
-301     continue
-        if( nqb.eq.0 ) goto 100   ! No qbar. Try to compose baryons.
-        do i1=1,nqb,1
-          nth = nth + 1   ! 110905
-          ithrob = ithrob + 1
-          kk  = K(i1,2)
-          ich = ich + PYCHGE(kk)
-          kth(nth,2) = kk
-          vth(nth,5) = V(i1,5)   ! 250823 Lei Fixed from V(nth, to vth(nth
-          pth(nth,5) = P(i1,5)   ! 250823 Lei
-          do i2=1,4
-            throe(i2)   = throe(i2) + P(i1,i2)
-            pth(nth,i2) = P(i1,i2)
-            vth(nth,i2) = V(i1,i2)
-          enddo
-        enddo
-c       Move parton list nqb steps downward from nqb+1 to n1.
-        call updad_pyj(n1,nqb+1,nqb)
-        N   = N  - nqb   ! 300623 Lei
-        n1  = n1 - nqb
-        nqb = 0
-
-100     continue
-        if( n1-nqb.eq.0 ) goto 505   ! No quarks. Get out of 'coal'.
-        if( n1-nqb.lt.3 ) goto 500   ! Throw away those quarks.
-c       No qbar. Try to compose baryons.
-        call barpro(n1,nqb,iphas,nba,ibarp,netba,rrp,0)
-        if( n1-nqb.eq.0 ) goto 505  ! No quarks. Get out of 'coal'.
-
-500     continue
-        if( n1-nqb.eq.0 ) goto 505   ! No quarks. Get out of 'coal'.
-c       Throw away remained q.   150922
-        ithroq = ithroq + n1-nqb
-        do i1=nqb+1,n1,1
-          nth = nth + 1   ! 110905 171122 Lei Corrected it from nth=nth+i1.
-          kk  = K(i1,2)
-          ich = ich + PYCHGE(kk)
-          kth(nth,2) = K(i1,2)
-          vth(nth,5) = V(i1,5)
-          pth(nth,5) = P(i1,5)   ! 250823 Lei
-          do i2=1,4
-            throe(i2)   = throe(i2) + P(i1,i2)
-            pth(nth,i2) = P(i1,i2)
-            vth(nth,i2) = V(i1,i2)
-          enddo
-        enddo
-        N   = nqb   ! 250823 Lei
-        n1  = nqb
-c-------------------------   Failed quarks treatment   -------------------------
-c-------------------------------------------------------------------------------
-
-
-505     continue
-
-
-c-------------------------------------------------------------------------------
-c---------------------------   List reconstructing   ---------------------------
+c-----------------------   Failed Particle Collecting   ------------------------
 c300623 Lei
-c       Reconstruct parton list for calling 'coal' again.
-c       Sort the parton list ('sa37') in order of qbar and q.
-        jh = nth
-        jl = 0
-        n_q = 0
-2030    continue
-        do j=jl+1,jh,1
-            kf = kth(j,2)
-            if( kf.gt.0 .AND. kf.lt.7 )then   ! q
-                nth = nth + 1
-                n_q = n_q + 1
-                do i4=1,5,1
-                    kth(nth,i4) = kth(j,i4)
-                    pth(nth,i4) = pth(j,i4)
-                    vth(nth,i4) = vth(j,i4)
-                enddo
-c       Move particle list 'sa37' one step downward from j+1 to nth.
-                do jjj=1,5,1
-                    do ii2=j+1,nth,1
-                        kth(ii2-1,jjj) = kth(ii2,jjj)
-                        pth(ii2-1,jjj) = pth(ii2,jjj)
-                        vth(ii2-1,jjj) = vth(ii2,jjj)
-                    enddo
-                enddo
-                nth = nth - 1
-                jh  = jh - 1
-                jl  = j  - 1
-                goto 2030
-            endif
-        enddo
-        n_tot  = nth
-        i_qbar = n_tot - n_q
-c       'sa37' -> 'PYJETS'
-        N = nth
-        do j=1,5,1
-            do i=1,nth,1
-                K(i,j) = kth(i,j)
-                P(i,j) = pth(i,j)
-                V(i,j) = vth(i,j)
-            end do
-        end do
-        ithroq = 0
-        ithrob = 0
-        ich    = 0
-        throe  = 0.
-c300623 Lei
-c---------------------------   List reconstructing   ---------------------------
-c-------------------------------------------------------------------------------
-
-
-c-------------------------------------------------------------------------------
-c--------------------------   Final coalescence try   --------------------------
-c300623 Lei
-c       Final try for meson production. No more than 50 times.
-        if( i_qbar.gt.0 .AND. n_q.gt.0 )then
-            do i=1,50,1
-                ii1 = INT( i_qbar*PYR(1) + 1 )
-                call mespro(n_tot,i_qbar,ii1,iphas,nme,imes,rrp,isu)
-                    if( isu.eq.1 .and. nme.eq.1 )then   ! One meson produced.
-                        n_q = n_q - 1
-                        if( i_qbar.eq.0 .OR. n_q.eq.0) exit
-                    end if
-            end do
-            if(i.eq.50) write(*,*) "Final mespro failed! iii, N" ,ijk,N
-        end if
-c       Final try for baryon production. No more than 50 times.
-        if( n_q.gt.2 )then
-            do i=1,50,1
-                call barpro(n_tot,i_qbar,iphas,nba,ibarp,netba,rrp,0)
-                if( n_tot.eq.i_qbar ) exit
-            end do
-            if(i.eq.50) write(*,*) "Final barpro failed! iii, N" ,ijk,N
-        end if
-        n_q = n_tot - i_qbar
-c       Final try for anti-baryon production. No more than 50 times.
-        if( i_qbar.gt.2 )then
-            do i=1,50,1
-                ii1 = INT( i_qbar*PYR(1) + 1 )
-        call an_barpro(n_tot,i_qbar,ii1,iphas,nba,ibarm,netba,rrp,isu,2)
-                if( isu.eq.1 .and. nba.eq.1 )then   ! One anti-baryon produced.
-                    if( i_qbar.eq.0 ) exit
-                end if
-            end do
-        if(i.eq.50) write(*,*) "Final an_barpro failed! ijk, N" ,ijk,N
-        end if
-c300623 Lei
-c--------------------------   Final coalescence try   --------------------------
-c-------------------------------------------------------------------------------
-
-
-c-------------------------------------------------------------------------------
-c------------------------------   Data dumping   -------------------------------
-c300623 Lei
+c       Collects failed quarks that may fail, i.e. PYJETS -> sa37.
 c       'PYJETS' -> 'sa37'
-        if(N.gt.0)then
+        if( N.gt.0 )then
             do i=1,N,1
                 do j=1,5,1
                     kth(i,j) = K(i,j)
@@ -897,15 +829,17 @@ c       'PYJETS' -> 'sa37'
                 end if
             end do
             nth = N
+            N = 0
         else
             nth = 0
+            N = 0
         end if
 c300623 Lei
-c------------------------------   Data dumping   -------------------------------
+c-----------------------   Failed Particle Collecting   ------------------------
 c-------------------------------------------------------------------------------
 
 
-        return
+        return  ! 241212
         end
 
 
@@ -928,6 +862,7 @@ C...Double precision and integer declarations.
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
         dimension ikf(2)
 
+
         if(iflav.eq.1)then   ! 1
           if1=kf1
           if2=kf2
@@ -935,14 +870,24 @@ C...Double precision and integer declarations.
           kfi=kqh(i4,1)
           kfj=kqh(i4,2)
           amas1=amash(i4,1)
-          amas1=abs(cm-amas1)
+c         amas1=abs(cm-amas1)
           amas2=amash(i4,2)
-          amas2=abs(cm-amas2)
-          if(kfi.eq.if1 .and. kfj.eq.if2)then   ! 2 success
-          if(proh(i4,1).eq.0 .and. proh(i4,2).eq.0.)goto 500
-          if(proh(i4,1).eq.0 .and. proh(i4,2).ne.0.)goto 506   ! vector
-          if((proh(i4,1).ne.0.and.proh(i4,2).ne.0.).and.amas2.le.amas1)
-     c      goto 506   ! vector
+c         amas2=abs(cm-amas2)
+          xpseud=amas2/(amas1+amas2)  ! probability for pseudoscalar
+          xvector=1-xpseud  ! probability for vector
+c110324 Lei
+          rand=PYR(1)
+          if(kfi.eq.if1 .AND. kfj.eq.if2)then   ! 2 success
+          if( ABS(proh(i4,1)).le.1D-5 .AND.
+     &        ABS(proh(i4,2)).le.1D-5       )
+     &        goto 500
+          if( ABS(proh(i4,1)).le.1D-5 .and.
+     &        ABS(proh(i4,2)).gt.1D-5       )
+     &        goto 506
+          if( ( ABS(proh(i4,1)).gt.1D-5   .AND.
+     &          ABS(proh(i4,2)).gt.1D-5 ) .AND. rand.gt.xpseud )
+     &        goto 506   ! vector
+c110324 Lei
 
 c         Proceed for pseudoscalar
           kfii=kfh(i4,1)
@@ -980,11 +925,18 @@ c       Two body permutation = arrangement (2,2)
             amas1=abs(cm-amas1)
             amas2=amash(i4,2)
             amas2=abs(cm-amas2)
+c110324 Lei
             if(kfi.eq.if1 .and. kfj.eq.if2)then   ! success
-            if(proh(i4,1).eq.0 .and. proh(i4,2).eq.0.)goto 503
-            if(proh(i4,1).eq.0 .and. proh(i4,2).ne.0.)goto 505   ! vector
-          if((proh(i4,1).ne.0.and.proh(i4,2).ne.0.).and.amas2.le.amas1)
-     c      goto 505   ! vector
+            if( ABS(proh(i4,1)).le.1D-5 .and.
+     &          ABS(proh(i4,2)).le.1D-5       )
+     &          goto 503   ! 280224 Lei ABS
+            if( ABS(proh(i4,1)).le.1D-5 .and.
+     &          ABS(proh(i4,2)).gt.1D-5       )
+     &          goto 505   ! vector 280224 Lei ABS
+            if(( ABS(proh(i4,1)).gt.1D-5  .and.
+     &           ABS(proh(i4,2)).gt.1D-5) .and. amas2.le.amas1 )   ! 280224 Lei ABS
+     &          goto 505   ! vector
+c110324 Lei
 
 c           Proceed for pseudoscalar
             kfii=kfh(i4,1)
@@ -1008,6 +960,8 @@ c           Proceed for pseudoscalar
         isucc=0   ! fail
         return
 504     isucc=1   ! success
+
+
         return
         end
 
@@ -1033,6 +987,7 @@ C...Double precision and integer declarations.
         common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
         dimension ikf(3)
 
+
         ikf(1)=kf0
         ikf(2)=kf1
         ikf(3)=kf2
@@ -1053,15 +1008,25 @@ c       Three body permutation = arrangement (3,3)
                 kfj=kqb(i4,2)
                 kfk=kqb(i4,3)
                 amas1=amasb(i4,1)
-                amas1=abs(cm-amas1)
+c               amas1=abs(cm-amas1)
                 amas2=amasb(i4,2)
-                amas2=abs(cm-amas2)
-                if(kfi.eq.if1 .and. kfj.eq.if2 .and. kfk.eq.if3)then ! success
-                  if(prob(i4,1).eq.0.and.prob(i4,2).eq.0)goto 107 ! fail and try again
-                  if(prob(i4,1).eq.0.and.prob(i4,2).ne.0.)goto 108   ! 3/2
-        if((prob(i4,1).ne.0.and.prob(i4,2).ne.0.).and.amas2.le.amas1)
-     c    goto 108   ! 3/2
+c               amas2=abs(cm-amas2)
+                xpseud=amas2/(amas1+amas2)   ! probability for 1/2 octet.
+                xvector=1-xpseud  ! probability for 3/2 decuplet.
+c110324 Lei
+                rand=PYR(1)   ! 110324 Lei
+                if( kfi.eq.if1 .AND. kfj.eq.if2 .AND. kfk.eq.if3 )then ! success
+                  if( ABS(prob(i4,1)).le.1D-5 .AND.
+     &                ABS(prob(i4,2)).le.1D-5       )
+     &                goto 107   ! fail and try again
+                  if( ABS(prob(i4,1)).le.1D-5 .AND.
+     &                ABS(prob(i4,2)).gt.1D-5       )
+     &                goto 108   ! 3/2
+                  if( ( ABS(prob(i4,1)).gt.1D-5   .AND.
+     &                  ABS(prob(i4,2)).gt.1D-5 ) .AND. rand.gt.xpseud )
+     &                goto 108   ! 3/2
 c       Goto 108, for spin 3/2 decuplet.
+c110324 Lei
 c       Proceed for spin 1/2 octet.
                   kfii=kfb(i4,1)
                   amasi=amasb(i4,1)
@@ -1091,398 +1056,6 @@ c       Proceed for spin 1/2 octet.
         isucc=0   ! fail
         return
 109     isucc=1   ! success
-
-        return
-        end
-
-
-
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        subroutine barpro(n1,nqb,iphas,nba,ibarp,netba,rrp,iway)
-c       To compose baryon.
-c       n1 : total number of partons (q & qbar)
-c       nqb : total number of qbar (qbar is ordered before q)
-c       iphas: = 1, complete phase space constraint  ! 300623 Lei
-c              = 2, position constraint only
-c              = 3, momentum constraint only
-c       ibarp: statistic number of baryon
-c       netba: number of baryons keeping baryon conservation
-c       iway: a switch
-C...Double precision and integer declarations.
-        IMPLICIT DOUBLE PRECISION(A-H, O-Z)
-        IMPLICIT INTEGER(I-N)
-        INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER (KSZJ=80000,MPLIS=80000)
-        COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
-        common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
-        common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
-        common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
-        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
-        common/sa24/adj1(40),nnstop,non24,zstop
-        dimension rcp(3)
-
-        ! dpmax = adj1(27)
-        ! drmax = adj1(28)
-        nba = 0
-400     continue
-
-        if( n1-nqb.lt.3 ) return   ! Number of quarks is less than three.
-
-        do 404 i1=nqb+1,n1-2,1
-            kf1 = K(i1,2)   ! 150922
-            do 405 i2=i1+1,n1-1,1
-                kf2 = K(i2,2)
-                do 406 i3=i2+1,n1,1
-                kf3 = K(i3,2)
-
-                sume  = P(i1,4) + P(i2,4) + P(i3,4)
-                sump1 = P(i1,1) + P(i2,1) + P(i3,1)
-                sump2 = P(i1,2) + P(i2,2) + P(i3,2)
-                sump3 = P(i1,3) + P(i2,3) + P(i3,3)
-                cm = sume*sume - sump1*sump1 - sump2*sump2 - sump3*sump3
-                if( cm.gt.1D20 ) cm = 1D20
-                if( cm.le.0D0  ) goto 406   ! fail 071204
-                cm = SQRT(cm)
-
-c       Find out the primary baryon from hadron table.
-                call findb(kf1,kf2,kf3,cm,kfii,amasi,isucc,1)
-
-                if( isucc.eq.0 ) goto 406   ! fail, and keep on cycle, try again.
-
-c070223
-c       Phase space adjudgment.
-                if( iphas.ne.0 )then   ! Change from '.eq.1' to '.ne.0'.
-                    call phas(i1,i2,i3,isucc,3,iphas)   ! 140223 Lei Added iphas.
-                    if( isucc.eq.0 ) goto 406   ! fail
-                endif   !!1
-c070223
-
-c       Proceed for success.
-                ibarp = ibarp + 1
-                nba   = nba   + 1
-
-c       Give proper variables to the primary baryon.
-                nnol  = nn
-                nn    = nn+1
-                kn(nn,1) = 1
-                kn(nn,2) = kfii
-                kn(nn,3) = 0
-                kn(nn,4) = 0
-                kn(nn,5) = 0
-                pn(nn,5) = amasi
-                pn(nn,1) = sump1
-                pn(nn,2) = sump2
-                pn(nn,3) = sump3
-                pnnm  = sump1*sump1 + sump2*sump2 + sump3*sump3
-                pnnmm = amasi*amasi + pnnm
-                if( pnnmm.gt.1D20 ) pnnmm = 1D20
-                if( pnnmm.le.0D0  ) pnnmm = 1D-20
-                pnnn = SQRT(pnnmm)
-                pn(nn,4)   = pnnn
-                ! dele     = sume - pnnn
-                throe_p(4) = throe_p(4) + sume-pnnn   ! 300623 Lei
-
-c       Produced hadron is arranged among constituent partons randomly.
-                pyrx = PYR(1)
-                pyry = PYR(1)
-                pyrz = PYR(1)
-                rn(nn,1) = pyrx*V(i1,1) + pyry*V(i2,1) + pyrz*V(i3,1)
-                rn(nn,2) = pyrx*V(i1,2) + pyry*V(i2,2) + pyrz*V(i3,2)
-                rn(nn,3) = pyrx*V(i1,3) + pyry*V(i2,3) + pyrz*V(i3,3)
-
-c       Move parton list one step downward from i3+1 to n1.
-411             call updad_pyj(n1,i3+1,1)
-                n1 = n1 - 1
-                N  = N  - 1   ! 300623 Lei
-
-c       Move parton list one step downward from i2+1 to n1.
-                call updad_pyj(n1,i2+1,1)
-                n1 = n1 - 1
-                N  = N  - 1   ! 300623 Lei
-
-c       Move parton list one step downward from i1+1 to n1.
-                call updad_pyj(n1,i1+1,1)
-                n1 = n1 - 1
-                N  = N  - 1   ! 300623 Lei
-
-c300623 Share the surplus 4-momentum in throe_p.   ! 300623 Lei
-                ! call share_p_PYJETS   ! 300623 Lei
-                call share_p_PYJETS_sa1h   ! 300623 Lei
-                if( iway.eq.1 )then
-                    if( nba.lt.netba ) goto 400 ! Recycle all the partons remained, do again.
-                    if( nba.eq.netba ) return
-                endif
-                if( iway.eq.2 .and. nba.eq.1 ) return
-                if( iway.eq.0 ) goto 400   ! 121204
-c       iway=1: when the baryon number equal net baryon, return. Used in conserving net baryon number.
-c       iway=2: generate one baryon. 
-c       iway=0: check all the probability of parton constituent baryon, then return.
-406             continue   ! fail
-405         continue
-404     continue
-
-
-        return
-        end
-
-
-
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        subroutine an_barpro(n1,nqb,i1,iphas,nba,ibarm,netba,rrp,isu,
-     c   iway)
-c       To compose an anti-baryon.
-c       n1 : total number of partons (q & qbar)
-c       nqb : total number of qbar (qbar is ordered before q)
-c       i1: anti-quark wanted to compose anti-baryon
-c       iphas: = 1, complete phase space constraint  ! 300623 Lei
-c              = 2, position constraint only
-c              = 3, momentum constraint only
-c       ibarm: statistic number of anti-baryon
-c       -netba: number of anti-baryons keeping baryon conservation
-c       isu: =1 success
-c            =0 fail
-c       iway: a switch
-C...Double precision and integer declarations.
-        IMPLICIT DOUBLE PRECISION(A-H, O-Z)
-        IMPLICIT INTEGER(I-N)
-        INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER (KSZJ=80000,MPLIS=80000)
-        COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)   ! 150922
-        common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
-        common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
-        common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
-        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
-        common/sa24/adj1(40),nnstop,non24,zstop
-        dimension rcp(3)
-
-        ! dpmax = adj1(27)
-        ! drmax = adj1(28)
-        isu = 1
-        nba = 0
-
-        if( nqb.lt.3 ) goto 100   ! Number of qbar is less than three, return.
-
-        kf1 = K(i1,2)
-        do 405 i2=1,nqb,1
-            if( i2.eq.i1 ) goto 405
-            kf2 = K(i2,2)
-            do 406 i3=1,nqb,1
-                if( i3.eq.i1 ) goto 406
-                if( i3.eq.i2 ) goto 406
-                kf3 = K(i3,2)
-
-                sume  = P(i1,4) + P(i2,4) + P(i3,4)
-                sump1 = P(i1,1) + P(i2,1) + P(i3,1)
-                sump2 = P(i1,2) + P(i2,2) + P(i3,2)
-                sump3 = P(i1,3) + P(i2,3) + P(i3,3)
-                cm = sume*sume - sump1*sump1 - sump2*sump2 - sump3*sump3
-                if(cm.gt.1D20) cm = 1D20
-                if( cm.le.0D0 ) goto 406   ! fail 071204
-                cm = SQRT(cm)
-
-c       Find out the primary anti-baryon from hadron table.
-                call findb(-kf1,-kf2,-kf3,cm,kfii,amasi,isucc,-1)
-
-                if( isucc.eq.0 ) goto 406   ! fail
-
-c070223
-c       Phase space adjudgment.
-                if( iphas.ne.0 )then   ! Changed from '.eq.1' to '.ne.0'.
-                    call phas(i1,i2,i3,isucc,3,iphas)   ! 140223 Lei Added iphas.
-                    if( isucc.eq.0 ) goto 406   ! fail
-                endif   !!1
-c070223
-
-c       Proceed for success.
-                goto 400
-
-406         continue   ! fail
-405     continue
-        goto 100
-
-400     continue
-        ibarm = ibarm + 1
-        nba   = nba + 1
-
-c       Give proper variables to the primary anti-baryon.
-        nnol = nn
-        nn   = nn + 1
-        kn(nn,1) = 1
-        kn(nn,2) = kfii
-        kn(nn,3) = 0
-        kn(nn,4) = 0
-        kn(nn,5) = 0
-        pn(nn,5) = amasi
-        pn(nn,1) = sump1
-        pn(nn,2) = sump2
-        pn(nn,3) = sump3
-        pnnm  = sump1*sump1 + sump2*sump2 + sump3*sump3
-        pnnmm = amasi*amasi + pnnm
-        if( pnnmm.gt.1D20 ) pnnmm = 1D20
-        if( pnnmm.le.0D0 )  pnnmm = 1D-20
-        pnnn = SQRT(pnnmm)
-        pn(nn,4)   = pnnn
-        ! dele     = sume - pnnn
-        throe_p(4) = throe_p(4) + sume-pnnn   ! 300623 Lei
-
-c       Produced hadron is arranged among contituent partons randomly.
-        pyrx = PYR(1)
-        pyry = PYR(1)
-        pyrz = PYR(1)
-        rn(nn,1) = pyrx*V(i1,1) + pyry*V(i2,1) + pyrz*V(i3,1)
-        rn(nn,2) = pyrx*V(i1,2) + pyry*V(i2,2) + pyrz*V(i3,2)
-        rn(nn,3) = pyrx*V(i1,3) + pyry*V(i2,3) + pyrz*V(i3,3)
-
-c       Move parton list one step downward from i3+1 to n1.
-411     call updad_pyj(n1,i3+1,1)
-        if( i1.gt.i3 ) i1 = i1 - 1
-        if( i2.gt.i3 ) i2 = i2 - 1
-        nqb = nqb - 1
-        n1  = n1  - 1
-        N   = N   - 1   ! 300623 Lei
-
-c       Move parton list one step downward from i2+1 to n1.
-        call updad_pyj(n1,i2+1,1)
-        if( i1.gt.i2 ) i1 = i1 - 1
-        nqb = nqb - 1
-        n1  = n1  - 1
-        N   = N   - 1   ! 300623 Lei
-
-c       Move parton list one step downward from i1+1 to n1.
-        call updad_pyj(n1,i1+1,1)
-        nqb = nqb - 1
-        n1  = n1  - 1
-        N   = N   - 1   ! 300623 Lei
-
-c300623 Share the surplus 4-momentum in throe_p.   ! 300623 Lei
-        ! call share_p_PYJETS
-        call share_p_PYJETS_sa1h
-c       iway=1: creat an anti-baryon and return
-c       iway=2: creat an anti-baryon and a baryon, then return
-        if( iway.eq.1 .and. nba.eq.1 ) return
-        if( iway.eq.2 .and. nba.eq.1 ) then
-c       An anti-baryon generation must be followed immediately a baryon
-c        generation to keep baryon conservation.
-            call barpro(n1,nqb,iphas,nbaa,ibarp,netba,rrp,2)
-            return
-        endif
-
-100     isu=0
-
-
-        return
-        end
-
-
-
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-        subroutine mespro(n1,nqb,i1,iphas,nme,imes,rrp,isu)
-c       Compose a meson.
-c       n1 : total number of partons (q & qbar)
-c       nqb : total number of qbar (qbar is ordered before q)
-c       i1: anti-quark wanted to compose a meson
-c       iphas: = 1, complete phase space constraint  ! 300623 Lei
-c              = 2, position constraint only
-c              = 3, momentum constraint only
-c       imes: statistic number of meson
-c       isu: =1 success
-c            =0 fail
-C...Double precision and integer declarations.
-        IMPLICIT DOUBLE PRECISION(A-H, O-Z)
-        IMPLICIT INTEGER(I-N)
-        INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER (KSZJ=80000,MPLIS=80000)
-        COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)   ! 150922
-        common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)
-        common/sa4_c/kqh(80,2),kfh(80,2),proh(80,2),amash(80,2),imc
-        common/sa5_c/kqb(80,3),kfb(80,2),prob(80,2),amasb(80,2),ibc
-        common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
-        common/sa24/adj1(40),nnstop,non24,zstop
-        dimension rcp(3)
-
-        ! dpmax = adj1(27)
-        ! drmax = adj1(28)
-        isu = 1
-        nme = 0
-
-        if( n1.eq.nqb ) goto 100   ! 300105 No quark, return.
-
-        kf1 = K(i1,2)
-        do 102 i2=nqb+1,n1,1
-            kf2 = K(i2,2)
-
-            sume  = P(i1,4) + P(i2,4)
-            sump1 = P(i1,1) + P(i2,1)
-            sump2 = P(i1,2) + P(i2,2)
-            sump3 = P(i1,3) + P(i2,3)
-            cm = sume*sume - sump1*sump1 - sump2*sump2 - sump3*sump3
-            if( cm.gt.1.e20 ) cm = 1D20
-            if( cm.le.0D0   ) goto 102   ! fail 071204
-            cm = SQRT(cm)
-
-c       Find out primary meson from hadronic table according to kf2 & kf1
-            call findm(kf2,kf1,cm,kfii,amasi,isucc,1)
-
-            if( isucc.eq.0 ) goto 102   ! fail
-
-c070223
-c       Phase space adjudgment.
-        if( iphas.ne.0 )then   ! Changed from '.eq.1' to '.ne.0'.
-            call phas(i1,i2,i3,isucc,2,iphas)   ! 140223 Lei Added iphas.
-            if( isucc.eq.0 ) goto 102   ! fail
-        endif   !
-c070223 
-
-c       Proceed for success
-        imes = imes + 1
-        nme  = nme  + 1
-
-c       Give proper variables to the primary meson.
-        nnol = nn
-        nn   = nn+1
-        kn(nn,1) = 1
-        kn(nn,2) = kfii
-        kn(nn,3) = 0
-        kn(nn,4) = 0
-        kn(nn,5) = 0
-        pn(nn,5) = amasi
-        pn(nn,1) = sump1
-        pn(nn,2) = sump2
-        pn(nn,3) = sump3
-        pnnm  = sump1*sump1 + sump2*sump2 + sump3*sump3
-        pnnmm = amasi*amasi + pnnm
-        if( pnnmm.gt.1D20 ) pnnmm = 1D20
-        if( pnnmm.le.0D0  ) pnnmm = 1D-20
-        pnnn = SQRT(pnnmm)
-        pn(nn,4)   = pnnn
-        ! dele     = sume - pnnn
-        throe_p(4) = throe_p(4) + sume-pnnn   ! 300623 Lei
-
-c       Produced hadron is set in between contituent partons randomly.
-        pyrx = PYR(1)
-        pyry = PYR(1)
-        rn(nn,1) = pyrx*V(i1,1) + pyry*V(i2,1)
-        rn(nn,2) = pyrx*V(i1,2) + pyry*V(i2,2)
-        rn(nn,3) = pyrx*V(i1,3) + pyry*V(i2,3)
-
-c       Move parton list one step downward since i2+1.
-111     call updad_pyj(n1,i2+1,1)
-        n1 = n1 - 1
-        N  = N  - 1   ! 300623 Lei
-
-c       Move parton list one step downward since i1+1.
-        call updad_pyj(n1,i1+1,1)
-        nqb = nqb - 1
-        n1  = n1  - 1
-        N   = N   - 1   ! 300623 Lei
-
-c300623 Share the surplus 4-momentum in throe_p.   ! 300623 Lei
-        ! call share_p_PYJETS
-        call share_p_PYJETS_sa1h
-        if( nme.eq.1 ) return
-102     continue
-
-100     isu=0   ! 300105
 
 
         return
@@ -2505,7 +2078,7 @@ c       Sets parameters.
 c       Finds max values.
         if(iii.eq.1 .AND. ij.eq.0)then
             fmax_value = 0.
-c           1 = LUND
+c           1 = Lund
             fmax = 0.
             z1   = 0.025
             do i1=1,20
@@ -2545,7 +2118,7 @@ c           5 = dummy, but set FF as default
         fm = ran1 * fmax
 
         select case( i_z_samp_func )
-        case(1)   ! LUND
+        case(1)   ! Lund
             fran2 = (1./ran2) * (1.-ran2)**a * dexp(-2.36*b/ran2)
         case(2)   ! FF
             fran2 = 1. - aFF + 3.*aFF*(1.-ran2)**2
@@ -2582,7 +2155,7 @@ C...Double precision and integer declarations.
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000,MPLIS=80000)   ! 150922
+        PARAMETER (KSZJ=80000,MPLIS=80000)   ! 150922
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)   ! 150922
         common/sa24/adj1(40),nnstop,non24,zstop
         dimension ri1(3),ri2(3),ri3(3),pi1(3),pi2(3),pi3(3)
@@ -3043,7 +2616,7 @@ c260503
 c       Decay method.
         decsuc=1
         call decmom(ps,pp,am1,am2,decsuc)
-        if(decsuc.eq.0)goto 401   ! return to random three momentum method
+        if(INT(decsuc).eq.0)goto 401   ! return to random three momentum method 280224 Lei INT
 300     continue
 c       adjust four momentum conservation by iteration,no more than
 c        4000 iterations
@@ -3204,6 +2777,8 @@ c             = 5, random px and random py from mother, different random factors
 c             = 6, random (px and py) from mother, the same random factor
 c             = 7, random (px and py) from mother, the same random factor as 
 c                   z which related to adj1(29).
+c             = 8, random pT from mother, the same random factor as z which 
+c                   related to adj1(29)
 c       i_max: (D=0) whether the sampled pT in coal deexitation is greater 
 c                       than the mother quark or not.
 C...Double precision and integer declarations.
@@ -3278,4 +2853,611 @@ C...PT might deviate little bit from original one.
         PT=SQRT(PX*PX+PY*PY)
  
         RETURN
+        END
+
+
+
+c*********************************************************************
+        subroutine PASORT(i_begin,i_end, name_common,quantity,operation)
+c120324 Lei
+c       Sorts the arrays of corresponding COMMON blocks by 
+c        Indexing Quicksort algorithm (from max to min or min to max) or
+c        Knuth shuffle algorithm (random sorting).
+c
+c       i_begin: the beginning index of arrays in COMMON to be sorted.
+c       i_end: the ending index of arrays in COMMON to be sorted.
+c       Note: the following CHARACTERs are accepted with lower case only.
+c       name_common: name of COMMON clock to be sorted, CHARACTER, 
+c                    could be "pyjets", "sa2", "sbe", etc.
+c       quantity: name of quantity to be brought into sorted order.
+c                 CHARACTER, could be "kf", 
+c                                     "px", "py", "pz", "e", "m", 
+c                                     "rx", "ry", "rz", "t", "tau",
+c                                     "pt", "y", "eta", "charge", etc.
+c                 Or "1, 2, 3, ... , 25", corresponds to the FUNCTION 
+c                    PYP(I,J) in PYTHIA 6. Cf. PYTHIA 6.4 manual.
+c       operation: name of the operation, CHARACTER, could be 
+c                  "max_to_min", "min_to_max" or "random".
+        IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+        IMPLICIT INTEGER(I-N)
+        INTEGER PYK,PYCHGE,PYCOMP
+        PARAMETER (KSZJ=80000,MPLIS=80000)
+        PARAMETER (NSIZE=280000)
+        COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
+        common/sa2/nsa,non2,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
+        common/sa36/nglu,nongu,kglu(kszj,5),pglu(kszj,5),vglu(kszj,5) ! 220822
+        common/sa37/nth,npadth,kth(kszj,5),pth(kszj,5),vth(kszj,5)   ! 150922
+        common/sbe/nbe,non_be,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
+        common/saf/naf,nonaf,kaf(kszj,5),paf(kszj,5),vaf(kszj,5)   ! 210921
+        common/aaff/naff,nonff,kaff(kszj,5),paff(kszj,5),vaff(kszj,5) ! 010518
+        common/sbh/nbh,nonbh,kbh(kszj,5),pbh(kszj,5),vbh(kszj,5)   ! 050603
+        common/sa1_h/nn,non1_h,kn(kszj,5),pn(kszj,5),rn(kszj,5)   ! 050603
+        common/sgam/ngam,nongam,kgam(kszj,5),pgam(kszj,5),vgam(kszj,5) ! 250209
+        common/trs/ntrs,nontrs,ktrs(kszj,5),ptrs(kszj,5),vtrs(kszj,5) ! 280620
+        common/delt/ndel,nodel,kdel(kszj,5),pdel(kszj,5),vdel(kszj,5) ! 150323
+c       Local temporary variables.
+        character*(*) name_common, quantity, operation
+        character*1 char_1
+        allocatable k_tmp(:,:)
+        allocatable p_tmp(:,:), v_tmp(:,:)
+        allocatable quantity_tmp(:), i_order(:)
+
+
+c       Firstly, saves /PYJETS/ to temporary arrays and dumps data from
+c        "name_commom" to /PYJETS/.
+
+c       Allocates local memory and saves /PYJETS/.
+        allocate( k_tmp(N,5),  p_tmp(N,5),  v_tmp(N,5) )
+        do j=1,5,1
+            do i=1,N,1
+                k_tmp(i,j) = K(i,j)
+                p_tmp(i,j) = P(i,j)
+                v_tmp(i,j) = V(i,j)
+            end do
+        end do
+
+c       Identifies the operation.
+        if(      TRIM(ADJUSTL(operation)) .eq. "min_to_max" )then
+            i_operation =  1
+            N_sort = i_end
+        else if( TRIM(ADJUSTL(operation)) .eq. "max_to_min" )then
+            i_operation = -1
+            N_sort = i_end
+        else if( TRIM(ADJUSTL(operation)) .eq. "random" )then
+            i_operation =  0
+            N_sort = i_end
+            goto 666
+        end if
+
+c       Identifies "name_common" and dumps data.
+        ! if(      TRIM(ADJUSTL(name_common)) .eq. "pyjets"   )then
+        if(      TRIM(ADJUSTL(name_common)) .eq. "sa2"   )then
+            do j=1,5,1
+                do i = i_begin, i_end, 1
+                    K(i,j) = ksa(i,j)
+                    P(i,j) = psa(i,j)
+                    V(i,j) = vsa(i,j)
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "sa36"   )then
+            do j=1,5,1
+                do i = i_begin, i_end, 1
+                    K(i,j) = kglu(i,j)
+                    P(i,j) = pglu(i,j)
+                    V(i,j) = vglu(i,j)
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "sa37"   )then
+            do j=1,5,1
+                do i = i_begin, i_end, 1
+                    K(i,j) = kth(i,j)
+                    P(i,j) = pth(i,j)
+                    V(i,j) = vth(i,j)
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "sbe"   )then
+            do j=1,5,1
+                do i = i_begin, i_end, 1
+                    K(i,j) = kbe(i,j)
+                    P(i,j) = pbe(i,j)
+                    V(i,j) = vbe(i,j)
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "saf"   )then
+            do j=1,5,1
+                do i = i_begin, i_end, 1
+                    K(i,j) = kaf(i,j)
+                    P(i,j) = paf(i,j)
+                    V(i,j) = vaf(i,j)
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "aaff"  )then
+            do j=1,5,1
+                do i = i_begin, i_end, 1
+                    K(i,j) = kaff(i,j)
+                    P(i,j) = paff(i,j)
+                    V(i,j) = vaff(i,j)
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "sbh"   )then
+            do j=1,5,1
+                do i = i_begin, i_end, 1
+                    K(i,j) = kbh(i,j)
+                    P(i,j) = pbh(i,j)
+                    V(i,j) = vbh(i,j)
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "sa1_h" )then
+            do j=1,5,1
+                do i = i_begin, i_end, 1
+                    K(i,j) = kn(i,j)
+                    P(i,j) = pn(i,j)
+                    V(i,j) = rn(i,j)
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "sgam"  )then
+            do j=1,5,1
+                do i = i_begin, i_end, 1
+                    K(i,j) = kgam(i,j)
+                    P(i,j) = pgam(i,j)
+                    V(i,j) = vgam(i,j)
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "trs"   )then
+            do j=1,5,1
+                do i = i_begin, i_end, 1
+                    K(i,j) = ktrs(i,j)
+                    P(i,j) = ptrs(i,j)
+                    V(i,j) = vtrs(i,j)
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "delt"   )then
+            do j=1,5,1
+                do i = i_begin, i_end, 1
+                    K(i,j) = kdel(i,j)
+                    P(i,j) = pdel(i,j)
+                    V(i,j) = vdel(i,j)
+                end do
+            end do
+        end if
+
+c       Secondly, identify the sorting-quantity.
+        do i=1,10,1
+            char_1 = quantity(1:1)
+            if( char_1.ne." " ) exit
+        end do
+
+c       = 0, KF code.
+        if(      TRIM(ADJUSTL(quantity)) .eq. "kf" )then
+            i_quantity = 0
+c       = [1,25], PYP(i,j).
+        else if( TRIM(ADJUSTL(quantity)) .eq. "px" )then
+            i_quantity = 1
+        else if( TRIM(ADJUSTL(quantity)) .eq. "py" )then
+            i_quantity = 2
+        else if( TRIM(ADJUSTL(quantity)) .eq. "pz" )then
+            i_quantity = 3
+        else if( TRIM(ADJUSTL(quantity)) .eq. "e"  )then
+            i_quantity = 4
+        else if( TRIM(ADJUSTL(quantity)) .eq. "m"  )then
+            i_quantity = 5
+        else if( TRIM(ADJUSTL(quantity)) .eq. "charge" )then
+            i_quantity = 6
+        else if( TRIM(ADJUSTL(quantity)) .eq. "|p|" )then
+            i_quantity = 8
+        else if( TRIM(ADJUSTL(quantity)) .eq. "pt" )then
+            i_quantity = 10
+        else if( TRIM(ADJUSTL(quantity)) .eq. "y" )then
+            i_quantity = 17
+        else if( TRIM(ADJUSTL(quantity)) .eq. "eta" )then
+            i_quantity = 19
+c       = [26,29], Velocity.
+        else if( TRIM(ADJUSTL(quantity)) .eq. "vx" )then
+            i_quantity = 26
+        else if( TRIM(ADJUSTL(quantity)) .eq. "vy" )then
+            i_quantity = 27
+        else if( TRIM(ADJUSTL(quantity)) .eq. "vz" )then
+            i_quantity = 28
+        else if( TRIM(ADJUSTL(quantity)) .eq. "|v|" )then
+            i_quantity = 29
+c       = [-6, -1], space-time coordinates and lifetime.
+        else if( TRIM(ADJUSTL(quantity)) .eq. "rx" )then
+            i_quantity = -1
+        else if( TRIM(ADJUSTL(quantity)) .eq. "ry" )then
+            i_quantity = -2
+        else if( TRIM(ADJUSTL(quantity)) .eq. "rz" )then
+            i_quantity = -3
+        else if( TRIM(ADJUSTL(quantity)) .eq. "t"  )then
+            i_quantity = -4
+        else if( TRIM(ADJUSTL(quantity)) .eq. "tau" )then
+            i_quantity = -5
+        else if( TRIM(ADJUSTL(quantity)) .eq. "|r|" )then
+            i_quantity = -6
+c       ABS( x + 100 ), Absolute values.
+        else if( TRIM(ADJUSTL(quantity)) .eq. "|kf|" )then
+            i_quantity = 100
+        else if( TRIM(ADJUSTL(quantity)) .eq. "|px|" )then
+            i_quantity = 101
+        else if( TRIM(ADJUSTL(quantity)) .eq. "|py|" )then
+            i_quantity = 102
+        else if( TRIM(ADJUSTL(quantity)) .eq. "|pz|" )then
+            i_quantity = 103
+        else if( TRIM(ADJUSTL(quantity)) .eq. "|y|" )then
+            i_quantity = 117
+        else if( TRIM(ADJUSTL(quantity)) .eq. "|eta|" )then
+            i_quantity = 119
+        else if( TRIM(ADJUSTL(quantity)) .eq. "|vx|" )then
+            i_quantity = 126
+        else if( TRIM(ADJUSTL(quantity)) .eq. "|vy|" )then
+            i_quantity = 127
+        else if( TRIM(ADJUSTL(quantity)) .eq. "|vz|" )then
+            i_quantity = 128
+        else if( TRIM(ADJUSTL(quantity)) .eq. "|rx|" )then
+            i_quantity = -101
+        else if( TRIM(ADJUSTL(quantity)) .eq. "|ry|" )then
+            i_quantity = -102
+        else if( TRIM(ADJUSTL(quantity)) .eq. "|rz|" )then
+            i_quantity = -103
+c       = 999, null.
+        else if( TRIM(ADJUSTL(quantity)) .eq. "null" )then
+            i_quantity = 999
+c       "Number", uses ASCII.
+        else if(  IACHAR(char_1).ge.48 .AND. IACHAR(char_1).le.57 )then
+            read( quantity, "(I2)" ) i_quantity
+        end if
+
+c       Gets sorting-quantity array.
+
+c       Allocates memory for sorting-quantity.
+        allocate( quantity_tmp( N_sort ) )
+
+c       Sets small enough values for i < i_begin.
+        if( i_begin.gt.1 )then
+            small_value = -999999999D0
+            do i = 1, i_begin-1, 1
+                quantity_tmp(i) = small_value
+                small_value = small_value + 1D0
+            end do
+        end if
+
+c       = 0, KF code.
+        if( i_quantity.eq.0 )then
+            do i= i_begin, i_end, 1
+                quantity_tmp( i ) = K(i,2) * 1D0
+            end do
+c       = [1,25], PYP(i,j).
+        else if( i_quantity.ge.1 .AND. i_quantity.le.25 )then
+            do i= i_begin, i_end, 1
+                quantity_tmp( i ) = PYP( i, i_quantity )
+            end do
+c       = [26,28], velocity components.
+        else if( i_quantity.ge.26 .AND. i_quantity.le.28 )then
+            do i= i_begin, i_end, 1
+                quantity_tmp( i ) = P( i, i_quantity - 25 ) / P(i,4)
+            end do
+c       = 29, absolute velocity |v|.
+        else if( i_quantity.eq.29 )then
+            do i= i_begin, i_end, 1
+                quantity_tmp( i ) = SQRT( (P(i,1)/P(i,4))**2 + 
+     &               (P(i,2)/P(i,4))**2 + (P(i,3)/P(i,4))**2 )
+            end do
+c       = [-5, -1], space-time coordinate components and lifetime.
+        else if( i_quantity.ge.-5 .AND. i_quantity.le.-1 )then
+            do i= i_begin, i_end, 1
+                quantity_tmp( i ) = V( i, -i_quantity )
+            end do
+c       = -6, absolute "space coordinate", displacement, |r|.
+        else if( i_quantity.eq.-6 )then
+            do i= i_begin, i_end, 1
+                quantity_tmp( i ) = SQRT( V(i,1)**2 + 
+     &                                    V(i,2)**2 + V(i,3)**2 )
+            end do
+c       = 100, absolute KF.
+        else if( i_quantity.eq.100 )then
+            do i= i_begin, i_end, 1
+                quantity_tmp( i ) = ABS( K(i,2) )
+            end do
+c       = [101,125], ABS( PYP(i,j) ).
+        else if( i_quantity.ge.101 .AND. i_quantity.le.125 )then
+            do i=i_begin,i_end,1
+                quantity_tmp( i ) = ABS( PYP( i, i_quantity-100 ) )
+            end do
+c       = [126,128], absolute velocity components.
+        else if( i_quantity.ge.126 .AND. i_quantity.le.128 )then
+            do i=i_begin,i_end,1
+                quantity_tmp( i ) = ABS( P(i, i_quantity-125 ) /P(i,4) )
+            end do
+c       = [-103,-101], absolute space-time coordinate components.
+        else if( i_quantity.ge.-103 .AND. i_quantity.le.-101 )then
+            do i=i_begin,i_end,1
+                quantity_tmp( i ) = ABS( V(i, -(i_quantity+100) ) )
+            end do
+        end if
+
+666     continue
+
+c       Allocates memory for the array of the order index.
+        allocate( i_order(N_sort) )
+        j_begin = 1
+        do i = 1, i_end, 1
+            i_order( i ) = i
+        end do
+
+c       Indexing Quicksort algorithm. "max_to_min" or "min_to_max".
+        if( ABS(i_operation).eq.1 )then
+c       Gets the index in ascending order.
+            call PASORT_indexx( N_sort, quantity_tmp, i_order )   ! In coales.f.
+
+c       Knuth shuffle algorithm. "random".
+        else if( i_operation.eq.0 )then
+            do i = i_end, i_begin+1, -1
+                i_exchange = i_begin + FLOOR( (i + 1 - i_begin)*PYR(1) )
+                i_tmp = i_order( i_exchange )
+                i_order( i_exchange ) = i_order( i )
+                i_order( i ) = i_tmp
+            end do
+        end if
+
+c       Feeds the sorted rearrangement back.
+        j_begin = i_begin
+        j_end = i_end
+        ! if( i_operation.eq.-1 )then
+        !     j_begin = i_end
+        !     j_end = i_begin
+        ! end if
+        if(      TRIM(ADJUSTL(name_common)) .eq. "pyjets"   )then
+            do j=1,5,1
+                do i=i_begin,i_end,1
+                    i_new = i_order( i )
+                    i_insert = i
+                    if( i_operation.eq.-1 )  i_insert= i_end -i_insert+1
+                    K(i_insert,j) = k_tmp( i_new, j )
+                    P(i_insert,j) = p_tmp( i_new, j )
+                    V(i_insert,j) = v_tmp( i_new, j )
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "sa2"   )then
+            do j=1,5,1
+                do i=i_begin,i_end,1
+                    i_new = i_order( i )
+                    i_insert = i
+                    if( i_operation.eq.-1 )  i_insert= i_end -i_insert+1
+                    ksa(i_insert,j) = K( i_new, j )
+                    psa(i_insert,j) = P( i_new, j )
+                    vsa(i_insert,j) = V( i_new, j )
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "sa36"   )then
+            do j=1,5,1
+                do i=i_begin,i_end,1
+                    i_new = i_order( i )
+                    i_insert = i
+                    if( i_operation.eq.-1 )  i_insert= i_end -i_insert+1
+                    kglu(i_insert,j) = K( i_new, j )
+                    pglu(i_insert,j) = P( i_new, j )
+                    vglu(i_insert,j) = V( i_new, j )
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "sa37"   )then
+            do j=1,5,1
+                do i=i_begin,i_end,1
+                    i_new = i_order( i )
+                    i_insert = i
+                    if( i_operation.eq.-1 )  i_insert= i_end -i_insert+1
+                    kth(i_insert,j) = K( i_new, j )
+                    pth(i_insert,j) = P( i_new, j )
+                    vth(i_insert,j) = V( i_new, j )
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "sbe"   )then
+            do j=1,5,1
+                do i=i_begin,i_end,1
+                    i_new = i_order( i )
+                    i_insert = i
+                    if( i_operation.eq.-1 )  i_insert= i_end -i_insert+1
+                    kbe(i_insert,j) = K( i_new, j )
+                    pbe(i_insert,j) = P( i_new, j )
+                    vbe(i_insert,j) = V( i_new, j )
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "saf"   )then
+            do j=1,5,1
+                do i=i_begin,i_end,1
+                    i_new = i_order( i )
+                    i_insert = i
+                    if( i_operation.eq.-1 )  i_insert= i_end -i_insert+1
+                    kaf(i_insert,j) = K( i_new, j )
+                    paf(i_insert,j) = P( i_new, j )
+                    vaf(i_insert,j) = V( i_new, j )
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "aaff"  )then
+            do j=1,5,1
+                do i=i_begin,i_end,1
+                    i_new = i_order( i )
+                    i_insert = i
+                    if( i_operation.eq.-1 )  i_insert= i_end -i_insert+1
+                    kaff(i_insert,j) = K( i_new, j )
+                    paff(i_insert,j) = P( i_new, j )
+                    vaff(i_insert,j) = V( i_new, j )
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "sbh"   )then
+            do j=1,5,1
+                do i=i_begin,i_end,1
+                    i_new = i_order( i )
+                    i_insert = i
+                    if( i_operation.eq.-1 )  i_insert= i_end -i_insert+1
+                    kbh(i_insert,j) = K( i_new, j )
+                    pbh(i_insert,j) = P( i_new, j )
+                    vbh(i_insert,j) = V( i_new, j )
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "sa1_h" )then
+            do j=1,5,1
+                do i=i_begin,i_end,1
+                    i_new = i_order( i )
+                    i_insert = i
+                    if( i_operation.eq.-1 )  i_insert= i_end -i_insert+1
+                    kn(i_insert,j) = K( i_new, j )
+                    pn(i_insert,j) = P( i_new, j )
+                    rn(i_insert,j) = V( i_new, j )
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "sgam"  )then
+            do j=1,5,1
+                do i=i_begin,i_end,1
+                    i_new = i_order( i )
+                    i_insert = i
+                    if( i_operation.eq.-1 )  i_insert= i_end -i_insert+1
+                    kgam(i_insert,j) = K( i_new, j )
+                    pgam(i_insert,j) = P( i_new, j )
+                    vgam(i_insert,j) = V( i_new, j )
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "trs"   )then
+            do j=1,5,1
+                do i=i_begin,i_end,1
+                    i_new = i_order( i )
+                    i_insert = i
+                    if( i_operation.eq.-1 )  i_insert= i_end -i_insert+1
+                    ktrs(i_insert,j) = K( i_new, j )
+                    ptrs(i_insert,j) = P( i_new, j )
+                    vtrs(i_insert,j) = V( i_new, j )
+                end do
+            end do
+        else if( TRIM(ADJUSTL(name_common)) .eq. "delt"   )then
+            do j=1,5,1
+                do i=i_begin,i_end,1
+                    i_new = i_order( i )
+                    i_insert = i
+                    if( i_operation.eq.-1 )  i_insert= i_end -i_insert+1
+                    kdel(i_insert,j) = K( i_new, j )
+                    pdel(i_insert,j) = P( i_new, j )
+                    vdel(i_insert,j) = V( i_new, j )
+                end do
+            end do
+        end if
+
+c       Recovers /PYJETS/ if the incoming COMMOM was not /PYJETS/.
+        if( TRIM(ADJUSTL(name_common)) .ne. "pyjets" )then
+            do j=1,5,1
+                do i=1,N,1
+                    K(i,j) = k_tmp(i,j)
+                    P(i,j) = p_tmp(i,j)
+                    V(i,j) = v_tmp(i,j)
+                end do
+            end do
+        end if
+
+c       Releases memory
+        deallocate( k_tmp,  p_tmp,  v_tmp, i_order )
+        if( ABS(i_operation).eq.1 ) deallocate( quantity_tmp )
+
+
+        return
+        end
+
+
+
+        SUBROUTINE PASORT_indexx(n,arr,indx)
+c120324 Lei
+c       Generates the sorted index using the Insertion sort and 
+c        the Quicksort algorithms.
+c
+c       Indexes an array arr(1:n), i.e., outputs the array indx(1:n) 
+c        such that arr(indx(j)) is in ascending order for j = 1,2,...,N.
+c       The input quantities n and arr are not changed.
+c       Parameters: M is the size of subarrays sorted by straight 
+c        insertion and NSTACK is the required auxiliary storage.
+c
+c       Cf. NUMERICAL RECIPES IN FORTRAN 77: THE ART OF SCIENTIFIC 
+c        COMPUTING (ISBN 0-521-43064-X)
+c
+        INTEGER n,indx(n),M,NSTACK,kszj
+        REAL*8 arr(n)
+        PARAMETER (M=7,NSTACK=50,kszj=80000)
+        INTEGER i,indxt,ir,itemp,j,jstack,k,l,istack(NSTACK)
+        ! ALLOCATABLE istack(:)
+        REAL*8 a
+        do j=1,n
+            indx(j)=j
+        enddo
+        ! allocate( istack(kszj) )
+        jstack=0
+        l=1
+        ir=n
+c       Insertion sort when subarray small enough.
+ 1      if(ir-l.lt.M)then
+            do j=l+1,ir
+                indxt=indx(j)
+                a=arr(indxt)
+                do i=j-1,l,-1
+                    if(arr(indx(i)).le.a) goto 2
+                    indx(i+1)=indx(i)
+                enddo
+                i=l-1
+ 2              indx(i+1)=indxt
+            enddo
+            if(jstack.eq.0)then
+                ! deallocate( istack )
+                return
+            end if
+            ir=istack(jstack)    ! Pop stack and begin a new round of 
+            l=istack(jstack-1)   !  partitioning.
+            jstack=jstack-2
+        else
+            k=(l+ir)/2          ! Choose median of left, center and right elements as 
+            itemp=indx(k)       ! partitioning element a. Also rearrange so that a(l) <= 
+            indx(k)=indx(l+1)   ! a(l+1) <= a(ir).
+            indx(l+1)=itemp
+            if(arr(indx(l)).gt.arr(indx(ir)))then
+                itemp=indx(l)
+                indx(l)=indx(ir)
+                indx(ir)=itemp
+            endif
+            if(arr(indx(l+1)).gt.arr(indx(ir)))then
+                itemp=indx(l+1)
+                indx(l+1)=indx(ir)
+                indx(ir)=itemp
+            endif
+            if(arr(indx(l)).gt.arr(indx(l+1)))then
+                itemp=indx(l)
+                indx(l)=indx(l+1)
+                indx(l+1)=itemp
+            endif
+            i=l+1   ! Initialize pointers for partitioning.
+            j=ir
+            indxt=indx(l+1)
+            a=arr(indxt)   ! Partitioning element.
+ 3          continue       ! Beginning of innermost loop.
+            i=i+1          ! Scan up to find element > a
+            if(arr(indx(i)).lt.a) goto 3
+ 4          continue
+            j=j-1          ! Scan down to find element < a.
+            if(arr(indx(j)).gt.a) goto 4
+            if(j.lt.i) goto 5   ! Pointers crossed. Exit with partitioning complete.
+            itemp=indx(i)       ! Exchange elements of both arrays.
+            indx(i)=indx(j)
+            indx(j)=itemp
+            goto 3              ! End of innermost loop.
+ 5          indx(l+1)=indx(j)   ! Insert partitioning element in both arrays.
+            indx(j)=indxt
+            jstack=jstack+2
+c       Push pointers to larger subarray on stack, process smaller 
+c        subarray immediately.
+            if(jstack.gt.NSTACK) write(*,*) 'NSTACK too small in indexx'
+            if(ir-i+1.ge.j-l)then
+                istack(jstack)=ir
+                istack(jstack-1)=i
+                ir=j-1
+            else
+                istack(jstack)=j-1
+                istack(jstack-1)=l
+                l=i
+            endif
+        endif
+        goto 1
+
+
         END

@@ -167,7 +167,7 @@ c300623 istop=1 means all particles have get out of considered volume
 c120603
 c       consider parton energy loss phenomenologically
 c120505
-        if(adj136.eq.1)then
+        if(INT(adj136).eq.1)then   ! 280224 Lei INT
         bmax=rnt+rnp
         bmax2=bmax*bmax
         bp2=bp*bp
@@ -968,6 +968,7 @@ c       kf: parton flaver
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
+        ichge=0   ! 280224 Lei
         if(kf.eq.21 .or. kf.eq.-21)then   ! 180520
         ichge=0   ! gluon charge
         elseif(kf.gt.0)then
@@ -985,6 +986,8 @@ c       kf: parton flaver
         if(kf.eq.-5)ichge=1   ! bbar
         if(kf.eq.-6)ichge=-2   ! tbar
         else
+            write(*,*) "Non-parton in ichge of parcas.f, STOP!"   ! 280224 Lei
+            stop   ! 280224 Lei
         endif
         return
         end
@@ -1100,6 +1103,7 @@ c       the process can not happen
         return
         endif
 
+        eee=0D0   ! 280224 Lei
         if(lqaq.or.lgg) then   ! 1
 
         if(kf0.eq.21) then  ! 2 gg->
@@ -1297,7 +1301,7 @@ c250803 crose(8)=crose(8)+sum
         sig=sig*0.04   ! 121099
 c121099 0.04 is the transformation factor from (GeV)^-2 to (fm)^2
 c280803
-        if(adj120.eq.0 .or. adj120.eq.1)then   ! 230405
+        if(INT(adj120).eq.0 .or. INT(adj120).eq.1)then   ! 230405 280224 Lei INT
         do i=0,idw
         if(eee(i).lt.0.)then
         sig=0.
@@ -1310,7 +1314,7 @@ c280803
 c       sample the t value
         if(ilo.eq.1) then
 c230405
-        if(adj120.eq.2 .or. adj120.eq.3)then
+        if(INT(adj120).eq.2 .or. INT(adj120).eq.3)then   ! 280224 Lei INT
 c       tsmp=-pyr(1)*xs
         seta=pyr(1)*pio
         tsmp=xs*(dcos(seta)-1)/2+tcut   ! 280407
@@ -1605,7 +1609,7 @@ c       throws away scattering parton pair (ik1 & ik2)
         endif   !! 2
 
         if(lmn.eq.4.or.lmn.eq.6)then   !! 3, 4:q1q1bar->q2q2bar, 6:qqbar->gg
-        if(adj12.ne.0)then   !! 4, hadronization with coalescence 300623 Lei -> .ne.0
+        if(INT(adj12).ne.0)then   !! 4, hadronization with coalescence 300623 Lei -> .ne.0 280224 Lei INT
 c       throws away scattering parton pair (ik1 & ik2)
         if(ik1.gt.ik2)then
         call parmov(ik1,ik1,ik2,lmn)
@@ -1618,7 +1622,7 @@ c       throws away scattering parton pair (ik1 & ik2)
         n00=n-2   ! 300623 Lei New partons are above n-2 w/ or w/o branching.
         call updpli_p(n00,time)   ! 300623 Lei
         return
-        elseif(adj12.eq.0)then   !! 4
+        elseif(INT(adj12).eq.0)then   !! 4 280224 Lei INT
 c       does ik1 (ik2) is a component of string
         call adjst(ik1,ik1str,ik1sa,ik1sv)   ! 020620
 c       ik1str: oredr number of string to which ik1 belongs,equal 0 otherwise
@@ -2109,10 +2113,13 @@ c            =1 success in sampling q2 and z
         if(stili.gt.2.)qqb=qa
         zab=z
 c       'zab' is the sampled ratio of x/x' in this branching.
-        if(zab.eq.0.)return   ! 031204
+c280224 if(zab.eq.0.)return   ! 031204 280224 Lei
+        if(ABS(zab).le.1D10)return   ! 031204 280224 Lei
         xa1=xa*zab
         xa2=xa-xa1
 
+        kf1=0   ! 280224 Lei
+        kf2=0   ! 280224 Lei
         if(kfk.ne.21) then   !! initial state is quark
 c       branch q->qg
         kf1=kfk
@@ -2265,6 +2272,7 @@ c----------------------------------------------------------------------
         yint1(x)=-dlog(1.d0-x)          !q->qg cf. Sa' note p. 44
         yint2(x)=dlog(1.d0/(1.d0-x)-1.d0)   !g->gg
 c       yint1,2: the integral functions of part of the splitting functions
+        zsp=0D0   ! 280224 Lei
         adj25=adj1(25)
 c       adj25: lamda_QCD
         adj25=adj25*adj25
@@ -2621,7 +2629,7 @@ c120699 ccc=dlog(xt*xu/xs/adj1(25).adj1(25))
 c120699 ccc=ccc**2
 c120699 fsabcd=pio*as**2/xs**2/ccc
         pioa=pio*as**2   ! 240803
-        if(adj20.eq.1 .or.adj20.eq.3)goto 100   ! 230405
+        if(INT(adj20).eq.1 .or.INT(adj20).eq.3)goto 100   ! 230405 280224 Lei
         fsabcd=pioa/xs**2   ! 120699
         fs12_0=fsabcd*(xs**2+xu**2)*4./xt**2/9.*adj11   ! 210803
 c240803 LO pQCD
@@ -2655,7 +2663,7 @@ c120699 ccc=dlog(xt*xu/xs/adj1(25)/adj1(25))
 c120699 ccc=ccc**2
 c120699 fsabcd=pio*as**2/xs**2/ccc
         pioa=pio*as**2   ! 240803
-        if(adj20.eq.1 .or. adj20.eq.3)goto 100   ! 230405
+        if(INT(adj20).eq.1 .or. INT(adj20).eq.3)goto 100   ! 230405 280224 Lei INT
         fsabcd=pioa/xs**2   ! 120699
         fs11_0=fsabcd*(4.*((xs**2+xu**2)/xt**2+(xs**2+xt**2)/xu**2)/9.-
      c   8.*xs**2/27./xu/xt)*adj11   ! 210803
@@ -2690,7 +2698,7 @@ c120699 ccc=dlog(xt*xu/xs/adj1(25)/adj1(25))
 c120699 ccc=ccc**2
 c120699 fsabcd=pio*as**2/xs**2/ccc
         pioa=pio*as**2   ! 240803
-        if(adj20.eq.1 .or. adj20.eq.3)goto 100   ! 230405
+        if(INT(adj20).eq.1 .or. INT(adj20).eq.3)goto 100   ! 230405 280224 Lei INT
         fsabcd=pioa/xs**2   ! 120699
         fs12_1=fsabcd*(4.*(xs**2+xu**2)/xt**2/9.)*adj11   ! 210803
 c240803 LO pQCD
@@ -2732,7 +2740,7 @@ c120699 ccc=dlog(xt*xu/xs/adj1(25)/adj1(25))
 c120699 ccc=ccc**2
 c120699 fsabcd=pio*as**2/xs**2/ccc
         pioa=pio*as**2   ! 240803
-        if(adj20.eq.1 .or. adj20.eq.3)goto 100   ! 230405
+        if(INT(adj20).eq.1 .or. INT(adj20).eq.3)goto 100   ! 230405 280224 Lei INT
         fsabcd=pioa/xs**2   ! 120699
         fs11_1=fsabcd*(4.*(xt**2+xu**2)/xs**2/9.)*adj11   ! 210803
 c240803 LO pQCD
@@ -2766,7 +2774,7 @@ c120699 ccc=dlog(xt*xu/xs/adj1(25)/adj1(25))
 c120699 ccc=ccc**2
 c120699 fsabcd=pio*as**2/xs**2/ccc
         pioa=pio*as**2   ! 240803
-        if(adj20.eq.1 .or. adj20.eq.3)goto 100   ! 230405
+        if(INT(adj20).eq.1 .or. INT(adj20).eq.3)goto 100   ! 230405 280224 Lei INT
         fsabcd=pioa/xs**2   ! 120699
         fs11_2=fsabcd*(4.*((xs**2+xu**2)/xt**2+(xu**2+xt**2)/xs**2)/9.-
      c   8.*xu**2/27./xs/xt)*adj11   ! 210803
@@ -2809,7 +2817,7 @@ c120699 ccc=dlog(xt*xu/xs/adj1(25)/adj1(25))
 c120699 ccc=ccc**2
 c120699 fsabcd=pio*as**2/xs**2/ccc
         pioa=pio*as**2   ! 240803
-        if(adj20.eq.1 .or. adj20.eq.3)goto 100   ! 230405
+        if(INT(adj20).eq.1 .or. INT(adj20).eq.3)goto 100   ! 230405 280224 Lei INT
         fsabcd=pioa/xs**2   ! 120699
         fsqq=fsabcd*(32.*(xu**2+xt**2)/xu/xt/27.-
      c   8.*(xu**2+xt**2)/xs**2/3.)*adj11   ! 210803
@@ -2851,7 +2859,7 @@ c120699 ccc=dlog(xt*xu/xs/adj1(25)/adj1(25))
 c120699 ccc=ccc**2
 c120699 fsabcd=pio*as**2/xs**2/ccc
         pioa=pio*as**2   ! 240803
-        if(adj20.eq.1 .or. adj20.eq.3)goto 100   ! 230405
+        if(INT(adj20).eq.1 .or. INT(adj20).eq.3)goto 100   ! 230405 280224 Lei INT
         fsabcd=pioa/xs**2   ! 120699
         fsgg_1=fsabcd*((xu**2+xt**2)/xu/xt/6.-3.*(xu**2+xt**2)/xs**2/8.)
      c   *adj11   ! 210803
@@ -2886,7 +2894,7 @@ c120699 ccc=dlog(xt*xu/xs/adj1(25)/adj1(25))
 c120699 ccc=ccc**2
 c120699 fsabcd=pio*as**2/xs**2/ccc
         pioa=pio*as**2   ! 240803
-        if(adj20.eq.1 .or. adj20.eq.3)goto 100   ! 230405
+        if(INT(adj20).eq.1 .or. INT(adj20).eq.3)goto 100   ! 230405 280224 Lei INT
         fsabcd=pioa/xs**2   ! 120699
         fsqg=fsabcd*((xu**2+xs**2)/xt**2-4.*(xu**2+xs**2)/xu/xs/9.)
      c   *adj11   ! 210803
@@ -2921,7 +2929,7 @@ c120699 ccc=dlog(xt*xu/xs/adj1(25)/adj1(25))
 c120699 ccc=ccc**2
 c120699 fsabcd=pio*as**2/xs**2/ccc
         pioa=pio*as**2   ! 240803
-        if(adj20.eq.1 .or. adj20.eq.3)goto 100   ! 230405
+        if(INT(adj20).eq.1 .or. INT(adj20).eq.3)goto 100   ! 230405 280224 Lei INT
         fsabcd=pioa/xs**2   ! 120699
         fsgg_0=fsabcd*(9.*(3.-xu*xt/xs**2-xu*xs/xt**2-xs*xt/xu**2)/2.)
      c   *adj11   ! 210803
@@ -3288,7 +3296,7 @@ c       finds order number etc. of ik1 string    ! 270620
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000)
+        PARAMETER (KSZJ=80000)
         common/sbe/nbe,nonbe,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
         common/sa28/nstr,nstra(kszj),nstrv(kszj),nstr0,
      c   nstr1,nstr1a(kszj),nstr1v(kszj)   ! 030620
@@ -3428,7 +3436,7 @@ c       ik1 & ik2 are the line number (in parton list) of colliding pair
 
         adj12=adj1(12)   ! 070720
 c       moves parton ii (not equal to ik1 or ik2) to 'trs'
-        if(adj12.eq.0 .and. (lmn.eq.4 .or. lmn.eq.6) .and. 
+        if(INT(adj12).eq.0 .and. (lmn.eq.4 .or. lmn.eq.6) .and.   ! 280224 Lei INT
      c   (ii.ne.ik1 .or. ii.ne.ik2))then
         ntrs=ntrs+1
         ktrs(ntrs,1)=3
@@ -3580,7 +3588,7 @@ c        it freezes out or not
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000)
+        PARAMETER (KSZJ=80000)
         common/PYJETS/N,NON1,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         common/sa8_p/taup(kszj),coor(3),ishp(kszj)   ! 300623 Lei
@@ -3715,7 +3723,7 @@ c       Loop over new ii (greater than n00) and old jj partons (smaller than n00
         icol = icol + 1
         do 100 ii=n00+1,n,1
             i1 = ii
-            kfi = ABS(k(i,2))
+            kfi = ABS(k(ii,2))   ! 280224 Lei i -> ii
             if(kfi.gt.6 .and. kfi.ne.21) goto 100
 c           Consider d,u,s,c,b,t, their antiquarks, and gluon.
             do 200 jj=1,n00,1

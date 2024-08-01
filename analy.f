@@ -161,9 +161,6 @@ c070802
 
 c       statistics of y, pt, ... distributions (for NA,AN,and BA); z, \nu,
 c        ... distributions (for lp and -lA)
-        do 500 kk=1,ispmax
-        kf=ispkf(kk)
-        if(ik.ne.kf)goto 500
 
 c????????????????????????????????????????????????????????????????????
 c       excludes the projectile and the target spectator nucleons
@@ -177,9 +174,13 @@ c     c   p4.le.0.940))then   ! 111899
 c       goto 500
 c       endif   ! 111899
 c       if(ifram.eq.1 .and. (p4.gt.eepd .and. p4.lt.eepu))then
-        if(ppt.le.1.e-5)goto 500 ! 310521 e-4->e-5
+        if(ppt.le.1D-5) goto 400 ! 310521 e-4 -> e-5 300124 Lei 500 -> 400
         endif
 c????????????????????????????????????????????????????????????????????
+
+        do 500 kk=1,ispmax
+        kf=ispkf(kk)
+        if(ik.ne.kf)goto 500
 
 c       analyses for pp,pA and AB
         if(ipden.lt.11)
@@ -195,24 +196,18 @@ c260314
 c       statistics of multiplicity distributions,
 c        spectator nucleons are excluded
         do kkk=1,ispmax
-c       ik=ispkf(kkk)
-c       if(iabs(ik).eq.2212.or.iabs(ik).eq.2112.or.iabs(ik).eq.3122.or.
-c     &   iabs(ik).eq.3212.or.ik.eq.3222.or.ik.eq.3112)then
 c       multiplicity is located at which interval
-c       if(ik.eq.2212)then
-        idf=bnf(kkk)/asd(5)+1
+            idf = INT( bnf(kkk)/asd(5)+1 )   ! 300124 Lei
 c       the 5-th distribution is particle multiplicity distribution
-        if(idf.lt.1 .or. idf.gt.40)goto 405   ! 131204 300623 Lei 20 -> 40
-        anf(idf,5,kkk)=anf(idf,5,kkk)+1. !/asd(5)
-c       active the window 
-405     do i=1,iflmax   ! 131204
-        if(c(i).lt.afl(kkk,i,1) .or. c(i).gt.afl(kkk,i,2))goto 404
-        enddo
-        idd=bn(kkk)/asd(5)+1
-        if(idd.lt.1 .or. idd.gt.40)goto 404   ! 131204 300623 Lei 20 -> 40
-        an(idd,5,kkk)=an(idd,5,kkk)+1. !/asd(5)
-404     continue
-c       endif
+            if(idf.lt.1 .or. idf.gt.40 .OR. bnf(kkk).lt.1D-10)goto 405   ! 131204 300623 Lei 300124 Lei
+            anf(idf,5,kkk) = anf(idf,5,kkk) + 1./asd(5)
+c       active the window
+c300124 Lei
+405         continue
+            idd = INT( bn(kkk)/asd(5)+1 )   ! 300124 Lei
+            if(idd.lt.1 .or. idd.gt.40 .OR. bn(kkk).lt.1D-10) goto 404   ! 131204 300623 Lei 300124 Lei
+            an(idd,5,kkk) = an(idd,5,kkk) + 1./asd(5)
+404         continue
         enddo
 
 
@@ -588,28 +583,26 @@ c           Analyses for pp,pA and AB
 c       Statistics of multiplicity distributions
         do kkk=1,14,1
 c           Multiplicity is located at which interval
-            idf = INT( bn_p_f(kkk)/asd(5) + 1 )
+            idf = INT( bn_p_f(kkk)/asd(5) + 1 )   ! 300124 Lei
 c           The 5-th distribution is particle multiplicity distribution
-            if(idf.lt.1 .or. idf.gt.40) goto 405
-            an_p_f(idf,5,kkk) = an_p_f(idf,5,kkk) + 1. !/asd(5)
+            if(idf.lt.1.OR.idf.gt.40.OR.bn_p_f(kkk).lt.1D-10) goto 405   ! 300124 Lei
+            an_p_f(idf,5,kkk) = an_p_f(idf,5,kkk) + 1./asd(5)
 c           Active the window
 c           Use the nominal cuts of 1-st setting in usu.dat for partons.
-405         do i=1,iflmax,1
-                if(c(i).lt.afl(1,i,1) .or. c(i).gt.afl(1,i,2)) goto 404
-            enddo
-            idd = INT( bn_p(kkk)/asd(5) + 1 )
-            if(idd.lt.1 .or. idd.gt.40) goto 404
-            an_p(idd,5,kkk) = an_p(idd,5,kkk) + 1. !/asd(5)
+405         continue
+            idd = INT( bn_p(kkk)/asd(5) + 1 )   ! 300124 Lei
+            if(idd.lt.1 .OR.idd.gt.40 .OR.bn_p(kkk).lt.1D-10) goto 404   ! 300124 Lei
+            an_p(idd,5,kkk) = an_p(idd,5,kkk) + 1./asd(5)
 404         continue
         enddo
 
 c       Event accumulation
-        sn_min_p   = sn_min_p   + n_min_p * 1.
-        sn_min_p_f = sn_min_p_f + n_min_p_f * 1.
-        sn_cha_p   = sn_cha_p   + n_cha_p * 1.
-        sn_cha_p_f = sn_cha_p_f + n_cha_p_f * 1.
-        sn_g       = sn_g       + n_g * 1.
-        sn_g_f     = sn_g_f     + n_g_f * 1.
+        sn_min_p   = sn_min_p   + n_min_p * 1D0
+        sn_min_p_f = sn_min_p_f + n_min_p_f * 1D0
+        sn_cha_p   = sn_cha_p   + n_cha_p * 1D0
+        sn_cha_p_f = sn_cha_p_f + n_cha_p_f * 1D0
+        sn_g       = sn_g       + n_g * 1D0
+        sn_g_f     = sn_g_f     + n_g_f * 1D0
 
         sbn_p   = sbn_p   + bn_p
         sbn_p_f = sbn_p_f + bn_p_f
@@ -625,7 +618,7 @@ c       Event accumulation
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine stati_parton(y,pt,eta,p5,kf,kk,ww,a,b,af,bf,yOrEta)
 c300623 Lei
-c       Online statistics for NA,AN,and AA collisions
+c       Online statistics for NA,AN,and AA collisions.
 c       Use the nominal cuts of 1-st setting in usu.dat for partons.
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
@@ -646,7 +639,7 @@ c       Use the nominal cuts of 1-st setting in usu.dat for partons.
 c       .
 c       .
 c       .
-c       Calculate the abscissa one by one
+c       Calculate the abscissa one by one.
 c       y is located in which interval?
         id = 0
         ii = INT( ABS(y)/asd(1) + 1 )
@@ -690,6 +683,7 @@ c       Use the nominal cuts of 1-st setting in usu.dat for partons.
         do i=1,isdmax,1
             ii=id(i)
             if(ii.lt.1 .or. ii.gt.40) goto 50000
+c       pT cut. Note (1,*,*) here.
             if( c(2).ge.afl(1,2,1) .AND. c(2).le.afl(1,2,2) )then   ! pT cut
                 if(i.eq.1) b(ii,i,kk) = b(ii,i,kk) + ww/asd(i)      ! dN/dy
                 if(i.eq.3) b(ii,i,kk) = b(ii,i,kk) + ww/asd(i)      ! dN/deta
@@ -698,6 +692,7 @@ c       Use the nominal cuts of 1-st setting in usu.dat for partons.
                     if(i.eq.3) b(ii,i,2) = b(ii,i,2) + ww/asd(i)
                 endif
             endif
+c       y/eta cut. Note (1,*,*) here.
             if( c(1).ge.afl(1,1,1) .AND. c(1).le.afl(1,1,2) )then   ! y/eta cut
                 if(i.eq.2) b(ii,i,kk) = b(ii,i,kk) + ww/asd(i)/pt   ! (1/pT)dN/dpT
                 if(i.eq.4) b(ii,i,kk) = b(ii,i,kk) + ww/asd(i)/pmt  ! (1/mT)dN/dmT
@@ -1002,7 +997,17 @@ C    XSEC(0,3) is the estimated the estimated total cross for section for
 C              all subprocesses included. (mb)
 C    PROC(I) is the character strings for the different possible subprocesses.
 C    PROC(0) is denotes all processes.
-
+C
+C   I_STAT: controlls different usage
+C       =-2, initializes the global variables.
+C       =-1, counts single-event cross sections.
+C       = 0, counts total-event cross sections.
+C       = 1, prints the cross sections.
+C
+C   I_CALL: the number of PASTAT calling.
+C   I_STAT=1 AND I_CALL=0 mean prints out information.
+C300623 Lei
+ 
 C...Double precision and integer declarations.
       IMPLICIT DOUBLE PRECISION(A-H, O-Z)
       IMPLICIT INTEGER(I-N)

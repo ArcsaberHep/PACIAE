@@ -10,7 +10,7 @@ c060112 if ijkk=1 give up current event avoiding infinite loop
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000,NSIZE=750000)
+        PARAMETER (KSZJ=80000,NSIZE=750000)
         common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         common/sa8_h/tau(kszj),ishp(kszj)
         common/sa9_h/kfmax,kfaco(100),numb(100),non9,disbe(100,100)
@@ -28,10 +28,10 @@ c060112 if ijkk=1 give up current event avoiding infinite loop
 c       ifram = 0 for fixed target, = 1 for collider 
 c       cspipi (fm^2): total cross section of pion + pion
 c       cspin (fm^2): total cross section of pion + nucleon 
-c       cskn (fm^2): total cross section of kaon + nucleon 
+c       cskn (fm^2): total cross section of Kaon + nucleon 
 c       csnn (fm^2): total cross section of n + n 
-c       cspsn: total cross section of J/Psi (Psi') + n
-c       cspsm: total cross section of J/Psi (Psi') + meson
+c       cspsn: total cross section of J/psi (psi') + n
+c       cspsm: total cross section of J/psi (psi') + meson
 c       rcsit: ratio of inelastic to total cross section
 c       kfmax: the maximum # of particles with given flavor code 
 c       kfaco(i): flavor code of i-th particle among kfmax
@@ -39,10 +39,10 @@ c       numb(i): order # of last particle of particles with same flavor of
 c        kfaco(i) in particle list
 c       disbe(i,j): allowable minimum approaching distance between particles
 c                   kfaco(i) & kfaco(j)
-c       sig (fm^2): cross section of pion + pion to kaon + kaon
+c       sig (fm^2): cross section of pion + pion to Kaon + Kaon
 c       edipi: largest interaction distance between two pions.
 c       epin: largest interaction distance between pion and nucleon.
-c       ekn: largest interaction distance between kaon and nucleon.
+c       ekn: largest interaction distance between Kaon and nucleon.
 c       ecsnn: largest interaction distance between two nucleons.
 c       t0: average proper formation time at rest.
 c       ddt: time accuracy 
@@ -76,10 +76,10 @@ c       noel: statistics of the occurring of elastic process
         pio=3.1416
 c110923 iabsb=0   ! 110923 Lei
 c110923 iabsm=0   ! 110923 Lei
-c       iabsb = 0 : without J/Psi (Psi') + baryon
-c             = 1 : with J/Psi (Psi') + baryon
-c       iabsm = 0 : without J/Psi (Psi') + meson
-c             = 1 : with J/Psi (Psi') + meson
+c       iabsb = 0 : without J/psi (psi') + baryon
+c             = 1 : with J/psi (psi') + baryon
+c       iabsm = 0 : without J/psi (psi') + meson
+c             = 1 : with J/psi (psi') + meson
 
 c280910 if(ijk.eq.1)then
 c       give initial value to quantities needed in hardon rescattering
@@ -263,19 +263,23 @@ c       disbe(29,j)=DISDET(j)
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine filt_h
 c       filter out particles wanted to study and make
-c       in order of proton,neutron,pba,nba,pi+,pi-,pi0,k-,k0-,sigma0,
-c        sigma-,sigma+,sigma0ba,sigma-ba,sigma+ba,lamda,lamdaba,k0,k+,
-c        cascade-,cascade-ba,cascade0,cascade0ba,Omega-,Omega+,Delta-,
-c        Delta0,Delta+,Delta++,rho+,rho-,rho0,J/Psi,Psi',Upsilon,
-c        Upsilon',x0c,x1c,x2c,D+,D+ba,D0,D0ba,lamdac+,sigmac0,sigmac+,
-c        sigmac++,omega,k*+,K*0,D*+,D*+ba,D*0,D*0ba,Ds+,Ds+ba,B0,B0ba,
-c        B+,B+ba,Bs0,Bs0ba,Bc+,Bc+ba,B*0,B*0ba,B*+,B*+ba,Bs*0,Bs*0ba,
-c        Bc*+,Bc*+ba   ! 250420
-c        (72 kinds of particle altogether)   ! 250420
+c       in order of 
+c               1            2          3          4            5             6             7             8         9           10
+c    0     proton,     neutron,     pbar-,      nbar,         pi+,          pi-,          pi0,           K-,    Kbar0,      Sigma0,
+c    1     Sigma-,      Sigma+, Sigmabar0, Sigmabar+,   Sigmabar-,      Lambda0,   Lambdabar0,           K0,       K+,         Xi-,
+c    2     Xibar+,         Xi0,    Xibar0,    Omega-,   Omegabar+,       Delta-,       Delta0,       Delta+,  Delta++,        rho+,
+c    3       rho-,        rho0,     J/psi,      psi',   Deltabar+,    Deltabar0,    Deltabar-,   Deltabar--,       D+,          D-,
+c    4         D0,       Dbar0,       D*+,       D*-,         D*0,       D*bar0,    Lambda_c+, Lambda_cbar-,     D_s+,        D_s-,
+c    5      D*_s+,       D*_s-,       K*+,       K*-,         K*0,       K*bar0,      Upsilon,     Upsilon',   chi_0c,      chi_1c,
+c    6     chi_2c,    Sigma_c0,  Sigma_c+, Sigma_c++, Sigma_cbar0,  Sigma_cbar+, Sigma_cbar++,        omega,       B0,       B0bar,
+c    7         B+,          B-,      B_s0,   B_sbar0,        B_c+,         B_c-,          B*0,       B*bar0,      B*+,         B*-,
+c    8      B*_s0,    B*_sbar0,     B*_c+,     B*_c-,   Lambda_b0, Lambda_bbar0,     Sigma_b0,  Sigma_bbar0, Sigma_b-, Sigma_bbar+,
+c    9   Sigma_b+, Sigma_bbar-,        8*0      ! 250420 112323 Lei
+c        (92 kinds of particle altogether)   ! 250420 112323 Lei
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000)
+        PARAMETER (KSZJ=80000)
         common/sa1_h/n,non1,k(kszj,5),p(kszj,5),v(kszj,5)
         common/sa9_h/kfmax,kfaco(100),numb(100),non9,disbe(100,100)
         iii=0
@@ -302,7 +306,7 @@ c       ipi : j-th particle should order after ipi
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000)
+        PARAMETER (KSZJ=80000)
         common/sa1_h/n,non1,k(kszj,5),p(kszj,5),v(kszj,5)
         dimension kk(5),pp(5),vv(5)
         ik=k(j,2)
@@ -337,7 +341,7 @@ c        it freezes out or not
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000)
+        PARAMETER (KSZJ=80000)
         common/sa1_h/n,non1,k(kszj,5),p(kszj,5),v(kszj,5)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         common/sa8_h/tau(kszj),ishp(kszj)
@@ -369,7 +373,7 @@ c       create the initial collision list
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000,NSIZE=750000)
+        PARAMETER (KSZJ=80000,NSIZE=750000)
         common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         common/sa9_h/kfmax,kfaco(100),numb(100),non9,disbe(100,100)
         common/sa20_h/t0,sig,dep,ddt,edipi,epin,ecsnn,ekn,ecspsn,ecspsm
@@ -380,22 +384,29 @@ c       create the initial collision list
         m2=numb(2)   ! up to n (neutron)
         m4=numb(4)   ! up to nbar
         m7=numb(7)   ! up to pi0
-        m9=numb(9)   ! up to k0-
-        m17=numb(17)   ! up to Lambdabar
-        m19=numb(19)   ! up to k+
-        m25=numb(25)   ! up to omega+
+        m9=numb(9)   ! up to K0bar
+        m17=numb(17)   ! up to Lambdabar0
+        m19=numb(19)   ! up to K+
+        m25=numb(25)   ! up to Omegabar+
         m29=numb(29)   ! up to Delta++
         m32=numb(32)   ! up to rho0
-        m34=numb(34)   ! up to Psi'
-c       m34=numb(kfmax-11)
-c       subtract 11, since do not consider the rescattering of x0c, etc
+        m34=numb(34)   ! up to psi'
+        m46 = numb(46)   ! 231123 Lei up to D*bar0
+        ! m48 = numb(48)   ! 231123 Lei up to Lambda_cbar-
+        ! m52 = numb(52)   ! 231123 Lei up to D*_s-
+c       <= m19, reiniteraction including nucleon, pion, Kaon, Sigma, Lambda
+        ! m_low = m25  ! 231123 consider reiniteraction not including Xi or Omega
+        ! m_upp = m34  ! 231123 consider reiniteraction up to psi'
+        m_low = m19  ! 231123 consider reiniteraction including Xi and Omega
+        m_upp = m46  ! 231123 consider reiniteraction up to D*bar0
 
         nctl=1
         do 500 l=1,nsa-1
-        if(l.le.m19
-     c   .or. (l.gt.m25 .and. l.le.m34))goto 300
-c       consider only the reinteraction among nucleon, pion, kaon,
-c        sigma, lambda, delta, rho and psi
+        if( l.le.m19
+     c   .or. (l.gt.m_low .and. l.le.m_upp) ) goto 300   ! 231123 Lei
+c231123 Lei     c   .or. (l.gt.m25 .and. l.le.m34))goto 300
+c       Consider only the reinteraction among nucleon, pion, Kaon, Xi, Omega, 
+c        Sigma, Lambda, Delta, rho, J/psi, psi' and D mesons. ! 231123 Lei
         goto 500
 300     do 600 l1=l+1,nsa
 
@@ -406,10 +417,11 @@ c        sigma, lambda, delta, rho and psi
         stop 30000
         endif
 
-        if(l1.le.m19 
-     c   .or. (l1.gt.m25 .and. l1.le.m34))goto 700
-c       consider only the reinteraction among nucleon, pion, kaon,
-c        sigma, lambda, delta,rho and psi
+        if( l1.le.m19 
+     c   .or. (l1.gt.m_low .and. l1.le.m_upp) ) goto 700   ! 231123 Lei
+c231123 Lei     c   .or. (l1.gt.m25 .and. l1.le.m34))goto 700
+c       Consider only the reinteraction among nucleon, pion, Kaon, Xi, Omega, 
+c        Sigma, Lambda, Delta, rho, J/psi, psi' and D mesons. ! 231123 Lei
         goto 600
 700     iflag=0
         call rsfilt_h(l,l1,iflag)
@@ -453,7 +465,7 @@ c       neve: total number of runs
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000,NSIZE=750000)
+        PARAMETER (KSZJ=80000,NSIZE=750000)
         common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         common/sa8_h/tau(kszj),ishp(kszj)
         common/sa9_h/kfmax,kfaco(100),numb(100),non9,disbe(100,100)
@@ -816,7 +828,7 @@ c       117. k0- + lambda to pion0 + cascade0
 c       118. k+ + sigma+ba to pion0 + cascade0-
 c       119. k+ + sigma0- to pion+ + cascade0-
 c       120. k+ + lambda- to pion+ + cascade0-
-c       121. k+ + cascade-ba to pion+ + omiga-ba
+c       121. k+ + cascade-ba to pion+ + Omega-ba
 c       122. k0 + sigma-ba to pion+ + cascade0ba
 c       123. k0 + sigma0- to pion0 + cascade0-
 c       124. k0 + lambda- to pion0 + cascade0ba
@@ -826,22 +838,22 @@ c       127. k0- + n to k0 + cascade0
 c       128. k+ + p- to k0- + cascade0ba
 c       129. k0 + p- to k- + cascade0-
 c       130. k0 + n- to k0- + cascade0-
-c       131. pion+ + cascade- to k+ + omiga-
-c       132. pion0 + cascade- to k0 + omiga-
-c       133. pion- + cascade-ba to k- + omiga-ba
-c       134. pion0 + cascade-ba to k0- + omiga-ba
-c       135. pion- + cascade0 to k0 + omiga-
-c       136. pion0 + cascade0 to k+ + omiga-
-c       137. pion+ + cascade0- to k0- + omiga-ba
-c       138. pion0 + cascade0- to k- + omiga-ba
-c       139. k- + cascade- to pion- + omiga-
-c       140. k0- + cascade- to pion0 + omiga-
-c       141. k- + cascade0 to pion0 + omiga-
-c       142. k0- + cascade0 to pion+ + omiga-
-c       143. k+ + cascade-ba to pion+ + omiga-ba
-c       144. k0 + cascade-ba to pion0 + omiga-ba
-c       145. k+ + cascade0- to pion0 + omiga-ba
-c       146. k0 + cascade0- to pion- + omiga-ba
+c       131. pion+ + cascade- to k+ + Omega-
+c       132. pion0 + cascade- to k0 + Omega-
+c       133. pion- + cascade-ba to k- + Omega-ba
+c       134. pion0 + cascade-ba to k0- + Omega-ba
+c       135. pion- + cascade0 to k0 + Omega-
+c       136. pion0 + cascade0 to k+ + Omega-
+c       137. pion+ + cascade0- to k0- + Omega-ba
+c       138. pion0 + cascade0- to k- + Omega-ba
+c       139. k- + cascade- to pion- + Omega-
+c       140. k0- + cascade- to pion0 + Omega-
+c       141. k- + cascade0 to pion0 + Omega-
+c       142. k0- + cascade0 to pion+ + Omega-
+c       143. k+ + cascade-ba to pion+ + Omega-ba
+c       144. k0 + cascade-ba to pion0 + Omega-ba
+c       145. k+ + cascade0- to pion0 + Omega-ba
+c       146. k0 + cascade0- to pion- + Omega-ba
 
 c       147. pion- + p to delta- + pion+
 c       148. pion- + p to rho0 + n
@@ -1030,22 +1042,22 @@ c       327. k0 + cascade0 to k0- + n
 c       328. k0- + cascade0- to k+ + p-
 c       329. k- + cascade0- to k0 + p-
 c       330. k0- + cascade0- to k0 + n-
-c       331. k+ + omiga- to pion+ + cascade-
-c       332. k0 + omiga- to pion0 + cascade-
-c       333. k- + omiga-ba to pion- + cascade-ba
-c       334. k0- + omiga-ba to pion0 + cascade-ba
-c       335. k0 + omiga- to pion- + cascade0
-c       336. k+ + omiga- to pion0 + cascade0
-c       337. k0- + omiga-ba to pion+ + cascade0-
-c       338. k- + omiga-ba to pion0 + cascade0-
-c       339. pion- + omiga- to k- + cascade-
-c       340. pion0 + omiga- to k0- + cascade-
-c       341. pion0 + omiga- to k- + cascade0
-c       342. pion+ + omiga- to k0- + cascade0
-c       343. pion+ + omiga-ba to k+ + cascade-ba
-c       344. pion0 + omiga-ba to k0 + cascade-ba
-c       345. pion0 + omiga-ba to k+ + cascade0-
-c       346. pion- + omiga-ba to k0 + cascade0-
+c       331. k+ + Omega- to pion+ + cascade-
+c       332. k0 + Omega- to pion0 + cascade-
+c       333. k- + Omega-ba to pion- + cascade-ba
+c       334. k0- + Omega-ba to pion0 + cascade-ba
+c       335. k0 + Omega- to pion- + cascade0
+c       336. k+ + Omega- to pion0 + cascade0
+c       337. k0- + Omega-ba to pion+ + cascade0-
+c       338. k- + Omega-ba to pion0 + cascade0-
+c       339. pion- + Omega- to k- + cascade-
+c       340. pion0 + Omega- to k0- + cascade-
+c       341. pion0 + Omega- to k- + cascade0
+c       342. pion+ + Omega- to k0- + cascade0
+c       343. pion+ + Omega-ba to k+ + cascade-ba
+c       344. pion0 + Omega-ba to k0 + cascade-ba
+c       345. pion0 + Omega-ba to k+ + cascade0-
+c       346. pion- + Omega-ba to k0 + cascade0-
 c       347. pion+ + delta- to pion- + p
 c       348. pion+ + delta- to pion0 + n
 c       349. pion+ + delta0 to pion+ + n
@@ -1087,14 +1099,165 @@ c       382. psi' + rho0 to D0 + D0ba
 c       383. psi' + rho0 to D + Dba
 c       384. psi' + rho- to D0 + Dba
 
-c       593. lambda- + p to K*+ + omiga
-c       594. lambda- + n to K*0 + omiga
-c       595. sigma0- + p to K*+ + omiga
-c       596. sigma0- + n to K*0 + omiga
-c       597. p- + p to rho0 + omiga
-c       598. p- + n to rho- + omiga
-c       599. n- + p to rho+ + omiga
-c       600. n- + n to rho0 + omiga
+c031223 Lei D meson induced reactions.
+c============================================
+csa091223
+c       80 channels of D + pion/rho channels: 385-464
+c       32 channels of D + N channels: 465-496
+c       Total 112 channels: 385-496
+c--------------------------------------------
+c       D + pion/rho
+c       Single production channel.
+c
+c       Charge ++, --
+c       D+- + pion+-/rho+-
+c       385. D+ + pi+  -->  D*+ + rho+
+c       386. D- + pi-  -->  D*- + rho-
+c       387. D*+ + pi+  -->  D+ + rho+
+c       388. D*- + pi-  -->  D- + rho-
+c       389. D+ + rho+  -->  D*+ + pi+
+c       390. D- + rho-  -->  D*- + pi-
+c       391. D*+ + rho+  -->  D+ + pi+
+c       392. D*- + rho-  -->  D- + pi-
+c
+c       Charge 0- KF+-, Charge 0+ KF-+
+c       D0 + pion+-/rho+-
+c       393. D0 + pi-  -->  D*0 + rho-
+c       394. Dbar0 + pi+  -->  Dbar*0 + rho+
+c       395. D*0 + pi-  -->  D0 + rho-
+c       396. D*bar0 + pi+  -->  Dbar0 + rho+
+c       397. D0 + rho-  -->  D*0 + pi-
+c       398. Dbar0 + rho+  -->  Dbar*0 + pi+
+c       399. D*0 + rho-  -->  D0 + pi-
+c       400. D*bar0 + rho+  -->  Dbar0 + pi+
+c--------------------------------------------
+c       D + pion/rho
+c       Dual production chennels.
+c
+c       Charge 00 
+c       D0 + pi0/rho0
+c       401. D0 + pi0  -->  D*0 + rho0
+c       402. D0 + pi0  -->  D*+ + rho-
+c       403. Dbar0 + pi0  -->  Dbar*0 + rho0
+c       404. Dbar0 + pi0  -->  Dbar*- + rho+
+c       405. D*0 + pi0  -->  D0 + rho0
+c       406. D*0 + pi0  -->  D+ + rho-
+c       407. D*bar0 + pi0  -->  Dbar0 + rho0
+c       408. D*bar0 + pi0  -->  D- + rho+
+c       409. D0 + rho0  -->  D*0 + pi0
+c       410. D0 + rho0  -->  D*+ + pi-
+c       411. Dbar0 + rho0  -->  Dbar*0 + pi0
+c       412. Dbar0 + rho0  -->  D*- + pi+
+c       413. D*0 + rho0  -->  D0 + pi0
+c       414. D*0 + rho0  -->  D+ + pi-
+c       415. D*bar0 + rho0  -->  Dbar0 + pi0
+c       416. D*bar0 + rho0  -->  D- + pi+
+c
+c       Charge +-, -+
+c       D+- + pi+-/rho+-
+c       417. D+ + pi-  -->  D*+ + rho-
+c       418. D+ + pi-  -->  D*0 + rho0
+c       419. D- + pi+  -->  D*- + rho+
+c       420. D- + pi+  -->  D*bar0 + rho0
+c       421. D*+ + pi-  -->  D+ + rho-
+c       422. D*+ + pi-  -->  D0 + rho0
+c       423. D*- + pi+  -->  D- + rho+
+c       424. D*- + pi+  -->  Dbar0 + rho0
+c       425. D+ + rho-  -->  D*+ + pi-
+c       426. D+ + rho-  -->  D*0 + pi0
+c       427. D- + rho+  -->  D*- + pi+
+c       428. D- + rho+  -->  D*bar0 + pi0
+c       429. D*+ + rho-  -->  D+ + pi-
+c       430. D*+ + rho-  -->  D0 + pi0
+c       431. D*- + rho+  -->  D- + pi+
+c       432. D*- + rho+  -->  Dbar0 + pi0
+c
+c       Charge +0, -0
+c       D+- + pi0/rho0
+c       433. D+ + pi0  -->  D*+ + rho0
+c       434. D+ + pi0  -->  D*0 + rho+
+c       435. D- + pi0  -->  D*- + rho0
+c       436. D- + pi0  -->  D*bar0 + rho-
+c       437. D*+ + pi0  -->  D+ + rho0
+c       438. D*+ + pi0  -->  D0 + rho+
+c       439. D*- + pi0  -->  D- + rho0
+c       440. D*- + pi0  -->  Dbar0 + rho-
+c       441. D+ + rho0  -->  D*+ + pi0
+c       442. D+ + rho0  -->  D*0 + pi+
+c       443. D- + rho0  -->  D*- + pi0
+c       444. D- + rho0  -->  D*bar0 + pi-
+c       445. D*+ + rho0  -->  D+ + pi0
+c       446. D*+ + rho0  -->  D0 + pi+
+c       447. D*- + rho0  -->  D- + pi0
+c       448. D*- + rho0  -->  Dbar0 + pi-
+c
+c       Charge 0+ KF++, Charge 0- KF --
+c       D0 + pi+-/rho+-
+c       449. D0 + pi+  -->  D*0 + rho+
+c       450. D0 + pi+  -->  D*+ + rho0
+c       451. Dbar0 + pi-  -->  Dbar*0 + rho-
+c       452. Dbar0 + pi-  -->  D*- + rho0
+c       453. D*0 + pi+  -->  D0 + rho+
+c       454. D*0 + pi+  -->  D+ + rho0
+c       455. D*bar0 + pi-  -->  Dbar0 + rho-
+c       456. D*bar0 + pi-  -->  D- + rho0
+c       457. D0 + rho+  -->  D*0 + pi+
+c       458. D0 + rho+  -->  D*+ + pi0
+c       459. Dbar0 + rho-  -->  Dbar*0 + pi-
+c       460. Dbar0 + rho-  -->  D*- + pi0
+c       461. D*0 + rho+  -->  D0 + pi+
+c       462. D*0 + rho+  -->  D+ + pi0
+c       463. D*bar0 + rho-  -->  Dbar0 + pi-
+c       464. D*bar0 + rho-  -->  D- + pi0
+c--------------------------------------------
+c       D+- + N
+c       465. D+  + p+    -->  D*+ + p+
+c       466. D+  + p-    -->  D*+ + p-
+c       467. D+  + n     -->  D*+ + n
+c       468. D+  + nbar  -->  D*+ + nbar
+c       469. D-  + p+    -->  D*- + p+
+c       470. D-  + p-    -->  D*- + p-
+c       471. D-  + n     -->  D*- + n
+c       472. D-  + nbar  -->  D*- + nbar
+c       473. D*+ + p+    -->  D+  + p+
+c       474. D*+ + p-    -->  D+  + p-
+c       475. D*+ + n     -->  D+  + n
+c       476. D*+ + nbar  -->  D+  + nbar
+c       477. D*- + p+    -->  D-  + p+
+c       478. D*- + p-    -->  D-  + p-
+c       479. D*- + n     -->  D-  + n
+c       480. D*- + nbar  -->  D-  + nbar
+c
+c       D0 + N
+c       481. D0     + p+    -->  D*0 + p+
+c       482. D0     + p-    -->  D*0 + p-
+c       483. D0     + n     -->  D*0 + n
+c       484. D0     + nbar  -->  D*0 + nbar
+c       485. Dbar0  + p+    -->  D*bar0 + p+
+c       486. Dbar0  + p-    -->  D*bar0 + p-
+c       487. Dbar0  + n     -->  D*bar0 + n
+c       488. Dbar0  + nbar  -->  D*bar0 + nbar
+c       489. D*0    + p+    -->  D0 + p+
+c       490. D*0    + p-    -->  D0 + p-
+c       491. D*0    + n     -->  D0 + n
+c       492. D*0    + nbar  -->  D0 + nbar
+c       493. D*bar0 + p+    -->  Dbar0 + p+
+c       494. D*bar0 + p-    -->  Dbar0 + p-
+c       495. D*bar0 + n     -->  Dbar0 + n
+c       496. D*bar0 + nbar  -->  Dbar0 + nbar
+c============================================
+c031223 Lei D meson induced reactions.
+
+c       489-592: null.
+
+c       593. lambda- + p to K*+ + Omega
+c       594. lambda- + n to K*0 + Omega
+c       595. sigma0- + p to K*+ + Omega
+c       596. sigma0- + n to K*0 + Omega
+c       597. p- + p to rho0 + Omega
+c       598. p- + n to rho- + Omega
+c       599. n- + p to rho+ + Omega
+c       600. n- + n to rho0 + Omega
 
 c       the reaction processes above are copy from A. Baldini, etal; ``Total 
 c        cross sections for reaction of high energy particles"; Spring-Veslay 
@@ -1103,7 +1266,7 @@ c        Berlin, 1988.   sa091223
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000,NSIZE=750000)
+        PARAMETER (KSZJ=80000,NSIZE=750000)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         common/sa1_h/n,non1,k(kszj,5),p(kszj,5),v(kszj,5)
 c       note the name of the arraies in 'sa1' in this subroutine
@@ -1119,12 +1282,14 @@ c       note the name of the arraies in 'sa1' in this subroutine
         am01=pmas(pycomp(kl),1)
         am02=pmas(pycomp(kl1),1)
 c       the following statements guarantees the line number in particle 
-c        list of pion, kion, rho, and J/psi should be first component 
-c        of prod()
+c        list of pion, kion, rho, J/psi, psi' and D mesons should be 
+c        first component of prod()
 c       tw(i): the cross section ratio of (i-th inela.)/tot
-        if(abs(kl).eq.211 .or. abs(kl).eq.111 .or. abs(kl).eq.321
-     &   .or. abs(kl).eq.311.or. abs(kl).eq.213.or. abs(kl).eq.113
-     &   .or. kl.eq.443 .or. kl.eq.100443)then
+        if(   abs(kl).eq.211 .or. abs(kl).eq.111 .or. abs(kl).eq.321
+     &   .or. abs(kl).eq.311 .or. abs(kl).eq.213 .or. abs(kl).eq.113
+     &   .or. kl.eq.443 .or. kl.eq.100443
+     &   .OR. ABS(kl).eq.411 .OR. ABS(kl).eq.421 .OR. ABS(kl).eq.413
+     &   .OR. ABS(kl).eq.423 )then   ! 231123 Lei D meson
         idpl=1   ! meson
         else
         idpl=3   ! baryon
@@ -1256,7 +1421,7 @@ c       tw : the ratio of cross section of (given inela.)/tot
         common/iloval/ilo1,ilo2,ilo3,ilo4,ilo5,ilo6,ilo7,ilo8,ilo9
         common/count_h/isinel(600)
         dimension lc(nsize,5),tc(nsize),tw(nsize)
-        integer fact1,fact2
+c111223 integer fact1,fact2   ! 111223 Lei
         para13=PARAM(1)*0.1*PARAM(6)*0.8
 c       p-p annihilation cross section is assumed to be equal to 0.8*(
 c        total inelastic cross section)
@@ -1315,7 +1480,7 @@ c       pion+ + pion-
         call spipi(ik5,ik6,ss,ilo2)
         if(ilo2.eq.0)fact2=0.
 102     fact=fact1+fact2
-        if(fact1.eq.0. .and. fact2.eq.0.)goto 13
+        if(ABS(fact1).le.1D-15 .and. ABS(fact2).le.1D-15)goto 13
 c       if(ilo1.eq.0 .and. ilo2.eq.0)goto 13
         lc(icp,3)=ik3
         lc(icp,4)=ik4
@@ -1382,7 +1547,7 @@ c       pion0 + pion0
         call spipi(ik5,ik6,ss,ilo2)
         if(ilo2.eq.0)fact2=0.
 104     fact=fact1+fact2
-        if(fact1.eq.0. .and. fact2.eq.0.)goto 13
+        if(ABS(fact1).le.1D-5 .and. ABS(fact2).le.1D-5) goto 13   ! 280224 Lei ABS
 c       if(ilo1.eq.0 .and. ilo2.eq.0)goto 13
         lc(icp,3)=ik3
         lc(icp,4)=ik4
@@ -1691,8 +1856,8 @@ c       pion+ + sigma-
         endif
         the=pmas(pycomp(321),1)+pmas(pycomp(3312),1)
         si1=s1724(ss,ilo1,0,the)
-c       cross section of pion + y to kaon + cascade is assumed to be 
-c        equal to pion + n to kaon + y,but take the different of
+c       cross section of pion + y to Kaon + cascade is assumed to be 
+c        equal to pion + n to Kaon + y,but take the different of
 c        threshold energy into account
 
 701     if(isinel(97).eq.0)then
@@ -1772,8 +1937,8 @@ c       pion- + sigma-ba
         endif
         the=pmas(pycomp(-321),1)+pmas(pycomp(-3312),1)
         si1=s1724(ss,ilo1,0,the)
-c       cross section of pion + y to kaon + cascade is assumed to be 
-c        equal to pion + n to kaon + y,but take the different of
+c       cross section of pion + y to Kaon + cascade is assumed to be 
+c        equal to pion + n to Kaon + y,but take the different of
 c        threshold energy into account
 
 7011    if(isinel(105).eq.0)then
@@ -2517,8 +2682,8 @@ c        ten times of pion + n to k + y
         endif
         the=pmas(pycomp(321),1)+pmas(pycomp(3312),1)
         si5=s1724(ss,ilo5,0,the)/10.
-c       cross section of kaon + n to kaon + cascade is assumed to be 
-c        equal to pion + n to kaon + y,but take the different of 
+c       cross section of Kaon + n to Kaon + cascade is assumed to be 
+c        equal to pion + n to Kaon + y,but take the different of 
 c        threshold energy into account
 
 412     if(isinel(125).eq.0)then
@@ -2531,7 +2696,7 @@ c        threshold energy into account
 725     if(ilo1.eq.0 .and. ilo2.eq.0 .and. ilo3.eq.0 .and. ilo4.eq.0 
      c   .and. ilo5.eq.0 .and. ilo6.eq.0)goto 13
         if(si1.lt.1.e-6.and.si2.lt.1.e-6.and.si3.lt.1.e-6
-     c   .and.si4.lt.1.e-6 .and. si5.eq.1.e-6 .and. si6.eq.1.e-6)goto 13
+     c   .and.si4.lt.1.e-6 .and. si5.le.1.e-6 .and. si6.le.1.e-6)goto 13   ! 280224 Lei .eq. -> .lt.
         si12=si1+si2
         si13=si12+si3
         si14=si13+si4
@@ -2872,7 +3037,7 @@ c        ten times of pion + n to k + y
 730     if(ilo1.eq.0 .and. ilo2.eq.0 .and. ilo3.eq.0 .and. ilo4.eq.0
      c   .and. ilo5.eq.0 .and. ilo6.eq.0)goto 13
         if(si1.lt.1.e-6.and.si2.lt.1.e-6.and.si3.lt.1.e-6
-     c   .and.si4.lt.1.e-6 .and. si5.eq.1.e-6.and.si6.eq.1.e-6)goto 13
+     c   .and.si4.lt.1.e-6 .and. si5.lt.1.e-6.and.si6.lt.1.e-6)goto 13   ! 280224 Lei .eq. -> .lt.
         si12=si1+si2
         si13=si12+si3
         si14=si13+si4
@@ -3096,11 +3261,12 @@ c       k0 + n-
         si4=s1724(ss,ilo4,0,the)
 528     if(isinel(82).eq.0)then
         si5=0.
-        goto 529
+        goto 5299   ! 280224 Lei 529 -> 5299
         endif
         the=pmas(pycomp(-321),1)+pmas(pycomp(-3312),1)
         si5=s1724(ss,ilo5,0,the)/10.
 
+5299    continue   ! 280224 Lei
         if(isinel(130).eq.0)then
         si6=0.
         goto 529
@@ -3663,7 +3829,7 @@ c       k0 + sigma+bar to pion- + cascade0ba
         goto 10
         endif
 
-c       k+ + cascade-ba to pion+ + omiga-ba
+c       k+ + cascade-ba to pion+ + Omega-ba
         if(kl.eq.321 .and. kl1.eq.-3312)then
         if(isinel(143).eq.0)goto 13
         the=pmas(pycomp(211),1)+pmas(pycomp(-3334),1)
@@ -3675,7 +3841,7 @@ c       k+ + cascade-ba to pion+ + omiga-ba
         goto 10
         endif
 
-c       k+ + cascade0- to pion0 + omiga-ba
+c       k+ + cascade0- to pion0 + Omega-ba
         if(kl.eq.321 .and. kl1.eq.-3322)then
         if(isinel(145).eq.0)goto 13
         the=pmas(pycomp(111),1)+pmas(pycomp(-3334),1)
@@ -3687,7 +3853,7 @@ c       k+ + cascade0- to pion0 + omiga-ba
         goto 10
         endif
 
-c       k- + cascade- to pion- + omiga-
+c       k- + cascade- to pion- + Omega-
         if(kl.eq.-321 .and. kl1.eq.3312)then
         if(isinel(139).eq.0)goto 13
         the=pmas(pycomp(-211),1)+pmas(pycomp(3334),1)
@@ -3698,8 +3864,8 @@ c       k- + cascade- to pion- + omiga-
         lc(icp,5)=139
         goto 10
         endif
-       
-c       k- + cascade0 to pion0 + omiga-
+
+c       k- + cascade0 to pion0 + Omega-
         if(kl.eq.-321 .and. kl1.eq.3322)then
         if(isinel(141).eq.0)goto 13
         the=pmas(pycomp(111),1)+pmas(pycomp(3334),1)
@@ -3711,7 +3877,7 @@ c       k- + cascade0 to pion0 + omiga-
         goto 10
         endif
 
-c       k0 + cascade-ba to pion0 + omiga-ba
+c       k0 + cascade-ba to pion0 + Omega-ba
         if(kl.eq.311 .and. kl1.eq.-3312)then
         if(isinel(144).eq.0)goto 13
         the=pmas(pycomp(111),1)+pmas(pycomp(-3334),1)
@@ -3723,7 +3889,7 @@ c       k0 + cascade-ba to pion0 + omiga-ba
         goto 10
         endif
 
-c       k0 + cascade0- to pion- + omiga-ba
+c       k0 + cascade0- to pion- + Omega-ba
         if(kl.eq.311 .and. kl1.eq.-3322)then
         if(isinel(146).eq.0)goto 13
         the=pmas(pycomp(-211),1)+pmas(pycomp(-3334),1)
@@ -3735,7 +3901,7 @@ c       k0 + cascade0- to pion- + omiga-ba
         goto 10
         endif
 
-c       k0- + cascade- to pion0 + omiga-
+c       k0- + cascade- to pion0 + Omega-
         if(kl.eq.-311 .and. kl1.eq.3312)then
         if(isinel(140).eq.0)goto 13
         the=pmas(pycomp(111),1)+pmas(pycomp(3334),1)
@@ -3747,7 +3913,7 @@ c       k0- + cascade- to pion0 + omiga-
         goto 10
         endif
 
-c       k0- + cascade0 to pion+ + omiga-
+c       k0- + cascade0 to pion+ + Omega-
         if(kl.eq.-311 .and. kl1.eq.3322)then
         if(isinel(142).eq.0)goto 13
         the=pmas(pycomp(211),1)+pmas(pycomp(3334),1)
@@ -3788,7 +3954,7 @@ c       k+ + k- to pi0 + pi0
         fact2=fac
         if(ilo2.eq.0)fact2=0.
 602     fact=fact1+fact2
-        if(fact1.eq.0. .and. fact2.eq.0.)goto 13
+        if(ABS(fact1).le.1D-5 .and. ABS(fact2).le.1D-5) goto 13   ! 280224 Lei ABS
 c       if(ilo1.eq.0 .and. ilo2.eq.0)goto 13
         lc(icp,3)=ik3
         lc(icp,4)=ik4
@@ -3864,7 +4030,7 @@ c       k0 + k0- to pi0 + pi0
         fact2=fac
         if(ilo2.eq.0)fact2=0.
 604     fact=fact1+fact2
-        if(fact1.eq.0. .and. fact2.eq.0.)goto 13
+        if(ABS(fact1).le.1D-5 .and. ABS(fact2).le.1D-5) goto 13   ! 280224 Lei ABS
 c       if(ilo1.eq.0 .and. ilo2.eq.0)goto 13
         lc(icp,3)=ik3
         lc(icp,4)=ik4
@@ -5316,7 +5482,7 @@ c       pion+ + cascade- to k0- + sigma0
        ik1=321
         ik2=3334
         ic=131
-c       pion+ + cascade- to k+ + omiga-
+c       pion+ + cascade- to k+ + Omega-
 687     lc(icp,3)=ik1
         lc(icp,4)=ik2
         lc(icp,5)=ic
@@ -5380,7 +5546,7 @@ c       pion0 + cascade-
         the=pmas(pycomp(311),1)+pmas(pycomp(3334),1)
         si4=s1724(ss,ilo4,0,the)
 
-c       pion0 + cascade- to k0 + omiga-
+c       pion0 + cascade- to k0 + Omega-
 1690    if(ilo1.eq.0 .and. ilo2.eq.0 .and. ilo3.eq.0.and.
      &   ilo4.eq.0)goto 13
         if(si1.lt.1.e-6.and.si2.lt.1.e-6.and.si3.lt.1.e-6.and.
@@ -5416,7 +5582,7 @@ c       pion0 + cascade- to k0- + sigma-
         ik1=311
         ik2=3334
         ic=132
-c       pion0 + cascade- to k0 + omiga-
+c       pion0 + cascade- to k0 + Omega-
 691     lc(icp,3)=ik1
         lc(icp,4)=ik2
         lc(icp,5)=ic
@@ -5515,7 +5681,7 @@ c       pion- + cascade-ba to k0 + sigma0-
         ik1=-321
         ik2=-3334
         ic=133
-c       pion- + cascade-ba to k- + omiga-ba
+c       pion- + cascade-ba to k- + Omega-ba
 695     lc(icp,3)=ik1
         lc(icp,4)=ik2
         lc(icp,5)=ic
@@ -5596,7 +5762,7 @@ c       pion0 + cascade-ba to k0 + sigma-ba
        ik1=-311
         ik2=-3334
         ic=134
-c       pion0 + cascade-ba to k0- + omiga-ba
+c       pion0 + cascade-ba to k0- + Omega-ba
 700     lc(icp,3)=ik1
         lc(icp,4)=ik2
         lc(icp,5)=ic
@@ -6020,7 +6186,7 @@ c       k0- + cascade0- to k0 + n-
         goto 10
         endif
 
-c       k+ + omiga-
+c       k+ + Omega-
         if(kl.eq.321 .and. kl1.eq.3334)then
         if(isinel(331).eq.0)then
         si1=0.
@@ -6051,13 +6217,13 @@ c       k+ + omiga-
         ik1=211
         ik2=3312
         ic=331
-c       k+ + omiga- to pion+ + cascade-
+c       k+ + Omega- to pion+ + cascade-
         goto 794
         endif
         ik1=111
         ik2=3322
         ic=336
-c       k+ + omiga- to pion0 + cascade0
+c       k+ + Omega- to pion0 + cascade0
 794     lc(icp,3)=ik1
         lc(icp,4)=ik2
         lc(icp,5)=ic
@@ -6065,7 +6231,7 @@ c       k+ + omiga- to pion0 + cascade0
         goto 10
         endif
 
-c       k- + omiga-ba
+c       k- + Omega-ba
         if(kl.eq.-321 .and. kl1.eq.-3334)then
         if(isinel(333).eq.0)then
         si1=0.
@@ -6096,13 +6262,13 @@ c       k- + omiga-ba
         ik1=-211
         ik2=-3312
         ic=333
-c       k- + omiga-ba to pion- + cascade-ba
+c       k- + Omega-ba to pion- + cascade-ba
         goto 797
         endif
         ik1=111
         ik2=-3322
         ic=338
-c       k- + omiga-ba to pion0 + cascade0-
+c       k- + Omega-ba to pion0 + cascade0-
 797     lc(icp,3)=ik1
         lc(icp,4)=ik2
         lc(icp,5)=ic
@@ -6110,7 +6276,7 @@ c       k- + omiga-ba to pion0 + cascade0-
         goto 10
         endif
 
-c       k0 + omiga-
+c       k0 + Omega-
         if(kl.eq.311 .and. kl1.eq.3334)then
         if(isinel(332).eq.0)then
         si1=0.
@@ -6141,13 +6307,13 @@ c       k0 + omiga-
         ik1=111
         ik2=3312
         ic=332
-c       k0 + omiga- to pion0 + cascade-
+c       k0 + Omega- to pion0 + cascade-
         goto 800
         endif
         ik1=-211
         ik2=3322
         ic=335
-c       k0 + omiga- to pion- + cascade0
+c       k0 + Omega- to pion- + cascade0
 800     lc(icp,3)=ik1
         lc(icp,4)=ik2
         lc(icp,5)=ic
@@ -6155,7 +6321,7 @@ c       k0 + omiga- to pion- + cascade0
         goto 10
         endif
 
-c       k0- + omiga-ba
+c       k0- + Omega-ba
         if(kl.eq.-311 .and. kl1.eq.-3334)then
         if(isinel(334).eq.0)then
         si1=0.
@@ -6186,13 +6352,13 @@ c       k0- + omiga-ba
         ik1=111
         ik2=-3312
         ic=334
-c       k0- + omiga-ba to pion0 + cascade-ba
+c       k0- + Omega-ba to pion0 + cascade-ba
         goto 803
         endif
         ik1=211
         ik2=-3322
         ic=337
-c       k0- + omiga-ba to pion+ + cascade0-
+c       k0- + Omega-ba to pion+ + cascade0-
 803     lc(icp,3)=ik1
         lc(icp,4)=ik2
         lc(icp,5)=ic
@@ -6290,7 +6456,7 @@ c       pion+ + cascade0- to k0 + sigma-ba
         ik1=-311
         ik2=-3334
         ic=137
-cpion+ + cascade0- to k0- + omiga-ba
+c       pion+ + cascade0- to k0- + Omega-ba
 807     lc(icp,3)=ik1
         lc(icp,4)=ik2
         lc(icp,5)=ic
@@ -6372,7 +6538,7 @@ c       pion- + cascade0 to k0- + sigma-
         ik1=311
         ik2=3334
         ic=135
-c       pion- + cascade0 to k0 + omiga-
+c       pion- + cascade0 to k0 + Omega-
 811     lc(icp,3)=ik1
         lc(icp,4)=ik2
         lc(icp,5)=ic
@@ -6471,7 +6637,7 @@ c       pion0 + cascade0 to k0- + lambda
         ik1=321
         ik2=3334
         ic=136
-c       pion0 + cascade0 to k+ + omiga-
+c       pion0 + cascade0 to k+ + Omega-
 815     lc(icp,3)=ik1
         lc(icp,4)=ik2
         lc(icp,5)=ic
@@ -6553,7 +6719,7 @@ c       pion0 + cascade0- to k0 + lambda-
         ik1=-321
         ik2=-3334
         ic=138
-c       pion0 + cascade0- to k- + omiga-ba
+c       pion0 + cascade0- to k- + Omega-ba
 819     lc(icp,3)=ik1
         lc(icp,4)=ik2
         lc(icp,5)=ic
@@ -6561,7 +6727,7 @@ c       pion0 + cascade0- to k- + omiga-ba
         goto 10
         endif
 
-c       pion+ + omiga- to k0- + cascade0
+c       pion+ + Omega- to k0- + cascade0
         if(kl.eq.211 .and. kl1.eq.3334)then
         if(isinel(342).eq.0)goto 13
         the=pmas(pycomp(-311),1)+pmas(pycomp(3322),1)
@@ -6578,7 +6744,7 @@ c       pion+ + omiga- to k0- + cascade0
         goto 10
         endif
 
-c       pion+ + omiga-ba to k+ + cascade-ba
+c       pion+ + Omega-ba to k+ + cascade-ba
         if(kl.eq.211 .and. kl1.eq.-3334)then
         if(isinel(343).eq.0)goto 13
         the=pmas(pycomp(321),1)+pmas(pycomp(-3312),1)
@@ -6595,7 +6761,7 @@ c       pion+ + omiga-ba to k+ + cascade-ba
         goto 10
         endif
 
-c       pion- + omiga- to k- + cascade-
+c       pion- + Omega- to k- + cascade-
         if(kl.eq.-211 .and. kl1.eq.3334)then
         if(isinel(339).eq.0)goto 13
         the=pmas(pycomp(-321),1)+pmas(pycomp(3312),1)
@@ -6612,7 +6778,7 @@ c       pion- + omiga- to k- + cascade-
         goto 10
         endif
 
-c       pion- + omiga-ba to k0 + cascade0-
+c       pion- + Omega-ba to k0 + cascade0-
         if(kl.eq.-211 .and. kl1.eq.-3334)then
         if(isinel(346).eq.0)goto 13
         the=pmas(pycomp(311),1)+pmas(pycomp(-3322),1)
@@ -6629,7 +6795,7 @@ c       pion- + omiga-ba to k0 + cascade0-
         goto 10
         endif
 
-c       pion0 + omiga- 
+c       pion0 + Omega- 
         if(kl.eq.111 .and. kl1.eq.3334)then
         if(isinel(340).eq.0)then
         si1=0.
@@ -6660,21 +6826,21 @@ c       pion0 + omiga-
         ik1=-311
         ik2=3312
         ic=340
-c       pion0 + omiga- to k0- + cascade-
+c       pion0 + Omega- to k0- + cascade-
         goto 822
         endif
         ik1=-321
         ik2=3322
         ic=341
-c       pion0 + omiga- to k- + cascade0
+c       pion0 + Omega- to k- + cascade0
 822     lc(icp,3)=ik1
         lc(icp,4)=ik2
         lc(icp,5)=ic
-        tw(icp)=si13/cspin
+        tw(icp)=si12/cspin   ! 280224 Lei si13 -> si12
         goto 10
         endif
 
-c       pion0 + omiga-ba 
+c       pion0 + Omega-ba 
         if(kl.eq.111 .and. kl1.eq.-3334)then
         if(isinel(344).eq.0)then
         si1=0.
@@ -6705,13 +6871,13 @@ c       pion0 + omiga-ba
         ik1=311
         ik2=-3312
         ic=344
-c       pion0 + omiga-ba to k0 + cascade-ba
+c       pion0 + Omega-ba to k0 + cascade-ba
         goto 825
         endif
         ik1=321
         ik2=-3322
         ic=345
-c       pion0 + omiga-ba to k+ + cascade0-
+c       pion0 + Omega-ba to k+ + cascade0-
 825     lc(icp,3)=ik1
         lc(icp,4)=ik2
         lc(icp,5)=ic
@@ -7622,7 +7788,7 @@ c       if(ilo.eq.0) goto 13
         endif
 
 C&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-c       J/Psi interacts with baryon or meson
+c       J/psi interacts with baryon or meson
         if(kl.eq.443 .and. kl1.eq.2112)then
         if(iabsb.eq.0)goto 13
         call jpsin(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,1)
@@ -7685,11 +7851,11 @@ c       J/Psi interacts with baryon or meson
         goto 10
         endif
 
-c       Psi' interacts with baryon or meson
+c       psi' interacts with baryon or meson
         if(kl.eq.100443 .and. kl1.eq.2112)then
         if(iabsb.eq.0)goto 13
         call jpsin(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,2)
-c       argument '2' here refers to the Psi' induced reaction 
+c       argument '2' here refers to the psi' induced reaction 
 c       corresponding onse
         if(ioo.eq.0)goto 13
         icp5=lc(icp,5)
@@ -7699,7 +7865,7 @@ c       corresponding onse
         lc(icp,5)=icp5+192
         endif
 c       14 and 192 are the distance (in order number) of inelastic reaction 
-c        between J/Psi induced reaction and Psi, induced corresponding 
+c        between J/psi induced reaction and psi, induced corresponding 
 c        reaction 
         goto 10
         endif
@@ -7801,7 +7967,31 @@ c        reaction
         goto 10
         endif
 
-        write(9,*)'nothing is found in hadcas prod, kl, kl1=', kl, kl1
+c231123 Lei
+c       D meson + pion/rho ( pion/rho + D meson )
+        if( ( (ABS(kl) .eq.411 .OR. ABS(kl) .eq.421  .OR.    ! D+-, D0/Dbar0
+     &         ABS(kl) .eq.413 .OR. ABS(kl) .eq.423) .AND.   ! D*+-. D*0/D*bar0
+     &        (ABS(kl1).eq.211 .OR. ABS(kl1).eq.111  .OR.    ! pi+-, pi0
+     &         ABS(kl1).eq.213 .OR. ABS(kl1).eq.113) )       ! rho+-, rho0
+     &  .OR.( (ABS(kl1).eq.411 .OR. ABS(kl1).eq.421  .OR.    ! D+-, D0/Dbar0
+     &         ABS(kl1).eq.413 .OR. ABS(kl1).eq.423) .AND.   ! D*+-. D*0/D*bar0
+     &        (ABS(kl) .eq.211 .OR. ABS(kl) .eq.111  .OR.    ! pi+-, pi0
+     &         ABS(kl) .eq.213 .OR. ABS(kl) .eq.113) ) )then ! rho+-, rho0
+            call DMeson_coll(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo)
+            if( ioo.eq.0 ) goto 13   ! Treateda as elastic collision.
+            goto 10   ! Inelastic collision.
+c       D meson + N (the order has been specified when calling "prod")
+        else if( (ABS(kl) .eq.411  .OR. ABS(kl) .eq.421  .OR.    ! D+-, D0/Dbar0
+     &            ABS(kl) .eq.413  .OR. ABS(kl) .eq.423) .AND.   ! D*+-, D*0/D*bar0
+     &           (ABS(kl1).eq.2212 .OR. ABS(kl1).eq.2112) )then  ! p,pbar, n,nbar
+            call Dpn_coll(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo)
+            if( ioo.eq.0 ) goto 13   ! Treateda as elastic collision.
+            goto 10   ! Inelastic collision.
+        end if
+c231123 Lei
+
+        write(9,*)"No inel. channel is found in hadcas prod(), " //
+     &            "treated as elastic collision, kl, kl1=", kl, kl1
 13      do m=3,5
         lc(icp,m)=0
         enddo
@@ -7810,7 +8000,7 @@ c        reaction
 10      if(lc(icp,5).lt.1593)then
         nchargef=PYCHGE(lc(icp,3))+PYCHGE(lc(icp,4))
         if(nchargei/3.ne.nchargef/3)then
-        write(9,*)'initial,final,lc(icp,5)=',
+        write(9,*)'Charges were not conserved,initial,final,lc(icp,5)=',
      c   nchargei/3,nchargef/3,lc(icp,5)
         endif
         endif
@@ -7889,7 +8079,7 @@ c        truncate collision list correspondingly
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000,NSIZE=750000)
+        PARAMETER (KSZJ=80000,NSIZE=750000)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         common/sa12/ppsa(5),nchan,nsjp,sjp,taup,taujp   ! 250208 yan
         common/sa1_h/n,non1,k(kszj,5),p(kszj,5),v(kszj,5)
@@ -8243,7 +8433,7 @@ c       update the collision time list
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000,NSIZE=750000)
+        PARAMETER (KSZJ=80000,NSIZE=750000)
 c        common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         common/sa9_h/kfmax,kfaco(100),numb(100),non9,disbe(100,100)
         common/sa20_h/t0,sig,dep,ddt,edipi,epin,ecsnn,ekn,ecspsn,ecspsm
@@ -8297,15 +8487,23 @@ c       loop over particle list
         m29=numb(29)
         m32=numb(32)
         m34=numb(34)
-c       m34=numb(kfmax-11)
-c       subtract 11, since do not consider the rescattering of x0c, etc   
+        m46 = numb(46)   ! 231123 Lei up to D*0bar 
+        ! m48 = numb(48)   ! 231123 Lei up to Lambda_cbar-
+        ! m52 = numb(52)   ! 231123 Lei up to D*_s-
+c       <= m19, reiniteraction including nucleon, pion, Kaon, Sigma, Lambda
+        ! m_low = m25  ! 231123 consider reiniteraction not including Xi or Omega
+        ! m_upp = m34  ! 231123 consider reiniteraction up to psi'
+        m_low = m19  ! 231123 consider reiniteraction including Xi and Omega
+        m_upp = m46  ! 231123 consider reiniteraction up to D*bar0
+
         j1=ic
         do ik=1,2
 
-        if(j1.le.m19 
-     c   .or. (j1.gt.m25 .and. j1.le.m34))goto 301
-c       consider only the reinteraction among nucleon, pion, kaon,
-c        sigma, lambda, delta, rho and psi
+        if( j1.le.m19
+     c   .or. (j1.gt.m_low .and. j1.le.m_upp) ) goto 301   ! 231123 Lei
+c231123 Lei     c   .or. (j1.gt.m25 .and. j1.le.m34))goto 300
+c       Consider only the reinteraction among nucleon, pion, Kaon, Xi, Omega, 
+c        Sigma, Lambda, Delta, rho, J/psi, psi' and D mesons. ! 231123 Lei
         goto 300
 
 301     do i=1,m34
@@ -8322,10 +8520,11 @@ c       forbiden scattered particles colliding with each other immediately
         stop 30000
         endif
 
-        if(i.le.m19 
-     c   .or. (i.gt.m25 .and. i.le.m34))goto 602
-c       consider only the reinteraction among nucleon, pion, kaon,
-c        sigma, lambda, delta, rho and psi
+        if( i.le.m19 
+     c   .or. (i.gt.m_low .and. i.le.m_upp) ) goto 602   ! 231123 Lei
+c231123 Lei     c   .or. (i.gt.m25 .and. i.le.m34))goto 602
+c       Consider only the reinteraction among nucleon, pion, Kaon, Xi, Omega, 
+c        Sigma, Lambda, Delta, rho, J/psi, psi' and D mesons. ! 231123 Lei
         goto 600
 
 csa601     if(j1.le.m2 .and. i.le.m2.and.j1.lt.i)goto 600
@@ -8457,13 +8656,27 @@ c       constraints on the direct reactions
      &   3122 .or. kl.eq.3212 .or. kl.eq.3112 .or.kl.eq.3222
      &   .or.kl.eq.3312 .or.kl.eq.3322))goto 11
 
-c       constraints on the J/Psi (Psi') induced reactions
+c       constraints on the J/psi (psi') induced reactions
         if((kl.eq.443 .or. kl.eq.100443) .and. (kl1.eq.2212 .or. kl1.eq.
      &   2112 .or. kl1.eq.211 .or. kl1.eq.111 .or. kl1.eq.-211 
      &   .or. kl1.eq.213 .or. kl1.eq.113 .or. kl1.eq.-213))goto 11 
         if((kl1.eq.443 .or. kl1.eq.100443) .and. (kl.eq.2212 .or. kl.eq.
      &   2112 .or. kl.eq.211 .or. kl.eq.111 .or. kl.eq.-211 
      &   .or. kl.eq.213 .or. kl.eq.113 .or. kl.eq.-213))goto 11
+
+c231123 Lei
+c       D + pion/rho/nucleon
+        if( (ABS(kl) .eq.411  .OR. ABS(kl) .eq.421  .OR.    ! D+-, D0/Dbar0
+     &       ABS(kl) .eq.413  .OR. ABS(kl) .eq.423) .AND.   ! D*+-. D*0/D*bar0
+     &      (ABS(kl1).eq.211  .OR. ABS(kl1).eq.111  .OR.    ! pi+-, pi0
+     &       ABS(kl1).eq.213  .OR. ABS(kl1).eq.113  .OR.    ! rho+-, rho0
+     &       ABS(kl1).eq.2212 .OR. ABS(kl1).eq.2112) ) goto 11   ! p,pbar, n,nbar
+        if( (ABS(kl1).eq.411  .OR. ABS(kl1).eq.421  .OR.    ! D+-, D0/Dbar0
+     &       ABS(kl1).eq.413  .OR. ABS(kl1).eq.423) .AND.   ! D*+-. D*0/D*bar0
+     &      (ABS(kl) .eq.211  .OR. ABS(kl) .eq.111  .OR.    ! pi+-, pi0
+     &       ABS(kl) .eq.213  .OR. ABS(kl) .eq.113  .OR.    ! rho+-, rho0
+     &       ABS(kl) .eq.2212 .OR. ABS(kl) .eq.2112) ) goto 11   ! p,pbar, n,nbar
+c231123 Lei
 
 c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
         if(kl.eq.2112.and.(kl1.eq.2112.or.kl1.eq.2212))goto 11
@@ -8545,13 +8758,15 @@ c       constraints on the reverse reactions
         return
         end
 
+
+
 c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
         subroutine tcolij_h(l,l1,time,icp,lc,tc,tw)
 c       calculate the collision time & fill up lc(i,1-2),tc(i). 
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000,NSIZE=750000)
+        PARAMETER (KSZJ=80000,NSIZE=750000)
         common/sa1_h/n,non1,k(kszj,5),p(kszj,5),v(kszj,5)
         common/sa8_h/tau(kszj),ishp(kszj)
         common/sa10_h/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
@@ -8581,6 +8796,8 @@ c       perform Lorentz transf. to CMS frame
         call lorntz(ilo,b,pi,pj)
         bta=dsqrt(b(1)**2+b(2)**2+b(3)**2)
 c       if boost is too violent,put particles on mass shell by hand.
+        bmi=0D0   ! 280224 Lei
+        bmj=0D0   ! 280224 Lei
         if(bta.gt.0.99999d+0)then
         bmi=pmas(pycomp(k(l,2)),1)
         bmj=pmas(pycomp(k(l1,2)),1)
@@ -8596,18 +8813,18 @@ c092200
 c       if ss < threshold collision may not happen
 c311002
 c311002 for isothermal direct reactions
-c311002 pipi->kk
+c311002 pipi->KK
         if(((abs(k(l,2)).eq.211.or.k(l,2).eq.111).and.
      &   (abs(k(l1,2)).eq.211.or.k(l1,2).eq.111)).and.ss.le.
      &   2.*pmas(pycomp(321),1))goto 10
-c311002 piN->ky
+c311002 piN->KY
         if(((abs(k(l,2)).eq.211.or.k(l,2).eq.111).and.
      &   (abs(k(l1,2)).eq.2112.or.abs(k(l1,2)).eq.2212)).and.ss.le.
      &   (pmas(pycomp(321),1)+1.2))goto 10   ! 311002
         if(((abs(k(l1,2)).eq.211.or.k(l1,2).eq.111).and.
      &   (abs(k(l,2)).eq.2112.or.abs(k(l,2)).eq.2212)).and.ss.le.
      &   (pmas(pycomp(321),1)+1.2))goto 10   !311002
-c       piy->k(cascade)
+c       piY->K(Cascade)
         if(((abs(k(l,2)).eq.211.or.k(l,2).eq.111).and.
      &   (abs(k(l1,2)).eq.3122.or.abs(k(l1,2)).eq.3212.or.k(l1,2)
      &   .eq.3112.or.k(l1,2).eq.3222)).and.ss.le.
@@ -8616,14 +8833,14 @@ c       piy->k(cascade)
      &   (abs(k(l,2)).eq.3122.or.abs(k(l,2)).eq.3212.or.k(l,2)
      &   .eq.3112.or.k(l,2).eq.3222)).and.ss.le.
      &   (0.5+1.322))goto 10
-c       pi(cascade)->k(Omega)
+c       pi(Cascade)->K(Omega)
         if(((abs(k(l,2)).eq.211.or.k(l,2).eq.111).and.
      &   (abs(k(l1,2)).eq.3312.or.abs(k(l1,2)).eq.3322)).and.ss.le.
      &   (0.5+1.7))goto 10
         if(((abs(k(l1,2)).eq.211.or.k(l1,2).eq.111).and.
      &   (abs(k(l,2)).eq.3312.or.abs(k(l,2)).eq.3322)).and.ss.le.
      &   (0.5+1.7))goto 10
-c       kN->k(cascade)
+c       KN->K(Cascade)
         if(((abs(k(l,2)).eq.321.or.abs(k(l,2)).eq.311).and.
      &   (abs(k(l1,2)).eq.2112.or.abs(k(l1,2)).eq.2212)).and.ss.le.
      &   (0.5+1.322))goto 10
@@ -8648,7 +8865,7 @@ c       NN->N(Delta)
         if(((abs(k(l,2)).eq.2112.or.abs(k(l,2)).eq.2212).and.
      &   (abs(k(l1,2)).eq.2112.or.abs(k(l1,2)).eq.2212)).and.ss.le.
      &   2.172)goto 10
-c       k(cascade)->pi(Omega)
+c       K(Cascade)->pi(Omega)
         if(((abs(k(l,2)).eq.321.or.abs(k(l,2)).eq.311).and.
      &   (abs(k(l1,2)).eq.3312.or.abs(k(l1,2)).eq.3322)).and.ss.le.
      &   1.84)goto 10
@@ -8656,7 +8873,7 @@ c       k(cascade)->pi(Omega)
      &   (abs(k(l,2)).eq.3312.or.abs(k(l,2)).eq.3322)).and.ss.le.
      &   1.84)goto 10
 c       for isothermal reverse reactions
-c       piy->kN
+c       piY->KN
         if(((abs(k(l,2)).eq.211.or.k(l,2).eq.111).and.
      &   (abs(k(l1,2)).eq.3122.or.abs(k(l1,2)).eq.3212.or.k(l1,2)
      &   .eq.3112.or.k(l1,2).eq.3222)).and.ss.le.
@@ -8665,7 +8882,7 @@ c       piy->kN
      &   (abs(k(l,2)).eq.3122.or.abs(k(l,2)).eq.3212.or.k(l,2)
      &   .eq.3112.or.k(l,2).eq.3222)).and.ss.le.
      &   1.44)goto 10
-c       pi(cascade)->ky
+c       pi(Cascade)->KY
         if(((abs(k(l,2)).eq.211.or.k(l,2).eq.111).and.
      &   (abs(k(l1,2)).eq.3312.or.abs(k(l1,2)).eq.3322)).and.ss.le.
      &   1.7)goto 10
@@ -8816,10 +9033,21 @@ c       it plays also the role of second range filter
         rsig=0.
         kl=k(l,2)
         kl1=k(l1,2)
+
+c011223 Lei
+c       rsig in fm, sigma_tot in fm^2.
+c         rsig = SQRT( sigma_tot / 3.1416 )
+c       ecsnn in fm, csnn in fm^2. sa011223
+c        ecsnn = SQRT( csnn / 3.1416 ) (i.e. rsig for NN) sa091223
+c       csnn in fm^2, sigma_NN in mb. Note 1 mb = 0.1 fm^2.
+c        csnn = sigma_NN * 0.1, sigma_NN in mb.
+c       Use AQM cross sections. sigma_AQM is a function that returns in mb.
+        sigma_NN = ecsnn**2 * 3.1416 * 10.
+        rsig = SQRT( sigma_AQM( kl, kl1, sigma_NN )*0.1 / 3.1416 )
+c011223 Lei
+
         if(abs(kl).eq.2212 .or. abs(kl).eq.2112)idpl=1   ! N sa091223
-
         if(abs(kl).eq.443 .or. abs(kl).eq.100443)idpl=2   ! J/psi & psi'
-
         if(abs(kl).eq.211 .or. kl.eq.111)idpl=3   ! pi
         if(abs(kl).eq.321 .or. abs(kl).eq.311)idpl=4   ! K
         if(abs(kl).eq.3212 .or. abs(kl).eq.3112 .or. abs(kl).eq.3222
@@ -8830,9 +9058,7 @@ c       it plays also the role of second range filter
      &   idpl=7   ! Delta
 
         if(abs(kl1).eq.2212 .or. abs(kl1).eq.2112)idpl1=1
-
         if(abs(kl1).eq.443 .or. abs(kl1).eq.100443)idpl1=2   ! 1998/03/24
-
         if(abs(kl1).eq.211 .or. kl1.eq.111)idpl1=3
         if(abs(kl1).eq.321 .or. abs(kl1).eq.311)idpl1=4
         if(abs(kl1).eq.3212 .or. abs(kl1).eq.3112 .or. abs(kl1)
@@ -8885,14 +9111,14 @@ c        consider the effect of omega
         if(idpl.eq.3 .and. idpl1.eq.1)rsig=epin
         if(idpl.eq.3 .and. idpl1.eq.5)rsig=epin
         if(idpl.eq.5 .and. idpl1.eq.3)rsig=epin
-c       assume the total cross section of (pion)y,((pion)cascade) and 
-c        ((pion)omiga) = (pion)n
+c       assume the total cross section of (pion)Y,((pion)Cascade) and 
+c        ((pion)Omega) = (pion)n
         if(idpl.eq.4 .and. (idpl1.eq.1 .or. idpl1.eq.5))rsig=ekn
         if((idpl.eq.1 .or. idpl.eq.5) .and. idpl1.eq.4)rsig=ekn
         if(idpl.eq.4 .and. idpl1.eq.4)rsig=edipi
 
-c       assume the total cross section of ky (k cascade) and (k omiga)
-c        = kn
+c       assume the total cross section of KY (K Cascade) and (K Omega)
+c        = Kn
 c       assume the total cross section of kk=(pion)(pion)
         if(idpl.eq.1 .and. idpl1.eq.6)rsig=epin
         if(idpl.eq.1 .and. idpl1.eq.7)rsig=ecsnn
@@ -8903,11 +9129,15 @@ c       assume the total cross section of kk=(pion)(pion)
         if(idpl.eq.1 .and. idpl1.eq.5)rsig=ecsnn
         if(idpl.eq.5 .and. idpl1.eq.1)rsig=ecsnn
 c       assume the total cross section of (rho)n=(pion)n
-c       assume the total cross section of n(delta)=nn
-c       assume the total cross section of (pion)(delta)=(pion)n
-c       assume the total cross section of ny, n(cascade), and n(omiga)=nn
+c       assume the total cross section of n(Delta)=nn
+c       assume the total cross section of (pion)(Delta)=(pion)n
+c       assume the total cross section of nY, n(Cascade), and n(Omega)=nn
+
+
         return
         end
+
+
 
 C&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 C&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
@@ -10217,8 +10447,8 @@ c       pion0 + p to pi0 + delta+
 
 c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
         subroutine jpsin(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,ii)
-c       a part of 'prod' to deal with J/Psi (psi') + n to ... 
-c       ii = 1 for J/Psi, ii = 2 for Psi'
+c       a part of 'prod' to deal with J/psi (psi') + n to ... 
+c       ii = 1 for J/psi, ii = 2 for psi'
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -10242,9 +10472,9 @@ c       the--threshold energy of a reaction (squart root of s)
         goto 212
         endif
         sigma1=cspsn
-c       cross section of J/Psi + n (fm^2) 
+c       cross section of J/psi + n (fm^2) 
         if(ii.eq.2)sigma1=csspn
-c       cross section of Psi' + n (fm^2) 
+c       cross section of psi' + n (fm^2) 
 212     if(isinel(180).eq.0)then
         sigma2=0.
         goto 213
@@ -10278,17 +10508,17 @@ c       cross section of Psi' + n (fm^2)
         ik1=4122
         ik2=-411
         ic=179
-c       J/Psi (Psi') + n to lamdac + Dba 
+c       J/psi (psi') + n to lamdac + Dba 
         elseif(rlus.gt.s1 .and. rlus.le.s2)then
         ik1=4212
         ik2=-411
         ic=180
-c       J/Psi (Psi') + n to sigmac+  + Dba
+c       J/psi (psi') + n to sigmac+  + Dba
         else
         ik1=4112
         ik2=-421
         ic=181
-c       J/Psi (Psi') + n to sigmac0 + D0ba
+c       J/psi (psi') + n to sigmac0 + D0ba
         endif
 215     lc(icp,3)=ik1
         lc(icp,4)=ik2
@@ -10301,7 +10531,7 @@ c       J/Psi (Psi') + n to sigmac0 + D0ba
 
 c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
         subroutine jpsip(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,ii)
-c       a part of 'prod' to deal with J/Psi (Psi') + p to ... 
+c       a part of 'prod' to deal with J/psi (psi') + p to ... 
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -10359,17 +10589,17 @@ c       the: threshold energy of a reaction (squart root of s)
         ik1=4122
         ik2=-421
         ic=182
-c       J/Psi (psi') + p to lamdac + D0ba 
+c       J/psi (psi') + p to lamdac + D0ba 
         elseif(rlus.gt.s1 .and. rlus.le.s2)then
         ik1=4212
         ik2=-421
         ic=183
-c       J/Psi (psi') + p to sigmac+  + D0ba
+c       J/psi (psi') + p to sigmac+  + D0ba
         else
         ik1=4222
         ik2=-411
         ic=184
-c       J/Psi (psi') + p to sigmac++ + Dba
+c       J/psi (psi') + p to sigmac++ + Dba
         endif
 215     lc(icp,3)=ik1
         lc(icp,4)=ik2
@@ -10383,7 +10613,7 @@ c       J/Psi (psi') + p to sigmac++ + Dba
 
 c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
         subroutine jpsip1(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,ii)
-c       a part of 'prod' to deal with J/Psi (Psi') + pion+ to ... 
+c       a part of 'prod' to deal with J/psi (psi') + pion+ to ... 
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -10400,7 +10630,7 @@ c       a part of 'prod' to deal with J/Psi (Psi') + pion+ to ...
         the=pmas(pycomp(411),1)+pmas(pycomp(423),1)
         if(ss.le.the)goto 13
 c98/03/23   ww=cspsm
-c       J/Psi + pion+ to D + D*0ba
+c       J/psi + pion+ to D + D*0ba
         lc(icp,3)=411
         lc(icp,4)=-423
         lc(icp,5)=185
@@ -10411,7 +10641,7 @@ c       J/Psi + pion+ to D + D*0ba
 
 c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
         subroutine jpsip0(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,ii)
-c       a part of 'prod' to deal with J/Psi (Psi') + pion0 to ... 
+c       a part of 'prod' to deal with J/psi (psi') + pion0 to ... 
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -10435,9 +10665,9 @@ c       the: threshold energy of a reaction (squart root of s)
         goto 212
         endif
         sigma1=cspsm   
-c       cross section of J/Psi + m (fm^2) 
+c       cross section of J/psi + m (fm^2) 
         if(ii.eq.2)sigma1=csspm
-c       cross section of Psi' + m (fm^2) 
+c       cross section of psi' + m (fm^2) 
 212     if(isinel(187).eq.0)then
         sigma2=0.
         goto 213
@@ -10457,12 +10687,12 @@ c       cross section of Psi' + m (fm^2)
         ik1=421
         ik2=-423
         ic=186
-c       J/Psi (Psi') + pion0 to D0 + D*0ba 
+c       J/psi (psi') + pion0 to D0 + D*0ba 
         else
         ik1=411
         ik2=-413
         ic=187
-c       J/Psi (Psi') + pion0 to D + D*ba
+c       J/psi (psi') + pion0 to D + D*ba
         endif
 215     lc(icp,3)=ik1
         lc(icp,4)=ik2
@@ -10476,7 +10706,7 @@ c       J/Psi (Psi') + pion0 to D + D*ba
 
 c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
         subroutine jpsip2(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,ii)
-c       a part of 'prod' to deal with J/Psi (Psi') + pion- to ... 
+c       a part of 'prod' to deal with J/psi (psi') + pion- to ... 
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -10493,7 +10723,7 @@ c       a part of 'prod' to deal with J/Psi (Psi') + pion- to ...
         the=pmas(pycomp(421),1)+pmas(pycomp(413),1)
         if(ss.le.the)goto 13
 c98/03/23   ww=cspsm
-c       J/Psi (Psi') + pion- to D0 + D*ba
+c       J/psi (psi') + pion- to D0 + D*ba
         lc(icp,3)=421
         lc(icp,4)=-413
         lc(icp,5)=188
@@ -10504,7 +10734,7 @@ c       J/Psi (Psi') + pion- to D0 + D*ba
 
 c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
         subroutine jpsir1(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,ii)
-c       a part of 'prod' to deal with J/Psi (Psi') + rho+ to ... 
+c       a part of 'prod' to deal with J/psi (psi') + rho+ to ... 
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -10521,7 +10751,7 @@ c       a part of 'prod' to deal with J/Psi (Psi') + rho+ to ...
         the=pmas(pycomp(411),1)+pmas(pycomp(421),1)
         if(ss.le.the)goto 13
 c98/03/23   ww=cspsm
-c       J/Psi (Psi,) + rho+ to D + D0ba
+c       J/psi (psi,) + rho+ to D + D0ba
         lc(icp,3)=411
         lc(icp,4)=-421
         lc(icp,5)=189
@@ -10532,7 +10762,7 @@ c       J/Psi (Psi,) + rho+ to D + D0ba
 
 c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
         subroutine jpsir0(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,ii)
-c       a part of 'prod' to deal with J/Psi (Psi') + rho0 to ... 
+c       a part of 'prod' to deal with J/psi (psi') + rho0 to ... 
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -10576,12 +10806,12 @@ c       the--threshold energy of a reaction (squart root of s)
         ik1=421
         ik2=-421
         ic=190
-c       J/Psi (Psi') + rho0 to D0 + D0ba 
+c       J/psi (psi') + rho0 to D0 + D0ba 
         else
         ik1=411
         ik2=-411
         ic=191
-c       J/Psi (Psi') + rho0 to D + Dba
+c       J/psi (psi') + rho0 to D + Dba
         endif
 215     lc(icp,3)=ik1
         lc(icp,4)=ik2
@@ -10597,7 +10827,7 @@ c        consider the effect of omega
 
 c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
         subroutine jpsir2(l,l1,kl,kl1,ss,icp,lc,tc,tw,ioo,ii)
-c       a part of 'prod' to deal with J/Psi (Psi') + rho- to ... 
+c       a part of 'prod' to deal with J/psi (psi') + rho- to ... 
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -10614,13 +10844,780 @@ c       a part of 'prod' to deal with J/Psi (Psi') + rho- to ...
         the=pmas(pycomp(421),1)+pmas(pycomp(411),1)
         if(ss.le.the)goto 13
 c98/03/23   ww=cspsm
-c       J/Psi + rho- to D0 + Dba
+c       J/psi + rho- to D0 + Dba
         lc(icp,3)=421
         lc(icp,4)=-411
         lc(icp,5)=192
         tw(icp)=rcsit
         ioo=1
 13      return
+        end
+
+
+
+c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+        subroutine DMeson_coll( iA,iB,KF_A,KF_B,E_AB,icp,lc,tc,tw,ioo )
+c031223 Lei A part of 'prod' to deal with D + pion/rho --> ...
+c       Find production and fill up lc(i,3-5), tw(i).
+c       D + pion/rho channels are defined as 385-458.
+c       D, M: D meson and pion/rho Meson.
+c       iA, iB: line number of hadrons in /sa1_h/.
+c       KF_A, KF_B: the KF code.
+c       E_AB: the total energy of two hadrons.
+c       icp: the line number of the colliding pair in collision (time) list.
+c       lc: collision list.
+c       tc: collision time list.
+c       tw: the ratio of cross section of (special inela.)/tot.
+c       ioo: flag of elastic (0) and inelastic (1) treatment.
+        IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+        IMPLICIT INTEGER(I-N)
+        INTEGER PYK,PYCHGE,PYCOMP
+        PARAMETER(NSIZE=750000)
+        COMMON/PYCIDAT2/KFMAXT,NONT2,PARAM(20),WEIGH(600)
+        common/sa10_h/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
+     &   iabsb,iabsm,non10,csspn,csspm
+        common/count_h/isinel(600)
+        dimension lc(nsize,5),tc(nsize),tw(nsize)
+
+C       Make order as D + pion/rho.
+        i_order = 1
+        KF_D = KF_A   ! KF of D meson.
+        KF1_D = KF_D / 100   ! 280224 Lei The 100-th position of KF_D.
+        KF_M = KF_B   ! KF of pion/rho meson.
+
+c       Exchange orders if first one is not D meson.
+        if( KF1_D.ne.4 )then
+            KF   = KF_D
+            KF_D = KF_M
+            KF_M = KF
+            i_order = -1
+        end if
+c       Charges of two hadrons.
+        iCharge_D = PYCHGE( KF_D )
+        iCharge_M = PYCHGE( KF_M )
+
+c       Single production chennel: 16 chennels, 385-400.
+        if( (iCharge_D.gt.0 .AND. iCharge_M.gt.0) .OR.   ! ++
+     &      (iCharge_D.lt.0 .AND. iCharge_M.lt.0) .OR.   ! --
+     &      (iCharge_D.eq.0 .AND. iCharge_M.gt.0 .AND.   ! 0+, KF-+
+     &            KF_D.lt.0 .AND.      KF_M.gt.0) .OR.   ! 0+, KF-+
+     &      (iCharge_D.eq.0 .AND. iCharge_M.lt.0 .AND.   ! 0-, KF+-
+     &            KF_D.gt.0 .AND.      KF_M.lt.0)        ! 0-, KF+-
+     &    )then
+            call Dmeson1(iA,iB,KF_D,KF_M,E_AB,icp,lc,tc,tw,ioo,i_order)
+c       Dual production chennels: 64 channels, 401-464,
+c        else if( (iCharge_D.eq.0 .AND. iCharge_M.eq.0) .OR.   ! 00
+c     &           (iCharge_D.gt.0 .AND. iCharge_M.lt.0) .OR.   ! +-
+c     &           (iCharge_D.lt.0 .AND. iCharge_M.gt.0) .OR.   ! -+
+c     &           (iCharge_D.gt.0 .AND. iCharge_M.eq.0) .OR.   ! +0
+c     &           (iCharge_D.lt.0 .AND. iCharge_M.eq.0) .OR.   ! -0
+c     &           (iCharge_D.eq.0 .AND. iCharge_M.gt.0 .AND.   ! 0+, KF++
+c     &                 KF_D.gt.0 .AND.      KF_M.gt.0) .OR.   ! 0+, KF++
+c     &           (iCharge_D.eq.0 .AND. iCharge_M.lt.0 .AND.   ! 0-, KF--
+c     &                 KF_D.lt.0 .AND.      KF_M.lt.0)        ! 0-, KF--
+c     &         )then
+        else
+            call Dmeson2(iA,iB,KF_D,KF_M,E_AB,icp,lc,tc,tw,ioo,i_order)
+        end if
+
+
+        return
+        end
+
+
+
+c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+        subroutine Dmeson1(iA,iB,KF_D,KF_M,E_AB,icp,lc,tc,tw,ioo,i_od)
+c031223 Lei A part of 'prod' to deal with D + pion/rho  --> ...
+c       Single production channel: 385-400, total 16 reaction channels.
+        IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+        IMPLICIT INTEGER(I-N)
+        INTEGER PYK,PYCHGE,PYCOMP
+        PARAMETER(NSIZE=750000)
+        common/sa10_h/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
+     &   iabsb,iabsm,non10,csspn,csspm
+        common/count_h/isinel(600)
+        dimension lc(nsize,5),tc(nsize),tw(nsize)
+
+c       385. D+ + pi+  -->  D*+ + rho+
+385     if( KF_D.eq.411 .AND. KF_M.eq.211 )then
+            i_channel = 385
+            KF_out_A = 413
+            KF_out_B = 213
+c       386. D- + pi-  -->  D*- + rho-
+386     else if( KF_D.eq.-411 .AND. KF_M.eq.-211 )then
+            i_channel = 386
+            KF_out_A = -413
+            KF_out_B = -213
+c       387. D*+ + pi+  -->  D+ + rho+
+387     else if( KF_D.eq.413 .AND. KF_M.eq.211 )then
+            i_channel = 387
+            KF_out_A = 411
+            KF_out_B = 213
+c       388. D*- + pi-  -->  D- + rho-
+388     else if( KF_D.eq.-413 .AND. KF_M.eq.-211 )then
+            i_channel = 388
+            KF_out_A = -411
+            KF_out_B = -213
+c       389. D+ + rho+  -->  D*+ + pi+
+389     else if( KF_D.eq.411 .AND. KF_M.eq.213 )then
+            i_channel = 389
+            KF_out_A = 413
+            KF_out_B = 211
+c       390. D- + rho-  -->  D*- + pi-
+390     else if( KF_D.eq.-411 .AND. KF_M.eq.-213 )then
+            i_channel = 390
+            KF_out_A = -413
+            KF_out_B = -211
+c       391. D*+ + rho+  -->  D+ + pi+
+391     else if( KF_D.eq.413 .AND. KF_M.eq.213 )then
+            i_channel = 391
+            KF_out_A = 411
+            KF_out_B = 211
+c       392. D*- + rho-  -->  D- + pi-
+392     else if( KF_D.eq.-413 .AND. KF_M.eq.-213 )then
+            i_channel = 392
+            KF_out_A = -411
+            KF_out_B = -211
+c       393. D0 + pi-  -->  D*0 + rho-
+393     else if( KF_D.eq.421 .AND. KF_M.eq.-211 )then
+            i_channel = 393
+            KF_out_A = 423
+            KF_out_B = -213
+c       394. Dbar0 + pi+  -->  Dbar*0 + rho+
+394     else if( KF_D.eq.-421 .AND. KF_M.eq.211 )then
+            i_channel = 394
+            KF_out_A = -423
+            KF_out_B = 213
+c       395. D*0 + pi-  -->  D0 + rho-
+395     else if( KF_D.eq.423 .AND. KF_M.eq.-211 )then
+            i_channel = 395
+            KF_out_A = 421
+            KF_out_B = -213
+c       396. D*bar0 + pi+  -->  Dbar0 + rho+
+396     else if( KF_D.eq.-423 .AND. KF_M.eq.211 )then
+            i_channel = 396
+            KF_out_A = -421
+            KF_out_B = 213
+c       397. D0 + rho-  -->  D*0 + pi-
+397     else if( KF_D.eq.421 .AND. KF_M.eq.-213 )then
+            i_channel = 397
+            KF_out_A = 423
+            KF_out_B = -211
+c       398. Dbar0 + rho+  -->  Dbar*0 + pi+
+398     else if( KF_D.eq.-421 .AND. KF_M.eq.213 )then
+            i_channel = 398
+            KF_out_A = -423
+            KF_out_B = 211
+c       399. D*0 + rho-  -->  D0 + pi-
+399     else if( KF_D.eq.423 .AND. KF_M.eq.-213 )then
+            i_channel = 399
+            KF_out_A = 421
+            KF_out_B = -211
+c       400. D*bar0 + rho+  -->  Dbar0 + pi+
+400     else if( KF_D.eq.-423 .AND. KF_M.eq.213 )then
+            i_channel = 400
+            KF_out_A = -421
+            KF_out_B = 211
+c       Something is wrong.
+        else
+            write(9,*) "No inel. channel is found in hadcas "       //
+     &                 "Dmeson1(), treated as elastic collision, "  //
+     &                 "KF_D, KF_M =", KF_D, KF_M
+            return
+        end if
+
+c       Inelastic channel switch.
+        if( isinel( i_channel ).eq.0 ) return
+c       Threshold energy.
+        E_thresh = PYMASS( KF_out_A ) + PYMASS( KF_out_B )
+        if( E_AB.le.E_thresh ) return
+
+c       Order exchanging corresponding to that made in "DMeson_coll".
+        if( i_od.eq.-1 )then
+            KF = KF_out_A
+            KF_out_A = KF_out_B
+            KF_out_B = KF
+        end if
+
+c       Feedback.
+        lc(icp,3) = KF_out_A
+        lc(icp,4) = KF_out_B
+        lc(icp,5) = i_channel
+        tw(icp)   = rcsit
+        ioo = 1
+
+
+        return
+        end
+
+
+
+c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+        subroutine Dmeson2(iA,iB,KF_D,KF_M,E_AB,icp,lc,tc,tw,ioo,i_od)
+c031223 Lei A part of 'prod' to deal with D + pion/rho  --> ...
+c       Dual production channel: 401-464, total 64 reaction channels.
+        IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+        IMPLICIT INTEGER(I-N)
+        INTEGER PYK,PYCHGE,PYCOMP
+        PARAMETER(NSIZE=750000)
+        common/sa10_h/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
+     &   iabsb,iabsm,non10,csspn,csspm
+        common/count_h/isinel(600)
+        dimension lc(nsize,5),tc(nsize),tw(nsize)
+
+        if( KF_D.eq.421 .AND. KF_M.eq.111 )then
+c       401. D0 + pi0  -->  D*0 + rho0
+401         i_channel_1 = 401
+            KF_out_A_1 = 423
+            KF_out_B_1 = 113
+c       402. D0 + pi0  -->  D*+ + rho-
+402         i_channel_2 = 402
+            KF_out_A_2 = 413
+            KF_out_B_2 = -213
+        else if( KF_D.eq.-421 .AND. KF_M.eq.111 )then
+c       403. Dbar0 + pi0  -->  Dbar*0 + rho0
+403         i_channel_1 = 403
+            KF_out_A_1 = -423
+            KF_out_B_1 = 113
+c       404. Dbar0 + pi0  -->  D*- + rho+
+404         i_channel_2 = 404
+            KF_out_A_2 = -413
+            KF_out_B_2 = 213
+        else if( KF_D.eq.423 .AND. KF_M.eq.111 )then
+c       405. D*0 + pi0  -->  D0 + rho0
+405         i_channel_1 = 405
+            KF_out_A_1 = 421
+            KF_out_B_1 = 113
+c       406. D*0 + pi0  -->  D+ + rho-
+406         i_channel_2 = 406
+            KF_out_A_2 = 411
+            KF_out_B_2 = -213
+        else if( KF_D.eq.-423 .AND. KF_M.eq.111 )then
+c       407. D*bar0 + pi0  -->  Dbar0 + rho0
+407         i_channel_1 = 407
+            KF_out_A_1 = -421
+            KF_out_B_1 = 113
+c       408. D*bar0 + pi0  -->  D- + rho+
+408         i_channel_2 = 408
+            KF_out_A_2 = -411
+            KF_out_B_2 = 213
+        else if( KF_D.eq.421 .AND. KF_M.eq.113 )then
+c       409. D0 + rho0  -->  D*0 + pi0
+409         i_channel_1 = 409
+            KF_out_A_1 = 423
+            KF_out_B_1 = 111
+c       410. D0 + rho0  -->  D*+ + pi-
+410         i_channel_2 = 410
+            KF_out_A_2 = 413
+            KF_out_B_2 = -211
+        else if( KF_D.eq.-421 .AND. KF_M.eq.113 )then
+c       411. Dbar0 + rho0  -->  Dbar*0 + pi0
+411         i_channel_1 = 411
+            KF_out_A_1 = -423
+            KF_out_B_1 = 111
+c       412. Dbar0 + rho0  -->  D*- + pi+
+412         i_channel_2 = 412
+            KF_out_A_2 = -413
+            KF_out_B_2 = 211
+        else if( KF_D.eq.423 .AND. KF_M.eq.113 )then
+c       413. D*0 + rho0  -->  D0 + pi0
+413         i_channel_1 = 413
+            KF_out_A_1 = 421
+            KF_out_B_1 = 111
+c       414. D*0 + rho0  -->  D+ + pi-
+414         i_channel_2 = 414
+            KF_out_A_2 = 411
+            KF_out_B_2 = -211
+        else if( KF_D.eq.-423 .AND. KF_M.eq.113 )then
+c       415. D*bar0 + rho0  -->  Dbar0 + pi0
+415         i_channel_1 = 415
+            KF_out_A_1 = -421
+            KF_out_B_1 = 111
+c       416. D*bar0 + rho0  -->  D- + pi+
+416         i_channel_2 = 416
+            KF_out_A_2 = -411
+            KF_out_B_2 = 211
+        else if( KF_D.eq.411 .AND. KF_M.eq.-211 )then
+c       417. D+ + pi-  -->  D*+ + rho-
+417         i_channel_1 = 417
+            KF_out_A_1 = 413
+            KF_out_B_1 = -213
+c       418. D+ + pi-  -->  D*0 + rho0
+418         i_channel_2 = 418
+            KF_out_A_2 = 423
+            KF_out_B_2 = 113
+        else if( KF_D.eq.-411 .AND. KF_M.eq.211 )then
+c       419. D- + pi+  -->  D*- + rho+
+419         i_channel_1 = 419
+            KF_out_A_1 = -413
+            KF_out_B_1 = 213
+c       420. D- + pi+  -->  D*bar0 + rho0
+420         i_channel_2 = 420
+            KF_out_A_2 = -423
+            KF_out_B_2 = 113
+        else if( KF_D.eq.413 .AND. KF_M.eq.-211 )then
+c       421. D*+ + pi-  -->  D+ + rho-
+421         i_channel_1 = 421
+            KF_out_A_1 = 411
+            KF_out_B_1 = -213
+c       422. D*+ + pi-  -->  D0 + rho0
+422         i_channel_2 = 422
+            KF_out_A_2 = 421
+            KF_out_B_2 = 113
+        else if( KF_D.eq.-413 .AND. KF_M.eq.211 )then
+c       423. D*- + pi+  -->  D- + rho+
+423         i_channel_1 = 423
+            KF_out_A_1 = -411
+            KF_out_B_1 = 213
+c       424. D*- + pi+  -->  Dbar0 + rho0
+424         i_channel_2 = 424
+            KF_out_A_2 = -421
+            KF_out_B_2 = 113
+        else if( KF_D.eq.411 .AND. KF_M.eq.-213 )then
+c       425. D+ + rho-  -->  D*+ + pi-
+425         i_channel_1 = 425
+            KF_out_A_1 = 413
+            KF_out_B_1 = -211
+c       426. D+ + rho-  -->  D*0 + pi0
+426         i_channel_2 = 426
+            KF_out_A_2 = 423
+            KF_out_B_2 = 111
+        else if( KF_D.eq.-411 .AND. KF_M.eq.213 )then
+c       427. D- + rho+  -->  D*- + pi+
+427         i_channel_1 = 427
+            KF_out_A_1 = -413
+            KF_out_B_1 = 211
+c       428. D- + rho+  -->  D*bar0 + pi0
+428         i_channel_2 = 428
+            KF_out_A_2 = -423
+            KF_out_B_2 = 111
+        else if( KF_D.eq.413 .AND. KF_M.eq.-213 )then
+c       429. D*+ + rho-  -->  D+ + pi-
+429         i_channel_1 = 429
+            KF_out_A_1 = 411
+            KF_out_B_1 = -211
+c       430. D*+ + rho-  -->  D0 + pi0
+430         i_channel_2 = 430
+            KF_out_A_2 = 421
+            KF_out_B_2 = 111
+        else if( KF_D.eq.-413 .AND. KF_M.eq.213 )then
+c       431. D*- + rho+  -->  D- + pi+
+431         i_channel_1 = 431
+            KF_out_A_1 = -411
+            KF_out_B_1 = 211
+c       432. D*- + rho+  -->  Dbar0 + pi0
+432         i_channel_2 = 432
+            KF_out_A_2 = -421
+            KF_out_B_2 = 111
+        else if( KF_D.eq.411 .AND. KF_M.eq.111 )then
+c       433. D+ + pi0  -->  D*+ + rho0
+433         i_channel_1 = 433
+            KF_out_A_1 = 413
+            KF_out_B_1 = 113
+c       434. D+ + pi0  -->  D*0 + rho+
+434         i_channel_2 = 434
+            KF_out_A_2 = 423
+            KF_out_B_2 = 213
+        else if( KF_D.eq.-411 .AND. KF_M.eq.111 )then
+c       435. D- + pi0  -->  D*- + rho0
+435         i_channel_1 = 435
+            KF_out_A_1 = -413
+            KF_out_B_1 = 113
+c       436. D- + pi0  -->  D*bar0 + rho-
+436         i_channel_2 = 436
+            KF_out_A_2 = -423
+            KF_out_B_2 = -213
+        else if( KF_D.eq.413 .AND. KF_M.eq.111 )then
+c       437. D*+ + pi0  -->  D+ + rho0
+437         i_channel_1 = 437
+            KF_out_A_1 = 411
+            KF_out_B_1 = 113
+c       438. D*+ + pi0  -->  D0 + rho+
+438         i_channel_2 = 438
+            KF_out_A_2 = 421
+            KF_out_B_2 = 213
+        else if( KF_D.eq.-413 .AND. KF_M.eq.111 )then
+c       439. D*- + pi0  -->  D- + rho0
+439         i_channel_1 = 439
+            KF_out_A_1 = -411
+            KF_out_B_1 = 113
+c       440. D*- + pi0  -->  Dbar0 + rho-
+440         i_channel_2 = 440
+            KF_out_A_2 = -421
+            KF_out_B_2 = -213
+        else if( KF_D.eq.411 .AND. KF_M.eq.113 )then
+c       441. D+ + rho0  -->  D*+ + pi0
+441         i_channel_1 = 441
+            KF_out_A_1 = 413
+            KF_out_B_1 = 111
+c       442. D+ + rho0  -->  D*0 + pi+
+442         i_channel_2 = 442
+            KF_out_A_2 = 423
+            KF_out_B_2 = 211
+        else if( KF_D.eq.-411 .AND. KF_M.eq.113 )then
+c       443. D- + rho0  -->  D*- + pi0
+443         i_channel_1 = 443
+            KF_out_A_1 = -413
+            KF_out_B_1 = 111
+c       444. D- + rho0  -->  D*bar0 + pi-
+444         i_channel_2 = 444
+            KF_out_A_2 = -423
+            KF_out_B_2 = -211
+        else if( KF_D.eq.413 .AND. KF_M.eq.113 )then
+c       445. D*+ + rho0  -->  D+ + pi0
+445         i_channel_1 = 445
+            KF_out_A_1 = 411
+            KF_out_B_1 = 111
+c       446. D*+ + rho0  -->  D0 + pi+
+446         i_channel_2 = 446
+            KF_out_A_2 = 421
+            KF_out_B_2 = 211
+        else if( KF_D.eq.-413 .AND. KF_M.eq.113 )then
+c       447. D*- + rho0  -->  D- + pi0
+447         i_channel_1 = 447
+            KF_out_A_1 = -411
+            KF_out_B_1 = 111
+c       448. D*- + rho0  -->  Dbar0 + pi-
+448         i_channel_2 = 448
+            KF_out_A_2 = -421
+            KF_out_B_2 = -211
+        else if( KF_D.eq.421 .AND. KF_M.eq.211 )then
+c       449. D0 + pi+  -->  D*0 + rho+
+449         i_channel_1 = 449
+            KF_out_A_1 = 423
+            KF_out_B_1 = 213
+c       450. D0 + pi+  -->  D*+ + rho0
+450         i_channel_2 = 450
+            KF_out_A_2 = 413
+            KF_out_B_2 = 113
+        else if( KF_D.eq.-421 .AND. KF_M.eq.-211 )then
+c       451. Dbar0 + pi-  -->  Dbar*0 + rho-
+451         i_channel_1 = 451
+            KF_out_A_1 = -423
+            KF_out_B_1 = -213
+c       452. Dbar0 + pi-  -->  D*- + rho0
+452         i_channel_2 = 452
+            KF_out_A_2 = -413
+            KF_out_B_2 = 113
+        else if( KF_D.eq.423 .AND. KF_M.eq.211 )then
+c       453. D*0 + pi+  -->  D0 + rho+
+453         i_channel_1 = 453
+            KF_out_A_1 = 421
+            KF_out_B_1 = 213
+c       454. D*0 + pi+  -->  D+ + rho0
+454         i_channel_2 = 454
+            KF_out_A_2 = 411
+            KF_out_B_2 = 113
+        else if( KF_D.eq.-423 .AND. KF_M.eq.-211 )then
+c       455. D*bar0 + pi-  -->  Dbar0 + rho-
+455         i_channel_1 = 455
+            KF_out_A_1 = -421
+            KF_out_B_1 = -213
+c       456. D*bar0 + pi-  -->  D- + rho0
+456         i_channel_2 = 456
+            KF_out_A_2 = -411
+            KF_out_B_2 = 113
+        else if( KF_D.eq.421 .AND. KF_M.eq.213 )then
+c       457. D0 + rho+  -->  D*0 + pi+
+457         i_channel_1 = 457
+            KF_out_A_1 = 423
+            KF_out_B_1 = 211
+c       458. D0 + rho+  -->  D*+ + pi0
+458         i_channel_2 = 458
+            KF_out_A_2 = 413
+            KF_out_B_2 = 111
+        else if( KF_D.eq.-421 .AND. KF_M.eq.-213 )then
+c       459. Dbar0 + rho-  -->  Dbar*0 + pi-
+459         i_channel_1 = 459
+            KF_out_A_1 = -423
+            KF_out_B_1 = -211
+c       460. Dbar0 + rho-  -->  D*- + pi0
+460         i_channel_2 = 460
+            KF_out_A_2 = -413
+            KF_out_B_2 = 111
+        else if( KF_D.eq.423 .AND. KF_M.eq.213 )then
+c       461. D*0 + rho+  -->  D0 + pi+
+461         i_channel_1 = 461
+            KF_out_A_1 = 421
+            KF_out_B_1 = 211
+c       462. D*0 + rho+  -->  D+ + pi0
+462         i_channel_2 = 462
+            KF_out_A_2 = 411
+            KF_out_B_2 = 111
+        else if( KF_D.eq.-423 .AND. KF_M.eq.-213 )then
+c       463. D*bar0 + rho-  -->  Dbar0 + pi-
+463         i_channel_1 = 463
+            KF_out_A_1 = -421
+            KF_out_B_1 = -211
+c       464. D*bar0 + rho-  -->  D- + pi0
+464         i_channel_2 = 464
+            KF_out_A_2 = -411
+            KF_out_B_2 = 111
+c       Something is wrong.
+        else
+            write(9,*) "No inel. channel is found in hadcas "       //
+     &                 "Dmeson2(), treated as elastic collision, "  //
+     &                 "KF_D, KF_M =", KF_D, KF_M
+            return
+        end if
+
+        ratio_sig1 = 0D0
+        ratio_sig2 = 0D0
+
+        E_thresh_1 = PYMASS( KF_out_A_1 ) + PYMASS( KF_out_B_1 )
+        E_thresh_2 = PYMASS( KF_out_A_2 ) + PYMASS( KF_out_B_2 )
+        if( isinel( i_channel_1 ).eq.1 .AND. E_AB.gt.E_thresh_1 )
+     &      ratio_sig1 = 0.5
+        if( isinel( i_channel_2 ).eq.1 .AND. E_AB.gt.E_thresh_2 )
+     &      ratio_sig2 = 0.5
+
+        if( ratio_sig1.lt.1D-15 .AND.ratio_sig2.lt.1D-15 ) return
+
+        ratio_sig = ratio_sig1 + ratio_sig2
+        ratio1 = ratio_sig1 / ratio_sig
+        if( PYR(1).le.ratio1 )then
+            KF_out_A  = KF_out_A_1
+            KF_out_B  = KF_out_B_1
+            i_channel = i_channel_1
+        else
+            KF_out_A  = KF_out_A_2
+            KF_out_B  = KF_out_B_2
+            i_channel = i_channel_2
+        end if
+
+c       Order exchanging corresponding to that made in "DMeson_coll".
+        if( i_od.eq.-1 )then
+            KF = KF_out_A
+            KF_out_A = KF_out_B
+            KF_out_B = KF
+        end if
+
+c       Feedback.
+        lc(icp,3) = KF_out_A
+        lc(icp,4) = KF_out_B
+        lc(icp,5) = i_channel
+        tw(icp)   = rcsit
+        ioo = 1
+
+13      return
+        end
+
+
+
+c&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+        subroutine Dpn_coll(iA,iB,KF_D,KF_N,E_AB,icp,lc,tc,tw,ioo)
+c031223 Lei A part of "prod" to deal with D + p/n  --> ...
+c       Single production channel: 465-488, total 32 reaction channels.
+        IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+        IMPLICIT INTEGER(I-N)
+        INTEGER PYK,PYCHGE,PYCOMP
+        PARAMETER(NSIZE=750000)
+        common/sa10_h/csnn,cspin,cskn,cspipi,cspsn,cspsm,rcsit,ifram,
+     &   iabsb,iabsm,non10,csspn,csspm
+        common/count_h/isinel(600)
+        dimension lc(nsize,5),tc(nsize),tw(nsize)
+
+C       Make order as D + N.
+        i_order = 1
+c       Exchange orders if first one is not D meson.
+        if( KF_D.gt.999 )then
+            KF   = KF_D
+            KF_D = KF_N
+            KF_N = KF
+            i_order = -1
+        end if
+
+c       465. D+  + p+    -->  D*+ + p+
+465     if( KF_D.eq.411 .AND. KF_N.eq.2212 )then
+            i_channel = 465
+            KF_out_A = 413
+            KF_out_B = 2212
+c       466. D+  + p-    -->  D*+ + p-
+466     else if( KF_D.eq.411 .AND. KF_N.eq.-2212 )then
+            i_channel = 466
+            KF_out_A = 413
+            KF_out_B = -2212
+c       467. D+  + n     -->  D*+ + n
+467     else if( KF_D.eq.411 .AND. KF_N.eq.2112 )then
+            i_channel = 467
+            KF_out_A = 413
+            KF_out_B = 2112
+c       468. D+  + nbar  -->  D*+ + nbar
+468     else if( KF_D.eq.411 .AND. KF_N.eq.-2112 )then
+            i_channel = 468
+            KF_out_A = 413
+            KF_out_B = -2112
+c       469. D-  + p+    -->  D*- + p+
+469     else if( KF_D.eq.-411 .AND. KF_N.eq.2212 )then
+            i_channel = 469
+            KF_out_A = -413
+            KF_out_B = 2212
+c       470. D-  + p-    -->  D*- + p-
+470     else if( KF_D.eq.-411 .AND. KF_N.eq.-2212 )then
+            i_channel = 470
+            KF_out_A = -413
+            KF_out_B = -2212
+c       471. D-  + n     -->  D*- + n
+471     else if( KF_D.eq.-411 .AND. KF_N.eq.2112 )then
+            i_channel = 471
+            KF_out_A = -413
+            KF_out_B = 2112
+c       472. D-  + nbar  -->  D*- + nbar
+472     else if( KF_D.eq.-411 .AND. KF_N.eq.-2112 )then
+            i_channel = 472
+            KF_out_A = -413
+            KF_out_B = -2112
+c       473. D*+ + p+    -->  D+  + p+
+473     else if( KF_D.eq.413 .AND. KF_N.eq.2212 )then
+            i_channel = 473
+            KF_out_A = 411
+            KF_out_B = 2212
+c       474. D*+ + p-    -->  D+  + p-
+474     else if( KF_D.eq.413 .AND. KF_N.eq.-2212 )then
+            i_channel = 474
+            KF_out_A = 411
+            KF_out_B = -2212
+c       475. D*+ + n     -->  D+  + n
+475     else if( KF_D.eq.413 .AND. KF_N.eq.2112 )then
+            i_channel = 475
+            KF_out_A = 411
+            KF_out_B = 2112
+c       476. D*+ + nbar  -->  D+  + nbar
+476     else if( KF_D.eq.413 .AND. KF_N.eq.-2112 )then
+            i_channel = 476
+            KF_out_A = 411
+            KF_out_B = -2112
+c       477. D*- + p+    -->  D-  + p+
+477     else if( KF_D.eq.-413 .AND. KF_N.eq.2212 )then
+            i_channel = 477
+            KF_out_A = -411
+            KF_out_B = 2212
+c       478. D*- + p-    -->  D-  + p-
+478     else if( KF_D.eq.-413 .AND. KF_N.eq.-2212 )then
+            i_channel = 478
+            KF_out_A = -411
+            KF_out_B = -2212
+c       479. D*- + n     -->  D-  + n
+479     else if( KF_D.eq.-413 .AND. KF_N.eq.2112 )then
+            i_channel = 479
+            KF_out_A = -411
+            KF_out_B = 2112
+c       480. D*- + nbar  -->  D-  + nbar
+480     else if( KF_D.eq.-413 .AND. KF_N.eq.-2112 )then
+            i_channel = 480
+            KF_out_A = -411
+            KF_out_B = -2112
+c       481. D0     + p+    -->  D*0 + p+
+481     else if( KF_D.eq.421 .AND. KF_N.eq.2212 )then
+            i_channel = 481
+            KF_out_A = 423
+            KF_out_B = 2212
+c       482. D0     + p-    -->  D*0 + p-
+482     else if( KF_D.eq.421 .AND. KF_N.eq.-2212 )then
+            i_channel = 482
+            KF_out_A = 423
+            KF_out_B = -2212
+c       483. D0     + n     -->  D*0 + n
+483     else if( KF_D.eq.421 .AND. KF_N.eq.2112 )then
+            i_channel = 483
+            KF_out_A = 423
+            KF_out_B = 2112
+c       484. D0     + nbar  -->  D*0 + nbar
+484     else if( KF_D.eq.421 .AND. KF_N.eq.-2112 )then
+            i_channel = 484
+            KF_out_A = 423
+            KF_out_B = -2112
+c       485. Dbar0  + p+    -->  D*bar0 + p+
+485     else if( KF_D.eq.-421 .AND. KF_N.eq.2212 )then
+            i_channel = 485
+            KF_out_A = -423
+            KF_out_B = 2212
+c       486. Dbar0  + p-    -->  D*bar0 + p-
+486     else if( KF_D.eq.-421 .AND. KF_N.eq.-2212 )then
+            i_channel = 486
+            KF_out_A = -423
+            KF_out_B = -2212
+c       487. Dbar0  + n     -->  D*bar0 + n
+487     else if( KF_D.eq.-421 .AND. KF_N.eq.2112 )then
+            i_channel = 487
+            KF_out_A = -423
+            KF_out_B = 2112
+c       488. Dbar0  + nbar  -->  D*bar0 + nbar
+488     else if( KF_D.eq.-421 .AND. KF_N.eq.-2112 )then
+            i_channel = 488
+            KF_out_A = -423
+            KF_out_B = -2112
+c       489. D*0    + p+    -->  D0 + p+
+489     else if( KF_D.eq.423 .AND. KF_N.eq.2212 )then
+            i_channel = 489
+            KF_out_A = 421
+            KF_out_B = 2212
+c       490. D*0    + p-    -->  D0 + p-
+490     else if( KF_D.eq.423 .AND. KF_N.eq.-2212 )then
+            i_channel = 490
+            KF_out_A = 421
+            KF_out_B = -2212
+c       491. D*0    + n     -->  D0 + n
+491     else if( KF_D.eq.423 .AND. KF_N.eq.2112 )then
+            i_channel = 491
+            KF_out_A = 421
+            KF_out_B = 2112
+c       492. D*0    + nbar  -->  D0 + nbar
+492     else if( KF_D.eq.423 .AND. KF_N.eq.-2112 )then
+            i_channel = 492
+            KF_out_A = 421
+            KF_out_B = -2112
+c       493. D*bar0 + p+    -->  Dbar0 + p+
+493     else if( KF_D.eq.-423 .AND. KF_N.eq.2212 )then
+            i_channel = 493
+            KF_out_A = -421
+            KF_out_B = 2212
+c       494. D*bar0 + p-    -->  Dbar0 + p-
+494     else if( KF_D.eq.-423 .AND. KF_N.eq.-2212 )then
+            i_channel = 494
+            KF_out_A = -421
+            KF_out_B = -2212
+c       495. D*bar0 + n     -->  Dbar0 + n
+495     else if( KF_D.eq.-423 .AND. KF_N.eq.2112 )then
+            i_channel = 495
+            KF_out_A = -421
+            KF_out_B = 2112
+c       496. D*bar0 + nbar  -->  Dbar0 + nbar
+496     else if( KF_D.eq.-423 .AND. KF_N.eq.-2112 )then
+            i_channel = 496
+            KF_out_A = -421
+            KF_out_B = -2112
+c       Something is wrong.
+        else
+            write(9,*) "No inel. channel is found in hadcas "        //
+     &                 "Dpn_coll(), treated as elastic collision, "  //
+     &                 "KF_D, KF_M =", KF_D, KF_N
+            return
+        end if
+
+c       Inelastic channel switch.
+        if( isinel( i_channel ).eq.0 ) return
+c       Threshold energy.
+        E_thresh = PYMASS( KF_out_A ) + PYMASS( KF_out_B )
+        if( E_AB.le.E_thresh ) return
+
+c       Order exchanging corresponding to that made in "DMeson_coll".
+        if( i_order.eq.-1 )then
+            KF = KF_out_A
+            KF_out_A = KF_out_B
+            KF_out_B = KF
+        end if
+
+c       Feedback.
+        lc(icp,3) = KF_out_A
+        lc(icp,4) = KF_out_B
+        lc(icp,5) = i_channel
+        tw(icp)   = rcsit
+        ioo = 1
+
+
+        return
         end
 
 
@@ -10633,7 +11630,7 @@ c       iiii: number of event
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000,NSIZE=750000)
+        PARAMETER (KSZJ=80000,NSIZE=750000)
         common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         common/sa8_h/tau(kszj),ishp(kszj)
         common/sa14/ipyth(2000),idec(2000),iwide(2000)
@@ -10723,7 +11720,7 @@ c       kf: flavour code of decaying particle
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000)
+        PARAMETER (KSZJ=80000)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
         common/sa8_h/tau(kszj),ishp(kszj)
         common/sa14/ipyth(2000),idec(2000),iwide(2000)
@@ -10819,7 +11816,7 @@ c       ij: line number (in particle list 'sa1_h') of decaying particle
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000,NSIZE=750000)
+        PARAMETER (KSZJ=80000,NSIZE=750000)
         common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         common/sa8_h/tau(kszj),ishp(kszj)
         common/sa9_h/kfmax,kfaco(100),numb(100),non9,disbe(100,100)
@@ -10865,7 +11862,7 @@ c       give proper values to particle jj.
         ksa(jj,3)=0
         do m=1,5
         psa(jj,m)=p(i,m)
-        vsa(jj,m)=v(i,m)
+        if(m.le.4) vsa(jj,m)=v(i,m)   ! 280224 Lei
         enddo
         ishp(jj)=1
         tau(jj)=time
@@ -10931,6 +11928,7 @@ cc      ll=l
         kfd=numb(kfmax)-numb(kfmax-1)
 
 c       following statements are added by sa on 07/March/97
+        i2=0   ! 280224 Lei
         if(kfd.eq.0)then
         numbm=numb(kfmax)
         do i1=1,kfmax
@@ -10938,9 +11936,11 @@ c       following statements are added by sa on 07/March/97
         i2=i1
         goto 3001
 3000    enddo
+        if(i2.gt.0)then   ! 280224 Lei
 3001    do i1=i2,kfmax
         numb(i1)=numb(i1)-1
         enddo
+        end if   ! 280224 Lei
         goto 400
         endif
         numb(kfmax)=numb(kfmax)-1
@@ -10991,7 +11991,7 @@ c       ij: oredr number (in particle list) of decaying particle
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000,NSIZE=750000)
+        PARAMETER (KSZJ=80000,NSIZE=750000)
 c       common/sa1_h/nsa,non1,ksa(kszj,5),psa(kszj,5),vsa(kszj,5)
         common/sa9_h/kfmax,kfaco(100),numb(100),non9,disbe(100,100)
         common/sa14/ipyth(2000),idec(2000),iwide(2000)
@@ -11015,17 +12015,24 @@ c       loop over particle list
         m29=numb(29)
         m32=numb(32)
         m34=numb(34)
-c        m34=numb(kfmax-11)
-c       subtract 11, since we do not consider the rescattering of x0c, etc
+        m46 = numb(46)   ! 231123 Lei up to D*0bar 
+        ! m48 = numb(48)   ! 231123 Lei up to Lambda_cbar-
+        ! m52 = numb(52)   ! 231123 Lei up to D*_s-
+c       <= m19, reiniteraction including nucleon, pion, Kaon, Sigma, Lambda
+        ! m_low = m25  ! 231123 consider reiniteraction not including Xi or Omega
+        ! m_upp = m34  ! 231123 consider reiniteraction up to psi'
+        m_low = m19  ! 231123 consider reiniteraction including Xi and Omega
+        m_upp = m46  ! 231123 consider reiniteraction up to D*bar0
 
         j21=idec(1)
         j22=idec(2)
         do j11=1,n
         j1=idec(j11)
-        if(j1.le.m19
-     c   .or. (j1.gt.m25 .and. j1.le.m34))goto 301
-c       consider only the reinteraction among nucleon, pion, kaon,
-c        sigma, lambda, delta, rho and psi
+        if( j1.le.m19
+     c   .or. (j1.gt.m_low .and. j1.le.m_upp) ) goto 301   ! 231123 Lei
+c231123 Lei     c   .or. (j1.gt.m25 .and. j1.le.m34))goto 301
+c       Consider only the reinteraction among nucleon, pion, Kaon, Xi, Omega, 
+c        Sigma, Lambda, Delta, rho, J/psi, psi' and D mesons. ! 231123 Lei
         goto 300
 
 301     do i=1,m34
@@ -11044,9 +12051,10 @@ c       decayed particles could not collide with each other immediately
         endif
 
         if(i.le.m19 
-     c   .or. (i.gt.m25 .and. i.le.m34))goto 602
-c       consider only the reinteraction among nucleon, pion, kaon,
-c        sigma, lambda, delta, rho and psi
+     c   .or. (i.gt.m_low .and. i.le.m_upp) ) goto 602   ! 231123 Lei
+c231123 Lei     c   .or. (i.gt.m25 .and. i.le.m34))goto 602
+c       Consider only the reinteraction among nucleon, pion, Kaon, Xi, Omega, 
+c        Sigma, Lambda, Delta, rho, J/psi, psi' and D mesons. ! 231123 Lei
         goto 600
 
 c       if((j1.le.m2 .or. (j1.gt.m4 .and. j1.le.m7)) .and.
@@ -11105,6 +12113,64 @@ c061123 700     if(tc(nctl).le.1.e-7) nctl=nctl-1   ! 061123 Lei
 
 
 
+        function sigma_AQM(KF1,KF2,sigma_NN)
+c231123 Lei Calculate hh cross-section via AQM model.
+c       Effective valence quark number:
+c           n_eff = n_d + n_u + 0.6*n_s + 0.2*n_c + 0.07*n_b.
+c       Cross section of hh collision:
+c           sigma_AQM = sigma_NN * n_eff_h1/3 * n_eff_h2/3.
+        IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+        IMPLICIT INTEGER(I-N)
+        real*8 n_eff(2)
+        dimension n_q(6)
+
+        KFABS = ABS( KF1 )   ! For h1.
+        KF = KF1
+        do i_KF = 1,2,1
+        n_q = 0   ! Number of valence quarks with different flavors of h1 and h2.
+c       Normal meson i_KF.
+            if( KFABS.gt.99 .AND. KFABS.lt.1000 )then
+                KF_q1 = ABS( KFABS / 100 )
+                    if( KF_q1.lt.1 .OR. KF_q1.gt.6 ) goto 100   ! Error.
+                n_q( KF_q1 ) = 1
+                KF_q2 = ABS( ( KFABS - KF_q1*100 ) / 10 )
+                    if( KF_q2.lt.1 .OR. KF_q2.gt.6 ) goto 100   ! Error.
+                n_q( KF_q2 ) = n_q( KF_q2 ) + 1
+c       Normal baryon i_KF.
+            else if( KFABS.gt.999 .AND. KFABS.lt.10000 )then
+                KF_q1 = ABS( KFABS / 1000 )
+                    if( KF_q1.lt.1 .OR. KF_q1.gt.6 ) goto 200   ! Error.
+                n_q( KF_q1 ) = 1
+                KF_q2 = ABS( ( KFABS - KF_q1*1000 ) / 100 )
+                    if( KF_q2.lt.1 .OR. KF_q2.gt.6 ) goto 200   ! Error.
+                n_q( KF_q2 ) = n_q( KF_q2 ) + 1
+                KF_q3 = ABS( ( KFABS - KF_q1*1000 - KF_q2*100 ) / 10 )
+                n_q( KF_q3 ) = n_q( KF_q3 ) + 1
+            end if
+c       Effective valence quark number.
+            n_eff( i_KF ) =   1D0*n_q(1) +    1D0*n_q(2) +
+     &                      0.6D0*n_q(3) +
+     &                      0.2D0*n_q(4) + 0.07D0*n_q(5)
+            KFABS = ABS( KF2 )   ! For h2.
+            KF = KF2
+        end do
+
+c       hh cross section.
+        sigma_AQM = sigma_NN * n_eff(1)/3D0 * n_eff(2)/3D0
+
+        return
+
+100     write(*,*) "Abnormal meson in xsection_AQM, i_KF, KF1:", i_KF,KF
+        STOP
+200     write(*,*)"Abnormal baryon in xsection_AQM, i_KF, KF1:", i_KF,KF
+        STOP
+
+
+        return
+        end
+
+
+
 c******************************************************************************
         BLOCK DATA PYCIDATA
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
@@ -11114,17 +12180,37 @@ c******************************************************************************
         COMMON/PYCIDAT2/KFMAXT,NONCI2,PARAM(20),WEIGH(600)
         common/sa13/kjp20,non13,vjp20,vjp21,vjp22,vjp23
         SAVE /PYCIDAT1/,/PYCIDAT2/
-        DATA KFACOT/2212,2112,-2212,-2112,211,-211,111,-321,-311,
-     &   3212,3112,3222,-3212,-3112,-3222,3122,-3122,311,
-     &   321,3312,-3312,3322,-3322,3334,-3334,1114,2114,2214,2224,
-     &   213,-213,113,443,100443,553,100553,10441,20443,445,411,-411,
-     &   421,-421,4122,4112,4212,4222,223,323,313,413,-413,423,-423,
-     &   431,-431,511,-511,521,-521,531,-531,541,-541,
-     &   513,-513,523,-523,533,-533,543,-543,28*0/   ! 250420
-        DATA DISDET/0.5,0.5,0.5,0.5,46*0.,0.5,0.5,0.5,0.5,46*0./
-        DATA ISINELT/384*1,208*0,8*1/  ! with delta and rho
-        ! DATA KFMAXT/72/   ! 300623 Lei 52 -> 72
-        DATA KFMAXT/34/   ! 300623 Lei to psi', for time-saving
+c       In order of 
+c               1            2          3          4            5             6             7             8         9           10
+c    0     proton,     neutron,     pbar-,      nbar,         pi+,          pi-,          pi0,           K-,    Kbar0,      Sigma0,
+c    1     Sigma-,      Sigma+, Sigmabar0, Sigmabar+,   Sigmabar-,      Lambda0,   Lambdabar0,           K0,       K+,         Xi-,
+c    2     Xibar+,         Xi0,    Xibar0,    Omega-,   Omegabar+,       Delta-,       Delta0,       Delta+,  Delta++,        rho+,
+c    3       rho-,        rho0,     J/psi,      psi',   Deltabar+,    Deltabar0,    Deltabar-,   Deltabar--,       D+,          D-,
+c    4         D0,       Dbar0,       D*+,       D*-,         D*0,       D*0bar,    Lambda_c+, Lambda_cbar-,     D_s+,        D_s-,
+c    5      D*_s+,       D*_s-,       K*+,       K*-,         K*0,       K*bar0,      Upsilon,     Upsilon',   chi_0c,      chi_1c,
+c    6     chi_2c,    Sigma_c0,  Sigma_c+, Sigma_c++, Sigma_cbar0,  Sigma_cbar+, Sigma_cbar++,        omega,       B0,       B0bar,
+c    7         B+,          B-,      B_s0,   B_sbar0,        B_c+,         B_c-,          B*0,       B*bar0,      B*+,         B*-,
+c    8      B*_s0,    B*_sbar0,     B*_c+,     B*_c-,   Lambda_b0, Lambda_bbar0,     Sigma_b0,  Sigma_bbar0, Sigma_b-, Sigma_bbar+,
+c    9   Sigma_b+, Sigma_bbar-,        8*0      ! 250420 112323 Lei
+c        (92 kinds of particle altogether)   ! 250420 112323 Lei Extended to heavy-flavors.
+        DATA KFACOT /
+c           1     2      3      4      5     6     7     8      9    10
+     &   2212, 2112, -2212, -2112,   211, -211,  111, -321,  -311, 3212,    ! 10
+     1   3112, 3222, -3212, -3112, -3222, 3122,-3122,  311,   321, 3312,    ! 20
+     2  -3312, 3322, -3322,  3334, -3334, 1114, 2114, 2214,  2224,  213,    ! 30
+     3   -213,  113,  443,100443,  -1114,-2114,-2214,-2224,   411, -411,    ! 40
+     4    421, -421,   413,  -413,   423, -423, 4122, -4122,  431, -431,    ! 50
+     5    433, -433,   323,  -323,   313, -313,  553,100553,10441,20443,    ! 60
+     6    445, 4112,  4212,  4222, -4112,-4212,-4222,   223,  511, -511,    ! 70
+     7    521, -521,   531,  -531,   541, -541,  513,  -513,  523, -523,    ! 80
+     8    533, -533,   543,  -543, 5122, -5122, 5212, -5212, 5112,-5112,    ! 90
+     9   5222,-5222,   8*0      /                                           ! 100
+        DATA DISDET/ 0.5,0.5,0.5,0.5,   21*0., 0.5,0.5,0.5,0.5,   5*0., 
+     &               0.5,0.5,0.5,0.5,   62*0./   ! 231123 Lei nucleon & Delta = 0.5
+        DATA ISINELT/384*1, 112*1, 96*0, 8*1/  ! with Delta and rho. 021223 Lei 112*1 for D meson.
+        ! DATA KFMAXT/92/   ! 231123 Lei
+        ! DATA KFMAXT/34/   ! 300623 Lei Up to psi', for time-saving.
+        DATA KFMAXT/46/   ! 231123 Lei Up to D*0bar, for time-saving.
         DATA PARAM/40.,25.,21.,10.,2.0,0.85,1.0,0.02,0.1,4.0,0.16,0.04,
      &        6.0,3.0,12.,6.,4*0/   ! 060813
         DATA WEIGH/600*1.0/
@@ -11133,12 +12219,12 @@ c******************************************************************************
         END
 C******************************************************************
 C...........Main switches and parameters...........................
-C \item[KFACOT] flavor order of considered particles
-C \item[DISDET] allowable minimum distance between two
-C       particles,=0.5 between two necleons,=0 otherwise
-C \item[ISINELT] switch for i-th inelastic channel
-C       =0 closed,=1,opened
-C \item[KFMAXT](D=72) KFMAXT kinds of particles are involved in rescattering
+C KFACOT: flavor order of considered particles
+C DISDET: allowable minimum distance between two
+C          particles,=0.5 between two necleons (Delta),=0 otherwise
+C ISINELT: switch for i-th inelastic channel
+C           =0 closed, =1 opened
+C KFMAXT(D=92): KFMAXT kinds of particles are involved in rescattering
 C PARAM(1)(D=40.0mb) total cross-section of nucleon-nucleon
 C PARAM(2)(D=25.0mb) total cross-section of pi-nucleon
 C PARAM(3)(D=21.0mb) total cross-section of K-nucleon

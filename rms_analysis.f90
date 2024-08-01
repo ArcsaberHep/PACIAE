@@ -206,7 +206,8 @@
                 sum_Ncoll_lp_call_PYTHIA = sum_Ncoll_lp_call_PYTHIA + Ncoll_lp_call_PYTHIA
             !28-29
             ! For the case of fixed impact-parameter (b).
-            if( i_b_sampling_method == 0 ) then
+            ! if( i_b_sampling_method == 0 ) then
+            if( .true. ) then
                 read(99,*)
                 read(99,*)
             ! For the case of random impact-parameter (b) sampling method.
@@ -708,7 +709,8 @@
         write(100,*) sum_Ncoll_np_call_PYTHIA, sum_Ncoll_call_PYTHIA_2, sum_Ncoll_lp_call_PYTHIA
 !28-29
 ! For the case of fixed impact-parameter (b).
-        if( i_b_sampling_method == 0 ) then
+        ! if( i_b_sampling_method == 0 ) then
+        if( .true. ) then
             write(100,*)
             write(100,*)
 ! For the case of random impact-parameter (b) sampling method.
