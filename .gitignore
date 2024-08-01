@@ -41,6 +41,7 @@ Makefile
 *.pdf
 *.doc
 .md
+.log
 
 # Does not ignore the following files and directories.
 !README.md
