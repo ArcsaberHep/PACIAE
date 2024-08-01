@@ -104,7 +104,7 @@ RUN="RAW"            # Additional option. Not required to be modified usually.
 #                                                                              #
 #                                           By An-Ke Lei at CCNU on 17/10/2022 #
 #                                                                              #
-#                                      Last updated by An-Ke Lei on 21/12/2023 #
+#                                      Last updated by An-Ke Lei on 13/03/2024 #
 ################################################################################
 ################################################################################
 ################################################################################
@@ -400,6 +400,7 @@ i_deex_gen=1    # (D=1) adj(16), the deexcitation generation of newly qqbar
 n_deex_step=999 # (D=999) n_deex_step, the number of deexcitation steps per q.
 prob_ratio=(1 1 0.3 0 0 0)   # (D= 1 1 0.3 0 0) Probability ratio of 
                              #  u:d:s:c:b:t for qqbar sampling.
+ratio_B_to_M=0.167    # (D=0.167) bmrat, the ratio of baryons to mesons.
 
 #*******************************************************************************
 # Time accuracy.
@@ -437,14 +438,14 @@ rap_upp=1.4     # y/eta upper cut
 # The "ipden" and "itden" in PACIAE for different systems.
 i_proj_o=${i_proj}
 i_targ_o=${i_targ}
-if [[ "${na_proj}" = "1" ]]; then      # For N.
+if [[ "${nA_proj}" = "1" ]]; then      # For N.
     i_proj=0
-elif [[ "${na_proj}" > "1" ]]; then    # For A.
+elif [[ "${nA_proj}" > "1" ]]; then    # For A.
     i_proj=1
 fi
-if [[ "${na_targ}" = "1" ]]; then      # For N.
+if [[ "${nA_targ}" = "1" ]]; then      # For N.
     i_targ=0
-elif [[ "${na_targ}" > "1" ]]; then    # For A.
+elif [[ "${nA_targ}" > "1" ]]; then    # For A.
     i_targ=1
 fi
 if [[ "${i_proj}" = "0" && "${i_targ}" = "0" ]]; then
@@ -455,17 +456,17 @@ fi
 if [[ "${i_proj_o}" = "2" && "${i_targ_o}" = "2" ]]; then      # For e+e-.
     i_proj=${i_proj_o}
     i_targ=${i_targ_o}
-    na_proj=1
-    nz_proj=1
-    na_targ=1
-    nz_targ=-1
+    nA_proj=1
+    nZ_proj=1
+    nA_targ=1
+    nZ_targ=-1
     b_samp=0
-elif [ "${i_proj_o}" > "1" ]; then    # For lA.
+elif [[ "${i_proj_o}" > "1" ]]; then    # For lA.
     i_proj=${i_proj_o}
-    # nz_proj=1
-    # nz_proj=-1
-    if [ "${i_targ}" = "0" ]; then    # For lp.
-        nz_targ=1
+    # nZ_proj=1
+    # nZ_proj=-1
+    if [[ "${i_targ}" = "0" ]]; then    # For lN.
+        nZ_targ=1
         b_samp=0
     fi
 fi
@@ -552,7 +553,8 @@ echo "2.7,${i_y_or_eta},${energy}               ! parp21,yOrEta,win"    >> usu.d
 echo "0.,0.5,1,1,${i_channel}       ! ttaup,taujp,iabsb,iabsm,nchan"    >> usu.dat
 echo "7.2,4.,${b_samp},40.,20.,0.,0.1 ! para13,para14,psno,para15,para16,ajpsi,vneum"   >> usu.dat
 echo "40,40,25,10                 ! para1_1,para1_2,para2,para4" >> usu.dat
-echo "${i_deex},${n_deex_step},${i_pT_samp},${i_pT_max},0.77,0.05,0.005,${p_perp0},${i_tune}   ! i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b,parp82,i_tune" >> usu.dat
+echo "${i_deex},${n_deex_step},${i_pT_samp},${i_pT_max},${i_tune},2   ! i_deex,n_deex_step,i_pT,i_pT_max,i_tune,i_mm" >> usu.dat
+echo "0.77,0.05,0.005,${p_perp0},${ratio_B_to_M}   ! a_FF,aPS_c,aPS_b,parp82,bmrat" >> usu.dat
 echo "1,${i_inel_proc},${i_t_shower},${i_sim_mode},${prob_Delta_decay},2        ! mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw" >> usu.dat
 echo "${k_parcas},0.47,0.4,1000,${i_shadow},${a_lund},${b_lund},4,${p_perp_min},${k_PYTHIA}    ! adj1(1)- adj1(10)  " >> usu.dat
 echo "${dt_hadcas},${i_hadronization},30,45,1.,${i_deex_gen},${e_deex},0,${dt_parcas},1          ! adj1(11)- adj1(20) " >> usu.dat
@@ -734,8 +736,8 @@ echo "#  para1_2: nn total cross section used in hadron cascade"                
 echo "#  para2: total cross-section of pi-nucleon"                                          >> usu.dat
 echo "#  para4: total cross-section of pi-pi"                                               >> usu.dat
 echo "#"                                                                                    >> usu.dat
-echo "# i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b,parp82,i_tune"                    >> usu.dat
-echo "#  (D=3, 999, 0, 0.77, 0.05, 0.005, 2., 0)"                                           >> usu.dat
+echo "# i_deex,n_deex_step,i_pT,i_pT_max,i_tune,i_mm"                                       >> usu.dat
+echo "#  (D=3, 999, 1, 0, 0, 2)"                                                            >> usu.dat
 echo "#  i_deex: the deexcitation mode used in coal"                                        >> usu.dat
 echo "#          = 1, light-cone variable mode"                                             >> usu.dat
 echo "#          = 2, energy mode"                                                          >> usu.dat
@@ -755,6 +757,16 @@ echo "#        = 7, random (px and py) from mother, the same random factor as " 
 echo "#             z which related to adj1(29)"                                            >> usu.dat
 echo "#  i_pT_max: whether the sampled pT in coal deexitation is greater than the "         >> usu.dat
 echo "#            the mother quark or not."                                                >> usu.dat
+echo "#  i_tune: MSTP(5), tune number of PYTHIA. = 350, Perugia 2011 tune."                 >> usu.dat
+echo "#  i_mm: only the hadrons below numb(i_mm) (cf. 'filt' in parini.f)"                  >> usu.dat
+echo "#        join in updating the hh collision time list (cf. parini.f)."                 >> usu.dat
+echo "#        Originally i_mm=2, i.e. only p (proton) and n (neutron) join in"             >> usu.dat
+echo "#        updating the collision time list in parton initialization;"                  >> usu.dat
+echo "#        if i_mm=6, p, n, pbar, nbar, pi+ and pi- will join in updating"              >> usu.dat
+echo "#        the collision time list in parton initialization."                           >> usu.dat
+echo "#"                                                                                    >> usu.dat
+echo "# a_FF,aPS_c,aPS_b,parp82,bmrat"                                                      >> usu.dat
+echo "#  (D=0.77, 0.05, 0.005, 2., 0.167)"                                                  >> usu.dat
 echo "#  a_FF: parameter for light hadron in Field-Feynman function, i.e. u, d, and s "     >> usu.dat
 echo "#        hadron --PARJ(51), (52), and (53)--, set them equal"                         >> usu.dat
 echo "#  aPS_c: -PARJ(54), parameter for charm-hadron in Petersono/SLAC"                    >> usu.dat
@@ -762,7 +774,7 @@ echo "#  aPS_b: -PARJ(55), parameter for bottom-hadron in P/S function, note the
 echo "#  parp82: PARP(82) in PYTHIA, regularization scale p_erp_0 of the "                  >> usu.dat
 echo "#          transverse-momentum spectrum for multiple interactions with "              >> usu.dat
 echo "#          MSTP(82) >= 2."                                                            >> usu.dat
-echo "#  i_tune: MSTP(5), tune number of PYTHIA. = 350, Perugia 2011 tune."                 >> usu.dat
+echo "#  bmrat: ratio of baryon to meson used in coalescence model."                        >> usu.dat
 echo "#"                                                                                    >> usu.dat
 echo "# mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw (D=1, 7, 0, 3, 0.9, 2)"         >> usu.dat
 echo "#  mstu21: parameter mstu(21) in PYTHIA"                                              >> usu.dat
@@ -1352,7 +1364,7 @@ wait
 # Enters src folder then compiles and builds executable file.
 cd ./src
 echo
-make
+make -j
 echo
 cd ../
 ##------------------------------------------------------------------------------
@@ -1458,32 +1470,32 @@ if [[ "${i_proj}" = "2" && "${i_targ}" = "2" ]]; then
     proj_name=e+
 elif [[ "${i_proj}" = "11" ]]; then
     proj_name=e+
-    if [ "${nz_proj}" = "-1" ]; then
+    if [ "${nZ_proj}" = "-1" ]; then
         proj_name=e-
     fi
 elif [[ "${i_proj}" = "12" ]]; then
     proj_name=nu_ebar
-    if [ "${nz_proj}" = "-1" ]; then
+    if [ "${nZ_proj}" = "-1" ]; then
         proj_name=nu_e
     fi
 elif [[ "${i_proj}" = "13" ]]; then
     proj_name=mu+
-    if [ "${nz_proj}" = "-1" ]; then
+    if [ "${nZ_proj}" = "-1" ]; then
         proj_name=mu-
     fi
 elif [[ "${i_proj}" = "14"  ]]; then
     proj_name=nu_mubar
-    if [ "${nz_proj}" = "-1" ]; then
+    if [ "${nZ_proj}" = "-1" ]; then
         proj_name=nu_mu
     fi
 elif [[ "${i_proj}" = "15"  ]]; then
     proj_name=tau+
-    if [ "${nz_proj}" = "-1" ]; then
+    if [ "${nZ_proj}" = "-1" ]; then
         proj_name=tau-
     fi
 elif [[ "${i_proj}" = "16"  ]]; then
     proj_name=nu_taubar
-    if [ "${nz_proj}" = "-1" ]; then
+    if [ "${nZ_proj}" = "-1" ]; then
         proj_name=nu_tau
     fi
 fi
@@ -1526,8 +1538,8 @@ fi
 #Lei20231106B-- e+e-, lp and lA
 if [[ "${i_proj}" = "2" && "${i_targ}" = "2" ]]; then
     targ_name="e-"
-elif [ "${i_proj}" > 1 ]; then
-    if [ "${na_targ}" = "1" ]; then
+elif [[ "${i_proj}" > "1" ]]; then
+    if [[ "${nA_targ}" = "1" ]]; then
         targ_name="p"
     fi
 fi

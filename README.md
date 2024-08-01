@@ -2,7 +2,7 @@
      Written by Markdown language.
                  By Anke at CCNU on 17/10/2022 
                                                
-                    Last updated on 21/12/2023 
+                    Last updated on 13/03/2024 
  -->
 
 # The parton and hadron cascade model PACIAE
@@ -120,6 +120,20 @@ The released code are available on https://github.com/ArcsaberHep/PACIAE/release
 - PYTHIA 6.4 Physics and Manual, [JHEP 05 (2006) 026](https://doi.org/10.1088/1126-6708/2006/05/026) or [arXiv:hep-ph/0603175 [hep-ph]](https://doi.org/10.48550/arXiv.hep-ph/0603175)
 
 ## Update Notes:
+
+<!----------------------------------------------------------------------------->
+...(waiting for updating)
+
+<!----------------------------------------------------------------------------->
+### <font color=red> 01-03/2024: </font> In version PACIAE 3.0.01
+
+- In "coales_30.f", a new coalescence scheme has been introduced by Yu-Liang with some fixes and improvements from Ben-Hao and An-Ke, which gives faster and more direct coalescence. A new parameter "bmrat" (ratio of baryon to meson) was introduced.
+- In "hadcas_30.f", the heavy flavored D meson channels (D pi, D rho and DN) have been added. The AQM cross sections were adopted. Four subroutine "DMeson_coll, Dpn_coll, DMeson1, Dmeson2" and one function "sigma_AQM" were added. The "BLOCK DATA PYCIDATA" and related comments were fixed and updated. 
+- "rms0.out" output updated.
+- Some comments updated in program.
+- "usu.dat" updated.
+- "PACIAE.sh" updated.
+- Bug fixed.
 
 <!----------------------------------------------------------------------------->
 ### <font color=red> PACIAE 3.0 is now released! </font>

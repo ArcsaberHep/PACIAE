@@ -53,7 +53,8 @@
 0.,0.5,1,1,8       ! ttaup,taujp,iabsb,iabsm,nchan
 7.2,4.,2,40.,20.,0.,0.1 ! para13,para14,psno,para15,para16,ajpsi,vneum
 40,40,25,10                 ! para1_1,para1_2,para2,para4
-3,999,1,0,0.77,0.05,0.005,2.5,0   ! i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b,parp82,i_tune
+3,999,1,0,0,2   ! i_deex,n_deex_step,i_pT,i_pT_max,i_tune,i_mm
+0.77,0.05,0.005,2.5,0.167   ! a_FF,aPS_c,aPS_b,parp82,bmrat
 1,7,0,3,0.9,2        ! mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw
 1,0.47,0.4,1000,1,0.3,0.1,4,1.9,2.5    ! adj1(1)- adj1(10)  
 0.1,0,30,45,1.,1,2,0,0.03,1          ! adj1(11)- adj1(20) 
@@ -61,7 +62,7 @@
 0.1,0.3,0.4,0.45,1,0,100.,3.,2,4    ! adj1(31)- adj1(40) 
 4,2,2,0.025,0   ! kjp22,kjp23,kjp24,parp78,mstptj
 0.,0,0.,0.05,1.,0.2,0.05   ! parecc,iparres,smadel,dparj4,cp0,cr0,seco
-1,1,0.227,0,0,0 ! prob_ratio_q
+1,1,0.3,0,0,0 ! prob_ratio_q
 
 ######################        Annotation of usu.dat         ####################
 # neve,nout,nosc (D=xxx, xxx/10, 0)
@@ -229,8 +230,8 @@
 #  para2: total cross-section of pi-nucleon
 #  para4: total cross-section of pi-pi
 #
-# i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b,parp82,i_tune
-#  (D=3, 999, 0, 0.77, 0.05, 0.005, 2., 0)
+# i_deex,n_deex_step,i_pT,i_pT_max,i_tune,i_mm
+#  (D=3, 999, 1, 0, 0, 2)
 #  i_deex: the deexcitation mode used in coal
 #          = 1, light-cone variable mode
 #          = 2, energy mode
@@ -250,6 +251,16 @@
 #             z which related to adj1(29)
 #  i_pT_max: whether the sampled pT in coal deexitation is greater than the 
 #            the mother quark or not.
+#  i_tune: MSTP(5), tune number of PYTHIA. = 350, Perugia 2011 tune.
+#  i_mm: only the hadrons below numb(i_mm) (cf. 'filt' in parini.f)
+#        join in updating the hh collision time list (cf. parini.f).
+#        Originally i_mm=2, i.e. only p (proton) and n (neutron) join in
+#        updating the collision time list in parton initialization;
+#        if i_mm=6, p, n, pbar, nbar, pi+ and pi- will join in updating
+#        the collision time list in parton initialization.
+#
+# a_FF,aPS_c,aPS_b,parp82,bmrat
+#  (D=0.77, 0.05, 0.005, 2., 0.167)
 #  a_FF: parameter for light hadron in Field-Feynman function, i.e. u, d, and s 
 #        hadron --PARJ(51), (52), and (53)--, set them equal
 #  aPS_c: -PARJ(54), parameter for charm-hadron in Petersono/SLAC
@@ -257,7 +268,7 @@
 #  parp82: PARP(82) in PYTHIA, regularization scale p_erp_0 of the 
 #          transverse-momentum spectrum for multiple interactions with 
 #          MSTP(82) >= 2.
-#  i_tune: MSTP(5), tune number of PYTHIA. = 350, Perugia 2011 tune.
+#  bmrat: ratio of baryon to meson used in coalescence model.
 #
 # mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw (D=1, 7, 0, 3, 0.9, 2)
 #  mstu21: parameter mstu(21) in PYTHIA

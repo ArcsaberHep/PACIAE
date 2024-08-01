@@ -61,7 +61,7 @@ c151021
 c151021 
         call pyexec
         if(kkii.eq.2)return   ! 050920
-        if(ipden.lt.11)call pyedit(2)   ! 060813
+        if(ipden.lt.11)call pyedit(1)   ! 060813
         if(ipden.ge.11)call pyedit(1)   ! 060813
 
 c       return   ! temporal
@@ -97,8 +97,8 @@ c        in pyjets
         s1=rn(j2,1)
         s2=rn(j2,2)
         s3=rn(j2,3)
-        if(dabs(s1-r1).le.1.e-6 .and. dabs(s2-r2).le.1.e-6 .and.
-     c   dabs(s3-r3).le.1.e-6)ip=ip+1
+        if( abs(s1-r1).le.1.d-6 .and. abs(s2-r2).le.1.d-6 .and.
+     c      abs(s3-r3).le.1.d-6 ) ip=ip+1
         enddo
         ipp1=ipp+ip
         call posi(ipp,ipp1,rc,rrp)
@@ -158,7 +158,7 @@ c       'pyjets' to 'sa1_h'
         enddo
 c260123
 
-c       find out unstable hadron 
+c       find out unstable hadron
         jd=0
 c       jd: statistics of number of unstable hadrons adjudged
         i1o=1   ! 080104
@@ -198,7 +198,7 @@ c       store the position of decaying hadron
 c       update particle list
 
 c       remove decaying hadron from 'pyjets'
-        if(ipden.lt.11)call pyedit(2)   ! 060813
+        if(ipden.lt.11)call pyedit(1)   ! 060813
         if(ipden.ge.11)call pyedit(1)   ! 060813
 
 c       remove decaying hadron from 'sa1_h' as well
@@ -271,8 +271,10 @@ c       transfer four position messages of decaied hadrons to 'pyjets'
         enddo
         enddo
 
-        if(i1.eq.nn1o)goto 401 !141218, originally no this statement->dead loop 
+c010224 if(i1.eq.nn1o)goto 401 !141218, originally no this statement->dead loop 
+c010224 Lei For decay of the decayed secondary unstable particles.
         i1o=i1   ! 131218 
+        nn1 = n   ! 010224 Lei Update nn1.
         goto 200   ! 131218
         endif   ! 1
 
@@ -417,4 +419,4 @@ c       n=n-i
         end
 
 
-ccccccccccccccccccccccccccccccccccc end ccccccccccccccccccccccccccccccccc        
+ccccccccccccccccccccccccccccccccccc end ccccccccccccccccccccccccccccccccc

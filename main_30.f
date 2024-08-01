@@ -32,7 +32,7 @@ c        letter. typing ": set ic + enter key" before searching in Vi/Vim.
         COMMON/PYPARS/MSTP(200),PARP(200),MSTI(200),PARI(200)
         COMMON/PYSUBS/MSEL,MSELPD,MSUB(500),KFIN(2,-40:40),CKIN(200)
         COMMON/PYDATR/MRPY(6),RRPY(100)   ! 171022 Lei
-        common/pyint1/mint(400),vint(400)
+        COMMON/PYINT1/MINT(400),VINT(400)
         common/pycidat1/kfacot(100),disdet(100),isinelt(600)
         common/pycidat2/kfmaxt,nont2,PARAM(20),weigh(600)
         common/sa1/kjp21,non1,bp,iii,neve,nout,nosc
@@ -74,7 +74,7 @@ c300623 &   v1(4,20),v2(4,20),v12(4,20),v22(4,20)   ! 300623 Lei
         common/sa37/nth,npadth,kth(kszj,5),pth(kszj,5),vth(kszj,5)   ! 150922
 c       common/sa38/csp_31,csp_32,csp_41,csp_42,csp_43,csp_51,csp_52,
 c    c   csp_53,csp_54,csp_61,csp_62,csp_63,csp_64,csp_65   ! 161022
-        common/sa38/ prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei sa 111123
+        common/sa38/ prob_ratio_q(6), am(6), amqq(6)   ! 290823 Lei 111123 sa
         common/sa6_c/ithroq,ithrob,ithroc,non6_c,throe(4)
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)
         common/sbe/nbe,non_be,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
@@ -99,6 +99,7 @@ c    c   csp_53,csp_54,csp_61,csp_62,csp_63,csp_64,csp_65   ! 161022
         common/work7/reac(9),crose(9)   ! 300623 Lei In parcas
         common/ancoal/icoal1,icoal2,xkappa1,xkappa2 ! 200820 yan
         common/schuds/schun,schudn,schudsn,sfra   ! 211022 She and Lei
+        common/coal1/bmrat,i_mm  ! 080324 yan 120324
         dimension san(40,6,20),sbn(20),sanf(40,6,20),sbnf(20)   ! 070419 300623 Lei 5 -> 6
         dimension sao(40,6,20),sbo(20),saof(40,6,20),sbof(20)   ! 070419 300623 Lei 5 -> 6
         dimension skapa(6),skapao(6),snreac(9)   ! 020708 220110 010518
@@ -121,7 +122,14 @@ c       For the intrinsic subroutine DATE_AND_TIME calling.
 c       KF code of particles specified not to decay (without).   ! 290823 Lei
         dimension KF_woDecay(20)   ! 290823 Lei
 
-
+c080324 bmrat: ratio of baryon to meson in coalescenc model  ! yan
+c120324 i_mm: only the hadrons below numb(i_mm) (cf. 'filt' in parini.f)
+c        join in updating the hh collision time list (cf. parini.f).
+c        Originally i_mm=2, i.e. only p (proton) and n (neutron) join in 
+c        updating the collision time list in parton initialization; 
+c        if i_mm=6, p, n, pbar, nbar, pi+ and pi- will join in updating
+c        the collision time list in parton initialization.
+c
 c010418 itorw: =1 executing pyevnt, =2 executing pyevnw
 c260314 pl(ii,5): four momentum and mass of ii-th lepton
 c       adj1(i), i=
@@ -217,16 +225,13 @@ c       iparres: =0 considers elastic parton-parton collisions only in
 c                   parcas_30.f
 c                =1 with inelastic parton-parton collisions as well
 
+c260314 pl(ii,5): four momentum and mass of ii-th lepton
 c       pincl (pscal): four momentum and mass of incident (scatterd) lepon
 c       pinch: four momentum and mass of incident hadron
 c        vnu: \nu; fq2: Q^2=-q^2; w2l: W^2; yyl: y; zl: z; xb: x_B; pph: P_h
 
 c       para1_1: NN total cross section, used in parini_30.f 
 c       para1_2: NN total cross section, used in hadcas_30.f
-c       dni: nucleon number density
-
-c       pj and ej: (pt)**2 and transverse energy of J/psi 
-c       pjp and ejp: (pt)**2 and transverse energy of (J/psi) prime
 
 c       acoll: a array, demension of which should be larger
 c        than or equal to 'nmax' (interval # of impact parameter)
@@ -293,23 +298,16 @@ c            = 1 : OSCAR1997A (final_id_p_x, just PACIAE final output)
 c            = 2 : OSCAR1999A (full_event_history)
 c140223      = 3 : OSCAR2013A (full_event_history), dummy now
 c020708
-c       itime: number of strings in current event
-c       astr: no use 
-c       gtime: number of gluons in current event 
-c       akapa(1): parj(1) 
-c       akapa(2): parj(2) 
-c       akapa(3): parj(3) 
-c       akapa(4): parj(4) 
-c       akapa(5): parj(21) 
+c       itime: number of strings in current event, when kjp22 = 1 or 3
+c       astr: not useed
+c       gtime: number of gluons in current event, when kjp22 = 1 or 3
+c       akapa(1): parj(1)
+c       akapa(2): parj(2)
+c       akapa(3): parj(3)
+c       akapa(4): parj(4)
+c       akapa(5): parj(21)
 c       akapa(6): effective string tension
 c020708
-
-c161022 cumulent sum of flavor generation probability, for an example: 
-c        p_31=(1-amd/sms)/2., p_32=(1-amu/sms)/2., p_33=(1-ams/sms)/2.; 
-c        amd (amu, ams): d (u,s) quark constituent mass, sms=amd+amu+ams; 
-c        p_31+p_32+p33=1;
-c        cumulent sum: csp_31=p_31, csp_32=p_31+p_32
-c       u and d have same mass and probability
 
 c       ?????????????????????????????????????
 c       0. is the hard distance between two pions
@@ -368,8 +366,8 @@ c       reads input variables for event generation
         read(11,*)para13,para14,psno,para15,para16,ajpsi,vneum
         read(11,*)para1_1,para1_2,para2,para4
 c300623 read(11,*)tdh,cptl,cptu,cptl2,cptu2,itnum   ! 241108 300623 Lei
-        read(11,*)i_deex,n_deex_step,i_pT,i_pT_max,
-     &            a_FF,aPS_c,aPS_b,parp82,i_tune   ! 120923 Lei
+        read(11,*)i_deex,n_deex_step,i_pT,i_pT_max,i_tune,i_mm   ! 120923 Lei 260124 Lei 080324 yan
+        read(11,*)a_FF,aPS_c,aPS_b,parp82,bmrat   ! 120923 Lei 260124 Lei 080324 yan
         read(11,*)mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw   ! 160617 010418 310723 280823 Lei
         read(11,*)(adj1(i),i=1,10)
         read(11,*)(adj1(i),i=11,20)
@@ -381,9 +379,11 @@ c300623 read(11,*)tdh,cptl,cptu,cptl2,cptu2,itnum   ! 241108 300623 Lei
         close(11)
 c------------------------------   Input Reading   ------------------------------
 c-------------------------------------------------------------------------------
+
+
 csa221123
 c       if user wants to adjust the default value of prob_ratio_q(i) above, 
-c        you can active the following line:
+c        one can activate the following line:
 c       call ratio_prob(x)
 c       calculates the ratio probability of u(ubar):d(dbar):s(sbar)
 c        :c(cbar):b(bbar):t(tbar) by the law of {m_q}^{-x}, here x: adjustable 
@@ -394,7 +394,7 @@ c       bmin,bmax : minimum and maximum impact parameters, bmin=bmax means
 c        definite impact parameter, 2*nmax: the number of 
 c        intervals segmented in [bmin,bmax]
 c       nchan=0: inelastic (INEL)
-c       nchan=1: Non Single Difractive (NSD)
+c       nchan=1: Non Single Diffractive (NSD)
 c       nchan=2: Drell-Yan process
 c       nchan=3: J/psi production
 c       nchan=4: heavy-flavor production
@@ -493,13 +493,13 @@ c       default x_ratio=0.1 in usu.dat, so there are x_ratio*10.0, 010423 yan
         PARAM(7)=para7
         PARAM(8)=ddt
         PARAM(10)=para10
-c       totle cross-section of J/Psi + n
+c       totle cross-section of J/psi + n
         PARAM(13)=para13
-c       totle cross-section of J/Psi + meson
+c       totle cross-section of J/psi + meson
         PARAM(14)=para14
-c       totle cross-section of Psi' + n
+c       totle cross-section of psi' + n
         PARAM(15)=para15
-c       totle cross-section of Psi' + meson
+c       totle cross-section of psi' + meson
         PARAM(16)=para16
 c020511 # of segments used in integration
         idw=adj1(4)
@@ -637,7 +637,8 @@ c170121
         swoun=0.
         snpctl0=0.
         snpctlm=0.   ! 180121
-c170121       
+        psnono=0.   ! 280224 Lei
+c170121
         snpar=0.   ! 280722
         dinel=0.
         einel=0.
@@ -778,9 +779,16 @@ c171022 Initialies them avoiding bad display in rms.out.   ! 171022 Lei
         astbt  = 0D0
         aanbin = 0D0
         swouni = 2D0
+c280224 Lei
+        woun = 2D0
+        pirr   = 1D0
+        tirr   = 1D0
+        anbin  = 0D0
+        psnon  = 0D0
+c280224 Lei
 
 c260718 if(dabs(bmin-bmax).lt.10d-4)then   ! i. e. case of psno=0. 280113
-        if(psno.eq.0)then   ! 260718
+        if(INT(psno).eq.0)then   ! 260718 280224 Lei INT
         bp=bmin
         r4=rnp
         if(rnt.gt.rnp)r4=rnt
@@ -822,13 +830,13 @@ c020511
 c060605
         vneump=pir   ! 111399
         vneumt=tir   ! 111399
-        write(9,*)
-        write(9,*)'psno,b,N_part_p,N_part_t,N_bin=',
+        write(9,*) "#! Fixed b = bmin"  ! 160124 Lei
+        write(9,*)'psno, b, N_part_p, N_part_t, N_bin=',
      c   psno,bp,vneump,vneumt,evbin   ! 190309 280113
         goto 80003   ! 010518 changed from 300 to 80003
         endif
 
-        if(psno.eq.1.)then   ! 280113
+        if(INT(psno).eq.1)then   ! 280113 280224 Lei INT
 c       systematic sampling method for given interval of b according to b**2 law
         nmax2=2*nmax
         bmaxn=(bmax*bmax-bmin*bmin)/(2.*nmax)
@@ -838,6 +846,8 @@ c       systematic sampling method for given interval of b according to b**2 law
         i2=i2+1
         bpp(i2)=dsqrt(i1*bmaxn+bmin2)
         enddo
+        write(9,*) "#! Systematic sampling of b from (bmin,bmax)"  ! 160124 Lei
+        write(9,*) "nmax=", nmax  ! 160124 Lei
         write(9,*)'b=',(bpp(i1),i1=1,i2)   !!
         stab=0.   ! 280113
         stb=0.
@@ -877,11 +887,11 @@ c060605
         aneump=stbp/dfloat(i2)   ! 241110
         aneumt=stbt/dfloat(i2)   ! 241110
         vneum=stb/dfloat(i2)
-        write(9,*)'psno,ave. b=',psno,stab   ! 280113
+        write(9,*)'psno, ave. b=',psno,stab   ! 280113
         write(9,*)'N_bin=',(acoll(i1)*csnn,i1=1,i2)   !! 280113
         write(9,*)'(N_part)_p=',(acollp(i1),i1=1,i2)   ! 241110
         write(9,*)'(N_part)_t=',(acollt(i1),i1=1,i2)   ! 241110
-        write(9,*)'ave. N_part_p,N_part_t,N_bin=',
+        write(9,*)'ave. N_part_p, N_part_t, N_bin=',
      c   aneump,aneumt,vneum*csnn ! 191110      280113
 
 c       average b in [bmin,bmax]
@@ -911,6 +921,9 @@ c291118
         astbt=tir
 c220110
         endif   ! 280113
+        if(INT(psno).eq.2)then   ! 280113
+        write(9,*) "#! Random sampling of b from (bmin,bmax)"  ! 160124 Lei
+        end if
 c-------------   Independent Optical Initial Geometry Calculation  -------------
 c-------------------------------------------------------------------------------
 
@@ -920,44 +933,72 @@ c-------------------------------------------------------------------------------
 
 c-------------------------------------------------------------------------------
 c----------------------------   Input Recording   ------------------------------
-        write(9,*)'win,nap,nzp,nat,nzt=',win,nap,nzp,nat,nzt
-        write(9,*)'pio,ipden,itden=',pio,ipden,itden   ! 300623 Lei
-        write(9,*)'neve,nout,nosc=',neve,nout,nosc
-        write(9,*)'x_ratio,bmin,bmax,nmax,parp78,mstptj=',x_ratio,bmin,
-     &   bmax,nmax,parp78,mstptj   ! 150612 yan 070417 100821 230722 310723 Lei
-        write(9,*)'kjp21,ifram,para7,para10,kjp20,kjp22,kjp23,kjp24=',
-     c   kjp21,ifram,para7,para10,kjp20,kjp22,kjp23,kjp24   ! 020511
-        write(9,*)ispmax,isdmax,iflmax
-        write(9,*)(ispkf(i),i=1,ispmax)
-        write(9,*)(asd(i),i=1,isdmax)
-        write(9,*)'parp21,yOrEta,ttaup,taujp=',parp21,yOrEta,ttaup,taujp
-        write(9,*)'iabsb,iabsm,nchan=',iabsb,iabsm,nchan
-        write(9,*)'para13 - 16 =',para13,para14,para15,para16
-        write(9,*)'psno,ajpsi,vneum=',psno,ajpsi,vneum
-        write(9,*)'para1_1,para1_2,para2,para4=',para1_1,para1_2,para2,
-     c   para4
-        write(9,*)'i_deex,n_deex_step,i_pT,i_pt_max,'//
-     &            'a_FF,aPS_c,aPS_b,parp82,i_tune='   ! 120923 Lei
-        write(9,*) i_deex,n_deex_step,i_pT,i_pt_max,
-     &             a_FF,aPS_c,aPS_b,parp82,i_tune   ! 120923 Lei
-        write(9,*)'mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw='
-     c   ,mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw   ! 160617 010418 280823 Lei
-c210803
-        write(9,*)'adj1=',(adj1(i),i=1,10)
-        write(9,*)'adj1=',(adj1(i),i=11,20)
-        write(9,*)'adj1=',(adj1(i),i=21,30)
-        write(9,*)'adj1=',(adj1(i),i=31,40)
-c210803
-        write(9,*)'parecc,iparres,smadel,dparj4,cp0,cr0,seco=',
-     c   parecc,iparres,smadel,dparj4,cp0,cr0,seco   ! 120219 260219
-        write(9,*) "prob_ratio_q=", prob_ratio_q   ! 040923 Lei
-        if(iflmax.ne.0)then
+C040123 Lei
+        write(9,*)
+        write(9,*)
+        write(9,*) "#!-------------------------- Input Recording " //
+     &             "--------------------------"
+        write(9,*) "#! neve, nout, nosc:"
+        write(9,*) neve,nout,nosc
+        write(9,*) "#! nap, nzp, nat, nzt:"
+        write(9,*) nap,nzp,nat,nzt
+        write(9,*) "#! ddt, x_ratio, bmin, bmax, nmax:"   ! 241108 310723 Lei
+        write(9,*) ddt,x_ratio,bmin,bmax,nmax   ! 241108 310723 Lei
+        write(9,*) "#! kjp21, ifram, para7, para10, kjp20:"
+        write(9,*) kjp21,ifram,para7,para10,kjp20
+        write(9,*) "#! pio, ipden, itden: "
+        write(9,*) pio,ipden,itden
+c       input variables for event analyses
+        write(9,*) "#! ispmax, isdmax, iflmax:"
+        write(9,*) ispmax,isdmax,iflmax
+        write(9,*) "#! KF_woDecay:"
+        write(9,*) ( KF_woDecay(i), i=1,10,1)   ! 290823 Lei
+        write(9,*) ( KF_woDecay(i), i=11,20,1)   ! 290823 Lei
+        write(9,*) "#! ispkf:"
+        write(9,*) (ispkf(i),i=1,10)
+        write(9,*) (ispkf(i),i=11,ispmax)
+        write(9,*) "#! asd:"
+        write(9,*) (asd(i),i=1,isdmax)
+        if(iflmax.gt.0)then
+        write(9,*) "#! afl: "
         do kk=1,ispmax
         do i=1,iflmax
-        write(9,*)(afl(kk,i,j),j=1,2)
+        write(9,*) (afl(kk,i,j),j=1,2)
         enddo
         enddo
-        endif
+        end if
+c       input variables for event generation
+        write(9,*) "#! parp2, yOrEta, win:"   ! 280823 Lei
+        write(9,*) parp2,yOrEta,win   ! 280823 Lei
+        write(9,*) "#! ttaup, taujp, iabsb, iabsm, nchan:"   ! 241108
+        write(9,*) ttaup,taujp,iabsb,iabsm,nchan   ! 241108
+        write(9,*)"#! para13,para14, psno, para15,para16, ajpsi, vneum:"
+        write(9,*) para13,para14,psno,para15,para16,ajpsi,vneum
+        write(9,*) "#! para1_1, para1_2, para2, para4:"
+        write(9,*) para1_1,para1_2,para2,para4
+c300623 write(9,*)tdh,cptl,cptu,cptl2,cptu2,itnum   ! 241108 300623 Lei
+        write(9,*) "#! i_deex, n_deex_step, i_pT, i_pT_max, " //
+     &             "i_tune, i_mm:"   ! 120923 Lei 290124 Lei
+        write(9,*) i_deex,n_deex_step,i_pT,i_pT_max,i_tune,i_mm ! 120923 Lei 290124 Lei
+        write(9,*) "#! a_FF, aPS_c, aPS_b, parp82, bmrat:"   ! 120923 Lei 290124 Lei
+        write(9,*) a_FF,aPS_c,aPS_b,parp82,bmrat   ! 120923 Lei 290124 Lei
+        write(9,*) mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw   ! 160617 010418 310723 280823 Lei
+        write(9,*) "#! adj1(i): "
+        write(9,*) (adj1(i),i=1,10)
+        write(9,*) (adj1(i),i=11,20)
+        write(9,*) (adj1(i),i=21,30)
+        write(9,*) (adj1(i),i=31,40)
+        write(9,*) "#! kjp22-24, parp78, mstjtp:"   ! 100821 230722 240124 Lei
+        write(9,*) kjp22,kjp23,kjp24,parp78,mstjtp   !  100821 230722
+        write(9,*) "#! parecc, iparres, smadel, dparj4, cp0, cr0, seco:"   ! 120219 260219
+        write(9,*) parecc,iparres,smadel,dparj4,cp0,cr0,seco   ! 120219 260219
+        write(9,*) "#! prob_ratio_q(i): "
+        write(9,*) ( prob_ratio_q(i),i=1,6,1 )   ! 290823 Lei
+        write(9,*) "#!-------------------------- Input Recording " //
+     &             "--------------------------"
+        write(9,*)
+        write(9,*)
+C040123 Lei
 c----------------------------   Input Recording   ------------------------------
 c-------------------------------------------------------------------------------
 
@@ -1018,6 +1059,8 @@ c250209
         ntrs=0   ! 300623 Lei
         nth=0    ! 300623 Lei
         naff=0   ! 300623 Lei
+        pathn = 0D0   ! 280224 Lei
+        ckapa = 1D0   ! 280224 Lei
         if(iii.eq.1)then   ! 300623 Lei
         kgam=0
         pgam=0.
@@ -1049,6 +1092,7 @@ c181003
         nnstop=0
         zstop=0.
 c181003
+        call PASTAT(-1,0)   ! 080324 Initializes the variables couting cross sections.
 c-------------------   Single Event Variable Initializing   --------------------
 c-------------------------------------------------------------------------------
 
@@ -1056,9 +1100,9 @@ c-------------------------------------------------------------------------------
 c-------------------------------------------------------------------------------
 c------------------------   Impact Parameter Sampling   ------------------------
         non6_c=123456   ! 141208
-        if(psno.eq.0)goto 800   ! 260718
+        if(INT(psno).eq.0)goto 800   ! 260718 280224 Lei INT
 
-        if(psno.eq.1)then   ! 280113
+        if(INT(psno).eq.1)then   ! 280113 280224 Lei INT
         sbp(jjj)=sbp(jjj)+1
         bp=bpp(jjj)
         vneump=acollp(jjj)   ! 241110
@@ -1069,7 +1113,7 @@ c------------------------   Impact Parameter Sampling   ------------------------
         goto 800   ! 280113
         endif   ! 280113
 
-        if(psno.eq.2)then   ! calcaulate impact parameter etc. for psno=2
+        if(INT(psno).eq.2)then   ! calcaulate impact parameter etc. for psno=2 280224 Lei INT
         bmin2=bmin*bmin   ! 190620
         bp=sqrt(pyr(1)*(bmax*bmax-bmin2)+bmin2)
 c       calculate the overlap region of two nuclei at given bp
@@ -1095,13 +1139,18 @@ c280113 endif
 c020511
         vneump=pir
         vneumt=tir
-        if(iii.eq.1)write(9,*)'psno,b,N_part_p,N_part_t,N_bin=',
-     c   psno,bp,vneump,vneumt,evbin   ! 280113 020718
+c160124 Lei
+        if(iii.eq.1)then
+            write(9,*)"#! Random sampling of b from (bmin,bmax)"
+            write(9,*)'iii, psno, b, N_part_p,N_part_t, N_bin=',
+     c                 iii,psno,bp,vneump,vneumt,evbin   ! 280113 020718
+        end if
+c160124 Lei
         endif
 c241110
 800     continue
 c280113
-        if(psno.eq.2.)then
+        if(INT(psno).eq.2)then   ! 280224 Lei INT
         averb=averb+bp
         psnon=psnon+anbin
         psnop=psnop+vneump
@@ -1152,7 +1201,7 @@ c       MDCY( KC , 1 ) = 0 means the particle will not decay (stable).
             if( KF.ne.0 ) MDCY( PYCOMP(KF), 1 ) = 0
         end do
 c       MDCY( KC , 1 ) = 1 means the particle will decay (unstable).
-        if(iMode.eq.1)then   ! For A-framework, hardcode
+        if(iMode.eq.1)then   ! For A-framework, hardcode.
             MDCY( PYCOMP(111),  1 ) = 1   ! pi0
             MDCY( PYCOMP(1114), 1 ) = 1   ! Delta-
             MDCY( PYCOMP(2114), 1 ) = 1   ! Delta0
@@ -1278,6 +1327,7 @@ c       for nucleon (antinucleon)-nucleon (antinucleon) or e+e-
         nbe=0
         naf=0
         nsa=0
+        nbh=0   ! 300124 Lei
         idi=0
         idio=0
         if(iii.eq.1)then   ! 300623 Lei
@@ -1639,7 +1689,7 @@ c-----------------------------   e+e- Generating   -----------------------------
 c-----------------------------   e+e- Generating   -----------------------------
 
 c151021
-        call pyedit(2)   ! in p_30.f
+        call pyedit(1)   ! in p_30.f
 
 c---------------------------   B-framework Treating  ---------------------------
 c230722
@@ -1670,7 +1720,7 @@ c       give four position to the particles generated in PYTHIA (in pyjets)
         call ptcre(1,2,time) ! arguments 1 and 2 make no sense indeed
 c       remove hadrons from 'pyjets' to 'sbh'
         call remo   ! in parini.f
-        call pyedit(2)
+        call pyedit(1)
 c----------------------------   Gamma 66 Removing   ----------------------------
 
 c----------------------------   Diquark Locating   -----------------------------
@@ -1708,7 +1758,7 @@ c---------------------------   Diquark Breaking-up   ---------------------------
 c       break up diquark and give four momentum and four position
 c        to broken quarks (working in 'pyjets')
         call break   ! in parini.f
-        call pyedit(2)
+        call pyedit(1)
 c---------------------------   Diquark Breaking-up   ---------------------------
 
 c140223 Lei full_events_history of OSC1999A
@@ -1779,7 +1829,7 @@ c       081010 240513 260223
 c260223 added the iMode & decpro
 c120620  mstp(111)=1   ! 050620
         if(ijk.eq.1)goto 300   ! to avoide infinite loop in parcas 060813
-        if(ipden.lt.11)call pyedit(2)   ! 060813
+        if(ipden.lt.11)call pyedit(1)   ! 060813
         if(ipden.ge.11)call pyedit(1)   ! 060813
 c---------------------------   Partonic Initiation   ---------------------------
 c-------------------------------------------------------------------------------
@@ -1855,14 +1905,20 @@ c-------------------   Diffractive & Hadron Remnants Event ---------------------
 c       no parton produced at all
         if(n.le.0)then
         NN_diff=NN_diff+1   ! 061123 Lei nncoll -> NN_diff
-c300623 Diffractive and Hadron Remnants event in PYTHIA.
-c       Do not throw it away.   ! 300623 Lei
-        if(nbh.gt.0) goto 333
 c060814 if(NN_diff.gt.neve)then   ! 061123 Lei nncoll -> NN_diff
 c       stop 8888
 c060814 endif
-        iii=iii-1
-        goto 300
+c300623 Diffractive and Hadron Remnants event in PYTHIA.
+c       Do not throw it away.   ! 300623 Lei
+c200224 Lei
+        if( nbh.gt.0 .AND. (INT(adj140).ne.1 .or. INT(adj140).ne.3))then
+c       There are hadrons only. Do hadron rescatterings.
+            goto 333
+        else if( nbh.le.0 )then
+            iii=iii-1
+            goto 300
+        end if
+c200224 Lei
         endif
 c-------------------   Diffractive & Hadron Remnants Event ---------------------
 c-------------------------------------------------------------------------------
@@ -1895,9 +1951,8 @@ c271205
         enddo
 c020718
         if(adj140.eq.3)call coales(iii,neve,nout,nap,nat,nzp,nzt,1)   ! 280825 Lei In coales.f
-csa221123       i_coal=1 or 0: with or without gluon splitting and 
-c                deexcitation 
-c                in coales_30.f
+c221123 i_coal=1 or 0: do the real coalescence or not ( only gluon 
+c                      splitting and quark deexcitation ).
         n44=0
         do j=1,nbh
         kf=kbh(j,2)
@@ -1957,6 +2012,8 @@ c  deexcitation before 'parcas'. It means that there will be no gluons
 c  into 'parcas', similar to the ZPC of AMPT string-melting in some sence.
         if( INT(adj1(12)).eq.2 )
      &    call coales(iii,neve,nout,nap,nat,nzp,nzt,0)
+c221123 i_coal=1 or 0: do the real coalescence or not ( only gluon 
+c                      splitting and quark deexcitation ).
 c300623
 c---------------------------   Coalescence Mode 2   ----------------------------
 c-------------------------------------------------------------------------------
@@ -1979,7 +2036,7 @@ c120603
         endif
 c120603
         if(iijk.eq.2)siijk=siijk+1   ! 201203
-c       if(ipden.lt.11)call pyedit(2)
+c       if(ipden.lt.11)call pyedit(1)
 c       if(ipden.ge.11)call pyedit(1)
 c201203
         if(n.eq.0)goto 300   ! no parton at all, give up current event
@@ -2054,7 +2111,7 @@ c-------------------------------------------------------------------------------
 
 c*******************************************************************************
 c------------------------------   Hadronization  -------------------------------
-        if(adj12.ne.0)goto 889   ! coalescence 120520
+        if(INT(adj12).ne.0)goto 889   ! coalescence 120520 280224 Lei INT
 c120520        if(adj12.ne.0.or.(adj12.eq.0.and.(nreac(4).gt.nreaco(4).or.
 c120520     c   nreac(6).gt.nreaco(6).or.nreac(7).gt.nreaco(7))))goto 889 
 ! 020512 ->coalescence
@@ -2166,6 +2223,7 @@ c        PYTHIA sfm, i.e. more random position distribution for produced hadrons
         end do
 c300623 Recovers the 4-coordinate from 'parini'. (not ?) This treatment is 
 c        equivalent to giving medium correction in momentum space.   ! 300623 Lei
+        time_par_happen = time_par   ! 080324 Lei
         i_coord_recover = 1   ! 280823 Lei
         if(INT(adj12).eq.0 .AND. i_coord_recover.eq.1)then
             do i2=1,5,1
@@ -2173,6 +2231,7 @@ c        equivalent to giving medium correction in momentum space.   ! 300623 Le
                     v(i1,i2)=vbe(i1,i2)
                 end do
             end do
+            time_par_happen = 0D0   ! 080324 Lei
         end if
 c300623
 c---------------------------   Diquark Recovering   ----------------------------
@@ -2199,7 +2258,7 @@ c-------------------------------------------------------------------------------
 
 889     continue
 c010518
-        if(ipden.lt.11)call pyedit(2)
+        if(ipden.lt.11)call pyedit(1)
         if(ipden.ge.11)call pyedit(1)
 c010518
 
@@ -2211,7 +2270,7 @@ c230618
         n77s=0   ! 270220
         nbe=0
 c230618
-        if(adj12.eq.0)then   !! 010518
+        if(INT(adj12).eq.0)then   !! 010518 280224 Lei INT
 c120520 if(nreac(4).gt.nreaco(4) .or. nreac(6).gt.nreaco(6)
 c120520      c   .or. nreac(7).gt.nreaco(7))then   ! 020512 010518
 c020512 for inela. processes 4,6,and 7
@@ -2319,7 +2378,7 @@ c300623 Lei
             ps1(i1) = PYP(0,i1)   ! 4-momentum after 'sfm'
             throe_p(i1) = throe_p(i1) + ps0(i1) - ps1(i1)
         end do
-        if(ipden.lt.11)call pyedit(2)
+        if(ipden.lt.11)call pyedit(1)
         if(ipden.ge.11)call pyedit(1)
 
 c----------------------------   Gamma 77 Removing   ----------------------------
@@ -2331,6 +2390,7 @@ c       removes gammas ('77') after hadronization from 'pyjets' to 'sgam'
         if(kf.eq.22)then
         k(j,2)=77   ! '77': photons after hadronization of current string
         n77=n77+1
+        n77s=n77s+1   ! 200224 Lei
         endif
         enddo
 c       move "77" from 'pyjets' to 'sgam'
@@ -2522,7 +2582,7 @@ c300623 Throw away the current event if any errors exit.   ! 300623
 c300623 Lei
 c--------------------------   String Fragmentation   ---------------------------
 
-        if(ipden.lt.11)call pyedit(2)
+        if(ipden.lt.11)call pyedit(1)
         if(ipden.ge.11)call pyedit(1)
 
 c-------------------------   Failed String Treating   --------------------------
@@ -2685,7 +2745,7 @@ c-------------------------------------------------------------------------------
 
 c-------------------------------------------------------------------------------
 c---------------------------   Coalescence  Model  -----------------------------
-        if(adj12.ne.0)then
+        if( INT(adj12).ne.0 )then
         call coales(iii,neve,nout,nap,nat,nzp,nzt,1)   ! 250823 Lei
 c300623 goto 333   ! 300623 Lei
         endif
@@ -2693,7 +2753,7 @@ c---------------------------   Coalescence  Model  -----------------------------
 c-------------------------------------------------------------------------------
 
 
-        if(ipden.lt.11)call pyedit(2)
+        if(ipden.lt.11)call pyedit(1)
         if(ipden.ge.11)call pyedit(1)
 c141208
 
@@ -2721,15 +2781,15 @@ c       'sbh' to 'pyjets'
         if(nbh.ge.1)then
 c300623 Lei
 c       Spectators in 'sbh' moved during time of 'parcas'.
-        if( time_par.gt.1D-5 )then
+        if( time_par_happen.gt.1D-5 )then
         do l=1,nbh,1
         kf  = kbh(l,2)
         pT2 = pbh(l,1)**2 + pbh(l,2)**2
         if( pT2.le.1D-15 .AND. (kf.eq.2212 .OR. kf.eq.2112) )then
-        vbh(l,1) = vbh(l,1) + time_par * pbh(l,1)/pbh(l,4)
-        vbh(l,2) = vbh(l,2) + time_par * pbh(l,2)/pbh(l,4)
-        vbh(l,3) = vbh(l,3) + time_par * pbh(l,3)/pbh(l,4)
-        vbh(l,4) = time_par
+        vbh(l,1) = vbh(l,1) + time_par_happen * pbh(l,1)/pbh(l,4)
+        vbh(l,2) = vbh(l,2) + time_par_happen * pbh(l,2)/pbh(l,4)
+        vbh(l,3) = vbh(l,3) + time_par_happen * pbh(l,3)/pbh(l,4)
+        vbh(l,4) = time_par_happen
         end if
         end do
         end if
@@ -2796,6 +2856,10 @@ c       move "77" from 'pyjets' to 'sgam'
         if(n77.gt.0)call remo_gam_hadro(77)
         endif  !!! 161222
 c230722
+c202024 Lei
+c       egam3: gamma energy after hadronization
+        call prt_sgam(n77s,egam3,3)   ! 080419 100919 270220 202024 Lei
+c202024 Lei
 c----------------------   B-framework Gamma 77 Removing  -----------------------
 c-------------------------------------------------------------------------------
 
@@ -2811,9 +2875,12 @@ c       hadronic cascade (rescattering, HRS)
 
 c----------------------------   Hadron Specifying  -----------------------------
         call filt   ! in parini.f
-        do i=1,kfmax
-        nup=numbs(i)
-        enddo
+c280224 Lei
+c       do i=1,kfmax
+c       nup=numbs(i)
+c       enddo
+        nup = numbs(kfmax)
+c280224 Lei
         nbh1=n-nup
 c       nup is the number of particles kept in 'pyjets' (joints HRS)
 c       nbh1 is the number of particles storing in 'sbh' (not joints HRS)
@@ -2928,11 +2995,6 @@ c-----------------------------   Kaon Oscillation  -----------------------------
 c-------------------------------------------------------------------------------
 
 
-c       perform particle, declared unstable in the 'mdcy' array, decay
-c        and remove hadronic decay gammas ('22') from 'pyjets' to 'sgam'
-c130205 call pyexec   ! in p_30.f
-
-
 c-------------------------------------------------------------------------------
 c---------------------------   A-framework Treating   --------------------------
 c150323 
@@ -2974,7 +3036,7 @@ c       decay the pi^0
         kf=k(i1,2)
         if(kf.eq.111)then
         call pydecy(i1)
-        call pyedit(2)
+        call pyedit(1)
         i11=i1
         goto 907
         endif
@@ -3000,12 +3062,15 @@ c-------------------------------------------------------------------------------
 
 c181003
 888     continue
-        if(nnstop.ne.0)then
-        sstop1=zstop/dfloat(nnstop)
-        sstop=sstop+sstop1
-        else
-        nzstop=nzstop+1
-        endif
+c200224 Lei
+c       Not used now. Commented out.
+c       if(nnstop.ne.0)then
+c       sstop1=zstop/dfloat(nnstop)
+c       sstop=sstop+sstop1
+c       else
+c       nzstop=nzstop+1
+c       endif
+c200224 Lei
 c181003
 
 
@@ -3023,12 +3088,15 @@ c--------------------------   Information Recording   --------------------------
      c   ifram,rcsit,kfmax,ipden,itden   ! 060813
 c300623 Lei
         n_kfmax=kfmax/10
+        write(9,*) "#! Particle KF considered in hadron rescattering,"//
+     &             " kfaco="
         do i_kfmax=1,n_kfmax+1,1
             i_low=i_kfmax*10-9
             i_upp=i_kfmax*10
             if(i_kfmax.eq.(n_kfmax+1)) i_upp=kfmax
         write(9,*) (kfaco(i),i=i_low,i_upp,1)
         enddo
+        write(9,*)"#! Allowable minimum distance (not used now), disbe="
         do i_kfmax=1,n_kfmax+1,1
             i_low=i_kfmax*10-9
             i_upp=i_kfmax*10
@@ -3036,10 +3104,8 @@ c300623 Lei
         write(9,*) (disbe(i,i),i=i_low,i_upp,1)
         enddo
 c300623 Lei
-c300623 write(9,*)(kfaco(i),i=1,kfmax)
-c300623 write(9,*)(disbe(i,i),i=1,kfmax)
-        write(9,*)(disbe(1,i),i=1,10)
-        write(9,*)'isinel='
+        write(9,*) "#! isinel (open # inel. channel or not, list ref."//
+     &             " subroutine coinel in hadcas.f) ="
         write(9,600)isinel
         endif
 600     format(25(1x,i2)/)
@@ -3048,7 +3114,7 @@ c--------------------------   Information Recording   --------------------------
 c-------------------------------------------------------------------------------
 
 
-        if(ipden.lt.11)call pyedit(2)   ! 060813
+        if(ipden.lt.11)call pyedit(1)   ! 060813
         if(ipden.ge.11)call pyedit(1)   ! 060813
 
 
@@ -3195,6 +3261,7 @@ c-----------------------------   Event Analysis   ------------------------------
 c-------------------------------------------------------------------------------
 
 
+c       Prompts the number of current events.
         open(8,file='nout.out',status='unknown')
         write(8,*)'iii=',iii
         close(8)
@@ -3206,12 +3273,18 @@ c       internal and final printing and controled return
         if(mod(iii,nout).eq.0 .or. iii.eq.neve)then
 
         open(10,file='rms.out',status='unknown')
-        flaa=dfloat(iii-ich)   ! July/20/98 ich=0
-        if(flaa.le.1.e-20)goto 1200
+
+c200224 Lei
+c       flaa: the number of current events in type "float".
+c       Not safe. Changed.
+c       flaa=dfloat(iii-ich)   ! July/20/98
+        flaa = iii*1D0   ! 080324 Lei
+        if(flaa.le.1.e-20) goto 1000   ! 2802224 Lei 1200 -> 1000
+c200224 Lei
 
 c-----------------------------   Event Averaging   -----------------------------
 c       averaged ovr events
-        if(psno.eq.2)then
+        if(INT(psno).eq.2)then   ! 280224 Lei INT
         averbo=averb/flaa
         psnono=psnon/flaa
         psnopo=psnop/flaa
@@ -3222,16 +3295,13 @@ c       averaged ovr events
         dnchao=dncha/flaa
         dnchafo=dnchaf/flaa
 c010220
-        flaa_org = flaa   ! 220823 Lei
         do kk=1,ispmax
         sbo(kk)=sbn(kk)/flaa
         sbof(kk)=sbnf(kk)/flaa
         do i1=1,40   ! 070419
         do i2=1,isdmax
-        if(i2.eq.5) flaa = 1D0  ! 220823 Lei
         sao(i1,i2,kk)=san(i1,i2,kk)/flaa
         saof(i1,i2,kk)=sanf(i1,i2,kk)/flaa
-        if(i2.eq.5) flaa = flaa_org  ! 220823 Lei
         enddo
         enddo
         enddo
@@ -3335,6 +3405,26 @@ c171022 Records the seed of random number generator.
         write(10,*)'#! parp81, parp82, bp, mstp82 ='    ! 291207 300623 Lei parp82
         write(10,*) adj1(9),parp82,bp,mstp(82)    ! 291207 300623 Lei parp82
 
+c010224 Lei
+c       Corrects output.
+        if( (ipden.eq.0 .AND. itden.eq.0) )then
+            snpctl0i = 1.
+            snpari = 2.
+            snpctlmi = 1.
+            eineli(592) = 1.
+            swouni = 2.
+            skparo = 2.
+            if( nzp.eq.0 .AND. nzt.eq.0 )then
+                sknno = 1.
+            elseif( ABS(nzp).eq.1 .AND. ABS(nzt).eq.1 )then
+                skppo = 1.
+            elseif( (ABS(nzp).eq.1 .AND. nzt.eq.0) .OR.
+     &          (nzp.eq.0 .AND. ABS(nzt).eq.1) )then
+                sknpo = 1.
+            end if
+        end if
+c010224 Lei
+
         write(10,*)"#!-------------------------------------"//
      &             "----------------------------------------"
         write(10,*)'#! MC Glauber-like <N_coll>, <N_part> ='
@@ -3365,7 +3455,7 @@ c200823 Lei
      &               //'Npart_t, T_pt='   ! 200823 Lei
             write(10,*) avb,avneu,astbp,astbt,aanbin   ! 280113
         else if( INT(psno).eq.2 )then
-            write(10,*)'#! psno, ave. b, N_part and N_bin ='   ! 280113
+            write(10,*)'#! psno, ave. b, Npart_p, Npart_t and N_bin ='   ! 280113 140224 Lei
             write(10,*) psno,averbo,psnopo,psnoto,psnono*csnn   ! 280113
         else
             write(10,*)
@@ -3423,7 +3513,7 @@ c070417
 c120119
         write(10,*)"#!-------------------------------------"//
      &             "----------------------------------------"
-        write(10,*)'#! times & sum='
+        write(10,*)'#! times & sum ='
         write(10,*) stime_ini,stime_par,stime_had,
      c              stime_ini+stime_par+stime_had
 c120119
@@ -3506,17 +3596,19 @@ c-------------------------------------------------------------------------------
 
 1000    if(iii.lt.neve)then
 c260718 if(dabs(bmin-bmax).lt.10d-4)goto 300
-        if(psno.eq.0 .or. psno.eq.2)goto 300   ! 280113 260718
-        if(psno.eq.1 .and. jjj.eq.10)then   ! 260718
+        if(INT(psno).eq.0 .or. INT(psno).eq.2) goto 300   ! 280113 260718 280224 Lei INT
+        if(INT(psno).eq.1 .and. jjj.eq.10)then   ! 260718 280224 Lei INT
 c       10: total number of impact paremeters in systematic sampling for impact
 c           parameter
         jjj=1
         goto 300
-        elseif(psno.eq.1 .and. jjj.lt.10)then   ! 260718
+        elseif(INT(psno).eq.1 .and. jjj.lt.10)then   ! 260718 280224 Lei INT
         jjj=jjj+1
         goto 300
         endif   ! 260718
         endif
+
+
 c----------------------------   Event Generating   -----------------------------
 c-------------------------------------------------------------------------------
 c*******************************************************************************
@@ -3551,7 +3643,7 @@ c       write(9,*)'time consuming =',timeb
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine remop
-c       moves q,qbar,g,diquark, and anti-diquark from 'pyjets' to 'sbe'
+c       moves q, qbar, g, diquark, and anti-diquark from 'pyjets' to 'sbe'
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -3603,7 +3695,7 @@ c       hadronizes with 'py2ent'
         IMPLICIT DOUBLE PRECISION (A-H,O-Z)
         IMPLICIT INTEGER (I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000)
+        PARAMETER (KSZJ=80000)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
@@ -3674,6 +3766,7 @@ c       moves 'ii' to position of 'jj' in 'sbh'
         enddo
         ngg=jj   ! order # of last gluon in 'sbh' ! 300623 Lei i1 -> jj
 
+        nqb=0   ! 280224 Lei
         if(nbh.gt.ngg)then   ! upto here jj=ngg
 
         do i2=ngg+1,nbh
@@ -3757,7 +3850,7 @@ c300623 Lei
             cycle
         end if
 c300623 Lei
-        if(ipden.lt.11)call pyedit(2)
+        if(ipden.lt.11)call pyedit(1)
         if(ipden.ge.11)call pyedit(1)
 c       moves "77" from 'pyjets' to 'sgam'
         if(n.gt.0)then
@@ -3771,7 +3864,7 @@ c       moves "77" from 'pyjets' to 'sgam'
         enddo
         if(n77.gt.0)call remo_gam_hadro(77)
         endif
-c       'pyjets' to 'aff'
+c       'pyjets' to 'aaff'
         call tran_pyjets
         nggg=nggg+2
         enddo   ! 2
@@ -3818,7 +3911,7 @@ c300623 Lei
             goto 200
         end if
 c300623 Lei
-        if(ipden.lt.11)call pyedit(2)
+        if(ipden.lt.11)call pyedit(1)
         if(ipden.ge.11)call pyedit(1)
 c       moves "77" from 'pyjets' to 'sgam'
         if(n.gt.0)then
@@ -3832,7 +3925,7 @@ c       moves "77" from 'pyjets' to 'sgam'
         enddo
         if(n77.gt.0)call remo_gam_hadro(77)
         endif
-c       'pyjets' to 'aff'
+c       'pyjets' to 'aaff'
         call tran_pyjets
 200     continue   ! 300623 Lei
         n=0
@@ -3909,13 +4002,14 @@ c       PYDAT1,PYDAT2,PYDAT3 and PYJETS are the subroutines in PYTHIA.
         common/trs/ntrs,nontrs,ktrs(kszj,5),ptrs(kszj,5),vtrs(kszj,5)
         common/ctllist_p/nreac(9),nrel
 
+
 c       Dumps "PYJETS" into "aaff".
         naff = 0
         call tran_pyjets   ! in main.f
         N = 0
 
 c       Appends "trs" to "sbe". (partons of inel. coll. in parcas with sfm)
-        if( INT(adj1(12)).eq.0. .AND. iparres.eq.1 .AND. ntrs.gt.0 )then
+        if( INT(adj1(12)).eq.0 .AND. iparres.eq.1 .AND. ntrs.gt.0 )then
             do ii1=1,ntrs,1
                 ii3 = nbe + ii1
                 do ii2=1,5,1
@@ -3948,9 +4042,9 @@ c       Breaks up potential diquarks in "sbe" if sfm.
 
         if( INT(adj1(18)).eq.0 .AND. nbe.gt.1 ) call rest_sfm   ! in main.f
 
-        if( INT(adj1(18)).ge.0 .AND. ( (INT(adj1(12)).eq.0 .AND. 
-     &      nbe.gt.0) .OR. INT(adj1(12)).ne.0) )
-     &  call rest_coal   ! Do coalescence again even though adj18=0.   ! in main.f
+c200224 Lei
+       if( nbe.gt.0 ) call rest_coal   ! Do coalescence again even though adj18=0.   ! in main.f
+c200224 Lei
 
 c       Appends "aaff" to "PYJETS". (dumps "aaff" into "PYJETS" in fact)
         do ii1=1,naff,1
@@ -3972,11 +4066,11 @@ c       Appends "aaff" to "PYJETS". (dumps "aaff" into "PYJETS" in fact)
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine rest_sfm
-c300623 Hadronizes/Fragmente "sbe" with "PYEXEC".   ! 300623 Lei
+c300623 Hadronizes/Fragments "sbe" with "PYEXEC".   ! 300623 Lei
         IMPLICIT DOUBLE PRECISION (A-H,O-Z)
         IMPLICIT INTEGER (I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000)
+        PARAMETER (KSZJ=80000)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
         COMMON/PYDAT2/KCHG(500,4),PMAS(500,4),PARF(2000),VCKM(4,4)
@@ -4000,6 +4094,8 @@ c       Local variables.
         dimension k_q(100,5), p_q(100,5), v_q(100,5)   ! n_q for quark/di-
         dimension k_b(100,5), p_b(100,5), v_b(100,5)   ! n_b for anti-quark/di-
 
+
+        if(nbe.lt.2) return   ! 200224 Lei
         if(nbe.gt.100) write(*,*) "Warning! nbe overflows in rest_sfm!"
         if(nbe.gt.100) stop
 
@@ -4114,7 +4210,7 @@ c           Charge is not conserved or errors occur. Re-generate the event.
 
             ! Success.
             do i=1,4,1
-            throe_p(i) = throe_p(i) + ps0(i) - ps1(i)
+                throe_p(i) = throe_p(i) + ps0(i) - ps1(i)
             end do
 
             if(ipden.lt.11) call pyedit(1)   ! in p_30.f
@@ -4156,8 +4252,8 @@ c            particle is put on its parent position originally.
             rc(1)    = rn(1,1)
             rc(2)    = rn(1,2)
             rc(3)    = rn(1,3)
-            rn(1,4)  = 0.   !TODO(Lei20230630): may need to be extended.
-c           In corresponding with the time set in >posi".
+            rn(1,4)  = 0.   !#TODO(Lei20230630): may need to be extended.
+c           In corresponding with the time set in "posi".
             call posi(1,nn,rc,rrp)   ! in sfm.f
 
 c           Transfers four position messages from "sa1_h" to "PYJETS".
@@ -4175,7 +4271,7 @@ c           Appends "PYJETS" to "aaff".
 
 200     continue
 
-        sn = (n_q + n_b)*1.
+        sn = (n_q + n_b)*1D0
         if( sn.le.0.9 ) goto 400   ! No q and qbar.
 
 c       Share the 4-momentum in 'throe_p' among q and qbar.
@@ -4222,6 +4318,7 @@ c           inv. m^2 >= 0 or < 0 but closer to 0, E > 0, then share.
         end do
 
 c       Fragments simple (di-)qbar-(di-)q string.
+!#TODO(Lei20240220): need improvement for diquarks.
 300     continue
         if( n_b.gt.0 .AND. n_q.gt.0 )then   ! 1
             do i=1,n_b,1   ! 2
@@ -4338,7 +4435,7 @@ c                    particle is put on its parent position originally.
                     rc(1)    = rn(1,1)
                     rc(2)    = rn(1,2)
                     rc(3)    = rn(1,3)
-                    rn(1,4)=0.   !TODO(Lei20230630): may need to be extended.
+                    rn(1,4)=0.   !#TODO(Lei20230630): may need to be extended.
 c                   In corresponding with the time set in >posi".
                     call posi(1,nn,rc,rrp)   ! in sfm.f
 
@@ -4348,7 +4445,7 @@ c                   Transfers four position messages from "sa1_h" to "PYJETS".
                             v(ii,jj) = rn(ii,jj)
                         enddo
                     enddo
-c                   "PYJETS" to "aff"
+c                   "PYJETS" to "aaff"
                     call tran_pyjets   ! in main.f
                     N = 0
                     ! Moves one step down. (j-q/diq)
@@ -4390,7 +4487,7 @@ c       Moves rest qbar/anti-diqaruk to 'sbe'. (for the case only one gluon)
         n_g = 0
 
 c       Moves rest qbar/anti-diqaruk to 'sbe'.
-        if(nbh.gt.0)then
+        if(n_b.gt.0)then
             do i=1,n_b,1
                 nbe = nbe + 1
                 do j=1,5
@@ -4400,7 +4497,7 @@ c       Moves rest qbar/anti-diqaruk to 'sbe'.
                 enddo
             enddo
         endif
-        nbh = 0
+        n_b = 0
 
 c       Moves rest q/diqaruk to 'sbe'.
         if(n_q.gt.0)then
@@ -4461,6 +4558,7 @@ c       PYDAT1,PYDAT2,PYDAT3 and PYJETS are the subroutines in PYTHIA.
      &   napp,natt,nzpp,nztt,pio
 c       Local variables.
         dimension numb(3)   ! g, qbar, q
+
 
         iteration = 0
         i_deex_gen = INT( adj1(16) )   ! 180923 Lei
@@ -4557,33 +4655,6 @@ c       numb(1),(2), and (3): the order # of last g,qba & q in "PYJETS"
 c       1: refers to g (no gluon at all now), 2: qba, 3: q
 
 c       Make the partons in order of qba and q, i.e. move q to the end.
-        jh = N
-        jl = 0
-200     continue
-        do j=jl+1,jh,1
-            kf   = K(j,2)
-            kfab = abs(kf)
-            if(kfab.lt.7 .and. kf.gt.0)then   ! q, consider d,u,s,c,b,t
-                N = N + 1
-                numb(3) = numb(3)+1
-                do i4=1,5,1
-                    K(N,i4) = K(j,i4)
-                    P(N,i4) = P(j,i4)
-                    V(N,i4) = V(j,i4)
-                enddo
-                call updad_pyj(N,j+1,1)   ! in sfm.f
-                N  = N  - 1
-                jh = jh - 1
-                jl = j  - 1
-                goto 200
-            endif
-        enddo
-        numb(1) = 0
-        numb(2) = N - numb(3)
-        numb(3) = N
-        n1 = numb(1)
-        n2 = numb(2)
-        n3 = N
 
 c       Read the table of hadron (meson: pseudoscalar-spin 0 & vector-spin 1 
 c        only, baryon: octet-spin 1/2 & decuplet-spin 3/2 only).
@@ -4591,9 +4662,9 @@ c        only, baryon: octet-spin 1/2 & decuplet-spin 3/2 only).
 c       iteration is the calling number
 
 c       Parton coalescence
-        netba = 0
-        iqba = n2
-        call coal(n3,iqba,iii,rrp,iphas,netba)   ! in coales.f
+c110324 Lei
+        call hadpro(rrp,iphas)
+c110324 Lei
 c       n3: total number of partons (qba and q)
 c       iqba: total # of qba (qba is ordered before q)
 c       ithroq : the total # of quarks thrown away
@@ -4602,11 +4673,11 @@ c       throe : total 4-momentum of the partons thrown away
 c       ich : total charge of the partons thrown away
 
 c       Re-coalesces if iphase /= 0.
-        iqba = ithrob
-        n3   = ithroq + ithrob
-        if(iphas.ne.0 .and. n3.ge.2)then
-            call coal(n3,iqba,iii,rrp,0,0)
+c110324 Lei
+        if( iphas.ne.0 .AND. nth.ge.2 )then
+            call hadpro(rrp,0)
         endif
+c110324 Lei
 
 c       Trasfers "sa1_h" to "PYJETS".
         N = nn
@@ -4655,7 +4726,7 @@ c       Appends "sa37" to "sbe".
 
 c       Assume the lost 4-momentum (positive energy) excites one gluon 
 c        (off-shell), then try re-coalescence again.
-c       The inv. mass should be greater than mass of pion (~140 MeV).
+c       The inv. mass should be greater than mass of a pion (~140 MeV).
         p1  = throe_p(1)
         p2  = throe_p(2)
         p3  = throe_p(3)
@@ -4679,12 +4750,13 @@ c       The inv. mass should be greater than mass of pion (~140 MeV).
             vbe(1,1) = PYR(1)*10.
             vbe(1,2) = PYR(1)*10.
             vbe(1,3) = PYR(1)*10.
-            vbe(1,4) = PYR(1)*10.   !TODO(Lei20230630): time of parcas or 0. ?
+            vbe(1,4) = PYR(1)*10.   !#TODO(Lei20230630): time of parcas or 0. ?
             vbe(1,5) = 0.
             nbe = 1
             throe_p = 0.
             goto 12345
         end if
+
 
         return
         end
@@ -4716,7 +4788,7 @@ c       Potential number of junctions and spectators.
         end do
         if(N.eq.n_junc) return
 
-        sn = (N - n_junc)*1.
+        sn = (N - n_junc)*1D0
 100     continue
         dp = throe_p/sn
         p0 = throe_p   ! Old
@@ -4747,6 +4819,7 @@ c        suceeded, try another sharing (iteration).
      &          ABS(throe_p(i1)-p0(i1)) .gt. 1D-15 ) goto 100
         end do
 
+
         return
         end
 
@@ -4754,7 +4827,7 @@ c        suceeded, try another sharing (iteration).
 
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine share_p_sbe
-c300623 Share the lost 4-momentum in "throe_p" with particles in "PYJETS".
+c300623 Share the lost 4-momentum in "throe_p" with particles in "sbe".
 c       The critirion is inv. m^2 > 0 and E > 0, or original inv. m^2 < 0 
 c         but the new one is closer to 0 and E > 0, after sharing.
 c       Sometimes there are junctions, which should be excluded.   ! 300623 Lei
@@ -5003,7 +5076,7 @@ c       Prints information of 3-momentum and energy.
 
 c       Failure and gamma information.
         if( ABS(ppsa(5)).gt.1D-10 ) write(mstu(11),*)"ppsa=", ppsa
-        if( INT(adj1(40)).gt.2 )then
+        ! if( INT(adj1(40)).gt.2 )then
 c           Prints the partons those failed in coales.
             if(nth.gt.0)then
         write(22,*) "Summary and list of partons thrown away in coales"
@@ -5019,7 +5092,7 @@ c           Prints gamma.
                 write(22,*)'summary and list of gammas'
                 call prt_sgam(ngam,egam,8)
             endif
-        endif
+        ! endif
 
 
         return
@@ -5029,7 +5102,7 @@ c           Prints gamma.
 
 c********************************************************************
         subroutine tran_pyjets
-c       'pyjets' to 'aff'
+c       'pyjets' to 'aaff'
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -5092,7 +5165,7 @@ c****************************** File header ******************************
         if(i_stage.eq.-1)then
             ntest = 1
             PACIAE = "PACIAE"
-            version= "2.3"
+            version= "3.0"
             if(ifram.eq.0)then
                 frame = "lab"
                 ebeam = SQRT(win*win+0.938*0.938)
@@ -5118,17 +5191,17 @@ cccccccccccccccccccccccccccccc   OSC1999A   cccccccccccccccccccccccccccccc
             else if(nosc.eq.2)then
                 write(34,"(A10)") "# OSC1999A"
                 write(34,"(A20)") "# full_event_history"
-                write(34,"(A12)") "# PACIAE 2.3"
+                write(34,"(A12)") "# PACIAE 3.0"
                 write(34,200) nap, nzp, nat, nzt, frame, ebeam, ntest
 200             format("# (", I3, ",", I6, ")+(", I3, ",", 
      &                 I6, ")", 2X, A4, 2X, E10.4, 2X, I8)
 cccccccccccccccccccccccccccccc   OSC2013A   cccccccccccccccccccccccccccccc
-            else if(nosc.eq.3)then   !TODO(Lei20230214): need to extend.
+            else if(nosc.eq.3)then   !#TODO(Lei20230214): need to extend.
                 write(34,*)"#!OSCAR2013 full_event_history ID "//
      &                     "px py pz E m x y z t"
                 write(34,*)"# Units: none "//
      &                     "GeV GeV GeV GeV GeV fm fm fm fm "
-                write(34,"(A12)") "# PACIAE 2.3"
+                write(34,"(A12)") "# PACIAE 3.0"
 300             continue
             end if
 c300623 Initialization.   ! 300623 Lei
@@ -5230,6 +5303,8 @@ cccccccccccccccccccccccccccccc   OSC1997A   cccccccccccccccccccccccccccccc
             end do
 101         format(I10, 2(2X, I10), 2X, F8.3, 2X, F8.3)
 102         format(I10, 2X, I10, 2X, 9(E12.6, 2X))
+cccccccccccccccccccccccccccccc   OSC1997A   cccccccccccccccccccccccccccccc
+
 cccccccccccccccccccccccccccccc   OSC1999A   cccccccccccccccccccccccccccccc
         else if(nosc.eq.2)then
 c300623 Prints stage 0, 1, 2, 3 and 4 at once.   ! 300623 Lei
@@ -5249,7 +5324,7 @@ c300623 Prints stage 0, 1, 2, 3 and 4 at once.   ! 300623 Lei
             do i=1,n3,1
               write(34,202) i, k3(i,2), (p3(i,j),j=1,5), (v3(i,j),j=1,4)
             end do
-c300623 Lei
+c300623 Prints stage 0, 1, 2, 3 and 4 at once.   ! 300623 Lei
             write(34,201) iii, neve, N, bp, phi, i_stage   ! FS (FHS)
             do i=1,N,1
                 write(34,202) i, K(i,2), (P(i,j),j=1,5), (V(i,j),j=1,4)
@@ -5258,10 +5333,13 @@ c300623 Lei
 202         format(I10, 2X, I10, 2X, 9(E12.6, 2X))
             if(i_stage.eq.4) write(34,"(11(I10,2X))") 
      &                       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+cccccccccccccccccccccccccccccc   OSC1999A   cccccccccccccccccccccccccccccc
+
 cccccccccccccccccccccccccccccc   OSC2013A   cccccccccccccccccccccccccccccc
-        else if(nosc.eq.3)then  !TODO(Lei20230214): need to extend.
+        else if(nosc.eq.3)then  !#TODO(Lei20230214): need to extend.
 
         end if
+cccccccccccccccccccccccccccccc   OSC2013A   cccccccccccccccccccccccccccccc
 
 
         return
@@ -5561,6 +5639,8 @@ c       give four coordinate to the breaked quarks
 
 300     enddo
 400     return
+
+
         end
 
 
@@ -5579,14 +5659,14 @@ c       kf1,kf2: flavor codes of broken quarks
         dimension pi(4),pj(4),ps(4),pp(20,5),bb(3)   ! 260503
         am1=pymass(kf1)
         am2=pymass(kf2)
-        pp(1,5)=am1
-        pp(2,5)=am2
 c300623 Lei
         if( p(ii,5).le.1D-15 )then   ! If zero mass diquark from PYTHIA.
-            pp(1,5) = 0D0
-            pp(2,5) = 0D0
+            am1 = 0D0
+            am2 = 0D0
         end if
 c300623 Lei
+        pp(1,5)=am1
+        pp(2,5)=am2
 c       pp : four momentum & mass of broken quarks, local variable 
         do i1=1,4
         ps(i1)=p(ii,i1)
@@ -5627,7 +5707,7 @@ c260503
 c       Decay method.
         decsuc=1
         call decmom_sbe(ps,pp,am1,am2,decsuc)
-        if(decsuc.eq.0)goto 401   ! return to random three momentum method
+        if(INT(decsuc).eq.0)goto 401   ! return to random three momentum method 280224 Lei INT
 300     continue
 c       adjust four momentum conservation by iteration,no more than
 c        4000 iterations
@@ -5659,7 +5739,7 @@ c       am1 and am2: mass of decayed pair
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
-        PARAMETER(KSZJ=80000)
+        PARAMETER (KSZJ=80000)
         common/sbe/n,npad,k(kszj,5),p(kszj,5),v(kszj,5)
         dimension pi(4),pj(4),ps(4),pp(20,5),bb(3)   
 c       calculate the E and |p| of broken quark in rest frame of diquark
@@ -5830,7 +5910,7 @@ c        {m_q}^{-x}
         INTEGER PYK,PYCHGE,PYCOMP
         common/sa38/ prob_ratio_q(6), am(6), amqq(6)
         dimension qmas(6)
-        data qmas/0.333,0.333,0.50,1.50,4.80,174.4/ 
+        data qmas/0.333,0.333,0.50,1.50,4.80,174.4/
 c       u,d,s,c,b,t constituent mass
         dratio=qmas(1)**(-x)   
         uratio=qmas(2)**(-x)   ! dratio=uratio
@@ -5911,6 +5991,7 @@ c       if(i.eq.36)write(9,*)'i,bbb,pir,tir=',i,bbb,pir,tir
         enddo
 c       Print data
 c-----------
+        write(9,*) "#! Results from independent Optical Glauber"
         if(kjp23.eq.2)write(9,901)'i','b','TA','TB','TAB','Apart',
      c   'Bpart','Nbin'
         if(kjp23.eq.1)write(9,902)'i','b','Apart','Bpart'
@@ -6304,12 +6385,12 @@ C      WRITE(9,*)'B=',BB
       TIR=0.
       IF(ISETA.EQ.1)GOTO 203
       JS=1
-208   SETA=SSS*JS 
+208   SETA=SSS*JS
       COSS=SETA
       SINS=SQRT(1-SETA*SETA)
 203   ROUP=3./4./3.1416*IAP/(RP*RP*RP)
       ROUT=3./4./3.1416*IAT/(RT*RT*RT)
-      DO 100 II=1,2 
+      DO 100 II=1,2
       ROU=ROUP
       IF(II.EQ.2)ROU=ROUT
       SUM(II)=0.
@@ -6342,7 +6423,7 @@ C
       TIR=TIR+SUMM2 
 C      WRITE(9,*)'PIR,TIR,PTIR=',SUMM1,SUMM2,SUMM1*SUMM2
       IF(ISETA.EQ.1)GOTO 204
-      IF(JS.GE.ISETA)GOTO 209 
+      IF(JS.GE.ISETA)GOTO 209
       JS=JS+1
       GOTO 208
 209   APIR=PIR/ISETA
@@ -6371,7 +6452,7 @@ C     SUBROUTINE FOR THE INTEGRANT.
       X32=X3*X3
       BY=BB-X2
       BY2=BY*BY
-      IF(CSETA.NE.0.)GOTO 400
+      IF(INT(CSETA).NE.0)GOTO 400   ! 280224 Lei
       IF(II.EQ.2)GOTO 200
 C     CALCULATE THE VOLUME OF INTERSECTION FOR PROJECTILE
       ARG1=SQRT(X12+BY2+X32)
@@ -6623,12 +6704,12 @@ C
 C           THE INPUT PARAMETER ALPHA IS USED ONLY FOR LAGUERRE AND             
 C        JACOBI POLYNOMIALS, AND THE PARAMETER BETA IS USED ONLY FOR            
 C        JACOBI POLYNOMIALS.  THE LAGUERRE AND JACOBI POLYNOMIALS               
-C        REQUIRE THE GAMMA FUNCTION.                                            
+C        REQUIRE THE xGAMMA FUNCTION.                                           
 C                                                                               
 C     ..................................................................        
 C                                                                               
       REAL A(N), B(N), MUZERO, ALPHA, BETA                                      
-      REAL ABI, A2B2, GAMMA, PI, DSQRT, AB   ! 081010                           
+      REAL ABI, A2B2, xGAMMA, PI, DSQRT, AB   ! 081010                          
       DATA PI / 3.141592653589793E0/                                            
 C                                                                               
       NM1 = N - 1                                                               
@@ -6690,8 +6771,8 @@ C              BETA GREATER THAN -1
 C                                                                               
    50 AB = ALPHA + BETA                                                         
       ABI = 2.0E0 + AB                                                          
-      MUZERO = 2.0E0 ** (AB + 1.0E0) * GAMMA(ALPHA + 1.0E0) * GAMMA(            
-     X BETA + 1.0E0) / GAMMA(ABI)   ! 081010                                    
+      MUZERO = 2.0E0 ** (AB + 1.0E0) * xGAMMA(ALPHA + 1.0E0) * xGAMMA(          
+     X BETA + 1.0E0) / xGAMMA(ABI)   ! 081010                                   
       A(1) = (BETA - ALPHA)/ABI                                                 
       B(1) = SQRT(4.0E0*(1.0E0 + ALPHA)*(1.0E0 + BETA)/((ABI + 1.0E0)*          
      1  ABI*ABI))                                                               
@@ -6711,7 +6792,7 @@ C              KIND = 6:  LAGUERRE POLYNOMIALS L(ALPHA)(X) ON
 C              (0, +INFINITY), W(X) = EXP(-X) * X**ALPHA, ALPHA GREATER         
 C              THAN -1.                                                         
 C                                                                               
-   60 MUZERO = GAMMA(ALPHA + 1.0E0)   ! 081010                                  
+   60 MUZERO = xGAMMA(ALPHA + 1.0E0)   ! 081010                                 
 c171022      DO 61 I = 1, NM1   ! 171022 Lei                                    
       DO I = 1, NM1                                                             
          A(I) = 2.0E0*I - 1.0E0 + ALPHA                                         
@@ -6855,7 +6936,7 @@ C                EIGENVALUE           AFTER 30 ITERATIONS
  1001 RETURN                                                                    
 C                                                                               
       END                                                                       
-      FUNCTION GAMMA(X)   ! 081010                                              
+      FUNCTION xGAMMA(X)   ! 081010                                             
       C=1.0E0                                                                   
       Y=X                                                                       
 c171022      IF(Y-2.0E0)1,2,2   ! 171022 Lei                                    
@@ -6897,6 +6978,6 @@ c171022      IF(Y-2.0E0)1,9,9   ! 171022 Lei
      4  -.002777777777777778E0)*C+.08333333333333333E0)*D                       
      5  +.9189385332046727E0+(Y-.5E0)*LOG(Y)-Y                                  
       VALUE=EXP(G)                                                              
-    7 GAMMA=VALUE   ! 081010                                                    
+    7 xGAMMA=VALUE   ! 081010                                                   
       RETURN                                                                    
       END                                                                       
