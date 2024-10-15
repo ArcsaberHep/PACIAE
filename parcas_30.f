@@ -100,7 +100,7 @@ c        is it freezing out or not, is measured with respect to this center
         call copl_p(time)   ! 300623 Lei
 
 c       step 1
-c       create the parton-parton (initial) collision time list 
+c       create the parton-parton (initial) collision time list
         call ctlcre_par(iijk)   ! 290803 
         if(iijk.eq.2)return   ! initial collis. list is empty 151203
 c290803
@@ -175,7 +175,7 @@ c       energy loss per unit distance
         dell=adj137*(nap/197.)**0.75*(1.-bp2/bmax2)
      c   *(win*win/40000)**0.25
         call eloss(dell,rpo,ppo)
-        endif 
+        endif
 c120505
 c       step 4
 c       performs parton-parton collision & updates particle list 
@@ -196,7 +196,7 @@ c       in above case 'update collision list' is executed in "collis'
         call update_ctl(ic,jc,kf3,kf4,iparres,lmn,iway,tcp)
 
 c       'new' method
-c1      if(adj136.eq.0)call update_ctl(tcp,iway)   
+c1      if(adj136.eq.0)call update_ctl(tcp,iway)
 c1      if(adj136.eq.1 .and.iway.eq.1)call update_ctl(tcp,iway)
 c       if collision does not happen remove the collision pairs (one of
 c        company is colliding particle) from collision time list only
@@ -210,7 +210,7 @@ c1      tc(1,i)=0.
 c1      tc(2,i)=0.
 c1      enddo
 c1      call ctlcre_para(iijk,time)
-c1      endif   
+c1      endif
 c120505
 c       goto 25   ! it is actived temporally
 26      continue   ! 120603
@@ -260,7 +260,7 @@ c        the value of cross section for 2->2 partonic processes
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine ctlcre_par(iijk)
-c       create the initial collision list 
+c       create the initial collision list
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
@@ -283,7 +283,7 @@ c080603
 c051122 if(kfi.gt.3 .and. kfi.ne.21)goto 100   ! 120620
 c       consider d,u,s, their antiquarks, and gluon only   ! 120620
         if(kfi.gt.6 .and. kfi.ne.21)goto 100   ! 080520 051122
-c       consider d,u,s,c,b,t, their antiquarks, and gluon only   ! 080520
+c       consider d,u,s,c,b, their antiquarks, and gluon only   ! 080520
 c080603
         do 200 j=1,i-1   ! upper diagonal 151203 
 c080603
@@ -291,7 +291,7 @@ c080603
 c051122 if(kfj.gt.3 .and. kfj.ne.21)goto 200   ! 120620
 c       consider d,u,s, their antiquarks, and gluon only   ! 120620
         if(kfj.gt.6 .and. kfj.ne.21)goto 200   ! 080520 051122 300623 Lei kfi -> kfj, 100 -> 200
-c       consider d,u,s,c,b,t, their antiquarks, and gluon only   ! 080520
+c       consider d,u,s,c,b, their antiquarks, and gluon only   ! 080520
 c080603
         if(icol.gt.mclis) then
         write(9,*)'icol over limit n,icol=',n,icol   ! sa
@@ -446,7 +446,7 @@ c080603
 c051122 if(kfi.gt.3 .and. kfi.ne.21)goto 100   ! 120620
 c       consider d,u,s, their antiquarks, and gluon only   ! 120620
         if(kfi.gt.6 .and. kfi.ne.21)goto 100   ! 080520 051122
-c       consider d,u,s,c,b,t, their antiquarks, and gluon only   ! 080520
+c       consider d,u,s,c,b, their antiquarks, and gluon only   ! 080520
 c080603
         do 200 k1=1,2
         if(k1.eq.1)j1=ic
@@ -464,9 +464,9 @@ c080603
         tcicol=tc1
         if(tc1.gt.tc2)tcicol=tc2
 c020603
-        if(tcicol.le.0.0)then
+c       if(tcicol.le.0.0)then
 c       write(9,*)'i1,j1,tcicol=',i1,j1,tcicol   ! sa
-        endif
+c       endif
 c020603
 c141104 if(tcicol.gt.0.0) icol=icol+1
         if(tcicol.gt.0.0)then   ! 141104
@@ -567,7 +567,7 @@ c080603
 c051122 if(kfi.gt.3 .and. kfi.ne.21)goto 100   ! 120620
 c       consider d,u,s, their antiquarks, and gluon only   ! 120620
         if(kfi.gt.6 .and. kfi.ne.21)goto 100   ! 080520 051122
-c       consider d,u,s,c,b,t, their antiquarks, and gluon only   ! 080520
+c       consider d,u,s,c,b, their antiquarks, and gluon only   ! 080520
 c080603
         do 200 k1=1,2
         if(k1.eq.1)j1=ic
@@ -666,7 +666,7 @@ c160110
         ikf1=iabs(kf1)
         ikf2=iabs(kf2)
         if((ikf1.le.6.or.ikf1.eq.21).and.(ikf2.le.6.or.ikf2.eq.21))then
-c       d,u,s,c,b,t quarks, their anti quarks, and gluon only
+c       d,u,s,c,b quarks, their anti quarks, and gluon only
 c       calculate the total cross section and decide the type of reaction
 c        (when ilo=0) or sample the t value as well (when ilo=1)
         call fsig(ilo,kf1,kf2,kf3,kf4,eiej2,sig,tsmp,lmn,jjj)! 230520
@@ -799,7 +799,7 @@ c160110
         ikf1=iabs(kf1)
         ikf2=iabs(kf2)
         if((ikf1.le.6.or.ikf1.eq.21).and.(ikf2.le.6.or.ikf2.eq.21))then
-c       d,u,s,c,b,t quarks, their anti quarks, and gluon only
+c       d,u,s,c,b quarks, their anti quarks, and gluon only
         call fsig(ilo,kf1,kf2,kf3,kf4,eiej2,sig,tsmp,lmn,jjj)   ! 230520
         else
         sig=0.
@@ -994,7 +994,6 @@ c       kf: parton flaver
 
 
 
-
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine fsig(ilo,kf1,kf2,kf3,kf4,eiej2,sig,tsmp,lmn,jjj)!230520
 c       calculate the total cross section and decide the type of reaction
@@ -1021,9 +1020,27 @@ c       leadding order pQCD differential cross section of 2->2 processes
         common/papr_p/core,xs,xu,xt,sm,as,dta,xa,sl0,tl0,qa,
      c   ea,sqq,sqg,sgg,pa(3),pip(6,msca),mtime,kfk,nsca,kpip(msca)
 c250803 common/work7/reac(9),crose(9)
-        dimension ssig(0:3),eee(0:1000),dd(0:1000),eee1(0:1000),
-     c   eee2(0:1000),eee3(0:1000)
+c250524 Lei
+c       dimension ssig(0:3),eee(0:1000),dd(0:1000),eee1(0:1000),
+c    c   eee2(0:1000),eee3(0:1000)
+        dimension ssig(0:3), eee(0:INT(adj1(4))), dd(0:INT(adj1(4))), 
+     &                       eee1(0:INT(adj1(4))), eee2(0:INT(adj1(4))),
+     &                       eee3(0:INT(adj1(4)))
+c250524 Lei
         logical lgg,lqg,lqq,lqaq,lqqp,lqaqp
+
+
+
+c===============================================================================
+c080624 Lei
+c       New method
+        call fsig_new(ilo,kf1,kf2,kf3,kf4,eiej2,sig,tsmp,lmn,jjj)
+        return
+c       The following old method is no longer used.
+c080624 Lei
+c===============================================================================
+
+
 
 c       classify the incident channel
         kf0=iabs(kf1)
@@ -1046,13 +1063,13 @@ c090603 lqqp=(kf0.ne.iabs(kf2)).and.(kf1.ne.21).and.(kf2.ne.21)
 c       lqqp: two quarks,or two antiquarks,or one quark and one antiquark
 c        with different flavor.
 
-c       calculate the total cross section for each incedent channel  
+c       calculate the total cross section for each incedent channel
         sig=0.
         lmn=0   ! 250803
         do i=0,3
         ssig(i)=0.
         enddo
-        idw=adj1(4)   ! 240803 changed from 1000
+        idw=INT(adj1(4))   ! 240803 changed from 1000
         adj120=adj1(20)   ! 230405
 c250420
         dmass=pymass(1)*2.   ! umass=pymass(2)=dmass
@@ -1326,6 +1343,1144 @@ c230405
         tsmp=tt+tcut   ! 200407
 c       tsmp: the t value sampled.
         endif
+
+
+        return
+        end
+
+
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+        subroutine fsig_new(ilo,kf1,kf2,kf3,kf4,eiej2,sig,tsmp,lmn,jjj)
+c       Calculates the total cross section, decides the type of reaction
+c        and/or samples the t value as well.
+c
+c       The masses of the heavy c and b are retained (massive), and 
+c        other masses of light quarks are set to zero (zero mass 
+c        approximation in kinematics treatment, massless).
+c
+c       ilo: flag for sampling t or not, or the special failure (-2).
+c       kf1 and kf2: kf code of the incoming pair after collision
+c       kf3 and kf4: kf code of the outgoing pair after collision
+c       eiej2: squared invariant mass of colliding pair
+c       sig: the total cross section of parton kf1 collideing with kf2
+c       tsmp: t value sampled.
+c       lmn: order number happened process.
+c
+c       q: light (anti-)quark; hQ/Q: heavy (anti-)quark; g: gluon.
+c       We ignore the collision between two heavy Q.
+c       Massless:
+c             1: q1 + q2 -> q1 + q2
+c             2: q1 + q1 -> q1 + q1
+c             3: q1 + q2bar -> q1 + q2bar
+c             4: q1 + q1bar -> q2 + q2bar   (inelastic)
+c             5: q1 + q1bar -> q1 + q1bar
+c             6: q1 + q1bar -> g + g        (inelastic)
+c             7: g  + g -> q1 + q1bar       (inelastic)
+c             8: q  + g -> q + g
+c             9: g  + g -> g + g
+c       Massive:
+c            10: hQ + q -> hQ + q
+c            11: hQ + g -> hQ + g
+c       Not yet used:
+c            12: q + qbar   -> hQ + hQbar   (inelastic)
+c            13: g + g      -> hQ + hQbar   (inelastic)
+c       Not yet included:
+c            14: hQ  + hQbar  -> q + qbar       (inelastic)
+c            15: hQ  + hQbar  -> g + g          (inelastic)
+c       Not taken into accout:
+c            16: hQ  + hQbar  -> hQ + hQbar （？ elastic）
+c            17: hQ1 + hQ1bar -> hQ2 + hQ2bar   (? inelastic)
+c
+c       jjj: jjj-th collision in the collisions list.
+c
+c       References:
+c        Massless: 
+c            B.L. Combridge et al., Phys. Lett. B 70 (1977) 234; 
+c            Bin Zhang, Comput.Phys.Commun. 109 (1998) 193-206; 
+c            Jussi Auvinen et al., Phys.Rev.C 82 (2010) 024906; 
+c            Ben-Hao Sa, Comput.Phys.Commun. 183 (2012) 333–346.
+c       Massive: 
+c            B.L. Combridge Nucl. Phys. B 151 (1979) 429-456; 
+c            Hamza Berrehrah et al., Phys.Rev.C 89 (2014) 5, 054901.
+c       t sampling:
+c            Klaus Geiger et al., Nucl.Phys.B 369 (1992) 600-654; 
+C            Ben-Hao Sa et al., Comput.Phys.Commun. 183 (2012) 333–346.
+        IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+        IMPLICIT INTEGER(I-N)
+        INTEGER PYK,PYCHGE,PYCOMP
+        PARAMETER (MSCA=20000,MCLIS=280000)
+        PARAMETER( pi=3.141592653589793, e=2.718281828459045 )
+        common/sa1/kjp21,non1,bp,iiii,neve,nout,nosc
+        common/sa24/adj1(40),nnstop,non24,zstop
+        common/sa25/i_inel_proc,i_time_shower,para1_1,para1_2
+        common/sa33/smadel,ecce,secce,parecc,iparres
+c       Note the following logical type.
+        logical l_q1q1bar, l_gg, l_hQhQ
+        logical l_q1q2_to_q1q2,       l_q1q1_to_q1q1, 
+     &          l_q1q2bar_to_q1q2bar, l_qg_to_qg, 
+     &          l_hQq_to_hQq,         l_hQg_to_hQg
+        real*8  sigma_relative(0:6), K_factor
+        real*8  Lambda_QCD, Lambda_QCD2
+        integer KF_outgoing( 2, 0:6 )
+
+
+c-------------------------------------------------------------------------------
+c---------------------------   Process Classifying   ---------------------------
+c       Classifies the incident partons.
+c       kf: 1 ~ 5 -- d, u, s, c, b; 21 -- g.
+c       kh: 0, 1, 20 -- q, hQ, g
+        ikf1 = ABS(kf1)
+        kh1 = 0
+        if( kf1.eq.21 ) kh1 = 20
+        if( ikf1.eq.4 .OR. ikf1.eq.5 ) kh1 = 1
+        ikf2 = ABS(kf2)
+        kh2 = 0
+        if( kf2.eq.21 ) kh2 = 20
+        if( ikf2.eq.4 .OR. ikf2.eq.5 ) kh2 = 1
+c       i_heavy: 0, light q + light q; 20, light q + g; 40, g + g; 
+c                1, heavy Q + light q; 21, heavy Q + g;
+c                2, heavy Q + heavy Q.
+c          i.e. > 0, with heavy Q; 
+c               = 0/20/40 ( MOD(*,1)=0 ), without heavy Q.
+        i_heavy = kh1 + kh2
+
+c       Classifies the process.
+c       Process 1: q1 + q2 -> q1 + q2.
+        l_q1q2_to_q1q2 = ( kf1.ne.kf2 ) .AND. ( kf1*kf2.gt.0 ) 
+     &                   .AND. ( i_heavy.eq.0 )
+c       Process 2: q1 + q1 -> q1 + q1.
+        l_q1q1_to_q1q1 = ( kf1.eq.kf2 ) .AND. ( i_heavy.eq.0 )
+c       Process 3: q1 + q2bar -> q1 + q2bar.
+        l_q1q2bar_to_q1q2bar = ( ikf1.ne.ikf2 ) .AND. ( kf1*kf2.lt.0 ) 
+     &                         .AND. ( i_heavy.eq.0 )
+c       Process 4, 5, 6 and 12: q1 + q1bar.
+        l_q1q1bar = ( kf1.eq.-kf2 ) .AND. ( i_heavy.eq.0 )
+c       Process 7, 9 and 13: g + g.
+        l_gg = i_heavy.eq.40
+c       Process 8: q + g -> q + g.
+        l_qg_to_qg = i_heavy.eq.20
+c       Process 10: hQ + q -> hQ + q.
+        l_hQq_to_hQq = i_heavy.eq.1
+c       Process 11: hQ + g -> hQ + g.
+        l_hQg_to_hQg = i_heavy.eq.21
+c       We will ignore hQ + hQ processes.
+        l_hQhQ = i_heavy.eq.2
+c---------------------------   Process Classifying   ---------------------------
+c-------------------------------------------------------------------------------
+
+
+c-------------------------------------------------------------------------------
+c-------------------------------   Preparation   -------------------------------
+c       Initialization of the total cross section calculated, t sampled 
+c        and order number of process to be returned.
+        sig  = 0D0
+        tsmp = 0D0
+        lmn  = 0
+c       jjj-th collision.
+        i_coll = jjj
+c       Relative cross sections among different outgoing partons in the 
+c        inelastic processed.
+        sigma_relative = 0D0
+c       Switch of inelastic processes.
+        i_inelastic = iparres
+c       Selection of inelastic processes when i_inelastic = 1.
+c       i_inel_proc = 6, all of 4, 6, 7 (12, 13); = 7, only 7 (13).
+        i_inelastic_process = i_inel_proc
+c       Selection of the form of differential cross section in LO-pQCD 
+c        and the scattering angle distribution to be used.
+c        =0, full LO-pQCD parton-parton cross section.
+c        =1, keeping only leading divergent terms in the LO-pQCD.
+c        =2, same as 0 but flat scattering angle distribution.
+c        =3, same as 1 but flat scattering angle distribution.
+        i_LOpQCD = INT( adj1(20) )
+c       Phenomenological high-order correction factor K.
+        K_factor = adj1(1)
+c       Squared invariant mass of the colliding pair.
+        s = eiej2
+        if( s.le.0D0 ) return
+c       Invariant mass of the colliding pair.
+        sqrt_s = SQRT( s )
+c       Effective coupling constant.
+c       For massless processes, use the constant adj1(2).
+c       For massive processes, it will be calculated automatically.
+        Lambda_QCD  = adj1(25)
+        Lambda_QCD2 = Lambda_QCD**2
+        alpha_s     = adj1(2)
+c       t_cut: the cutoff used to regulate 't' divergence, AKA mu^2.
+        t_cut = adj1(3)
+c       t_max: the upper limit (max.) of t.
+        t_max = -t_cut
+c       t_min: the lower limit (min.) of t.
+        t_min = -s - t_cut
+c       For full LO-pQCD, regulates 'u' divergence in some cases, too.
+        if( i_LOpQCD.eq.0 .OR. i_LOpQCD.eq.2 ) t_min = -s + t_cut
+c       Above t_max and t_min will be used in LO-pQCD cross section.
+c       Note that the integral variable t is negative.
+
+c       Wrong integration limits.
+        if( t_max.le.t_min )then
+            ilo = -2
+            return
+        endif
+c       Takes the "threshold energy" into account for massless processes
+c        due to the introduction of the cutoff. For the cuoffs of the 
+c        extra "u" divergence, it becomes 2*t_cut (see below).
+        if( MOD(i_heavy,10).eq.0 .AND. s.lt.t_cut )then
+            ilo = -2
+            return
+        endif
+
+c       Mass of heavy quark for massive processes. It will be given 
+c        automatically.
+        dM = 0D0
+c-------------------------------   Preparation   -------------------------------
+c-------------------------------------------------------------------------------
+
+
+c       Calculates the total cross section for each colliding pair.
+
+
+c-------------------------------------------------------------------------------
+c------------------------   Cross Section Calculating   ------------------------
+c       Process 1: q1 + q2 -> q1 + q2.
+        if( l_q1q2_to_q1q2 )then
+c       "t"-divergence in both full and simplified LO-pQCD.
+            t_min = -s - t_cut
+            sig_out = sigma_2parton( t_min, t_max, s, dM, alpha_s, 
+     &                               K_factor, 1, i_LOpQCD )
+            lmn  = 1
+            sig  = sig_out
+            kf3  = kf1
+            kf4  = kf2
+
+c-------------------------------------------------------------------------------
+c       Process 2: q1 + q1 -> q1 + q1.
+        else if( l_q1q1_to_q1q1 )then
+c       "t"-divergence in both full and simplified LO-pQCD.
+c       Extra "u"-divergence in full one. "threshold energy" becomes 2*t_cut.
+            if( (i_LOpQCD.eq.0 .OR. i_LOpQCD.eq.2)
+     &          .AND. s.lt.2D0*t_cut )then
+                ilo = -2
+                return
+            end if
+            sig_out = sigma_2parton( t_min, t_max, s, dM, alpha_s, 
+     &                               K_factor, 2, i_LOpQCD )
+            lmn  = 2
+            sig  = sig_out
+            kf3  = kf1
+            kf4  = kf2
+
+c-------------------------------------------------------------------------------
+c       Process 3: q1 + q2bar -> q1 + q2bar.
+        else if( l_q1q2bar_to_q1q2bar )then
+c       "t"-divergence in both full and simplified LO-pQCD.
+            t_min = -s - t_cut
+            sig_out = sigma_2parton( t_min, t_max, s, dM, alpha_s, 
+     &                               K_factor, 3, i_LOpQCD )
+            lmn  = 3
+            sig  = sig_out
+            kf3  = kf1
+            kf4  = kf2
+
+c-------------------------------------------------------------------------------
+c       Process 4, 5, 6 and 12: q1 + q1bar ->
+        else if( l_q1q1bar )then
+c       Elastic process 5, q1 + q1bar -> q1 + q1bar.
+c       "t"-divergence in both full and simplified LO-pQCD.
+            t_min = -s - t_cut
+            sig_out = sigma_2parton( t_min, t_max, s, dM, alpha_s, 
+     &                               K_factor, 5, i_LOpQCD )
+            sigma_relative(0)   = sig_out
+            KF_outgoing( 1, 0 ) = kf1
+            KF_outgoing( 2, 0 ) = kf2
+
+c       Inelastic process 4, 12 and 6, q1 + q1bar -> q2+q2bar / hQ+hQbar / g+g.
+c       Takes the threshold energy (2*mass) into account.
+            if( i_inelastic.eq.1 .AND. i_inelastic_process.eq.6 )then
+
+c       Inelastic process 4, q1 + q1bar -> u + ubar / d + dbar / s + sbar.
+c       With the massless approximation, their cross sections are equal.
+c       No divergence (?).
+                t_min = - s
+                t_max = 0D0
+c       Inelastic Process 4, q1 + q1bar -> u + ubar.
+                if( sqrt_s .ge. 2D0*PYMASS(2) )then
+                    sig_out = sigma_2parton( t_min, t_max, s, dM,
+     &                              alpha_s, K_factor, 4, i_LOpQCD )
+                    sigma_relative(2)   = sig_out
+                    KF_outgoing( 1, 2 ) =  2
+                    KF_outgoing( 2, 2 ) = -2
+c       Inelastic Process 4, q1 + q1bar -> d + dbar.
+                    if( sqrt_s .ge. 2D0*PYMASS(1) )then
+                        sigma_relative(1)   = sig_out
+                        KF_outgoing( 1, 1 ) =  1
+                        KF_outgoing( 2, 1 ) = -1
+                    end if
+c       Inelastic Process 4, q1 + q1bar -> s + sbar.
+                    if( sqrt_s .ge. 2D0*PYMASS(3) )then
+                        sigma_relative(3)   = sig_out
+                        KF_outgoing( 1, 3 ) =  3
+                        KF_outgoing( 2, 3 ) = -3
+                    end if
+                end if
+c===============================================================================
+c       DO NOT USE THE MASSIVE PROCESSES OF q1 + q1bar -> hQ + hQbar NOW.
+c       BECAUSE THEIR REVERSE PROCESSES HAVE NOT YET BEEN INTRODUCED.
+                IF( .FALSE. )THEN
+c       Inelastic process 12, q1 + q1bar -> c + cbar.
+c       Modifies the integral limits and alpha_s due to the heavy mass.
+                if( sqrt_s .ge. 2D0*PYMASS(4) )then
+                    dM  = PYMASS(4)
+                    dM2 = dM**2
+                    t_min = dM2 - s*( 1D0 + SQRT(1D0 - 4D0*dM2/s) ) /2D0
+                    t_max = dM2 - s*( 1D0 - SQRT(1D0 - 4D0*dM2/s) ) /2D0
+                    Q2 = s
+                    nf = 4
+                    alpha_s = 12D0 * pi / ( 33D0 - 2D0*nf )
+     &                        / ( LOG( Q2 / Lambda_QCD2 )/LOG(e) )
+                    sig_out = sigma_2parton( t_min, t_max, s, dM,
+     &                              alpha_s, K_factor, 12, i_LOpQCD )
+                    sigma_relative(4)   = sig_out
+                    KF_outgoing( 1, 4 ) =  4
+                    KF_outgoing( 2, 4 ) = -4
+c       Inelastic process 12, q1 + q1bar -> b + bbar.
+c       Modifies the integral limits and alpha_s due to the heavy mass.
+                    if( sqrt_s .ge. 2D0*PYMASS(5) )then
+                        dM  = PYMASS(5)
+                        dM2 = dM**2
+                        t_min = dM2 -s*( 1D0 +SQRT(1D0 -4D0*dM2/s) )/2D0
+                        t_max = dM2 -s*( 1D0 -SQRT(1D0 -4D0*dM2/s) )/2D0
+                        Q2 = s
+                        nf = 5
+                        alpha_s = 12D0 * pi / ( 33D0 - 2D0*nf )
+     &                            / ( LOG( Q2 / Lambda_QCD2 )/LOG(e) )
+                        sig_out = sigma_2parton( t_min, t_max, s, dM,
+     &                                  alpha_s, K_factor, 12, i_LOpQCD)
+                        sigma_relative(5)   = sig_out
+                        KF_outgoing( 1, 5 ) =  5
+                        KF_outgoing( 2, 5 ) = -5
+                    end if
+                end if
+                END IF
+c===============================================================================
+c       Inelastic process 6, q1 + q1bar -> g + g.
+c       "t"-divergence in both full and simplified LO-pQCD.
+c       Extra "u"-divergence in full one. "threshold energy" becomes 2*t_cut.
+                if( (i_LOpQCD.eq.0 .OR. i_LOpQCD.eq.2)
+     &              .AND. s.lt.2D0*t_cut )then
+                    ilo = -2
+                    return
+                end if
+                sig_out = sigma_2parton( t_min, t_max, s, dM,
+     &                          alpha_s, K_factor, 6, i_LOpQCD )
+                sigma_relative(6)   = sig_out
+                KF_outgoing( 1, 6 ) = 21
+                KF_outgoing( 2, 6 ) = 21
+            end if
+c       Determines the process to be happened according to the relative 
+c        cross section.
+            sig = 0D0
+            do i=0,6,1
+                sig = sig + sigma_relative(i)
+            end do
+            rand_num = PYR(1)
+            prob_low = 0D0
+            prob_upp = 0D0
+            do i=0,6,1
+                prob_upp = prob_upp + sigma_relative(i) / sig
+                if(rand_num.gt.prob_low .AND. rand_num.lt.prob_upp) exit
+                prob_low = prob_upp
+            end do
+            lmn = 5
+            if( i.ge.1 .AND. i.le.3 )then
+                lmn = 4
+            else if( i.eq.4 .AND. i.eq.5 )then
+                lmn = 12
+            else if( i.eq.6 )then
+                lmn = 6
+            end if
+            ! sig  = sig
+            kf3  = KF_outgoing( 1, i )
+            kf4  = KF_outgoing( 2, i )
+
+c-------------------------------------------------------------------------------
+c       Process 7 + 9 + 13, g + g ->
+        else if( l_gg )then
+c       "t"-divergence in both full and simplified LO-pQCD.
+c       Extra "u"-divergence in full one. "threshold energy" becomes 2*t_cut.
+            if( (i_LOpQCD.eq.0 .OR. i_LOpQCD.eq.2)
+     &          .AND. s.lt.2D0*t_cut )then
+                ilo = -2
+                return
+            end if
+
+c       Elastic process 9, g + g -> g + g.
+            sig_out = sigma_2parton( t_min, t_max, s, dM,
+     &                      alpha_s, K_factor, 9, i_LOpQCD )
+            sigma_relative(0)   = sig_out
+            KF_outgoing( 1, 0 ) = kf1
+            KF_outgoing( 2, 0 ) = kf2
+
+c       Inelastic process 7 and 13, g + g -> q + qbar / hQ + hQbar.
+c       Takes the threshold energy (2*mass) into account.
+            if( i_inelastic.eq.1 )then
+
+c       Inelastic Process 7, g + g -> u + ubar / d + dbar / s + sbar.
+c       With the massless approximation, their cross sections are equal.
+c       Inelastic Process 7, g + g -> u + ubar.
+                if( sqrt_s .ge. 2D0*PYMASS(2) )then
+                    sig_out = sigma_2parton( t_min, t_max, s, dM,
+     &                              alpha_s, K_factor, 7, i_LOpQCD )
+                    sigma_relative(2)   = sig_out
+                    KF_outgoing( 1, 2 ) =  2
+                    KF_outgoing( 2, 2 ) = -2
+c       Inelastic Process 7, g + g -> d + dbar.
+                    if( sqrt_s .ge. 2D0*PYMASS(1) )then
+                        sigma_relative(1)   = sig_out
+                        KF_outgoing( 1, 1 ) =  1
+                        KF_outgoing( 2, 1 ) = -1
+                    end if
+c       Inelastic Process 7, g + g -> s + sbar.
+                    if( sqrt_s .ge. 2D0*PYMASS(3) )then
+                        sigma_relative(3)   = sig_out
+                        KF_outgoing( 1, 3 ) =  3
+                        KF_outgoing( 2, 3 ) = -3
+                    end if
+                end if
+c===============================================================================
+c       DO NOT USE THE MASSIVE PROCESSES OF g + g -> hQ + hQbar NOW.
+c       BECAUSE THEIR REVERSE PROCESSES HAVE NOT YET BEEN INTRODUCED.
+                IF( .FALSE. )THEN
+c       Inelastic process 13, g + g -> c + cbar.
+c       Modifies the integral limits and alpha_s due to the heavy mass.
+                if( sqrt_s .ge. 2D0*PYMASS(4) )then
+                    dM  = PYMASS(4)
+                    dM2 = dM**2
+                    t_min = dM2 - s*( 1D0 + SQRT(1D0 - 4D0*dM2/s) ) /2D0
+                    t_max = dM2 - s*( 1D0 - SQRT(1D0 - 4D0*dM2/s) ) /2D0
+                    Q2 = 1D0/2D0 * s
+                    nf = 4
+                    alpha_s = 12D0 * pi / ( 33D0 - 2D0*nf )
+     &                        / ( LOG( Q2 / Lambda_QCD2 )/LOG(e) )
+                    sig_out = sigma_2parton( t_min, t_max, s, dM,
+     &                              alpha_s, K_factor, 13, i_LOpQCD )
+                    sigma_relative(4)   = sig_out
+                    KF_outgoing( 1, 4 ) =  4
+                    KF_outgoing( 2, 4 ) = -4
+c       Inelastic process 13, g + g -> b + bbar.
+c       Modifies the integral limits and alpha_s due to the heavy mass.
+                    if( sqrt_s .ge. 2D0*PYMASS(5) )then
+                        dM  = PYMASS(5)
+                        dM2 = dM**2
+                        t_min = dM2 -s*( 1D0 +SQRT(1D0 -4D0*dM2/s) )/2D0
+                        t_max = dM2 -s*( 1D0 -SQRT(1D0 -4D0*dM2/s) )/2D0
+                        Q2 = 1D0/2D0 * s
+                        nf = 5
+                        alpha_s = 12D0 * pi / (33D0 - 2D0*nf)
+     &                            / ( LOG( Q2 / Lambda_QCD2 )/LOG(e) )
+                        sig_out = sigma_2parton( t_min, t_max, s, dM,
+     &                                  alpha_s, K_factor, 13, i_LOpQCD)
+                        sigma_relative(5)   = sig_out
+                        KF_outgoing( 1, 5 ) =  5
+                        KF_outgoing( 2, 5 ) = -5
+                    end if
+                end if
+                END IF
+c===============================================================================
+            end if
+c       Determines the process to be happened according to the relative 
+c        cross section.
+            sig = 0D0
+            do i=0,5,1
+                sig = sig + sigma_relative(i)
+            end do
+            rand_num = PYR(1)
+            prob_low = 0D0
+            prob_upp = 0D0
+            do i=0,5,1
+                prob_upp = prob_upp + sigma_relative(i) / sig
+                if(rand_num.gt.prob_low .AND. rand_num.lt.prob_upp) exit
+                prob_low = prob_upp
+            end do
+            lmn = 9
+            if( i.ge.1 .AND. i.le.3 ) lmn = 7
+            if( i.eq.4 .AND. i.eq.5 ) lmn = 13
+            ! sig  = sig
+            kf3  = KF_outgoing( 1, i )
+            kf4  = KF_outgoing( 2, i )
+
+c-------------------------------------------------------------------------------
+c       Process 8: q + g -> q + g.
+        else if( l_qg_to_qg )then
+c       "t"-divergence in both full and simplified LO-pQCD.
+c       Extra "u"-divergence in full one. "threshold energy" becomes 2*t_cut.
+            if( (i_LOpQCD.eq.0 .OR. i_LOpQCD.eq.2)
+     &          .AND. s.lt.2D0*t_cut )then
+                ilo = -2
+                return
+            end if
+            sig_out = sigma_2parton( t_min, t_max, s, dM, alpha_s,
+     &                               K_factor, 8, i_LOpQCD )
+            lmn  = 8
+            sig  = sig_out
+            kf3  = kf1
+            kf4  = kf2
+
+c-------------------------------------------------------------------------------
+c       Process 10: hQ + q -> hQ + q.
+        else if( l_hQq_to_hQq )then
+c       "t"-divergence.
+c       Modifies the integral limits and alpha_s due to the heavy mass.
+            nf = MAX( ikf1, ikf2 )
+            dM = PYMASS( nf )
+            dM2 = dM**2
+c       How to determine the Q02 ?
+            ! Q02  = 1D0
+            Q02 = 0.5D0 * dM2
+            ! Q02 = dM2
+            Q04 = Q02**2
+            Q2  = 1D0/2D0 * ( Q02 + (s - dM2)**2 / s )
+            t_cut = Q02
+            ! t_min = - ( s - dM2 )**2 / s - t_cut
+            t_min = - ( s - dM2 )**2 / s
+            t_max = -t_cut
+            alpha_s = 12D0 * pi / ( 33D0 - 2D0*nf )
+     &                / ( LOG( Q2 / Lambda_QCD2 )/LOG(e) )
+            E_threshold = dM2 + 1D0/2D0*Q02
+     &                    + SQRT( dM2*Q02 + 1D0/4D0*Q04 )
+            if( s.gt.E_threshold )then
+                sig_out = sigma_2parton( t_min, t_max, s, dM, alpha_s,
+     &                                   K_factor, 10, i_LOpQCD )
+                lmn  = 10
+                sig  = sig_out
+                kf3  = kf1
+                kf4  = kf2
+            end if
+
+c-------------------------------------------------------------------------------
+c       Process 11: hQ + g -> hQ + g.
+        else if( l_hQg_to_hQg )then
+c       "t"- and "u"-divergence.
+c       Modifies the integral limits and alpha_s due to the heavy mass.
+            nf = MIN( ikf1, ikf2 )
+            dM = PYMASS( nf )
+            dM2 = dM**2
+c       How to determine the Q02 ?
+            ! Q02 = 1D0
+            Q02 = 0.5D0 * dM2
+            ! Q02 = dM2
+            Q04 = Q02**2
+            Q2  = 1D0/2D0 * ( s - dM2 )
+            t_cut = Q02
+            t_min = - MIN( (s - dM2 - Q02) , ( ( s - dM2 )**2 / s ) )
+            t_max = -t_cut
+            alpha_s = 12D0 * pi / ( 33D0 - 2D0*nf )
+     &                / ( LOG( Q2 / Lambda_QCD2 )/LOG(e) )
+            if( Q02 .lt. 1D0/2D0*dM2 )then
+                E_threshold = dM2 + 1D0/2D0*Q02
+     &                        + SQRT( dM2*Q02 + 1D0/4D0*Q04 )
+            else
+                E_threshold = dM2 + 2D0*Q02
+            end if
+            if( s.ge.E_threshold )then
+                sig_out = sigma_2parton( t_min, t_max, s, dM, alpha_s,
+     &                                   K_factor, 11, i_LOpQCD )
+                lmn  = 11
+                sig  = sig_out
+                kf3  = kf1
+                kf4  = kf2
+            end if
+
+c-------------------------------------------------------------------------------
+c       Ignores hQ + hQ processes.
+        else if( l_hQhQ )then
+            return
+        end if
+c------------------------   Cross Section Calculating   ------------------------
+c-------------------------------------------------------------------------------
+
+
+        if( sig.le.0D0 ) return
+
+
+c-------------------------------------------------------------------------------
+c-------------------------------   t Sampling   --------------------------------
+c       tsmp: the t value sampled.
+        i_sample_t = ilo
+        sigma_tot  = sig
+        if( i_sample_t.eq.1 )then
+c       Optionly, samples the t value with flat scattering angle distribution.
+            if( i_LOpQCD.eq.2 .or. i_LOpQCD.eq.3 )then
+c               tsmp = -PYR(1) * s
+                theta = PYR(1) * pi
+!#TODO(Lei20240608): the following formula needs to be modified.
+                tsmp  = s * ( COS(theta) - 1D0 ) / 2D0 + t_cut
+            else
+
+                t = sample_t( t_min, t_max, s, dM, lmn, i_LOpQCD, t_cut)
+                tsmp = t
+            endif
+        endif
+c-------------------------------   t Sampling   --------------------------------
+c-------------------------------------------------------------------------------
+
+
+c       0.0389379 (~0.04) is the transformation factor from GeV^-2 to fm^2.
+        sig = sig*0.0389379
+
+
+        return
+        end
+
+
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+        function sigma_2parton( t_min_in, t_max_in, s_in, mass_in,
+     &           alpha_s_in, K_factor_in, i_process_in, i_LOpQCD_in )
+c240524 Lei
+c       Total cross section of q(bar) / Q(bar) /g + q(bar) / Q(bar) /g .
+c       The masses of the heavy c and b are retained ( M_in, M ), and 
+c        other masses of light quarks are approximately to 0.
+cc      i_process: order number of the process.
+c       Massless:
+c             1: q1 + q2 -> q1 + q2
+c             2: q1 + q1 -> q1 + q1
+c             3: q1 + q2bar -> q1 + q2bar
+c             4: q1 + q1bar -> q2 + q2bar   (inelastic)
+c             5: q1 + q1bar -> q1 + q1bar
+c             6: q1 + q1bar -> g + g        (inelastic)
+c             7: g  + g -> q1 + q1bar       (inelastic)
+c             8: q  + g -> q + g
+c             9: g  + g -> g + g
+c       Massive:
+c            10: hQ + q -> hQ + q
+c            11: hQ + g -> hQ + g
+c       Not yet used:
+c            12: q + qbar   -> hQ + hQbar   (inelastic)
+c            13: g + g      -> hQ + hQbar   (inelastic)
+c       Not yet included:
+c            13: hQ  + hQbar  -> q + qbar       (inelastic)
+c            15: hQ  + hQbar  -> g + g          (inelastic)
+c            16: hQ  + hQbar  -> hQ + hQbar
+c             ?: hQ1 + hQ1bar -> hQ2 + hQ2bar   (? inelastic)
+        IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+        IMPLICIT INTEGER(I-N)
+        PARAMETER( pi=3.141592653589793, e=2.718281828459045 )
+        REAL*8 mass_in, M, K_factor_in, K_factor
+
+
+c       The lower and upper limits of the integratoin.
+        t_min = t_min_in
+        t_max = t_max_in
+        s = s_in
+        M = mass_in
+        alpha_s   = alpha_s_in
+        K_factor  = K_factor_in
+        i_process = i_process_in
+        i_LOpQCD  = i_LOpQCD_in
+
+        sigma_2parton = 0D0
+        sigma = 0D0
+
+c       LO-pQCD keeping leading divergent terms.
+        if( i_LOpQCD.eq.1 .OR. i_LOpQCD.eq.3 )then
+c           1: q1 + q2 -> q1 + q2
+c           2: q1 + q1 -> q1 + q1
+c           3: q1 + q2bar -> q1 + q2bar
+c           5: q1 + q1bar -> q1 + q1bar
+            if( i_process.eq.1 .OR. i_process.eq.2 .OR. 
+     &          i_process.eq.3 .OR. i_process.eq.5       )then
+                sigma = 8D0/9D0 * pi * alpha_s**2 
+     &                  * ( 1D0/t_min - 1D0/t_max )
+c           4: q1 + q1bar -> q2 + q2bar
+            else if( i_process.eq.4 )then
+                sigma = 4D0/9D0 * pi * alpha_s**2 / s**2 
+     &              * ( t_max-t_min + (t_max**3-t_min**3)/3D0/s**2 )
+                ! sigma = 0D0
+c           6: q1 + q1bar -> g + g
+            else if( i_process.eq.6 )then
+                sigma = 32D0/27D0 * pi * alpha_s**2 / s 
+     &                  * ( LOG( ABS(t_min/t_max) ) / LOG( e ) )
+c           7: g  + g -> q1 + q1bar
+            else if( i_process.eq.7 )then
+                sigma = 1D0/3D0 * pi * alpha_s**2 / s 
+     &                  * ( LOG( ABS(t_min/t_max) ) / LOG( e ) )
+c           8: q  + g -> q + g
+            else if( i_process.eq.8 )then
+                sigma = 2D0 * pi * alpha_s**2 
+     &                  * ( 1D0/t_min - 1D0/t_max )
+c           9: g  + g -> g + g
+            else if( i_process.eq.9 )then
+                sigma = 9D0/2D0 * pi * alpha_s**2 
+     &                  * ( 1D0/t_min - 1D0/t_max )
+            end if
+
+c       Full LO-pQCD.
+        else
+c           1: q1 + q2    -> q1 + q2
+c           3: q1 + q2bar -> q1 + q2bar
+            if( i_process.eq.1 .OR. i_process.eq.3 )then
+                sigma = 4D0/9D0 * pi * alpha_s**2 / s**2 
+     &                  *(
+     &                     primitive_func( t_max, s, M, 1 ) 
+     &                   - primitive_func( t_min, s, M, 1 ) 
+     &                   )
+c           2: q1 + q1 -> q1 + q1
+            else if( i_process.eq.2 )then
+                sigma = 4D0/9D0 * pi * alpha_s**2 / s**2 
+     &                  *(
+     &                     primitive_func( t_max, s, M, 1 ) 
+     &                   - primitive_func( t_min, s, M, 1 ) 
+     &                   + primitive_func( t_max, s, M, 2 ) 
+     &                   - primitive_func( t_min, s, M, 2 ) 
+     &                   + 2D0/3D0 * ( 
+     &                     s*LOG( ABS(t_max / ( t_max + s )) ) 
+     &                   - s*LOG( ABS(t_min / ( t_min + s )) ) ) /LOG(e)
+     &                   )
+c           4: q1 + q1bar -> q2 + q2bar
+            else if( i_process.eq.4 )then
+                sigma = 4D0/9D0 * pi * alpha_s**2 / s**2 
+     &                  *(
+     &                     primitive_func( t_max, s, M, 4 ) 
+     &                   - primitive_func( t_min, s, M, 4 ) 
+     &                   )
+                ! sigma = 0D0
+c           5: q1 + q1bar -> q1 + q1bar
+            else if( i_process.eq.5 )then
+                sigma = 4D0/9D0 * pi * alpha_s**2 / s**2 
+     &                  *(
+     &                     primitive_func( t_max, s, M, 1 ) 
+     &                   - primitive_func( t_min, s, M, 1 ) 
+     &                   + primitive_func( t_max, s, M, 4 ) 
+     &                   - primitive_func( t_min, s, M, 4 ) 
+     &                   - 2D0/3D0 * ( 
+     &                     ( s*LOG( ABS(t_max) )/LOG(e) 
+     &                              + 2D0*t_max + t_max**2/2D0/s )
+     &                   - ( s*LOG( ABS(t_min) )/LOG(e) 
+     &                              + 2D0*t_min + t_min**2/2D0/s ) )
+     &                   )
+c           6: q1 + q1bar -> g + g
+            else if( i_process.eq.6 )then
+                sigma = pi * alpha_s**2 / s**2 
+     &                  *(
+     &                     32D0/27D0 * (
+     &                     primitive_func( t_max, s, M, 6 ) 
+     &                   - primitive_func( t_min, s, M, 6 ) )
+     &                   - 8D0/3D0 * (
+     &                     primitive_func( t_max, s, M, 4 ) 
+     &                   - primitive_func( t_min, s, M, 4 ) )
+     &                   )
+c           7: g  + g -> q1 + q1bar
+            else if( i_process.eq.7 )then
+                sigma = pi * alpha_s**2 / s**2 
+     &                  *(
+     &                     1D0/6D0 * (
+     &                     primitive_func( t_max, s, M, 6 ) 
+     &                   - primitive_func( t_min, s, M, 6 ) )
+     &                   - 3D0/8D0 * (
+     &                     primitive_func( t_max, s, M, 4 ) 
+     &                   - primitive_func( t_min, s, M, 4 ) )
+     &                   )
+c           8: q  + g -> q + g
+            else if( i_process.eq.8 )then
+                sigma = pi * alpha_s**2 / s**2 
+     &                  *(
+     &                   - 4D0/9D0 * (
+     &                     primitive_func( t_max, s, M, 8 ) 
+     &                   - primitive_func( t_min, s, M, 8 ) )
+     &                   + primitive_func( t_max, s, M, 1 ) 
+     &                   - primitive_func( t_min, s, M, 1 ) 
+     &                   )
+c           9: g  + g -> g + g
+            else if( i_process.eq.9 )then
+                sigma = 9D0/2D0 * pi * alpha_s**2 / s**2 
+     &                  *(
+     &                     primitive_func( t_max, s, M, 9 ) 
+     &                   - primitive_func( t_min, s, M, 9 ) 
+     &                   )
+            end if
+
+        end if
+
+c       Full LO-pQCD for massive quarks.
+c       Process 10, Q + q -> Q + q.
+        if( i_process.eq.10 )then
+            sigma = 4D0/9D0 * pi * alpha_s**2 / (s-M**2)**2
+     &              *(
+     &                 primitive_func( t_max, s, M, 10 )
+     &               - primitive_func( t_min, s, M, 10 )
+     &               )
+c       Process 11, Q + g -> Q + g.
+        else if( i_process.eq.11 )then
+            sigma = 1D0/16D0 * pi * alpha_s**2 / (s-M**2)**2
+     &              *(
+     &                 primitive_func( t_max, s, M, 11 )
+     &               - primitive_func( t_min, s, M, 11 )
+     &               )
+c       Process 12, q + qbar -> Q + Qbar.
+        else if( i_process.eq.12 )then
+            sigma = 4D0/9D0 * pi * alpha_s**2 / s**2
+     &              *(
+     &                 primitive_func( t_max, s, M, 12 )
+     &               - primitive_func( t_min, s, M, 12 )
+     &               )
+c       Process 13, g + g -> Q + Qbar.
+        else if( i_process.eq.13 )then
+            sigma = 1D0/16D0 * pi * alpha_s**2 / s**2
+     &              *(
+     &                 primitive_func( t_max, s, M, 13 )
+     &               - primitive_func( t_min, s, M, 13 )
+     &               )
+        end if
+
+
+c       K factor enhancement.
+        sigma_2parton = sigma * K_factor
+
+
+        return
+        end
+
+
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+        function primitive_func( t_in, s_in, mass_in, i_func_in )
+c010624 Lei
+c       The primitive function F(t) of the differential x-section f(t).
+c       Note that there are no case 3, 5 and 7. They are redundant.
+        IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+        IMPLICIT INTEGER(I-N)
+        PARAMETER( e=2.718281828459045 )
+        REAL*8 mass_in, M
+
+
+        t = t_in
+        s = s_in
+        M = mass_in
+        i_func = i_func_in
+
+        primitive_func = 0D0
+
+        select case (i_func)
+c-------------------------------------------------------------------------------
+c       Massless.
+c       Cf. B.L. Combridge et al., Phys. Lett. B 70 (1977) 234.
+
+c       f(t) = ( s^2 + u^2 ) / t^2
+        case(1)
+            primitive_func = -2D0*s**2/t + 2D0*s*LOG( ABS(t) )/LOG(e) +t
+c       f(t) = ( s^2 + t^2 ) / u^2
+        case(2)
+            primitive_func = -2D0*s**2/(s + t) + (s + t)
+     &                       - 2D0*s*LOG( ABS(s + t) )/LOG(e)
+c       f(t) = ( t^2 + u^2 ) / s^2
+        case(4)
+            primitive_func = 1D0/3D0/s**2 * ( t**3 + (s+t)**3 )
+c       f(t) = ( u^2 + t^2 ) / ut
+        case(6)
+            primitive_func = s*LOG( ABS( (s+t)/t ) )/LOG(e) -2D0*(s+t)
+c       f(t) = ( u^2 + s^2 ) / us
+        case(8)
+            primitive_func = -(s + t)**2/2D0/s -s*LOG(ABS(s + t))/LOG(e)
+c       f(t) = 3 - u*t/s^2 - u*s/t^2 - s*t/u^2
+        case(9)
+            primitive_func = 3D0*t + t**2/2D0/s + t**3/3D0/s**2 - s**2/t
+     &                       + s*LOG( ABS(t/(s+t)) )/LOG(e) - s**2/(s+t)
+
+c-------------------------------------------------------------------------------
+c       Massive.
+c       Cf. B.L. Combridge Nucl. Phys. B 151 (1979) 429-456.
+
+c       f(t) = [ ( M^2 - u )^2 + ( s - M^2 )^2 + 2 * M^2 * t ] / t^2
+        case(10)
+            primitive_func = t + 2D0*s*LOG( ABS(t) )/LOG( e )
+     &                       - 2D0*( s - M**2 )**2 / t
+c       f(t) = 32*[ (s-M^2)*(M^2-u) ] / t^2 
+c              + 64/9*[ (s-M^2)*(M^2-u) + 2*M^2*(s+M^2) ] / (s-M^2)^2 
+c              + 64/9*[ (s-M^2)*(M^2-u) + 2*M^2*(M^2+u) ] / (M^2-u)^2 
+c              + 16/9*[ M^2*(4*M^2-t) ] / [ (s-M^2)*(M^2-u) ]
+c              + 16*[ (s-M^2)*(M^2-u) + M^2*(s-u) ] / [ t*(s-M^2) ]
+c              - 16*[ (s-M^2)*(M^2-u) - M^2*(s-u) ] / [ t*(M^2-u) ]
+        case(11)
+            T1 = 32D0 *(s - M**2)*( -(s - M**2)/t + LOG(ABS(t))/LOG(e) )
+            T2 = 64D0/9D0 / (s - M**2)**2
+     &           *( (s -M**2)*(s +t -M**2)**2/2D0 + 2*M**2*(s +M**2)*t )
+            T3 = 64D0/9D0 *( (s -3*M**3)*LOG( ABS(s + t - M**2) )/LOG(e)
+     &           - 4D0*M**4 / (s + t - M**2) )
+            T4 = 16D0/9D0 * M**2/(s - M**2) * ( - (s + t - M**2)
+     &           + (3D0*M**2 + s)*LOG( ABS(s + t - M**2) )/LOG(e) )
+            T5 = 16D0 * ( s/(s - M**2)*t
+     &           + ( (s - M**2) + M**2*(2D0*s - 2D0*M**2)/(s - M**2) )
+     &           * LOG( ABS(t) )/LOG(e) )
+            T6 = 16D0 * ( (s - 3D0*M**2)*LOG( ABS(t) )/LOG(e)
+     &           + M**2*LOG( ABS(s+t-M**2) )/LOG(e) )
+            primitive_func = T1 + T2 + T3 + T4 + T5 - T6
+c       f(t) = [ (M^2-t)^2 + (M^2-u)^2 + 2*M^2*s ] / s^2
+        case(12)
+            primitive_func = 1D0/s**2 * ( -( M**2 - t )**3/3D0
+     &                       + ( s + t - M**2 )**3/3D0 + 2D0*M**2*s*t )
+c       f(t) = 12/s^2 * (M^2-t) * (M^2-u)
+c              + 8/3 * [ (M^2-t)*(M^2-u) - 2*M^2*(M^2+t) ] / (M^2-t)^2
+c              + 8/3 * [ (M^2-t)*(M^2-u) - 2*M^2*(M^2+u) ] / (M^2-u)^2
+c              - 2/3*M^2 * (s-4*M^2) / [ (M^2-t)*(M^2-u) ]
+c              - 6 * [ (M^2-t)*(M^2-u) + M^2*(u-t) ] / [ s*(M^2-t)]
+c              - 6 * [ (M^2-t)*(M^2-u) + M^2*(t-u) ] / [ s*(M^2-u)]
+        case(13)
+            T1 = 12D0/s**2 * ( (M**2*s - M**4)
+     &           + (2D0*M**2 - s)/2D0*t**2 -1D0/3D0*t**3 )
+            T2 = 8D0/3D0 * ( M**2 - t + 4D0*M**4/(t - M**2)
+     &           - (s + 2D0*M**2)*LOG( ABS(t - M**2) )/LOG(e) )
+            T3 = 8D0/3D0 * ( M**2 - s - t + 4D0*M**4/(s + t - M**2)
+     &           + (s + 2D0*M**2)*LOG( ABS(s + t - M**2) )/LOG(e) )
+            T4 = 2D0/3D0 * M**2 * (s - 4D0*M**2) / s
+     &           * LOG( ABS( (s + t - M**2)/(t - M**2) ) )/LOG(e)
+            T5 = 6D0/s * ( (s + M**2)*t + t**2/2D0
+     &           + M**2*s*LOG( ABS(t - M**2) )/LOG(e))
+            T6 = 6D0/s * ( 2D0*(s - M**2) + (2D0 + M**2)*t -1D0/2D0*t**2
+     &           + (M**2*s - 2D0*s + 2D0*M**2 -2D0*M**4)
+     &           *LOG( ABS(s +t -M**2) )/LOG(e) )
+            primitive_func = T1 + T2 + T3 - T4 - T5 - T6
+        case default
+            primitive_func = 0D0
+        end select
+
+
+        return
+        end
+
+
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+        function sample_t( t_min_in, t_max_in, s_in, mass_in,
+     &           i_process_in, i_LOpQCD_in, t_cut_in )
+c110624 Lei
+c       Samples t from the regularized differential cross section 
+c        distribution dsigma/dt.
+        IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+        IMPLICIT INTEGER(I-N)
+        REAL*8 mass_in, M, mu2
+
+
+c       The lower and upper limits.
+        t_min = t_min_in
+        t_max = t_max_in
+        s = s_in
+        M = mass_in
+        i_process = i_process_in
+        i_LOpQCD  = i_LOpQCD_in
+        t_cut = t_cut_in
+        mu2   = t_cut_in
+        Q02   = t_cut_in
+
+        sample_t = 0E0
+        t = 0D0
+c       Maximum number of sapmling.
+        n_sample_max = 100000
+
+c       LO-pQCD keeping leading divergent terms.
+        if( i_LOpQCD.eq.1 .OR. i_LOpQCD.eq.3 )then
+c           1: q1 + q2 -> q1 + q2
+c           2: q1 + q1 -> q1 + q1
+c           3: q1 + q2bar -> q1 + q2bar
+c           5: q1 + q1bar -> q1 + q1bar
+c           8: q  + g -> q + g
+c           9: g  + g -> g + g
+c           With the common form of f(t) = 1/(t - mu2)^2. Direct sampling.
+            if( i_process.eq.1 .OR. i_process.eq.2 .OR. 
+     &          i_process.eq.3 .OR. i_process.eq.5 .OR. 
+     &          i_process.eq.8 .OR. i_process.eq.9      )then
+                ! do while(.true.)
+                do i_sample = 1, n_sample_max, 1
+                    rand_num = PYR(1)
+                    t = mu2*( 1D0 - (s + mu2)/(s*rand_num + mu2) )
+c           Limits t in [ -s, -mu2 ] ?
+                    ! if( t.le.-mu2 .AND. t.ge.-s ) exit
+                    exit
+                end do
+c           4: q1 + q1bar -> q2 + q2bar
+c           With the form of f(t) = t^2 + s^2. Rejection sampling.
+            else if( i_process.eq.4 )then
+                ! do while(.true.)
+                do i_sample = 1, n_sample_max, 1
+                    rand_num_1 = PYR(1)
+                    t = t_max + rand_num_1 * (t_min - t_max)
+                    dsigma_dt     = t**2 + s**2
+                    dsigma_dt_max = s**2 + s**2
+                    rand_num_2 = PYR(2)
+                    if( rand_num_2 .le. dsigma_dt/dsigma_dt_max ) exit
+                end do
+c           6: q1 + q1bar -> g + g
+c           7: g  + g -> q1 + q1bar
+c           With the common form of f(t) = -1/(t - mu2). Direct sampling.
+            else if( i_process.eq.6 .OR. i_process.eq.7 )then
+                ! do while(.true.)
+                do i_sample = 1, n_sample_max, 1
+                    rand_num = PYR(1)
+                    t = mu2 - (mu2 + s)*( mu2/(mu2 + s) )**rand_num
+c       Limits t in [ -s, -mu2 ] ?
+                    ! if( t.le.-mu2 .AND. t.ge.-s ) exit
+                    exit
+                end do
+            end if
+
+c       Full LO-pQCD for massless processes.
+c       Uses the rejection sampling method.
+        else if( i_process.ge.1 .AND. i_process.le.9 )then
+            ! do while(.true.)
+            do i_sample = 1, n_sample_max, 1
+                rand_num_1 = PYR(1)
+                t = t_max + rand_num_1 * (t_min - t_max)
+                dsigma_dt     = dsigma_dt_func( t, s, M, i_process )
+                dsigma_dt_max = MAX(
+     &                        dsigma_dt_func( t_min, s, M, i_process ) ,
+     &                        dsigma_dt_func( t_max, s, M, i_process ) )
+                rand_num_2 = PYR(2)
+                if( rand_num_2 .le. dsigma_dt/dsigma_dt_max ) exit
+            end do
+        end if
+
+c       Full LO-pQCD for massive quarks.
+c       Uses the rejection sampling method.
+c       Process 10, Q + q -> Q + q.
+c       Process 11, Q + g -> Q + g.
+c       Process 12, q + qbar -> Q + Qbar.
+c       Process 13, g + g -> Q + Qbar.
+        if( i_process.ge.10 )then
+            ! do while(.true.)
+            do i_sample = 1, n_sample_max, 1
+                rand_num_1 = PYR(1)
+                t = t_max + rand_num_1 * (t_min - t_max)
+                dsigma_dt     = dsigma_dt_func( t, s, M, i_process )
+                dsigma_dt_max = MAX(
+     &                        dsigma_dt_func( t_min, s, M, i_process ) ,
+     &                        dsigma_dt_func( t_max, s, M, i_process ) )
+                rand_num_2 = PYR(2)
+                if( rand_num_2 .le. dsigma_dt/dsigma_dt_max ) exit
+            end do
+        end if
+
+c       Hard to sample t. Gives up it.
+        ! if( i_sample.eq.n_sample_max ) t = 0D0
+
+        sample_t = t
+
+
+        return
+        end
+
+
+
+cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+        function dsigma_dt_func( t_in, s_in, mass_in, i_process_in )
+c010624 Lei
+c       The differential cross section f(t) = dsigma/dt.
+        IMPLICIT DOUBLE PRECISION(A-H, O-Z)
+        IMPLICIT INTEGER(I-N)
+        REAL*8 mass_in, M
+
+
+        t = t_in
+        s = s_in
+        M = mass_in
+        u = 2*M**2 - s - t
+        i_process = i_process_in
+
+        dsigma_dt_func = 0D0
+
+        select case (i_process)
+c-------------------------------------------------------------------------------
+c       Massless.
+c       Cf. B.L. Combridge et al., Phys. Lett. B 70 (1977) 234.
+
+c       f(t) = 4/9*( s^2 + u^2 ) / t^2
+        case(1)
+            dsigma_dt_func = 4D0/9D0 * ( s**2 + u**2 ) / t**2
+c       f(t) = 4/9*[ (s^2 + u^2)/t^2 + (s^2 + t^2)/u^2 ] - 8/27 * s^2/(ut)
+        case(2)
+            dsigma_dt_func = 4D0/9D0*( (s**2 + u**2)/t**2
+     &                       + (s**2 + t**2)/u**2 ) - 8D0/27D0 *s**2/u/t
+c       f(t) = 4/9*( s^2 + u^2 ) / t^2
+        case(3)
+            dsigma_dt_func = 4D0/9D0 * ( s**2 + u**2 ) / t**2
+c       f(t) = 4/9*( t^2 + u^2 ) / s^2
+        case(4)
+            dsigma_dt_func = 4D0/9D0 * ( t**2 + u**2 ) / s**2
+c       f(t) = 4/9*[ (s^2 + u^2)/t^2 + (t^2 + u^2)/s^2 ] - 8/27 * u^2/(st)
+        case(5)
+            dsigma_dt_func = 4D0/9D0*( (s**2 + u**2)/t**2
+     &                       + (t**2 + u**2)/s**2 ) - 8D0/27D0 *u**2/s/t
+c       f(t) = 32/27*( u^2 + t^2 ) / (ut) - 8/3*( u^2 + t^2 ) / s^2
+        case(6)
+            dsigma_dt_func = 32D0/27D0*(u**2 + t**2)/u/t
+     &                       - 8D0/3D0*(u**2 + t**2)/s**2
+c       f(t) = 1/6*( u^2 + t^2 ) / (ut) - 3/8*( u^2 + t^2 ) / s^2
+        case(7)
+            dsigma_dt_func = 1D0/6D0*(u**2 + t**2)/u/t
+     &                       - 3D0/8D0*(u**2 + t**2)/s**2
+c       f(t) = -4/9*( u^2 + s^2 ) / (us) + ( u^2 + s^2 ) / t^2
+        case(8)
+            dsigma_dt_func = -4D0/9D0*(u**2 + s**2)/u/s
+     &                       + (u**2 + s**2)/t**2
+c       f(t) = 3 - u*t/s^2 - u*s/t^2 - s*t/u^2
+        case(9)
+            dsigma_dt_func = 9D0/2D0*(3D0 -u*t/s**2 -u*s/t**2 -s*t/u**2)
+
+c-------------------------------------------------------------------------------
+c       Massive.
+c       Cf. B.L. Combridge Nucl. Phys. B 151 (1979) 429-456.
+
+c       f(t) = [ ( M^2 - u )^2 + ( s - M^2 )^2 + 2 * M^2 * t ] / t^2
+        case(10)
+            dsigma_dt_func = ( (M**2 - u)**2 + (s - M**2)**2
+     &                       + 2D0*M**2*t ) / t**2
+c       f(t) = 32*[ (s-M^2)*(M^2-u) ] / t^2 
+c              + 64/9*[ (s-M^2)*(M^2-u) + 2*M^2*(s+M^2) ] / (s-M^2)^2 
+c              + 64/9*[ (s-M^2)*(M^2-u) + 2*M^2*(M^2+u) ] / (M^2-u)^2 
+c              + 16/9*[ M^2*(4*M^2-t) ] / [ (s-M^2)*(M^2-u) ]
+c              + 16*[ (s-M^2)*(M^2-u) + M^2*(s-u) ] / [ t*(s-M^2) ]
+c              - 16*[ (s-M^2)*(M^2-u) - M^2*(s-u) ] / [ t*(M^2-u) ]
+        case(11)
+            T1 = 32D0 * (s - M**2) * (M**2 - u) / t**2
+            T2 = 64D0/9D0 * ( (s - M**2)*(M**2 - u)
+     &           + 2D0*M**2*(s + M**2) ) / (s - M**2)**2
+            T3 = 64D0/9D0 * ( (s - M**2)*(M**2 - u)
+     &           + 2D0*M**2*(M**2 + u) ) / (M**2 - u)**2
+            T4 = 16D0/9D0 * M**2*(4D0*M**2 - t)
+     &           / (s - M**2) /(M**2 - u)
+            T5 = 16D0 * ( (s - M**2)*(M**2 - u)
+     &           + M**2*(s - u) ) / t / (s - M**2)
+            T6 = 16D0 * ( (s - M**2)*(M**2 - u)
+     &           - M**2*(s - u) ) / t / (M**2 - u)
+            dsigma_dt_func = T1 + T2 + T3 + T4 + T5 - T6
+c       f(t) = [ (M^2-t)^2 + (M^2-u)^2 + 2*M^2*s ] / s^2
+        case(12)
+            dsigma_dt_func = ( (M**2 - t)**2 + (M**2 - u)**2
+     &                       + 2D0*M**2*s ) / s**2
+c       f(t) = 12/s^2 * (M^2-t) * (M^2-u)
+c              + 8/3 * [ (M^2-t)*(M^2-u) - 2*M^2*(M^2+t) ] / (M^2-t)^2
+c              + 8/3 * [ (M^2-t)*(M^2-u) - 2*M^2*(M^2+u) ] / (M^2-u)^2
+c              - 2/3*M^2 * (s-4*M^2) / [ (M^2-t)*(M^2-u) ]
+c              - 6 * [ (M^2-t)*(M^2-u) + M^2*(u-t) ] / [ s*(M^2-t)]
+c              - 6 * [ (M^2-t)*(M^2-u) + M^2*(t-u) ] / [ s*(M^2-u)]
+        case(13)
+            T1 = 12D0/s**2 * ( M**2 - t ) * ( M**2 - u )
+            T2 = 8D0/3D0 * ( (M**2 - t)*(M**2 - u)
+     &            - 2D0*M**2*(M**2 + t) ) / (M**2 - t)**2
+            T3 = 8D0/3D0 * ( (M**2 - t)*(M**2 - u)
+     &            - 2D0*M**2*(M**2 + u) ) / (M**2 - u)**2
+            T4 = 2D0/3D0 * M**2 * (s - 4D0*M**2)
+     &           / (M**2 - t) / (M**2 - u)
+            T5 = 6D0 * ( (M**2 - t)*(M**2 - u) + M**2*(u - t) )
+     &           / s / (M**2 - t)
+            T6 = 6D0 * ( (M**2 - t)*(M**2 - u) + M**2*(t - u) )
+     &           / s / (M**2 - u)
+            dsigma_dt_func = T1 + T2 + T3 - T4 - T5 - T6
+        case default
+            dsigma_dt_func = 0D0
+        end select
+
+
         return
         end
 
@@ -1333,7 +2488,7 @@ c       tsmp: the t value sampled.
 
 ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine collis(ik1,ik2,kf3,kf4,tcp,jjj,kkk,iway,
-     c   icnew,jcnew,lmn,time)   ! 120505 160110 
+     c   icnew,jcnew,lmn,time)   ! 120505 160110
 c       performs parton-parton collision & updates particle list
 c       if lmn=4,6,& 7, updates 'pyjets',
 c        'sbe',diquark list, string list, & lc(1-2,m) too
@@ -1410,7 +2565,7 @@ c       statistics of the total charge of partons
         pj_o(i)=pj(i)
         b(i)=(pi(i)+pj(i))/pij4
         enddo
-c       transfer to the current cms of colliding pair
+c       transform to the current cms of colliding pair
         call lorntz(0,b,pi,pj)
 c230520
         pij(1)=pi(1)+pj(1)
@@ -1435,7 +2590,7 @@ c160110
         ikf1=iabs(kf1)
         ikf2=iabs(kf2)
         if((ikf1.le.6.or.ikf1.eq.21).and.(ikf2.le.6.or.ikf2.eq.21))then
-c       d,u,s,c,b,t quarks, their anti quarks, and gluon only
+c       d,u,s,c,b quarks, their anti quarks, and gluon only
         call fsig(ilo,kf1,kf2,kf3,kf4,eiej2,sig,tsmp,lmn,jjj)   ! 230520
         else
         sig=0.
@@ -1463,8 +2618,19 @@ c        treated in zero mass approximation from momentum point of view
         paa=dsqrt(pi(1)**2+pi(2)**2+pi(3)**2)
         xs=eiej2
         xt=tsmp
-c       xu=am1**2+am2**2+am3**2+am4**2-xs-xt
-        xu=-xs-xt   ! zero rest mass approximation
+
+c050624 Lei
+c       Takes heavy masses into account ("fsig_new").
+        ikf3 = ABS( kf3 )
+        ikf4 = ABS( kf4 )
+        if( ikf1.eq.4 .OR. ikf1.eq.5 ) am1 = PYMASS( ikf1 )
+        if( ikf2.eq.4 .OR. ikf2.eq.5 ) am2 = PYMASS( ikf2 )
+        if( ikf3.eq.4 .OR. ikf3.eq.5 ) am3 = PYMASS( ikf3 )
+        if( ikf4.eq.4 .OR. ikf4.eq.5 ) am4 = PYMASS( ikf4 )
+        xu=am1**2+am2**2+am3**2+am4**2-xs-xt
+c       xu=-xs-xt   ! zero rest mass approximation
+c050624 Lei
+
 c       square of momentum transfer (Q**2)
         qc2=xt*xu/xs   ! pt**2, as the same in PYTHIA (Q^2_{hard})
 c151018 qc2=4.*qc2   ! as the same in PYTHIA
@@ -1477,7 +2643,13 @@ c        of corresponding particle before scattering
 c       relation between t and cos(ceta) in zero rest mass approximation
 c        (i. e. treated as ela. scattering)
         if(paa.lt.1.e-10)paa=1.e-10   ! 031204
-        cctas=1.+xt/2./paa**2
+
+c050624 Lei
+c       Uses the full form.
+c       cctas=1.+xt/2./paa**2
+        cctas = 1D0 + 2D0*xs*xt / (xs-am1-am2) / (xs-am1+am2)
+c050624 Lei
+
         if(dabs(cctas).gt.1.d0) then
         cctas=cctas/dabs(cctas)
         endif
@@ -1534,8 +2706,14 @@ c        to ik1 & ik2
         enddo
         p(l,4)=pip(4,1)
         k(l,2)=kpip(1)
-        p(l,5)=amass(kpip(1))
-        v(l,5)=0.
+c220624 Lei
+c       Uses PYMASS() directly. Only for the inelastic processes.
+        if( kf3.ne.kf1 )then
+c       p(l,5)=amass(kpip(1))
+        p(l,5) = PYMASS( kpip(1) )
+        end if
+c       v(l,5)=0.
+c220624 Lei
 
         l=ik2
         if(pip(4,2).lt.1.e-10)pip(4,2)=1.e-10   ! 031204
@@ -1544,11 +2722,21 @@ c        to ik1 & ik2
         enddo
         p(l,4)=pip(4,2)
         k(l,2)=kpip(2)
-        p(l,5)=amass(kpip(2))
-        v(l,5)=0.
+c220624 Lei
+c       Uses PYMASS() directly. Only for the inelastic processes.
+        if( kf4.ne.kf2 )then
+c       p(l,5)=amass(kpip(2))
+        p(l,5) = PYMASS( kpip(2) )
+        end if
+c       v(l,5)=0.
+c220624 Lei
+c020824 Lei
+        if( lmn.le.9 )then
         reac(lmn)=reac(lmn)+1.
         crose(lmn)=crose(lmn)+sig
         nreac(lmn)=nreac(lmn)+1   ! 071103
+        end if
+c020824 Lei
         if(iparres.eq.0)return   ! 060520
         if(iparres.eq.1.and.(lmn.ne.4.and.lmn.ne.6.and.lmn.ne.7))return!080520
 c       if(adj12.eq.1)return   ! 220820
@@ -1609,7 +2797,10 @@ c       throws away scattering parton pair (ik1 & ik2)
         endif   !! 2
 
         if(lmn.eq.4.or.lmn.eq.6)then   !! 3, 4:q1q1bar->q2q2bar, 6:qqbar->gg
-        if(INT(adj12).ne.0)then   !! 4, hadronization with coalescence 300623 Lei -> .ne.0 280224 Lei INT
+c300324 Lei
+        if( INT(adj12).ne.0 .AND. INT(adj12).ne.3 )then   !! 4
+c       hadronization with coalescence 300623 Lei -> .ne.0 280224 Lei INT
+c300324 Lei
 c       throws away scattering parton pair (ik1 & ik2)
         if(ik1.gt.ik2)then
         call parmov(ik1,ik1,ik2,lmn)
@@ -1622,7 +2813,9 @@ c       throws away scattering parton pair (ik1 & ik2)
         n00=n-2   ! 300623 Lei New partons are above n-2 w/ or w/o branching.
         call updpli_p(n00,time)   ! 300623 Lei
         return
-        elseif(INT(adj12).eq.0)then   !! 4 280224 Lei INT
+c300324 Lei
+        elseif( INT(adj12).eq.0 .OR. INT(adj12).eq.3 )then   !! 4 280224 Lei INT
+c300324 Lei
 c       does ik1 (ik2) is a component of string
         call adjst(ik1,ik1str,ik1sa,ik1sv)   ! 020620
 c       ik1str: oredr number of string to which ik1 belongs,equal 0 otherwise
@@ -1989,7 +3182,9 @@ c0800   finished----------------------------------------------
 
 c220820 deals with third & fourth partons in 'nsca'
         if(nsca.eq.3)then
-        if(INT(adj12).eq.0)then   ! 300623 Lei
+c300324 Lei
+        if( INT(adj12).eq.0 .OR. INT(adj12).eq.3 )then   ! 300623 Lei
+c300324 Lei
 c       moves third induced partons to 'trs' for sfm
         ntrs=ntrs+1
         ktrs(ntrs,1)=3
@@ -2000,7 +3195,9 @@ c       moves third induced partons to 'trs' for sfm
         enddo
         ptrs(ntrs,5)=0.
         vtrs(ntrs,5)=0.
-        elseif(INT(adj12).ne.0)then   ! 300623 Lei
+c300324 Lei
+        elseif( INT(adj12).ne.0 .AND. INT(adj12).ne.3 )then   ! 300623 Lei
+c300324 Lei
 c300623 Add this parton (gluon) into collision list for coal.   ! 300623 Lei
         n=n+1
         k(n,1)=2
@@ -3117,13 +4314,13 @@ c       adj136=adj1(36)
 c051122 if(kfi.gt.3 .and. kfi.ne.21)goto 100   ! 120620
 c       consider d,u,s, their antiquarks, and gluon only   ! 120620
         if(kfi.gt.6 .and. kfi.ne.21)goto 100   ! 080520
-c       consider d,u,s,c,b,t, their antiquarks, and gluon only   ! 080520
+c       consider d,u,s,c,b, their antiquarks, and gluon only   ! 080520
         do 200 j=1,i-1   ! upper diagonal
         kfj=iabs(k(j,2))
 c051122 if(kfj.gt.3 .and. kfj.ne.21)goto 200   ! 120620
 c       consider d,u,s, their antiquarks, and gluon only   ! 120620
         if(kfj.gt.6 .and. kfj.ne.21)goto 200   ! 080520 051122 300623 Lei kfi -> kfj, 100 -> 200
-c       consider d,u,s,c,b,t, their antiquarks, and gluon only   ! 080520
+c       consider d,u,s,c,b, their antiquarks, and gluon only   ! 080520
         if(icol.gt.mclis) then
         write(9,*)'icol over limit n,icol=',n,icol   ! sa
         stop 77777
@@ -3436,8 +4633,11 @@ c       ik1 & ik2 are the line number (in parton list) of colliding pair
 
         adj12=adj1(12)   ! 070720
 c       moves parton ii (not equal to ik1 or ik2) to 'trs'
-        if(INT(adj12).eq.0 .and. (lmn.eq.4 .or. lmn.eq.6) .and.   ! 280224 Lei INT
-     c   (ii.ne.ik1 .or. ii.ne.ik2))then
+c300324 Lei
+        if( ( INT(adj12).eq.0 .or. INT(adj12).eq.3 ) .and. 
+     &      (lmn.eq.4 .or. lmn.eq.6) .and.   ! 280224 Lei INT
+     &      (ii.ne.ik1 .or. ii.ne.ik2))then
+c300324 Lei
         ntrs=ntrs+1
         ktrs(ntrs,1)=3
         ktrs(ntrs,2)=k(ii,2)
@@ -3682,6 +4882,8 @@ c        and intdis
         COMMON/PYJETS/N,NON2,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
         common/sa8_p/taup(kszj),coor(3),ishp(kszj)   ! 300623 Lei
 
+
+        iflag=0   ! 300623 Lei
         kl=k(l,2)
         kl1=k(l1,2)
         klab=iabs(kl)
@@ -3725,7 +4927,7 @@ c       Loop over new ii (greater than n00) and old jj partons (smaller than n00
             i1 = ii
             kfi = ABS(k(ii,2))   ! 280224 Lei i -> ii
             if(kfi.gt.6 .and. kfi.ne.21) goto 100
-c           Consider d,u,s,c,b,t, their antiquarks, and gluon.
+c           Consider d,u,s,c,b, their antiquarks, and gluon.
             do 200 jj=1,n00,1
                 j1 = jj
                 if(i1.eq.j1) goto 200

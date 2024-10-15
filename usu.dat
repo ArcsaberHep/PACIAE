@@ -1,8 +1,8 @@
-10,1,0                  ! neve,nout,nosc
+1000,100,0                  ! neve,nout,nosc
 197,79,197,79 ! nap,nzp,nat,nzt
 0.00001,0.85,0,3.72,10      ! ddt,x_ratio,bmin,bmax,nmax
 1,1,1.2,200,1     ! kjp21,ifram,para7,para10,kjp20
-3.1416,1,1                  ! pio,ipden,itden
+3.1416,1,2                  ! pio,ipden,itden
 20,6,2                                 ! ispmax,isdmax,iflmax
 0,0,0,0,0,0,0,0,0,0   ! KF code of particles not to decay
 0,0,0,0,0,0,0,0,0,0   ! KF code of particles not to decay
@@ -49,10 +49,10 @@
 0.2,5.
 0.2,1.4
 0.2,5.
-2.7,1,200               ! parp21,yOrEta,win
+2.7,1,200               ! parp2,yOrEta,win
 0.,0.5,1,1,8       ! ttaup,taujp,iabsb,iabsm,nchan
 7.2,4.,2,40.,20.,0.,0.1 ! para13,para14,psno,para15,para16,ajpsi,vneum
-40,40,25,10                 ! para1_1,para1_2,para2,para4
+0,40,25,10                 ! para1_1,para1_2,para2,para4
 3,999,1,0,0,2   ! i_deex,n_deex_step,i_pT,i_pT_max,i_tune,i_mm
 0.77,0.05,0.005,2.5,0.167   ! a_FF,aPS_c,aPS_b,parp82,bmrat
 1,7,0,3,0.9,2        ! mstu21,i_inel_proc,i_time_shower,iMode,decpro,itorw
@@ -184,8 +184,8 @@
 #       =4, p_h (hadron momentum)
 #       =5: z
 #
-# parp21,yOrEta,win (D=2.7, 1, xxx)
-#  parp21: lowest CM energy running 'PYTHIA'
+# parp2,yOrEta,win (D=2.7, 1, xxx)
+#  parp2: lowest CM energy running 'PYTHIA'
 #  yOrEta: select y or eta in partial phase-space statistics (analy.f)
 #          = 0 , y
 #          = 1 , eta
@@ -226,6 +226,7 @@
 #
 # para1_1,para1_2,para2,para4 (D= 40, 40, 25, 10 for Au+Au; 70, 70... for Pb+Pb)
 #  para1_1: nn total cross section used in parton initiation
+#           (now it will be recalculated in program)
 #  para1_2: nn total cross section used in hadron cascade
 #  para2: total cross-section of pi-nucleon
 #  para4: total cross-section of pi-pi
@@ -279,6 +280,7 @@
 #  iMode: =1, low energy simulation A-framework
 #         =2, PYTHIA-like simulation B-framework
 #         =3, PACIAE simulation C-framework
+#         =4, PACIAE simulation D-framework
 #  decpro: is Delta decay probability in low energy A-framework
 #  itorw: =1, executing pyevnt
 #         =2, executing pyevnw
@@ -305,9 +307,11 @@
 #       11: time accuracy used in the hadron rescattering.
 #       12: model for hadronization:
 #           =0, string fragmentation;
-#           =1, Monte Carlo coalescence model, mode 1;
-#           =2, Monte Carlo coalescence model, mode 2; with gluon splitting & 
-#               deexcitation before parcas.
+#           =1, Monte Carlo coalescence model;
+#           =2, with gluon splitting & quark deexcitation before parcas and 
+#               hadronized by coalescence model;
+#           =3, with gluon splitting & quark deexcitation before parcas and 
+#               hadronized by string frafmentation.
 #       13: dimension of meson table considered in coalescence model.
 #       14: dimension of baryon table considered coalescence model.
 #       15: string tension of qqbar simple string.
@@ -339,7 +343,8 @@
 #       25: Lambda_QCD in parton rescattering.
 #       26: selection of random number seed:
 #           =0, default PYTHIA seed (19780503), can be used for debug,
-#           =other, seed from the real-time clock.
+#           =1, seed from the real-time clock,
+#           >1, seed from adj1(26), can be used for debug.
 #       27: largest momentum allowed for produced particle.
 #       28: concerned to the largest position allowed for produced particle in 
 #            hadcas, it will be recalculated in program running 

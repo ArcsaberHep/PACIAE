@@ -30,8 +30,11 @@ c       PYDAT1,PYDAT2,PYDAT3 and PYJETS are the subroutines in PYTHIA
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
         common/sa18/i_deex,n_deex_step,i_pT,i_pT_max,a_FF,aPS_c,aPS_b   ! 280823 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
+        common/sa28/nstr,nstra(kszj),nstrv(kszj),nstr0,
+     &   nstr1,nstr1a(kszj),nstr1v(kszj)   ! 030620
         common/sa36/nglu,nongu,kglu(kszj,5),pglu(kszj,5),vglu(kszj,5) ! 220822
         common/sa37/nth,npadth,kth(kszj,5),pth(kszj,5),vth(kszj,5)   ! 150922
+        common/sbe/nbe,nonbe,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
         common/sbh/nbh,nonh,kbh(kszj,5),pbh(kszj,5),vbh(kszj,5)
         common/syspar/ipden,itden,suppm,suptm,suppc,suptc,r0p,r0t,
      c   napp,natt,nzpp,nztt,pio
@@ -58,19 +61,21 @@ c-------------------------------------------------------------------------------
 
 c-------------------------------------------------------------------------------
 c----------------------------   Junctions removing   ---------------------------
+        if( INT(adj1(40)).eq.3 )then   ! 070223
 c220822     Remove junctions.
-        jb = 0
-2010    do i1=jb+1,N,1  ! i1 loop
-            kf   = K(i1,2)
-            kfab = ABS(kf)
-            if(kfab.ne.88)then
-                jb = jb + 1
-                goto 2020
-            endif
-            call updad_pyj(N,i1+1,1)   ! 090922 'updad_pyj' in sfm_30.f
-            N = N - 1
-            goto 2010
-2020    enddo   ! i1 loop
+            jb = 0
+2010        do i1=jb+1,N,1  ! i1 loop
+                kf   = K(i1,2)
+                kfab = ABS(kf)
+                if(kfab.ne.88)then
+                    jb = jb + 1
+                    goto 2020
+                endif
+                call updad_pyj(N,i1+1,1)   ! 090922 'updad_pyj' in sfm_30.f
+                N = N - 1
+                goto 2010
+2020        enddo   ! i1 loop
+        endif   ! 070223
 c----------------------------   Junctions removing   ---------------------------
 c-------------------------------------------------------------------------------
 
@@ -83,6 +88,7 @@ c       So jumps out them when do the real coalescence (i_coal=1).
 c-------------------------------------------------------------------------------
 c-----------------------------   Gluon splitting   -----------------------------
 c220122
+        n00 = N   ! Original total entries in PYJETS
 c       Move gluons from 'pyjest' to 'sa36'.
         call remo_glu
 c       Break-up gluon (with E_g>2E_u in 'sa36') -> qqbar string 
@@ -100,20 +106,15 @@ c-----------------------------   Gluon splitting   -----------------------------
 c-------------------------------------------------------------------------------
 
 
-c250823 Debug mode.   ! 250823 Lei
-c       Do g-splitting only, without q-deexcitation.
-        if( INT(adj1(12)).eq.3 ) goto 1000
-
-
 c-------------------------------------------------------------------------------
 c---------------------------   Quark deexcitation   ----------------------------
 c280822 energetic q (qbar) de-excitation
-        n00   = N   ! Original total entries in PYJETS
         i_call_deex  = 0
         i_daught_gen = 1   ! the #-th newly produced daughter qqbar
         n_deex = 0   ! the number of successful deexcitation
         jb = 0
         n0 = N   ! Current total entries in PYJETS
+        if( i_deex_gen.eq.0 ) goto 900   ! 300324 Lei
 700     continue
         do i1=jb+1,n0,1
             kf0   = K(i1,2)
@@ -147,12 +148,37 @@ c       energetic q (qbar) de-excitation, finished.
 c300623 Shares the 4-momentum in 'throe_p' among partons.   ! 300623 Lei
         call share_p_PYJETS   ! 300623 Lei
 c220122
+
+c300324 Lei
+        if( INT(adj1(12)).eq.3 )then
+c       Records the location (line numbers) of new strings (qqbar).
+            do i1=n00+1,N,2
+                nstr1 = nstr1 + 1
+                nstr1a( nstr1 ) = i1
+                nstr1v( nstr1 ) = i1 + 1
+            end do
+            nstr0 = nstr1
+c       Updates "sbe".
+            do ii=n00+1,N,1
+                nbe = nbe + 1
+                do jj=1,5,1
+                    kbe( nbe, jj ) = K(ii,jj)
+                    pbe( nbe, jj ) = P(ii,jj)
+                    vbe( nbe, jj ) = V(ii,jj)
+                end do
+            end do
+        end if
+c300324 Lei
+
 c---------------------------   Quark deexcitation   ----------------------------
 c-------------------------------------------------------------------------------
 
 
 c       Just do the g-splitting and quark deexcitation, without real coalescence
-1000    if( i_coal.eq.0 ) return   ! 300623 Lei For adj12 = 2
+c250324
+1000    continue
+        if( i_coal.eq.0 ) return   ! 300623 Lei For adj12 = 2
+c250324
 
 
 c-------------------------------------------------------------------------------
@@ -506,7 +532,7 @@ C...Double precision and integer declarations.
         common/sa6_p/ithroq_p,ithrob_p,ich_p,non6_p,throe_p(4)   ! 201104 300623 Lei
         common/sa24/adj1(40),nnstop,non24,zstop
         common/sa37/nth,npadth,kth(kszj,5),pth(kszj,5),vth(kszj,5)   ! 150922
-        common/coal1/bmrat   ! ratio of baryon to meson
+        common/coal1/bmrat,i_mm   ! ratio of baryon to meson
         dimension pc(4),rc(3),iar(3),rcp(3)
         dimension psu(3),peo(5),pnn(kszj,5)
         dimension numb(3)   ! 110905
@@ -575,7 +601,7 @@ c       Tries to produce a meason.
 c110324 Lei
             KF_in_1 = kf1
             KF_in_2 = kf2
-c           Exchanges KFSs of qbar and q to ensure the first one is q.
+c       Exchanges KFs of qbar and q to ensure the first one is q.
             if( kf1.lt.0 )then
                 KF_in_1 = kf2
                 KF_in_2 = kf1
@@ -584,13 +610,13 @@ c           Exchanges KFSs of qbar and q to ensure the first one is q.
 c110324 Lei
             if(isucc.eq.0) goto 500
 
-c           Phase space adjudgment.
+c       Phase space adjudgment.
             if( iphas.ne.0 )then 
             call phas(i1,i2,0,isucc,2,iphas)
             if( isucc.eq.0 ) goto 500   ! fail
             endif
 
-c           Proceed for success
+c       Proceed for success
             imes = imes + 1
             nme  = nme  + 1
 
@@ -658,6 +684,12 @@ c       Tries to produce a baryon.
 c       Find out the baryon from hadron table.
                 call findb(kf1,kf2,kf3,cm,kfii,amasi,isucc,1)
                 if(isucc.eq.0) goto 600
+
+c       Phase space adjudgment.
+                if( iphas.ne.0 )then 
+                call phas(i1,i2,i3,isucc,3,iphas)
+                if( isucc.eq.0 ) goto 600   ! fail
+                endif
 
 c       Proceed for success.
                 ibarp = ibarp + 1
@@ -734,6 +766,12 @@ c       Tries to produce an anti-baryon.
 c       Find out the anti-baryon from hadron table.
             call findb(-kf1,-kf2,-kf3,cm,kfii,amasi,isucc,-1)
             if(isucc.eq.0) goto 700   ! 110324 Lei
+
+c       Phase space adjudgment.
+            if( iphas.ne.0 )then 
+            call phas(i1,i2,i3,isucc,3,iphas)
+            if( isucc.eq.0 ) goto 700   ! fail
+            endif
 
             ibarm = ibarm + 1
             nba = nba + 1
@@ -2424,13 +2462,21 @@ c220312 note: ps is not in the dimension list
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
         subroutine remo_glu   ! 160822
 c       moves gluons from 'pyjets' to 'sa36'
+c290324 Removes gluons from 'sbe', too.   ! 290324 Lei
         IMPLICIT DOUBLE PRECISION(A-H, O-Z)
         IMPLICIT INTEGER(I-N)
         INTEGER PYK,PYCHGE,PYCOMP
         PARAMETER (KSZJ=80000)
         COMMON/PYJETS/N,NPAD,K(KSZJ,5),P(KSZJ,5),V(KSZJ,5)
-        common/sa36/nglu,nongu,kglu(kszj,5),pglu(kszj,5),vglu(kszj,5)
         common/sa1/kjp21,non1,bp,iii,neve,nout,nosc
+        common/sa24/adj1(40),nnstop,non24,zstop   ! 170205
+        common/sa26/ndiq(kszj),npt(kszj),ifcom(kszj),idi,idio   ! 220110
+        common/sa28/nstr,nstra(kszj),nstrv(kszj),nstr0,
+     &   nstr1,nstr1a(kszj),nstr1v(kszj)   ! 030620
+        common/sa36/nglu,nongu,kglu(kszj,5),pglu(kszj,5),vglu(kszj,5)
+        common/sbe/nbe,nonbe,kbe(kszj,5),pbe(kszj,5),vbe(kszj,5)
+
+
         nglu=0
         if(iii.eq.1)then   ! 300623 Lei
         kglu=0
@@ -2466,9 +2512,62 @@ c       move particle list one step downward from i1+1 to N
         enddo
         enddo
         N=N-1
+c290324 Lei
+        if( INT(adj1(12)).eq.3 )then
+c       Adjusts line numbers of components of broken diquarks.
+        do i_diq = 1, idi, 1
+            if( i1.lt.ifcom(i_diq) ) ifcom(i_diq) = ifcom(i_diq) - 1
+            if( i1.lt.  npt(i_diq) )   npt(i_diq) =   npt(i_diq) - 1
+        end do
+        do j = i1+1, N+1, 1
+            ndiq( j-1 ) = ndiq(j)
+        end do
+c       Adjusts line numbers of the string-locating.
+        do i_string = 1, nstr1, 1
+            if( i1.le.nstr1a(i_string) ) 
+     &          nstr1a(i_string) = nstr1a(i_string) - 1
+            if( i1.le.nstr1v(i_string) ) 
+     &          nstr1v(i_string) = nstr1v(i_string) - 1
+        end do
+        end if
+c290324 Lei
         goto 201
 202     enddo   ! do loop
 203     continue
+
+
+c290324 Lei
+        if( INT(adj1(12)).eq.3 )then
+c       Removes gluons from 'sbe'.
+        jb=0
+301     do i1=jb+1,nbe
+        kf=kbe(i1,2)
+        kfab=iabs(kf)
+        eng=pbe(i1,4)
+        if(kfab.ne.21)then   ! stay
+        jb=jb+1
+        goto 302
+        endif
+        if(i1.eq.nbe)then
+        nbe=nbe-1
+        goto 303
+        endif
+c       move particle list one step downward from i1+1 to nbe
+        do jj=1,5
+        do j=i1+1,nbe,1
+        kbe(j-1,jj)=kbe(j,jj)
+        pbe(j-1,jj)=pbe(j,jj)
+        vbe(j-1,jj)=vbe(j,jj)
+        enddo
+        enddo
+        nbe=nbe-1
+        goto 301
+302     enddo   ! do loop
+303     continue
+        end if
+c290324 Lei
+
+
         return
         end
 

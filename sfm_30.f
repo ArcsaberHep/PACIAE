@@ -47,11 +47,6 @@ c       ich1=ich1+pychge(kf)
 c       enddo
         rrp=1.16
         nn=0
-        if(iii.eq.1)then   ! 300623 Lei
-        kn=0
-        pn=0.
-        rn=0.
-        endif   ! 300623 Lei
 c151021
         if(ipden.eq.2 .and. itden.eq.2)then
         mstj(1)=1

@@ -145,9 +145,7 @@ c       filter out particles wanted to study and make in order of proton,
 c        neutron, ...
 c       initial particle list is compsed of the arraies in common block 
 c        'sa1_h', 'tau' and 'ishp' in 'sa8_h', and 'numb' in 'sa9_h'
-c       call prt_sa1_h(nsa) ! sa 
         call filt_h
-c       call prt_sa1_h(nsa) ! sa
 c280910 time=0.
 
 c       calculate position of center of mass of the system. distance of a 
@@ -1107,7 +1105,7 @@ c       32 channels of D + N channels: 465-496
 c       Total 112 channels: 385-496
 c--------------------------------------------
 c       D + pion/rho
-c       Single production channel.
+c       Single production channels.
 c
 c       Charge ++, --
 c       D+- + pion+-/rho+-
@@ -1132,7 +1130,7 @@ c       399. D*0 + rho-  -->  D0 + pi-
 c       400. D*bar0 + rho+  -->  Dbar0 + pi+
 c--------------------------------------------
 c       D + pion/rho
-c       Dual production chennels.
+c       Dual production channels.
 c
 c       Charge 00 
 c       D0 + pi0/rho0
@@ -1248,7 +1246,7 @@ c       496. D*bar0 + nbar  -->  Dbar0 + nbar
 c============================================
 c031223 Lei D meson induced reactions.
 
-c       489-592: null.
+c       497-592: null.
 
 c       593. lambda- + p to K*+ + Omega
 c       594. lambda- + n to K*0 + Omega
@@ -10896,7 +10894,7 @@ c       Charges of two hadrons.
         iCharge_D = PYCHGE( KF_D )
         iCharge_M = PYCHGE( KF_M )
 
-c       Single production chennel: 16 chennels, 385-400.
+c       Single production channels: 16 channels, 385-400.
         if( (iCharge_D.gt.0 .AND. iCharge_M.gt.0) .OR.   ! ++
      &      (iCharge_D.lt.0 .AND. iCharge_M.lt.0) .OR.   ! --
      &      (iCharge_D.eq.0 .AND. iCharge_M.gt.0 .AND.   ! 0+, KF-+
@@ -10905,7 +10903,7 @@ c       Single production chennel: 16 chennels, 385-400.
      &            KF_D.gt.0 .AND.      KF_M.lt.0)        ! 0-, KF+-
      &    )then
             call Dmeson1(iA,iB,KF_D,KF_M,E_AB,icp,lc,tc,tw,ioo,i_order)
-c       Dual production chennels: 64 channels, 401-464,
+c       Dual production channels: 64 channels, 401-464,
 c        else if( (iCharge_D.eq.0 .AND. iCharge_M.eq.0) .OR.   ! 00
 c     &           (iCharge_D.gt.0 .AND. iCharge_M.lt.0) .OR.   ! +-
 c     &           (iCharge_D.lt.0 .AND. iCharge_M.gt.0) .OR.   ! -+
@@ -11936,8 +11934,12 @@ c       following statements are added by sa on 07/March/97
         i2=i1
         goto 3001
 3000    enddo
+c200624 Lei
+3001    continue
         if(i2.gt.0)then   ! 280224 Lei
-3001    do i1=i2,kfmax
+c3001   do i1=i2,kfmax
+        do i1=i2,kfmax
+c200624 Lei
         numb(i1)=numb(i1)-1
         enddo
         end if   ! 280224 Lei
