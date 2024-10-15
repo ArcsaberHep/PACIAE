@@ -10,7 +10,7 @@ C*   7. printing FORMAT in PYLIST;                                  **
 C*   8. About iikk, kkii, smadel and shanul stemming from PACIAE;   **
 C*   9. N_CALL_PYTUNE and M13 in PYTUNE.                            **
 c*                                                    By Ben-Hao Sa **
-c*                          Last updated by An-Ke Lei on 11/03/2024 **
+c*                          Last updated by An-Ke Lei on 30/03/2024 **
 C*********************************************************************
 
 C*********************************************************************
@@ -64992,12 +64992,10 @@ C...Commonblocks.
       COMMON/PYDAT3/MDCY(500,3),MDME(8000,2),BRAT(8000),KFDP(8000,5)
       COMMON/PYINT1/MINT(400),VINT(400)
       COMMON/PYINT4/MWID(500),WIDS(500,5)
-        common/sa24/adj1(40),nnstop,non24,zstop   ! 050920
         common/sa34/itorw,iikk,cp0,cr0,kkii   ! 112819 050920
       SAVE /PYJETS/,/PYDAT1/,/PYDAT2/,/PYDAT3/,/PYINT1/,/PYINT4/
 C...Local array.
       DIMENSION PS(2,6),IJOIN(100)
-        adj12=adj1(12)   ! 050920
  
 C...Initialize and reset.
       MSTU(24)=0
@@ -65179,9 +65177,7 @@ C...Double precision and integer declarations.
       INTEGER PYK,PYCHGE,PYCOMP
 C...Commonblocks.
 c050920
-        common/sa24/adj1(40),nnstop,non24,zstop
         common/sa34/itorw,iikk,cp0,cr0,kkii
-        common/ctllist_p/nreac(9),nrel
 c050920
       COMMON/PYJETS/N,NPAD,K(80000,5),P(80000,5),V(80000,5)
       COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
@@ -65205,8 +65201,6 @@ C...Local arrays.
 C...Function to give four-product.
       FOUR(I,J)=P(I,4)*P(J,4)-P(I,1)*P(J,1)-P(I,2)*P(J,2)-P(I,3)*P(J,3)
  
-        adj12=adj1(12)   ! 050920
-
 C...Rearrange parton shower product listing along strings: begin loop.
       MSTU(24)=0
       NOLD=N
@@ -66614,8 +66608,9 @@ C...Check flavours and invariant masses in parton systems.
           ENDIF
           IF(NFERR.EQ.1) THEN
             CALL PYERRM(2,'(PYPREP:) unphysical flavour combination')
-           if(adj12.ne.0.or.(adj12.eq.0.and.(nreac(4).ne.0.or.nreac(6)   ! 300623 Lei adj12.eq.1 -> .ne.0
-     c     .ne.0.or.nreac(7).ne.0)))kkii=2   ! 050920
+c300324 Lei
+            kkii=2   ! 050920
+c300324 Lei
             MINT(51)=1
             RETURN
           ENDIF
@@ -66649,9 +66644,7 @@ C...Double precision and integer declarations.
       INTEGER PYK,PYCHGE,PYCOMP
 C...Commonblocks.
 c050920
-        common/sa24/adj1(40),nnstop,non24,zstop
         common/sa34/itorw,iikk,cp0,cr0,kkii
-        common/ctllist_p/nreac(9),nrel
 c050920
       COMMON/PYJETS/N,NPAD,K(80000,5),P(80000,5),V(80000,5)
       COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
@@ -66669,9 +66662,6 @@ C...Function: four-product of two vectors.
      &DP(I,3)*DP(J,3)
  
 C...Reset counters.
- 
-        adj12=adj1(12)   ! 050920
- 
       MSTJ(91)=0
       NSAV=N
       MSTU90=MSTU(90)
@@ -66726,11 +66716,10 @@ C...Take copy of partons to be considered. Check flavour sum.
       IF(MOD(KQSUM,3).NE.0) THEN
         CALL PYERRM(12,'(PYSTRF:) unphysical flavour combination')
 c050920
-        if(adj12.ne.0.or.(adj12.eq.0.and.(nreac(4).ne.0.or.nreac(6)   ! 300623 Lei adj12.eq.1 -> .ne.0
-     c   .ne.0.or.nreac(7).ne.0)))then
+c300324 Lei
         kkii=2
         return
-        endif
+c300324 Lei
 c050920
         IF(MSTU(21).GE.1) RETURN
       ENDIF
@@ -68277,9 +68266,7 @@ C...Double precision and integer declarations.
       INTEGER PYK,PYCHGE,PYCOMP
 C...Commonblocks.
 c050920
-        common/sa24/adj1(40),nnstop,non24,zstop
         common/sa34/itorw,iikk,cp0,cr0,kkii
-        common/ctllist_p/nreac(9),nrel
 c050920
       COMMON/PYJETS/N,NPAD,K(80000,5),P(80000,5),V(80000,5)
       COMMON/PYDAT1/MSTU(200),PARU(200),MSTJ(200),PARJ(200)
@@ -68293,9 +68280,6 @@ C.. MOPS error message
      &' are not treated as expected in independent fragmentation')
  
 C...Reset counters. Identify parton system and take copy. Check flavour.
- 
-        adj12=adj1(12)   ! 050920
- 
       NSAV=N
       MSTU90=MSTU(90)
       NJET=0
@@ -68327,11 +68311,10 @@ C...Reset counters. Identify parton system and take copy. Check flavour.
       IF(NJET.NE.1.AND.KQSUM.NE.0) THEN
         CALL PYERRM(12,'(PYINDF:) unphysical flavour combination')
 c050920
-        if(adj12.ne.0.or.(adj12.eq.0.and.(nreac(4).ne.0.or.nreac(6)   ! 300623 Lei adj12.eq.1 -> .ne.0
-     c   .ne.0.or.nreac(7).ne.0)))then
+c300324 Lei
         kkii=2
         return
-        endif
+c300324 Lei
 c050920
         IF(MSTU(21).GE.1) RETURN
       ENDIF

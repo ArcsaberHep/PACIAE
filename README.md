@@ -2,7 +2,7 @@
      Written by Markdown language.
                  By Anke at CCNU on 17/10/2022 
                                                
-                    Last updated on 13/03/2024 
+                    Last updated on 15/10/2024 
  -->
 
 # The parton and hadron cascade model PACIAE
@@ -122,7 +122,20 @@ The released code are available on https://github.com/ArcsaberHep/PACIAE/release
 ## Update Notes:
 
 <!----------------------------------------------------------------------------->
-...(waiting for updating)
+<!-- ...(waiting for updating) -->
+
+<!----------------------------------------------------------------------------->
+### <font color=red> 04-10/2024: </font> In version PACIAE 3.0.02
+
+- In "main_30.f" and "parini_30.f", the *NN* total cross section "para1_1" has been recalculated in the program by subroutine "PAXTOT" via Donnachie-Landshoff parameterization instead of the manual input.
+- In "main_30.f" and "parini_30.f", the adjustment of energy conservation stemming from diquark breaking-up and recovering has been cancelled. It may cause errors in string fragmentation and abnormal hardening of intermediate and high $p_T$. The cancellation may lead to 0.1-1% energy violation.
+- In "parini_30.f", a new "D-framework" has been introduced to take the leading-proton effect into account, mainly for ***p*A** collisions.
+- In "parini_30.f", for **AA** and ***p*A** collisions, now the initial positions of projectile and target nucleon/nuclei are setting at (b/2, 0, -20) and (-b/2, 0, 20), respectively.
+- In "parcas_30.f", the analytical form of parton-parton cross sections have been introduced replacing the old numerical method of integral cross section calculation, which may cause abnormal sharp peaks at forward and backward rapidities. The mass correction of cross section for heavy c and b quarks has been taken into account now.
+- An experimental feature, string fragmentation after the gluon-splitting and the deexcitation of excited quarks, has been introduced in order to enhance the flow effect in string fragmentation model.
+- Some statements optimized in program.
+- Bug fixed.
+- "PACIAE.sh" updated.
 
 <!----------------------------------------------------------------------------->
 ### <font color=red> 01-03/2024: </font> In version PACIAE 3.0.01
