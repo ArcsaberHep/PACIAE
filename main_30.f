@@ -2935,6 +2935,7 @@ c----------------------   B-framework Gamma 77 Removing  -----------------------
         if(mstptj.eq.1.and.iMode.eq.2)then   !!! 161222 260223
 c       removes gammas ('77') after hadronization from 'pyjets' to 'sgam'
         n77=0
+        n77s=0
         do j=1,n
         kf=k(j,2)
         if(kf.eq.22)then
